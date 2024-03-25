@@ -1,10 +1,11 @@
-package dev.bittim.valolink.di
+package dev.bittim.valolink.core.di
 
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.bittim.valolink.core.ui.nav.navigator.NavigatorImpl
 import javax.inject.Singleton
 
 @Module
@@ -12,7 +13,9 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth.getInstance()
-    }
+    fun provideFirebaseAuth() = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideNavigator() = NavigatorImpl()
 }
