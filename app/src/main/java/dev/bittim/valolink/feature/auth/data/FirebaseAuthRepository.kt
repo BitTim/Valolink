@@ -2,6 +2,7 @@ package dev.bittim.valolink.feature.auth.data
 
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import dev.bittim.valolink.core.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -23,10 +24,19 @@ class FirebaseAuthRepository @Inject constructor(
         }
     }
 
-    override fun signUp(email: String, password: String): Flow<Resource<AuthResult>> {
+    override fun signUp(
+        email: String,
+        username: String,
+        password: String
+    ): Flow<Resource<AuthResult>> {
         return flow {
             emit(Resource.Loading())
             val result = auth.createUserWithEmailAndPassword(email, password).await()
+            auth.currentUser?.updateProfile(
+                UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+                    .build()
+            )
             emit(Resource.Success(result))
         }.catch {
             it.printStackTrace()

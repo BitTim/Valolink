@@ -1,7 +1,19 @@
 package dev.bittim.valolink.feature.auth.ui.signup
 
-data class SignUpState(
-    val isLoading: Boolean = false,
-    val success: String? = null,
-    val error: String? = null
-)
+sealed interface SignUpState {
+    data class Input(
+        val email: String,
+        val username: String,
+        val password: String,
+        val confirmPassword: String,
+
+        val emailError: String?,
+        val usernameError: String?,
+        val passwordError: String?,
+        val confirmPasswordError: String?,
+        val authError: String?
+    ) : SignUpState
+
+    data object Loading : SignUpState
+    data object Success : SignUpState
+}

@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.auth.ui.signin
+package dev.bittim.valolink.feature.auth.ui.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
@@ -17,7 +18,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -27,14 +27,15 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.feature.auth.ui.components.OutlinedTextFieldWithError
 
 @Composable
-fun SignInScreen(
-    state: SignInState,
+fun SignUpScreen(
+    state: SignUpState,
     onEmailValueChange: (String) -> Unit,
+    onUsernameValueChange: (String) -> Unit,
     onPasswordValueChange: (String) -> Unit,
-    onSignInClicked: () -> Unit,
-    onNavContent: () -> Unit,
-    onNavSignUp: () -> Unit,
-    onNavForgot: () -> Unit
+    onConfirmPasswordValueChange: (String) -> Unit,
+    onSignUpClicked: () -> Unit,
+    onNavToOnboardingGraph: () -> Unit,
+    onNavToSignIn: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -43,14 +44,14 @@ fun SignInScreen(
         verticalArrangement = Arrangement.Center
     ) {
         when (state) {
-            is SignInState.Loading -> {
+            is SignUpState.Loading -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Signing in",
+                        text = "Creating account",
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -58,15 +59,16 @@ fun SignInScreen(
                     CircularProgressIndicator()
                 }
             }
-            is SignInState.Success -> {
+
+            is SignUpState.Success -> {
                 LaunchedEffect(key1 = Unit) {
-                    onNavContent()
+                    onNavToOnboardingGraph()
                 }
             }
 
-            is SignInState.Input -> {
+            is SignUpState.Input -> {
                 Text(
-                    text = "Sign in to Valolink",
+                    text = "Create a new Valolink account",
                     style = MaterialTheme.typography.headlineMedium
                 )
 
@@ -89,6 +91,22 @@ fun SignInScreen(
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 OutlinedTextFieldWithError(
+                    label = "Username",
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "Username"
+                        )
+                    },
+                    value = state.username,
+                    error = state.usernameError,
+                    enableVisibilityToggle = false,
+                    onValueChange = onUsernameValueChange
+                )
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                OutlinedTextFieldWithError(
                     label = "Password",
                     leadingIcon = {
                         Icon(
@@ -100,6 +118,22 @@ fun SignInScreen(
                     error = state.passwordError,
                     enableVisibilityToggle = true,
                     onValueChange = onPasswordValueChange
+                )
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                OutlinedTextFieldWithError(
+                    label = "Confirm Password",
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Password,
+                            contentDescription = "Password"
+                        )
+                    },
+                    value = state.confirmPassword,
+                    error = state.confirmPasswordError,
+                    enableVisibilityToggle = true,
+                    onValueChange = onConfirmPasswordValueChange
                 )
 
                 Spacer(modifier = Modifier.padding(8.dp))
@@ -116,20 +150,10 @@ fun SignInScreen(
 
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = onSignInClicked
+                    onClick = onSignUpClicked
                 ) {
                     Text(
-                        text = "Sign in",
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-
-                TextButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = onNavForgot
-                ) {
-                    Text(
-                        text = "Forgot password?",
+                        text = "Create account",
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
@@ -147,7 +171,7 @@ fun SignInScreen(
                             .weight(2f)
                             .fillMaxWidth()
                             .padding(16.dp),
-                        text = "Don't have an account?",
+                        text = "Already have an account?",
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -155,10 +179,10 @@ fun SignInScreen(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth(),
-                        onClick = onNavSignUp
+                        onClick = onNavToSignIn
                     ) {
                         Text(
-                            text = "Sign up",
+                            text = "Sign in",
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -170,39 +194,47 @@ fun SignInScreen(
 
 @Preview(showSystemUi = true)
 @Composable
-fun LoadingSignInScreenPreview() {
-    SignInScreen(
-        state = SignInState.Loading,
-        {}, {}, {}, {}, {}, {}
+fun LoadingSignUpScreenPreview() {
+    SignUpScreen(
+        state = SignUpState.Loading,
+        {}, {}, {}, {}, {}, {}, {}
     )
 }
 
 @Preview(showSystemUi = true)
 @Composable
-fun InputSignInScreenPreview() {
-    SignInScreen(
-        state = SignInState.Input(
+fun InputSignUpScreenPreview() {
+    SignUpScreen(
+        state = SignUpState.Input(
             email = "",
+            username = "",
             password = "",
+            confirmPassword = "",
             emailError = null,
+            usernameError = null,
             passwordError = null,
+            confirmPasswordError = null,
             authError = null
         ),
-        {}, {}, {}, {}, {}, {}
+        {}, {}, {}, {}, {}, {}, {}
     )
 }
 
 @Preview(showSystemUi = true)
 @Composable
-fun ErrorInputSignInScreenPreview() {
-    SignInScreen(
-        state = SignInState.Input(
-            email = "test@mailcom",
-            password = "Password",
+fun ErrorInputSignUpScreenPreview() {
+    SignUpScreen(
+        state = SignUpState.Input(
+            email = "",
+            username = "",
+            password = "",
+            confirmPassword = "",
             emailError = "",
+            usernameError = "",
             passwordError = "",
+            confirmPasswordError = "",
             authError = "Something went wrong"
         ),
-        {}, {}, {}, {}, {}, {}
+        {}, {}, {}, {}, {}, {}, {}
     )
 }
