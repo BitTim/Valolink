@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.feature.auth.ui.components.OutlinedTextFieldWithError
+import dev.bittim.valolink.ui.theme.ValolinkTheme
 
 @Composable
 fun SignUpScreen(
@@ -195,46 +196,52 @@ fun SignUpScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun LoadingSignUpScreenPreview() {
-    SignUpScreen(
-        state = SignUpState.Loading,
-        {}, {}, {}, {}, {}, {}, {}
-    )
+    ValolinkTheme {
+        SignUpScreen(
+            state = SignUpState.Loading,
+            {}, {}, {}, {}, {}, {}, {}
+        )
+    }
 }
 
 @Preview(showSystemUi = true)
 @Composable
 fun InputSignUpScreenPreview() {
-    SignUpScreen(
-        state = SignUpState.Input(
-            email = "",
-            username = "",
-            password = "",
-            confirmPassword = "",
-            emailError = null,
-            usernameError = null,
-            passwordError = null,
-            confirmPasswordError = null,
-            authError = null
-        ),
-        {}, {}, {}, {}, {}, {}, {}
-    )
+    ValolinkTheme {
+        SignUpScreen(
+            state = SignUpState.Input(
+                email = "",
+                username = "",
+                password = "",
+                confirmPassword = "",
+                emailError = null,
+                usernameError = null,
+                passwordError = null,
+                confirmPasswordError = null,
+                authError = null
+            ),
+            {}, {}, {}, {}, {}, {}, {}
+        )
+    }
 }
 
 @Preview(showSystemUi = true)
 @Composable
 fun ErrorInputSignUpScreenPreview() {
-    SignUpScreen(
-        state = SignUpState.Input(
-            email = "",
-            username = "",
-            password = "",
-            confirmPassword = "",
-            emailError = "",
-            usernameError = "",
-            passwordError = "",
-            confirmPasswordError = "",
-            authError = "Something went wrong"
-        ),
-        {}, {}, {}, {}, {}, {}, {}
-    )
+    ValolinkTheme {
+        SignUpScreen(
+            state = SignUpState.Input(
+                email = "",
+                username = "",
+                password = "",
+                confirmPassword = "",
+                emailError = "",
+                usernameError = "",
+                passwordError = "",
+                confirmPasswordError = "",
+                authError = "Something went wrong"
+            ),
+            {}, {}, {}, {}, {}, {}, {}
+        )
+    }
 }

@@ -25,5 +25,7 @@ fun NavGraphBuilder.homeScreen(
 }
 
 fun NavController.navToHome() {
-    navigate(HomeNavRoute)
+    navigate(HomeNavRoute) {
+        launchSingleTop = true
+    }
 }

@@ -20,9 +20,9 @@ fun NavGraphBuilder.contentNavGraph(
     }
 }
 
-fun NavController.navToContentGraph() {
+fun NavController.navToContentGraph(origin: String) {
     navigate(ContentNavRoute) {
-        popUpTo(ContentNavRoute) {
+        popUpTo(origin) {
             inclusive = true
         }
         launchSingleTop = true

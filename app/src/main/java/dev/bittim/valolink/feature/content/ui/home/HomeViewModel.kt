@@ -11,7 +11,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private var _homeState = MutableStateFlow<HomeState>(HomeState.NotAuthorized)
+    private var _homeState = MutableStateFlow<HomeState>(HomeState.Loading)
     val homeState = _homeState.asStateFlow()
 
     fun onCheckAuth() {

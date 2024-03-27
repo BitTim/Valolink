@@ -31,5 +31,7 @@ fun NavGraphBuilder.signUpScreen(
 }
 
 fun NavController.navToSignUp() {
-    navigate(SignUpNavRoute)
+    navigate(SignUpNavRoute) {
+        launchSingleTop = true
+    }
 }

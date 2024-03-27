@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
 import dev.bittim.valolink.feature.auth.ui.signin.SignInNavRoute
-import dev.bittim.valolink.feature.auth.ui.signin.navToSignIn
 import dev.bittim.valolink.feature.auth.ui.signin.signInScreen
 import dev.bittim.valolink.feature.auth.ui.signup.navToSignUp
 import dev.bittim.valolink.feature.auth.ui.signup.signUpScreen
@@ -21,20 +20,19 @@ fun NavGraphBuilder.authNavGraph(
     ) {
         signInScreen(
             onNavToContent = onNavToContentGraph,
-            onNavToSignUp = { navController.navToSignUp() },
-            onNavToForgot = {}
+            onNavToSignUp = { navController.navToSignUp() }
         )
 
         signUpScreen(
             onNavToOnboardingGraph = onNavToOnboardingGraph,
-            onNavToSignIn = { navController.navToSignIn() }
+            onNavToSignIn = { navController.popBackStack() }
         )
     }
 }
 
-fun NavController.navToAuthGraph() {
+fun NavController.navToAuthGraph(origin: String) {
     navigate(AuthNavRoute) {
-        popUpTo(AuthNavRoute) {
+        popUpTo(origin) {
             inclusive = true
         }
         launchSingleTop = true

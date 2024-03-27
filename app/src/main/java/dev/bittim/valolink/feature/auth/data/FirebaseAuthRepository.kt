@@ -43,4 +43,15 @@ class FirebaseAuthRepository @Inject constructor(
             emit(Resource.Error(it.message.toString()))
         }
     }
+
+    override fun forgotPassword(email: String): Flow<Resource<Unit>> {
+        return flow {
+            emit(Resource.Loading())
+            auth.sendPasswordResetEmail(email).await()
+            emit(Resource.Success(Unit))
+        }.catch {
+            it.printStackTrace()
+            emit(Resource.Error(it.message.toString()))
+        }
+    }
 }

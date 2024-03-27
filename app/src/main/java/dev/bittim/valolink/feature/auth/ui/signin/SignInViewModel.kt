@@ -1,5 +1,6 @@
 package dev.bittim.valolink.feature.auth.ui.signin
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,12 +24,15 @@ class SignInViewModel @Inject constructor(
             password = "",
             emailError = null,
             passwordError = null,
-            authError = null
+            authError = null,
+            showForgotDialog = false,
+            forgotEmail = "",
+            forgotEmailError = null
         )
     )
     val signInState = _signInState.asStateFlow()
-
-
+    val snackbarHostState = SnackbarHostState()
+    
     fun onSignInClicked() = viewModelScope.launch {
         if (_signInState.value !is SignInState.Input) return@launch
         val state = _signInState.value as SignInState.Input
@@ -67,9 +71,85 @@ class SignInViewModel @Inject constructor(
                         password = state.password,
                         emailError = "",
                         passwordError = "",
-                        authError = result.message
+                        authError = result.message,
+                        showForgotDialog = state.showForgotDialog,
+                        forgotEmail = state.forgotEmail,
+                        forgotEmailError = state.forgotEmailError
                     )
                 }
+            }
+        }
+    }
+
+    fun onForgotConfirmation() = viewModelScope.launch {
+        if (_signInState.value !is SignInState.Input) return@launch
+        val state = _signInState.value as SignInState.Input
+
+        val emailError = AuthValidator.validateEmail(state.forgotEmail)
+
+        if (emailError != null) {
+            _signInState.update {
+                if (it is SignInState.Input) {
+                    it.copy(
+                        forgotEmailError = emailError
+                    )
+                } else {
+                    it
+                }
+            }
+
+            return@launch
+        }
+
+        authRepo.forgotPassword(state.forgotEmail).collectLatest { result ->
+            when (result) {
+                is Resource.Loading -> {}
+                is Resource.Success -> {
+                    viewModelScope.launch {
+                        snackbarHostState.showSnackbar("Sent password reset request to ${state.forgotEmail}")
+                    }
+                    onForgotDismiss()
+                }
+
+                is Resource.Error -> {
+                    _signInState.value = SignInState.Input(
+                        email = state.email,
+                        password = state.password,
+                        emailError = state.emailError,
+                        passwordError = state.passwordError,
+                        authError = state.authError,
+                        showForgotDialog = true,
+                        forgotEmail = state.forgotEmail,
+                        forgotEmailError = result.message
+                    )
+                }
+            }
+        }
+    }
+
+
+    fun onForgotClicked() {
+        _signInState.update { state ->
+            if (state is SignInState.Input) {
+                state.copy(
+                    showForgotDialog = true
+                )
+            } else {
+                state
+            }
+        }
+    }
+
+    fun onForgotDismiss() {
+        _signInState.update { state ->
+            if (state is SignInState.Input) {
+                state.copy(
+                    showForgotDialog = false,
+                    forgotEmail = "",
+                    forgotEmailError = null
+                )
+            } else {
+                state
             }
         }
     }
@@ -91,6 +171,18 @@ class SignInViewModel @Inject constructor(
             if (state is SignInState.Input) {
                 state.copy(
                     password = password
+                )
+            } else {
+                state
+            }
+        }
+    }
+
+    fun onForgotEmailChange(email: String) {
+        _signInState.update { state ->
+            if (state is SignInState.Input) {
+                state.copy(
+                    forgotEmail = email
                 )
             } else {
                 state

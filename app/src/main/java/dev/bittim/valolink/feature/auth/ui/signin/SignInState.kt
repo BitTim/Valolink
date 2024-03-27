@@ -6,7 +6,11 @@ sealed interface SignInState {
         val password: String,
         val emailError: String?,
         val passwordError: String?,
-        val authError: String?
+        val authError: String?,
+
+        val showForgotDialog: Boolean,
+        val forgotEmail: String,
+        val forgotEmailError: String?
     ) : SignInState
     data object Loading : SignInState
     data object Success : SignInState

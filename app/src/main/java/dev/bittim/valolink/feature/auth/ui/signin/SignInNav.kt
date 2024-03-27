@@ -11,8 +11,7 @@ const val SignInNavRoute = "signin"
 
 fun NavGraphBuilder.signInScreen(
     onNavToContent: () -> Unit,
-    onNavToSignUp: () -> Unit,
-    onNavToForgot: () -> Unit
+    onNavToSignUp: () -> Unit
 ) {
     composable(SignInNavRoute) {
         val viewModel: SignInViewModel = hiltViewModel()
@@ -20,16 +19,23 @@ fun NavGraphBuilder.signInScreen(
 
         SignInScreen(
             state = signInState,
+            snackbarHostState = viewModel.snackbarHostState,
+            
             onEmailValueChange = viewModel::onEmailChange,
             onPasswordValueChange = viewModel::onPasswordChange,
+            onForgotEmailValueChange = viewModel::onForgotEmailChange,
+            onForgotDismissRequest = viewModel::onForgotDismiss,
+            onForgotConfirmation = viewModel::onForgotConfirmation,
             onSignInClicked = viewModel::onSignInClicked,
+            onForgotClicked = viewModel::onForgotClicked,
             onNavContent = onNavToContent,
-            onNavSignUp = onNavToSignUp,
-            onNavForgot = onNavToForgot
+            onNavSignUp = onNavToSignUp
         )
     }
 }
 
 fun NavController.navToSignIn() {
-    navigate(SignInNavRoute)
+    navigate(SignInNavRoute) {
+        launchSingleTop = true
+    }
 }
