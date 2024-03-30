@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.bittim.valolink.core.nav.RootNavGraph
+import dev.bittim.valolink.core.ui.RootNavGraph
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 
 @AndroidEntryPoint

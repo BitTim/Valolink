@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.R
+import dev.bittim.valolink.core.ui.UiText
 import dev.bittim.valolink.feature.auth.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 
@@ -71,6 +73,13 @@ fun SignUpScreen(
                 Text(
                     text = "Create a new Valolink account",
                     style = MaterialTheme.typography.headlineMedium
+                )
+
+                Spacer(modifier = Modifier.padding(4.dp))
+
+                Text(
+                    text = "After creating an account you will need to connect your Riot Games account in order to use the app.",
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
                 Spacer(modifier = Modifier.padding(16.dp))
@@ -141,7 +150,7 @@ fun SignUpScreen(
 
                 if (state.authError != null) {
                     Text(
-                        text = state.authError,
+                        text = state.authError.asString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -235,11 +244,11 @@ fun ErrorInputSignUpScreenPreview() {
                 username = "",
                 password = "",
                 confirmPassword = "",
-                emailError = "",
-                usernameError = "",
-                passwordError = "",
-                confirmPasswordError = "",
-                authError = "Something went wrong"
+                emailError = UiText.DynamicString(""),
+                usernameError = UiText.DynamicString(""),
+                passwordError = UiText.DynamicString(""),
+                confirmPasswordError = UiText.DynamicString(""),
+                authError = UiText.StringResource(R.string.error_auth_generic)
             ),
             {}, {}, {}, {}, {}, {}, {}
         )

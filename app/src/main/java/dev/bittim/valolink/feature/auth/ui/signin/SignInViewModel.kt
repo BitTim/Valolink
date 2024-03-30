@@ -4,9 +4,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.core.util.Resource
-import dev.bittim.valolink.feature.auth.data.AuthRepository
-import dev.bittim.valolink.feature.auth.util.AuthValidator
+import dev.bittim.valolink.core.domain.Result
+import dev.bittim.valolink.core.ui.UiText
+import dev.bittim.valolink.feature.auth.data.repository.AuthRepository
+import dev.bittim.valolink.feature.auth.domain.ValidationUseCases
+import dev.bittim.valolink.feature.auth.ui.asUiText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -16,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val authRepo: AuthRepository
+    private val authRepo: AuthRepository,
+    private val validationUseCases: ValidationUseCases
 ) : ViewModel() {
     private var _signInState = MutableStateFlow<SignInState>(
         SignInState.Input(
@@ -37,9 +40,9 @@ class SignInViewModel @Inject constructor(
         if (_signInState.value !is SignInState.Input) return@launch
         val state = _signInState.value as SignInState.Input
 
-        val emailError = AuthValidator.validateEmail(state.email)
-        val passwordError = AuthValidator.validatePassword(state.password)
-
+        val emailError: UiText? = validateEmail(state.email)
+        val passwordError: UiText? = validatePassword(state.password)
+        
         if (emailError != null || passwordError != null) {
             _signInState.update {
                 if (it is SignInState.Input) {
@@ -57,21 +60,21 @@ class SignInViewModel @Inject constructor(
 
         authRepo.signIn(state.email, state.password).collectLatest { result ->
             when (result) {
-                is Resource.Loading -> {
+                is Result.Loading -> {
                     _signInState.value = SignInState.Loading
                 }
 
-                is Resource.Success -> {
+                is Result.Success -> {
                     _signInState.value = SignInState.Success
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _signInState.value = SignInState.Input(
                         email = state.email,
                         password = state.password,
-                        emailError = "",
-                        passwordError = "",
-                        authError = result.message,
+                        emailError = UiText.DynamicString(""),
+                        passwordError = UiText.DynamicString(""),
+                        authError = result.error.asUiText(),
                         showForgotDialog = state.showForgotDialog,
                         forgotEmail = state.forgotEmail,
                         forgotEmailError = state.forgotEmailError
@@ -85,7 +88,7 @@ class SignInViewModel @Inject constructor(
         if (_signInState.value !is SignInState.Input) return@launch
         val state = _signInState.value as SignInState.Input
 
-        val emailError = AuthValidator.validateEmail(state.forgotEmail)
+        val emailError = validateEmail(state.forgotEmail)
 
         if (emailError != null) {
             _signInState.update {
@@ -103,15 +106,15 @@ class SignInViewModel @Inject constructor(
 
         authRepo.forgotPassword(state.forgotEmail).collectLatest { result ->
             when (result) {
-                is Resource.Loading -> {}
-                is Resource.Success -> {
+                is Result.Loading -> {}
+                is Result.Success -> {
                     viewModelScope.launch {
                         snackbarHostState.showSnackbar("Sent password reset request to ${state.forgotEmail}")
                     }
                     onForgotDismiss()
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _signInState.value = SignInState.Input(
                         email = state.email,
                         password = state.password,
@@ -120,12 +123,34 @@ class SignInViewModel @Inject constructor(
                         authError = state.authError,
                         showForgotDialog = true,
                         forgotEmail = state.forgotEmail,
-                        forgotEmailError = result.message
+                        forgotEmailError = result.error.asUiText() // Handle string conversion
                     )
                 }
             }
         }
     }
+
+
+    private fun validateEmail(email: String): UiText? {
+        return when (val result = validationUseCases.validateEmail(email)) {
+            is Result.Error -> {
+                result.error.asUiText()
+            }
+
+            else -> null
+        }
+    }
+
+    private fun validatePassword(password: String): UiText? {
+        return when (val result = validationUseCases.validatePassword(password)) {
+            is Result.Error -> {
+                result.error.asUiText()
+            }
+
+            else -> null
+        }
+    }
+    
 
 
     fun onForgotClicked() {

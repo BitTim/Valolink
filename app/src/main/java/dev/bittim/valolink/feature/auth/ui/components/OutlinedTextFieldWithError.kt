@@ -23,6 +23,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.R
+import dev.bittim.valolink.core.ui.UiText
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 
 @Composable
@@ -30,7 +32,7 @@ fun OutlinedTextFieldWithError(
     label: String,
     leadingIcon: @Composable (() -> Unit)?,
     value: String,
-    error: String?,
+    error: UiText?,
     enableVisibilityToggle: Boolean,
     onValueChange: (String) -> Unit
 ) {
@@ -53,7 +55,7 @@ fun OutlinedTextFieldWithError(
     label: String,
     leadingIcon: @Composable (() -> Unit)?,
     value: String,
-    error: String?,
+    error: UiText?,
     enableVisibilityToggle: Boolean,
     onVisibilityChange: (Boolean) -> Unit,
     onValueChange: (String) -> Unit
@@ -90,10 +92,12 @@ fun OutlinedTextFieldWithError(
             }
         )
 
-        if (!error.isNullOrEmpty()) {
+        val errorText: String? = error?.asString()
+
+        if (!errorText.isNullOrEmpty()) {
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = error,
+                text = errorText,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )
@@ -133,7 +137,7 @@ fun HiddenEmptyOutlinedTextFieldWithErrorPreview() {
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Password,
-                    contentDescription = "Username"
+                    contentDescription = "Password"
                 )
             },
             value = "",
@@ -154,7 +158,7 @@ fun HiddenFilledOutlinedTextFieldWithErrorPreview() {
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Password,
-                    contentDescription = "Username"
+                    contentDescription = "Password"
                 )
             },
             value = "Test1234",
@@ -175,7 +179,7 @@ fun VisibleFilledOutlinedTextFieldWithErrorPreview() {
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Password,
-                    contentDescription = "Username"
+                    contentDescription = "Password"
                 )
             },
             value = "Test1234",
@@ -200,7 +204,7 @@ fun ErrorEmptyOutlinedTextFieldWithErrorPreview() {
                 )
             },
             value = "",
-            error = "Username cannot be empty",
+            error = UiText.StringResource(R.string.error_username_empty),
             enableVisibilityToggle = false,
             {}, {}
         )
@@ -217,11 +221,11 @@ fun ErrorHiddenEmptyOutlinedTextFieldWithErrorPreview() {
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Password,
-                    contentDescription = "Username"
+                    contentDescription = "Password"
                 )
             },
             value = "",
-            error = "Password cannot be empty",
+            error = UiText.StringResource(R.string.error_password_empty),
             enableVisibilityToggle = true,
             {}, {}
         )
@@ -238,11 +242,11 @@ fun ErrorHiddenFilledOutlinedTextFieldWithErrorPreview() {
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Password,
-                    contentDescription = "Username"
+                    contentDescription = "Password"
                 )
             },
             value = "Test1234",
-            error = "Password does not contain special characters",
+            error = UiText.StringResource(R.string.error_password_mismatch),
             enableVisibilityToggle = true,
             {}, {}
         )
@@ -263,7 +267,7 @@ fun ErrorVisibleFilledOutlinedTextFieldWithErrorPreview() {
                 )
             },
             value = "Test1234",
-            error = "Password does not contain special characters",
+            error = UiText.StringResource(R.string.error_password_mismatch),
             enableVisibilityToggle = true,
             {}, {}
         )

@@ -1,4 +1,4 @@
-package dev.bittim.valolink.core.nav
+package dev.bittim.valolink.core.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController

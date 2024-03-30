@@ -13,13 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.core.ui.UiText
 import dev.bittim.valolink.feature.auth.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 
 @Composable
 fun ForgotAlertDialog(
     email: String,
-    emailError: String?,
+    emailError: UiText?,
     onEmailValueChange: (String) -> Unit,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit

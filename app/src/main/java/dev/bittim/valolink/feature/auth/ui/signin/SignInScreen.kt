@@ -28,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.R
+import dev.bittim.valolink.core.ui.UiText
 import dev.bittim.valolink.feature.auth.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.feature.auth.ui.signin.components.ForgotAlertDialog
 import dev.bittim.valolink.ui.theme.ValolinkTheme
@@ -123,7 +125,7 @@ fun SignInScreen(
 
                     if (state.authError != null) {
                         Text(
-                            text = state.authError,
+                            text = state.authError.asString(),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -258,9 +260,9 @@ fun ErrorInputSignInScreenPreview() {
             state = SignInState.Input(
                 email = "test@mailcom",
                 password = "Password",
-                emailError = "",
-                passwordError = "",
-                authError = "Something went wrong",
+                emailError = UiText.DynamicString(""),
+                passwordError = UiText.DynamicString(""),
+                authError = UiText.StringResource(R.string.error_auth_generic),
                 showForgotDialog = false,
                 forgotEmail = "",
                 forgotEmailError = null
