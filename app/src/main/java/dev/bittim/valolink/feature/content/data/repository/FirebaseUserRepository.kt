@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.content.data
+package dev.bittim.valolink.feature.content.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject

@@ -5,8 +5,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.bittim.valolink.feature.content.data.FirebaseUserRepository
-import dev.bittim.valolink.feature.content.data.UserRepository
+import dev.bittim.valolink.feature.content.data.repository.FirebaseUserRepository
+import dev.bittim.valolink.feature.content.data.repository.UserRepository
 import javax.inject.Singleton
 
 @Module
