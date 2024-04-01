@@ -6,9 +6,9 @@ import androidx.navigation.compose.NavHost
 import dev.bittim.valolink.feature.auth.ui.AuthNavRoute
 import dev.bittim.valolink.feature.auth.ui.authNavGraph
 import dev.bittim.valolink.feature.auth.ui.navToAuthGraph
-import dev.bittim.valolink.feature.content.ui.ContentNavRoute
-import dev.bittim.valolink.feature.content.ui.contentNavGraph
-import dev.bittim.valolink.feature.content.ui.navToContentGraph
+import dev.bittim.valolink.feature.content.ui.main.MainNavRoute
+import dev.bittim.valolink.feature.content.ui.main.mainScreen
+import dev.bittim.valolink.feature.content.ui.main.navToContentMain
 
 @Composable
 fun RootNavGraph(
@@ -16,17 +16,16 @@ fun RootNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = ContentNavRoute
+        startDestination = MainNavRoute
     ) {
         authNavGraph(
             navController = navController,
-            onNavToContentGraph = { navController.navToContentGraph(AuthNavRoute) },
-            onNavToOnboardingGraph = { navController.navToContentGraph(AuthNavRoute) } // TODO: Change to Onboarding graph
+            onNavToContentGraph = { navController.navToContentMain(AuthNavRoute) },
+            onNavToOnboardingGraph = { navController.navToContentMain(AuthNavRoute) } // TODO: Change to Onboarding graph
         )
 
-        contentNavGraph(
-            navController = navController,
-            onNavAuthGraph = { navController.navToAuthGraph(ContentNavRoute) }
+        mainScreen(
+            onNavAuthGraph = { navController.navToAuthGraph(MainNavRoute) }
         )
     }
 }

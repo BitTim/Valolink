@@ -1,11 +1,10 @@
-package dev.bittim.valolink.feature.content.ui.home
+package dev.bittim.valolink.feature.content.ui.matches
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,19 +17,18 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 
 @Composable
-fun HomeScreen(
-    state: HomeState,
-    onFetch: () -> Unit,
-    onSignOutClicked: () -> Unit
+fun MatchesScreen(
+    state: MatchesState,
+    onFetch: () -> Unit
 ) {
     when (state) {
-        is HomeState.Fetching -> {
+        is MatchesState.Fetching -> {
             LaunchedEffect(key1 = Unit) {
                 onFetch()
             }
         }
 
-        is HomeState.Loading -> {
+        is MatchesState.Loading -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,22 +43,16 @@ fun HomeScreen(
             }
         }
 
-        is HomeState.Content -> {
+        is MatchesState.Content -> {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Welcome back, ${state.username}",
+                    text = "Matches",
                     style = MaterialTheme.typography.headlineMedium
                 )
-
-                Spacer(modifier = Modifier.padding(8.dp))
-
-                Button(onClick = onSignOutClicked) {
-                    Text(text = "Sign out")
-                }
             }
         }
     }
@@ -68,11 +60,11 @@ fun HomeScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+fun MatchesScreenPreview() {
     ValolinkTheme {
-        HomeScreen(
-            state = HomeState.Content("John Doe"),
-            {}, {}
+        MatchesScreen(
+            state = MatchesState.Content,
+            onFetch = {}
         )
     }
 }

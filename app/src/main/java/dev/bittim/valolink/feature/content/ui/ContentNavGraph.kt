@@ -1,30 +1,28 @@
 package dev.bittim.valolink.feature.content.ui
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.navigation
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import dev.bittim.valolink.feature.content.ui.contracts.contractsScreen
+import dev.bittim.valolink.feature.content.ui.friends.friendsScreen
 import dev.bittim.valolink.feature.content.ui.home.HomeNavRoute
 import dev.bittim.valolink.feature.content.ui.home.homeScreen
+import dev.bittim.valolink.feature.content.ui.matches.matchesScreen
 
-const val ContentNavRoute = "content"
-
-fun NavGraphBuilder.contentNavGraph(
-    navController: NavController,
-    onNavAuthGraph: () -> Unit
+@Composable
+fun ContentNavGraph(
+    navController: NavHostController,
+    onSignOutClicked: () -> Unit
 ) {
-    navigation(
-        startDestination = HomeNavRoute,
-        route = ContentNavRoute
+    NavHost(
+        navController = navController,
+        startDestination = HomeNavRoute
     ) {
-        homeScreen(onNavAuthGraph)
-    }
-}
-
-fun NavController.navToContentGraph(origin: String) {
-    navigate(ContentNavRoute) {
-        popUpTo(origin) {
-            inclusive = true
-        }
-        launchSingleTop = true
+        homeScreen(
+            onSignOutClicked = onSignOutClicked
+        )
+        contractsScreen()
+        matchesScreen()
+        friendsScreen()
     }
 }

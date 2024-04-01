@@ -11,23 +11,14 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private var _homeState = MutableStateFlow<HomeState>(HomeState.Loading)
+    private var _homeState = MutableStateFlow<HomeState>(HomeState.Fetching)
     val homeState = _homeState.asStateFlow()
 
-    fun onCheckAuth() {
+    fun onFetch() {
         _homeState.value = HomeState.Loading
 
-        if (userRepository.hasUser()) {
-            _homeState.value = HomeState.Content(
-                username = userRepository.getUsername() ?: ""
-            )
-        } else {
-            _homeState.value = HomeState.NotAuthorized
-        }
-    }
-
-    fun onSignOutClicked() {
-        userRepository.signOut()
-        _homeState.value = HomeState.NotAuthorized
+        _homeState.value = HomeState.Content(
+            username = userRepository.getUsername() ?: ""
+        )
     }
 }

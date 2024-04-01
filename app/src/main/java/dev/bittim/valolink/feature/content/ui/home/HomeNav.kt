@@ -8,8 +8,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
 const val HomeNavRoute = "home"
+
 fun NavGraphBuilder.homeScreen(
-    onNavAuthGraph: () -> Unit
+    onSignOutClicked: () -> Unit
 ) {
     composable(HomeNavRoute) {
         val viewModel: HomeViewModel = hiltViewModel()
@@ -17,15 +18,17 @@ fun NavGraphBuilder.homeScreen(
 
         HomeScreen(
             state = homeState,
-            onCheckAuth = viewModel::onCheckAuth,
-            onSignOutClicked = viewModel::onSignOutClicked,
-            onNavAuthGraph = onNavAuthGraph
+            onFetch = viewModel::onFetch,
+            onSignOutClicked = onSignOutClicked
         )
     }
 }
 
-fun NavController.navToHome() {
+fun NavController.navToHome(origin: String) {
     navigate(HomeNavRoute) {
+        popUpTo(origin) {
+            inclusive = true
+        }
         launchSingleTop = true
     }
 }
