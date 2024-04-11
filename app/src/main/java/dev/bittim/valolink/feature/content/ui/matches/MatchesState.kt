@@ -1,6 +1,6 @@
 package dev.bittim.valolink.feature.content.ui.matches
 
-import dev.bittim.valolink.feature.content.data.remote.VersionDto
+import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 
 sealed interface MatchesState {
     data object Fetching : MatchesState

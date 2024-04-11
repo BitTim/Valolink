@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.content.data.remote
+package dev.bittim.valolink.feature.content.data.remote.game
 
 import com.squareup.moshi.JsonClass
 

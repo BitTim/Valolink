@@ -2,17 +2,20 @@ package dev.bittim.valolink.feature.content.data.repository
 
 import androidx.room.withTransaction
 import dev.bittim.valolink.core.domain.Result
-import dev.bittim.valolink.feature.content.data.local.GameDatabase
-import dev.bittim.valolink.feature.content.data.mapper.toSeason
-import dev.bittim.valolink.feature.content.data.mapper.toSeasonEntity
-import dev.bittim.valolink.feature.content.data.remote.GameApi
-import dev.bittim.valolink.feature.content.data.remote.VersionDto
+import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
+import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
+import dev.bittim.valolink.feature.content.data.remote.game.GameApi
+import dev.bittim.valolink.feature.content.data.remote.game.GameApiResponse
+import dev.bittim.valolink.feature.content.data.remote.game.dto.GameDto
+import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
+import dev.bittim.valolink.feature.content.domain.model.Map
 import dev.bittim.valolink.feature.content.domain.model.Season
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
@@ -44,7 +47,11 @@ class ApiGameRepository @Inject constructor(
         }
     }
 
-    override suspend fun getAllSeasons(): Flow<List<Season>> {
+    private suspend fun <T, E : GameEntity<T>, D : GameDto<E>> getWithCache(
+        cacheQuery: () -> Flow<List<E>>,
+        cacheUpsert: suspend (List<E>) -> Unit,
+        remoteQuery: suspend () -> Response<GameApiResponse<List<D>>>
+    ): Flow<List<T>> {
         // Get current remote API version
         val versionResult = getApiVersion()
         if (versionResult !is Result.Success) {
@@ -60,26 +67,38 @@ class ApiGameRepository @Inject constructor(
             }
         }
 
-        // Get Flow from cache
-        return gameDatabase.dao.getAllSeasons().onEach { entities ->
-            // If cache is invalid, fetch from API and put into cache
+        return cacheQuery.invoke().onEach { entities ->
             if (entities.isEmpty() || entities.any { it.version != version }) {
-                val seasonsResponse = gameApi.getSeasons()
-                if (seasonsResponse.isSuccessful &&
-                    seasonsResponse.body() != null &&
-                    seasonsResponse.body()!!.data != null
+                val response = remoteQuery.invoke()
+                if (response.isSuccessful &&
+                    response.body() != null &&
+                    response.body()!!.data != null
                 ) {
                     gameDatabase.withTransaction {
-                        gameDatabase.dao.upsertAll(seasonsResponse.body()!!.data!!.map {
-                            it.toSeasonEntity(
-                                version
-                            )
+                        cacheUpsert.invoke(response.body()!!.data!!.map {
+                            it.toEntity(version)
                         })
                     }
                 }
             }
         }.map { entities ->
-            entities.map { it.toSeason() }
+            entities.map { it.toType() }
         }
+    }
+
+    override suspend fun getAllSeasons(): Flow<List<Season>> {
+        return getWithCache(
+            gameDatabase.dao::getAllSeasons,
+            gameDatabase.dao::upsertAllSeasons,
+            gameApi::getSeasons
+        )
+    }
+
+    override suspend fun getAllMaps(): Flow<List<Map>> {
+        return getWithCache(
+            gameDatabase.dao::getAllMaps,
+            gameDatabase.dao::upsertAllMaps,
+            gameApi::getMaps
+        )
     }
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.core.domain.Result
-import dev.bittim.valolink.feature.content.data.remote.VersionDto
+import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 import dev.bittim.valolink.feature.content.data.repository.GameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -10,8 +10,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.bittim.valolink.feature.content.data.local.GameDatabase
-import dev.bittim.valolink.feature.content.data.remote.GameApi
+import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
+import dev.bittim.valolink.feature.content.data.remote.game.GameApi
 import dev.bittim.valolink.feature.content.data.repository.ApiGameRepository
 import dev.bittim.valolink.feature.content.data.repository.FirebaseUserRepository
 import dev.bittim.valolink.feature.content.data.repository.GameRepository
@@ -49,10 +49,10 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesGameApi(): GameApi {
+    fun providesGameApi(moshi: Moshi): GameApi {
         return Retrofit.Builder()
             .baseUrl(GameApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(GameApi::class.java)
     }

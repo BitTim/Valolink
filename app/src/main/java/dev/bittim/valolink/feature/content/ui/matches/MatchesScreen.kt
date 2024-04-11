@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.feature.content.data.remote.VersionDto
+import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 
 @Composable

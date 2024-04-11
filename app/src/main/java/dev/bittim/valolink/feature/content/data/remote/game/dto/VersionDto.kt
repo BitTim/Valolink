@@ -1,8 +1,5 @@
-package dev.bittim.valolink.feature.content.data.remote
+package dev.bittim.valolink.feature.content.data.remote.game.dto
 
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
 data class VersionDto(
     val manifestId: String,
     val branch: String,
