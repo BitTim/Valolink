@@ -26,48 +26,42 @@ fun MainScreen(
     onSignOutClicked: () -> Unit,
     onNavAuthGraph: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        onCheckAuth()
+    onCheckAuth()
 
-        when (state) {
-            is MainState.NoAuth -> {
-                LaunchedEffect(key1 = Unit) {
-                    onNavAuthGraph()
-                }
+    when (state) {
+        is MainState.NoAuth -> {
+            LaunchedEffect(key1 = Unit) {
+                onNavAuthGraph()
             }
+        }
 
-            is MainState.Loading -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Authenticating...",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.padding(4.dp))
-                    CircularProgressIndicator()
-                }
+        is MainState.Loading -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Authenticating...",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.padding(4.dp))
+                CircularProgressIndicator()
             }
+        }
 
-            is MainState.Content -> {
-                Scaffold(
-                    bottomBar = { NavBar(navController = navController) }
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(it)
-                    ) {
-                        ContentNavGraph(
-                            navController = navController,
-                            onSignOutClicked = onSignOutClicked
-                        )
-                    }
-                }
+        is MainState.Content -> {
+            Scaffold(
+                Modifier.fillMaxSize(),
+                bottomBar = { NavBar(navController = navController) }
+            ) {
+                ContentNavGraph(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it),
+                    navController = navController,
+                    onSignOutClicked = onSignOutClicked
+                )
             }
         }
     }
