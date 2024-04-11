@@ -1,8 +1,8 @@
 [versions]
 agp = "8.3.2"
-converterMoshi = "2.9.0"
-hiltAndroid = "2.49"
-hiltAndroidCompiler = "2.49"
+converterMoshi = "2.11.0"
+hiltAndroid = "2.51.1"
+hiltAndroidCompiler = "2.51.1"
 hiltCompiler = "1.2.0"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
@@ -12,15 +12,15 @@ espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.7.0"
 activityCompose = "1.8.2"
 composeBom = "2024.04.00"
-materialIconsExtendedAndroid = "1.6.4"
-moshiKotlin = "1.15.0"
-moshiKotlinCodegen = "1.15.0"
-navigationCompose = "2.7.7"
+materialIconsExtendedAndroid = "1.6.5"
+moshiKotlin = "1.15.1"
+moshiKotlinCodegen = "1.15.1"
+navigationCompose = "2.8.0-alpha06"
 googleServices = "4.4.1"
 firebaseAuth = "22.3.1"
 playServicesAuth = "21.0.0"
-lifecycleRuntimeCompose = "2.7.0"
-retrofit = "2.9.0"
+lifecycleRuntimeCompose = "2.8.0-alpha04"
+retrofit = "2.11.0"
 roomKtx = "2.6.1"
 material = "1.11.0"
 
@@ -28,12 +28,12 @@ material = "1.11.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }
-androidx-material-icons-extended-android = { module = "androidx.compose.material:material-icons-extended-android", version = "1.6.5" }
+androidx-material-icons-extended-android = { module = "androidx.compose.material:material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version = "2.11.0" }
-hilt-android = { module = "com.google.dagger:hilt-android", version = "2.51.1" }
-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version = "2.51.1" }
+converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -44,17 +44,17 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.7.0-alpha06" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.8.0-alpha06" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshiKotlinCodegen" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
-retrofit = { module = "com.squareup.retrofit2:retrofit", version = "2.11.0" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
