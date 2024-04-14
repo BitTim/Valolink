@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
+import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 
 @Entity
@@ -20,17 +21,33 @@ data class ContractEntity(
     @Embedded val content: Content,
     val assetPath: String
 ) : GameEntity<Contract>() {
+    fun toType(chapters: List<Chapter>): Contract {
+        return Contract(
+            uuid = uuid,
+            displayName = displayName,
+            displayIcon = displayIcon,
+            shipIt = shipIt,
+            useLevelVPCostOverride = useLevelVPCostOverride,
+            levelVPCostOverride = levelVPCostOverride,
+            freeRewardScheduleUuid = freeRewardScheduleUuid,
+            content = content.toType(chapters)
+        )
+    }
+
+
+
     data class Content(
         val relationType: String?,
         val relationUuid: String?,
         val premiumRewardScheduleUuid: String?,
         val premiumVPCost: Int
-    )
-
-
-    override fun toType(): Contract {
-        return Contract(
-            uuid = uuid
+    ) {
+        fun toType(chapters: List<Chapter>) = Contract.Content(
+            relationType = relationType,
+            relationUuid = relationUuid,
+            premiumRewardScheduleUuid = premiumRewardScheduleUuid,
+            premiumVPCost = premiumVPCost,
+            chapters = chapters
         )
     }
 }

@@ -65,7 +65,7 @@ data class AgentEntity(
     }
 
 
-    override fun toType(): Agent {
+    fun toType(): Agent {
         return Agent(
             uuid = uuid
         )

@@ -1,6 +1,9 @@
 package dev.bittim.valolink.feature.content.data.remote.game.dto
 
+import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ChapterEntity
+import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ChapterLevelEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContractEntity
+import dev.bittim.valolink.feature.content.data.local.game.entity.contract.RewardEntity
 
 data class ContractDto(
     val uuid: String,
@@ -13,39 +16,8 @@ data class ContractDto(
     val content: Content,
     val assetPath: String
 ) : GameDto<ContractEntity>() {
-    data class Content(
-        val relationType: String?,
-        val relationUuid: String?,
-        val chapters: List<Chapter>,
-        val premiumRewardScheduleUuid: String?,
-        val premiumVPCost: Int
-    ) {
-        data class Chapter(
-            val isEpilogue: Boolean,
-            val levels: List<Level>,
-            val freeRewards: List<Reward>?
-        ) {
-            data class Level(
-                val reward: Reward,
-                val xp: Int,
-                val vpCost: Int,
-                val isPurchasableWithVP: Boolean,
-                val doughCost: Int,
-                val isPurchasableWithDough: Boolean
-            )
-
-            data class Reward(
-                val type: String,
-                val uuid: String,
-                val amount: Int,
-                val isHighlighted: Boolean
-            )
-        }
-    }
-
-
     override fun toEntity(version: String): ContractEntity {
-        return ContractEntity(
+        val contract = ContractEntity(
             uuid = uuid,
             version = version,
             displayName = displayName,
@@ -54,41 +26,118 @@ data class ContractDto(
             useLevelVPCostOverride = useLevelVPCostOverride,
             levelVPCostOverride = levelVPCostOverride,
             freeRewardScheduleUuid = freeRewardScheduleUuid,
-            content = ContractEntity.Content(
-                relationType = content.relationType,
-                relationUuid = content.relationUuid,
-                chapters = content.chapters.map { chapter ->
-                    ContractEntity.Content.Chapter(
-                        isEpilogue = chapter.isEpilogue,
-                        levels = chapter.levels.map { level ->
-                            ContractEntity.Content.Chapter.Level(
-                                reward = ContractEntity.Content.Chapter.Reward(
-                                    type = level.reward.type,
-                                    uuid = level.reward.uuid,
-                                    amount = level.reward.amount,
-                                    isHighlighted = level.reward.isHighlighted
-                                ),
-                                xp = level.xp,
-                                vpCost = level.vpCost,
-                                isPurchasableWithVP = level.isPurchasableWithVP,
-                                doughCost = level.doughCost,
-                                isPurchasableWithDough = level.isPurchasableWithDough
-                            )
-                        },
-                        freeRewards = chapter.freeRewards?.map { reward ->
-                            ContractEntity.Content.Chapter.Reward(
-                                type = reward.type,
-                                uuid = reward.uuid,
-                                amount = reward.amount,
-                                isHighlighted = reward.isHighlighted
-                            )
-                        }
-                    )
-                },
-                premiumRewardScheduleUuid = content.premiumRewardScheduleUuid,
-                premiumVPCost = content.premiumVPCost
-            ),
+            content = content.toEntity(version, uuid),
             assetPath = assetPath
         )
+    }
+
+
+
+    data class Content(
+        val relationType: String?,
+        val relationUuid: String?,
+        val chapters: List<Chapter>,
+        val premiumRewardScheduleUuid: String?,
+        val premiumVPCost: Int
+    ) {
+        fun toEntity(version: String, contractUuid: String): Map<ContractEntity.Content, List<Map<ChapterEntity, Pair<List<Map<ChapterLevelEntity, RewardEntity>>, List<RewardEntity>?>>>> {
+            val content = ContractEntity.Content(
+                relationType = relationType,
+                relationUuid = relationUuid,
+                premiumRewardScheduleUuid = premiumRewardScheduleUuid,
+                premiumVPCost = premiumVPCost
+            )
+
+            val chapters = chapters.map {
+                it.toEntity(
+                    version = version,
+                    contractUuid = contractUuid
+                )
+            }
+
+            return mapOf(Pair(content, chapters))
+        }
+
+        data class Chapter(
+            val isEpilogue: Boolean,
+            val levels: List<ChapterLevel>,
+            val freeRewards: List<Reward>?
+        ) {
+            fun toEntity(version: String, contractUuid: String): Map<ChapterEntity, Pair<List<Map<ChapterLevelEntity, RewardEntity>>, List<RewardEntity>?>> {
+                val chapter = ChapterEntity(
+                    id = 0,
+                    contractUuid = contractUuid,
+                    version = version,
+                    isEpilogue = isEpilogue
+                )
+
+                val levels = levels.map {
+                    it.toEntity(
+                        version,
+                        chapter.id
+                    )
+                }
+
+                val freeRewards = freeRewards?.map {
+                    it.toEntity(
+                        version = version,
+                        chapterId = chapter.id
+                    )
+                }
+
+                return mapOf(Pair(chapter, Pair(levels, freeRewards)))
+            }
+
+            data class ChapterLevel(
+                val reward: Reward,
+                val xp: Int,
+                val vpCost: Int,
+                val isPurchasableWithVP: Boolean,
+                val doughCost: Int,
+                val isPurchasableWithDough: Boolean
+            ) {
+                fun toEntity(
+                    version: String,
+                    chapterId: Int
+                ): Map<ChapterLevelEntity, RewardEntity> {
+                    val level = ChapterLevelEntity(
+                        id = 0,
+                        chapterId = chapterId,
+                        version = version,
+                        xp = xp,
+                        vpCost = vpCost,
+                        isPurchasableWithVP = isPurchasableWithVP,
+                        doughCost = doughCost,
+                        isPurchasableWithDough = isPurchasableWithDough
+                    )
+
+                    val reward = reward.toEntity(
+                        version = version,
+                        levelId = level.id
+                    )
+
+                    return mapOf(Pair(level, reward))
+                }
+            }
+
+            data class Reward(
+                val type: String,
+                val uuid: String,
+                val amount: Int,
+                val isHighlighted: Boolean
+            ) {
+                fun toEntity(version: String, chapterId: Int? = null, levelId: Int? = null) =
+                    RewardEntity(
+                        id = 0,
+                        chapterId = chapterId,
+                        levelId = levelId,
+                        version = version,
+                        type = type,
+                        uuid = uuid,
+                        amount = amount,
+                        isHighlighted = isHighlighted
+                    )
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ data class RoleEntity(
     val displayIcon: String,
     val assetPath: String
 ) : GameEntity<Role>() {
-    override fun toType(): Role {
+    fun toType(): Role {
         return Role(
             uuid = uuid,
             displayName = displayName,

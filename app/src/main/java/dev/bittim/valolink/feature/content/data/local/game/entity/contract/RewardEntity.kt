@@ -9,7 +9,7 @@ import dev.bittim.valolink.feature.content.domain.model.contract.Reward
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = LevelEntity::class,
+            entity = ChapterLevelEntity::class,
             parentColumns = ["id"],
             childColumns = ["levelId"],
             onDelete = ForeignKey.CASCADE
@@ -33,7 +33,7 @@ data class RewardEntity(
     val amount: Int,
     val isHighlighted: Boolean
 ) : GameEntity<Reward>() {
-    override fun toType(): Reward {
+    fun toType(): Reward {
         return Reward(
             type = type,
             uuid = uuid,

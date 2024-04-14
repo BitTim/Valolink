@@ -16,7 +16,7 @@ data class SeasonEntity(
     val endTime: String,
     val parentUuid: String?
 ) : GameEntity<Season>() {
-    override fun toType(): Season {
+    fun toType(): Season {
         return Season(
             uuid = uuid,
             name = displayName,

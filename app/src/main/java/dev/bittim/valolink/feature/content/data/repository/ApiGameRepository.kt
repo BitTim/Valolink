@@ -8,6 +8,7 @@ import dev.bittim.valolink.feature.content.data.remote.game.GameApiResponse
 import dev.bittim.valolink.feature.content.data.remote.game.dto.GameDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 import dev.bittim.valolink.feature.content.domain.model.Season
+import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -37,12 +38,12 @@ class ApiGameRepository @Inject constructor(
         }
     }
 
-    private suspend fun <T, E : GameEntity<T>, D : GameDto<E>> getWithCache(
+    private suspend fun <T, E : GameEntity<T>, D : GameDto<E>> getWithCacheAsEntity(
         uuid: String,
         cacheQuery: (String) -> Flow<E>,
         cacheUpsert: suspend (String, E) -> Unit,
         remoteQuery: suspend (String) -> Response<GameApiResponse<D>>
-    ): Flow<T> {
+    ): Flow<E> {
         // Get current remote API version
         val version = getApiVersion()?.version
         if (version.isNullOrEmpty()) {
@@ -65,16 +66,14 @@ class ApiGameRepository @Inject constructor(
                     }
                 }
             }
-        }.map {
-            it.toType()
         }
     }
 
-    private suspend fun <T, E : GameEntity<T>, D : GameDto<E>> getAllWithCache(
+    private suspend fun <T, E : GameEntity<T>, D : GameDto<E>> getAllWithCacheAsEntity(
         cacheQuery: () -> Flow<List<E>>,
         cacheUpsert: suspend (List<E>) -> Unit,
         remoteQuery: suspend () -> Response<GameApiResponse<List<D>>>
-    ): Flow<List<T>> {
+    ): Flow<List<E>> {
         val version = getApiVersion()?.version
         if (version.isNullOrEmpty()) {
             return flow { }
@@ -94,16 +93,26 @@ class ApiGameRepository @Inject constructor(
                     }
                 }
             }
-        }.map { entities ->
-            entities.map { it.toType() }
         }
     }
 
     override suspend fun getAllSeasons(): Flow<List<Season>> {
-        return getAllWithCache(
+        return getAllWithCacheAsEntity(
             gameDatabase.dao::getAllSeasons,
             gameDatabase.dao::upsertAllSeasons,
             gameApi::getSeasons
-        )
+        ).map { seasons ->
+            seasons.map { it.toType() }
+        }
+    }
+
+    override suspend fun getAllContracts(): Flow<List<Contract>> {
+        return getAllWithCacheAsEntity(
+            gameDatabase.dao::getAllContracts,
+            gameDatabase.dao::upsertAllContracts,
+            gameApi::getContracts
+        ).map { contracts ->
+
+        }
     }
 }

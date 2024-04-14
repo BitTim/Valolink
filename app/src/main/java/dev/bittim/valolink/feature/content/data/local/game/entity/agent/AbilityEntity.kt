@@ -26,7 +26,7 @@ data class AbilityEntity(
     val description: String,
     val displayIcon: String
 ) : GameEntity<Ability>() {
-    override fun toType(): Ability {
+    fun toType(): Ability {
         return Ability(
             agent = agent,
             slot = slot,

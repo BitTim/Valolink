@@ -15,7 +15,7 @@ data class EventEntity(
     val endTime: String,
     val assetPath: String
 ) : GameEntity<Event>() {
-    override fun toType(): Event {
+    fun toType(): Event {
         return Event(
             uuid = uuid
         )
