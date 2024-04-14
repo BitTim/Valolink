@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 
 @Composable
@@ -58,26 +57,6 @@ fun MatchesScreen(
                     text = "Matches",
                     style = MaterialTheme.typography.headlineMedium
                 )
-
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(text = state.version?.manifestId ?: "No")
-                    Text(text = state.version?.branch ?: "data")
-                    Text(text = state.version?.version ?: "has")
-                    Text(text = state.version?.buildVersion ?: "been")
-                    Text(text = state.version?.engineVersion ?: "loaded")
-                    Text(text = state.version?.riotClientVersion ?: "if")
-                    Text(text = state.version?.riotClientBuild ?: "you can")
-                    Text(text = state.version?.buildDate ?: "read all this")
-                }
-
-                if (state.error) {
-                    Text(text = "ERROR", color = MaterialTheme.colorScheme.error)
-                }
             }
         }
     }
@@ -88,19 +67,7 @@ fun MatchesScreen(
 fun MatchesScreenPreview() {
     ValolinkTheme {
         MatchesScreen(
-            state = MatchesState.Content(
-                VersionDto(
-                    "a",
-                    "b",
-                    "c",
-                    "d",
-                    "e",
-                    "f",
-                    "g",
-                    "h"
-                ),
-                false
-            ),
+            state = MatchesState.Content,
             onFetch = {}
         )
     }

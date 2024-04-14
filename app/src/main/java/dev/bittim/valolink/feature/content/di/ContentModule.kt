@@ -39,7 +39,7 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesGameDatabase(@ApplicationContext context: Context): GameDatabase {
+    fun providesGameDatabase(@ApplicationContext context: Context, moshi: Moshi): GameDatabase {
         return Room.databaseBuilder(
             context,
             GameDatabase::class.java,

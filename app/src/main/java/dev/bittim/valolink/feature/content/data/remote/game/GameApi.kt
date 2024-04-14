@@ -1,6 +1,6 @@
 package dev.bittim.valolink.feature.content.data.remote.game
 
-import dev.bittim.valolink.feature.content.data.remote.game.dto.MapDto
+import dev.bittim.valolink.feature.content.data.remote.game.dto.ContractDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.SeasonDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 import retrofit2.Response
@@ -13,8 +13,8 @@ interface GameApi {
     @GET("seasons")
     suspend fun getSeasons(): Response<GameApiResponse<List<SeasonDto>>>
 
-    @GET("maps")
-    suspend fun getMaps(): Response<GameApiResponse<List<MapDto>>>
+    @GET("contracts")
+    suspend fun getContracts(): Response<GameApiResponse<List<ContractDto>>>
 
     companion object {
         const val BASE_URL = "https://valorant-api.com/v1/"
