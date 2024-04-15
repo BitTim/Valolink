@@ -16,6 +16,8 @@ import dev.bittim.valolink.feature.content.data.repository.ApiGameRepository
 import dev.bittim.valolink.feature.content.data.repository.FirebaseUserRepository
 import dev.bittim.valolink.feature.content.data.repository.GameRepository
 import dev.bittim.valolink.feature.content.data.repository.UserRepository
+import okhttp3.Cache
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -39,7 +41,7 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesGameDatabase(@ApplicationContext context: Context, moshi: Moshi): GameDatabase {
+    fun providesGameDatabase(@ApplicationContext context: Context): GameDatabase {
         return Room.databaseBuilder(
             context,
             GameDatabase::class.java,
@@ -47,6 +49,28 @@ object ContentModule {
         ).build()
     }
 
+    @Provides
+    @Singleton
+    fun providesCache(@ApplicationContext context: Context): Cache {
+        val cacheSize: Long = 5 * 1024 * 1024 // 5 MB
+        return Cache(context.cacheDir, cacheSize)
+    }
+
+    @Provides
+    @Singleton
+    fun providesOkHttpClient(cache: Cache): OkHttpClient {
+        return OkHttpClient.Builder()
+            .cache(cache)
+            .addInterceptor { chain ->
+                val request = chain.request()
+                request.newBuilder()
+                    .header("Cache-Control", "public, max-age=" + 5)
+                    .build()
+                chain.proceed(request)
+            }
+            .build()
+    }
+    
     @Provides
     @Singleton
     fun providesGameApi(moshi: Moshi): GameApi {

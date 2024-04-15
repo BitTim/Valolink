@@ -41,7 +41,7 @@ data class AgentEntity(
     val role: String,
     @Embedded val recruitmentData: RecruitmentData?,
     @Embedded val voiceLine: VoiceLine?
-) : GameEntity<Agent>() {
+) : GameEntity() {
     data class RecruitmentData(
         val counterId: String,
         val milestoneId: String,

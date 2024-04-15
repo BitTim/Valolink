@@ -1,13 +1,11 @@
 package dev.bittim.valolink.feature.content.data.local.game.entity.contract
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
-import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 
-@Entity
+@Entity(tableName = "contracts")
 data class ContractEntity(
     @PrimaryKey
     val uuid: String,
@@ -18,10 +16,9 @@ data class ContractEntity(
     val useLevelVPCostOverride: Boolean,
     val levelVPCostOverride: Int,
     val freeRewardScheduleUuid: String,
-    @Embedded val content: Content,
     val assetPath: String
-) : GameEntity<Contract>() {
-    fun toType(chapters: List<Chapter>): Contract {
+) : GameEntity() {
+    fun toType(content: Contract.Content): Contract {
         return Contract(
             uuid = uuid,
             displayName = displayName,
@@ -30,24 +27,7 @@ data class ContractEntity(
             useLevelVPCostOverride = useLevelVPCostOverride,
             levelVPCostOverride = levelVPCostOverride,
             freeRewardScheduleUuid = freeRewardScheduleUuid,
-            content = content.toType(chapters)
-        )
-    }
-
-
-
-    data class Content(
-        val relationType: String?,
-        val relationUuid: String?,
-        val premiumRewardScheduleUuid: String?,
-        val premiumVPCost: Int
-    ) {
-        fun toType(chapters: List<Chapter>) = Contract.Content(
-            relationType = relationType,
-            relationUuid = relationUuid,
-            premiumRewardScheduleUuid = premiumRewardScheduleUuid,
-            premiumVPCost = premiumVPCost,
-            chapters = chapters
+            content = content
         )
     }
 }

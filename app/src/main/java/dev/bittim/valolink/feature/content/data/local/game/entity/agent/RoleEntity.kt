@@ -14,7 +14,7 @@ data class RoleEntity(
     val description: String,
     val displayIcon: String,
     val assetPath: String
-) : GameEntity<Role>() {
+) : GameEntity() {
     fun toType(): Role {
         return Role(
             uuid = uuid,

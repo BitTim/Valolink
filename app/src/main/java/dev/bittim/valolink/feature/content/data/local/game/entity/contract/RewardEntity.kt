@@ -7,36 +7,39 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.Reward
 
 @Entity(
+    tableName = "contractRewards",
     foreignKeys = [
         ForeignKey(
             entity = ChapterLevelEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["levelId"],
+            parentColumns = ["uuid"],
+            childColumns = ["levelUuid"],
+            onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = ChapterEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["chapterId"],
+            parentColumns = ["uuid"],
+            childColumns = ["chapterUuid"],
+            onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
 data class RewardEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val levelId: Int?,
-    val chapterId: Int?,
-    override val version: String,
-    val type: String,
+    @PrimaryKey
     val uuid: String,
+    val levelUuid: String?,
+    val chapterUuid: String?,
+    override val version: String,
+    val rewardType: String,
+    val rewardUuid: String,
     val amount: Int,
     val isHighlighted: Boolean
-) : GameEntity<Reward>() {
+) : GameEntity() {
     fun toType(): Reward {
         return Reward(
-            type = type,
-            uuid = uuid,
+            type = rewardType,
+            uuid = rewardUuid,
             amount = amount,
             isHighlighted = isHighlighted
         )

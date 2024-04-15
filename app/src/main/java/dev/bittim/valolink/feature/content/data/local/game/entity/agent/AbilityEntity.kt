@@ -25,7 +25,7 @@ data class AbilityEntity(
     val displayName: String,
     val description: String,
     val displayIcon: String
-) : GameEntity<Ability>() {
+) : GameEntity() {
     fun toType(): Ability {
         return Ability(
             agent = agent,

@@ -20,9 +20,9 @@ class ContractsViewModel @Inject constructor(
     fun onFetch() = viewModelScope.launch {
         _contractsState.value = ContractsState.Loading
 
-        gameRepository.getAllSeasons().collectLatest { seasons ->
+        gameRepository.getAllContracts().collectLatest { contracts ->
             _contractsState.value = ContractsState.Content(
-                seasons = seasons
+                contracts = contracts
             )
         }
     }

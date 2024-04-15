@@ -14,7 +14,7 @@ data class EventEntity(
     val startTime: String,
     val endTime: String,
     val assetPath: String
-) : GameEntity<Event>() {
+) : GameEntity() {
     fun toType(): Event {
         return Event(
             uuid = uuid

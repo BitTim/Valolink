@@ -2,10 +2,7 @@ package dev.bittim.valolink.feature.content.data.repository
 
 import androidx.room.withTransaction
 import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
-import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
-import dev.bittim.valolink.feature.content.data.remote.game.GameApiResponse
-import dev.bittim.valolink.feature.content.data.remote.game.dto.GameDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 import dev.bittim.valolink.feature.content.domain.model.Season
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
@@ -13,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import retrofit2.Response
 import javax.inject.Inject
 
 class ApiGameRepository @Inject constructor(
@@ -38,81 +34,81 @@ class ApiGameRepository @Inject constructor(
         }
     }
 
-    private suspend fun <T, E : GameEntity<T>, D : GameDto<E>> getWithCacheAsEntity(
-        uuid: String,
-        cacheQuery: (String) -> Flow<E>,
-        cacheUpsert: suspend (String, E) -> Unit,
-        remoteQuery: suspend (String) -> Response<GameApiResponse<D>>
-    ): Flow<E> {
-        // Get current remote API version
+
+    override suspend fun getAllSeasons(): Flow<List<Season>> {
         val version = getApiVersion()?.version
         if (version.isNullOrEmpty()) {
             return flow { }
         }
 
-        return cacheQuery.invoke(uuid).onEach { entity ->
-            if (entity.version != version) {
-                val response = remoteQuery.invoke(uuid)
-
-                if (response.isSuccessful &&
-                    response.body() != null &&
-                    response.body()!!.data != null
-                ) {
-                    gameDatabase.withTransaction {
-                        cacheUpsert.invoke(
-                            uuid,
-                            response.body()!!.data!!.toEntity(version)
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun <T, E : GameEntity<T>, D : GameDto<E>> getAllWithCacheAsEntity(
-        cacheQuery: () -> Flow<List<E>>,
-        cacheUpsert: suspend (List<E>) -> Unit,
-        remoteQuery: suspend () -> Response<GameApiResponse<List<D>>>
-    ): Flow<List<E>> {
-        val version = getApiVersion()?.version
-        if (version.isNullOrEmpty()) {
-            return flow { }
-        }
-
-        return cacheQuery.invoke().onEach { entities ->
+        return gameDatabase.dao.getAllSeasons().onEach { entities ->
             if (entities.isEmpty() || entities.any { it.version != version }) {
-                val response = remoteQuery.invoke()
-                if (response.isSuccessful &&
-                    response.body() != null &&
-                    response.body()!!.data != null
-                ) {
+                val response = gameApi.getSeasons()
+                if (response.isSuccessful) {
                     gameDatabase.withTransaction {
-                        cacheUpsert.invoke(response.body()!!.data!!.map {
+                        gameDatabase.dao.upsertAllSeasons(response.body()!!.data!!.map {
                             it.toEntity(version)
                         })
                     }
                 }
             }
-        }
-    }
-
-    override suspend fun getAllSeasons(): Flow<List<Season>> {
-        return getAllWithCacheAsEntity(
-            gameDatabase.dao::getAllSeasons,
-            gameDatabase.dao::upsertAllSeasons,
-            gameApi::getSeasons
-        ).map { seasons ->
+        }.map { seasons ->
             seasons.map { it.toType() }
         }
     }
 
     override suspend fun getAllContracts(): Flow<List<Contract>> {
-        return getAllWithCacheAsEntity(
-            gameDatabase.dao::getAllContracts,
-            gameDatabase.dao::upsertAllContracts,
-            gameApi::getContracts
-        ).map { contracts ->
+        val version = getApiVersion()?.version
+        if (version.isNullOrEmpty()) {
+            return flow { }
+        }
 
+        return gameDatabase.dao.getAllContracts().onEach { entities ->
+            if (entities.isEmpty() || entities.any { it.contract.version != version }) {
+                val response = gameApi.getContracts()
+                if (response.isSuccessful) {
+                    val contractDto = response.body()!!.data!!
+                    val contracts = contractDto.map { it.toEntity(version) }
+
+                    val contents = contractDto.zip(contracts) { data, contract ->
+                        data.content.toEntity(version, contract.uuid)
+                    }
+
+                    val chapterDto = contractDto.map { it.content.chapters }.flatten()
+                    val chapters = contractDto.zip(contents) { data, content ->
+                        data.content.chapters.map() {
+                            it.toEntity(version, content.uuid)
+                        }
+                    }.flatten()
+
+                    val levelDto = chapterDto.map { it.levels }.flatten()
+                    val levels = chapterDto.zip(chapters) { data, chapter ->
+                        data.levels.map {
+                            it.toEntity(version, chapter.uuid)
+                        }
+                    }.flatten()
+
+                    val rewards = levelDto.zip(levels) { data, level ->
+                        data.reward.toEntity(version, levelUuid = level.uuid)
+                    }.plus(
+                        chapterDto.zip(chapters) { data, chapter ->
+                            data.freeRewards?.map {
+                                it.toEntity(version, chapterUuid = chapter.uuid)
+                            }.orEmpty()
+                        }.flatten()
+                    )
+
+                    gameDatabase.dao.upsertAllContracts(
+                        contracts = contracts,
+                        contents = contents,
+                        chapters = chapters,
+                        levels = levels,
+                        rewards = rewards
+                    )
+                }
+            }
+        }.map { contracts ->
+            contracts.map { it.toType() }
         }
     }
 }

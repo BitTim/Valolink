@@ -1,9 +1,9 @@
 package dev.bittim.valolink.feature.content.ui.contracts.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -11,17 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @Composable
 fun ContractCard(
     modifier: Modifier = Modifier,
     name: String,
     uuid: String,
-    startTime: ZonedDateTime,
-    endTime: ZonedDateTime
+    relationType: String?,
+    relationUuid: String?
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -39,32 +36,19 @@ fun ContractCard(
                 style = MaterialTheme.typography.labelSmall
             )
 
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = startTime.format(
-                        DateTimeFormatter.ofLocalizedDateTime(
-                            FormatStyle.SHORT
-                        )
-                    ),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = " • ",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = endTime.format(
-                        DateTimeFormatter.ofLocalizedDateTime(
-                            FormatStyle.SHORT
-                        )
-                    ),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+            Text(
+                text = relationType ?: "null",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = relationUuid ?: "null",
+                style = MaterialTheme.typography.labelSmall
+            )
         }
     }
 }

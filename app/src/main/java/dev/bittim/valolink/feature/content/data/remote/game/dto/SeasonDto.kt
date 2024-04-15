@@ -11,7 +11,7 @@ data class SeasonDto(
     val parentUuid: String?,
     val assetPath: String
 ) : GameDto<SeasonEntity>() {
-    override fun toEntity(version: String): SeasonEntity {
+    fun toEntity(version: String): SeasonEntity {
         return SeasonEntity(
             uuid = uuid,
             version = version,

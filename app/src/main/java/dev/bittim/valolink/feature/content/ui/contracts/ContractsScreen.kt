@@ -17,10 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.feature.content.domain.model.Season
+import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
+import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
+import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.contract.Reward
 import dev.bittim.valolink.feature.content.ui.contracts.components.ContractCard
 import dev.bittim.valolink.ui.theme.ValolinkTheme
-import java.time.ZonedDateTime
 
 @Composable
 fun ContractsScreen(
@@ -70,15 +72,15 @@ fun ContractsScreen(
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (state.seasons.isNotEmpty()) {
+                    if (state.contracts.isNotEmpty()) {
                         items(
-                            items = state.seasons,
+                            items = state.contracts,
                             itemContent = {
                                 ContractCard(
-                                    name = it.name,
+                                    name = it.displayName,
                                     uuid = it.uuid,
-                                    startTime = it.startTime,
-                                    endTime = it.endTime
+                                    relationType = it.content.relationType,
+                                    relationUuid = it.content.relationUuid
                                 )
                             }
                         )
@@ -105,11 +107,41 @@ fun ContractsScreenPreview() {
         ContractsScreen(
             state = ContractsState.Content(
                 listOf(
-                    Season(
+                    Contract(
                         uuid = "b02a8f64-5ba4-45a3-a2e1-24cd0be87627",
-                        name = "Test Season",
-                        endTime = ZonedDateTime.now().plusDays(10),
-                        startTime = ZonedDateTime.now().minusDays(10)
+                        displayName = "Test Contract",
+                        displayIcon = null,
+                        shipIt = false,
+                        useLevelVPCostOverride = false,
+                        levelVPCostOverride = 0,
+                        freeRewardScheduleUuid = "b02a8f64-5ba4-45a3-a2e1-24cd0be87827",
+                        content = Contract.Content(
+                            relationType = null,
+                            relationUuid = null,
+                            premiumRewardScheduleUuid = null,
+                            premiumVPCost = 0,
+                            chapters = listOf(
+                                Chapter(
+                                    isEpilogue = false,
+                                    levels = listOf(
+                                        ChapterLevel(
+                                            xp = 1000,
+                                            vpCost = 20,
+                                            isPurchasableWithVP = true,
+                                            doughCost = 4000,
+                                            isPurchasableWithDough = true,
+                                            reward = Reward(
+                                                type = "Type",
+                                                uuid = "b02a8f64-5944-45a3-a2e1-24cd0be87827",
+                                                amount = 1,
+                                                isHighlighted = false
+                                            )
+                                        )
+                                    ),
+                                    freeRewards = null
+                                )
+                            )
+                        )
                     )
                 )
             ),
