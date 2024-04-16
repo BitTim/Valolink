@@ -1,9 +1,9 @@
 package dev.bittim.valolink.feature.content.data.remote.game.dto
 
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ChapterEntity
-import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ChapterLevelEntity
-import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContractContentEntity
+import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContractEntity
+import dev.bittim.valolink.feature.content.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.RewardEntity
 import java.util.UUID
 
@@ -14,74 +14,81 @@ data class ContractDto(
     val shipIt: Boolean,
     val useLevelVPCostOverride: Boolean,
     val levelVPCostOverride: Int,
-    val freeRewardScheduleUuid: String,
-    val content: Content,
+    val freeRewardScheduleUuid: String, val content: ContentDto,
     val assetPath: String
-) : GameDto<ContractEntity>() {
-    fun toEntity(version: String) = ContractEntity(
-        uuid = uuid,
-        version = version,
-        displayName = displayName,
-        displayIcon = displayIcon,
-        shipIt = shipIt,
-        useLevelVPCostOverride = useLevelVPCostOverride,
-        levelVPCostOverride = levelVPCostOverride,
-        freeRewardScheduleUuid = freeRewardScheduleUuid,
-        assetPath = assetPath
-    )
+) {
+    fun toEntity(version: String): ContractEntity {
+        return ContractEntity(
+            uuid,
+            version,
+            displayName,
+            displayIcon,
+            shipIt,
+            useLevelVPCostOverride,
+            levelVPCostOverride,
+            freeRewardScheduleUuid,
+            assetPath
+        )
+    }
 
 
 
-    data class Content(
+    data class ContentDto(
         val relationType: String?,
-        val relationUuid: String?,
-        val chapters: List<Chapter>,
+        val relationUuid: String?, val chapters: List<ChapterDto>,
         val premiumRewardScheduleUuid: String?,
         val premiumVPCost: Int
     ) {
-        fun toEntity(version: String, contractUuid: String) = ContractContentEntity(
-            uuid = UUID.randomUUID().toString(),
-            contractUuid = contractUuid,
-            version = version,
-            relationType = relationType,
-            relationUuid = relationUuid,
-            premiumRewardScheduleUuid = premiumRewardScheduleUuid,
-            premiumVPCost = premiumVPCost
-        )
-
-        data class Chapter(
-            val isEpilogue: Boolean,
-            val levels: List<ChapterLevel>,
-            val freeRewards: List<Reward>?
-        ) {
-            fun toEntity(version: String, contentUuid: String) = ChapterEntity(
-                uuid = UUID.randomUUID().toString(),
-                contentUuid = contentUuid,
-                version = version,
-                isEpilogue = isEpilogue
+        fun toEntity(version: String, contractUuid: String): ContentEntity {
+            return ContentEntity(
+                UUID.randomUUID().toString(),
+                contractUuid,
+                version,
+                relationType,
+                relationUuid,
+                premiumRewardScheduleUuid,
+                premiumVPCost
             )
+        }
 
-            data class ChapterLevel(
-                val reward: Reward,
+
+
+        data class ChapterDto(
+            val isEpilogue: Boolean,
+            val levels: List<ChapterLevelDto>,
+            val freeRewards: List<RewardDto>?
+        ) {
+            fun toEntity(version: String, contentUuid: String): ChapterEntity {
+                return ChapterEntity(
+                    UUID.randomUUID().toString(), contentUuid, version, isEpilogue
+                )
+            }
+
+
+
+            data class ChapterLevelDto(
+                val reward: RewardDto,
                 val xp: Int,
                 val vpCost: Int,
                 val isPurchasableWithVP: Boolean,
                 val doughCost: Int,
                 val isPurchasableWithDough: Boolean
             ) {
-                fun toEntity(version: String, chapterUuid: String) = ChapterLevelEntity(
-                    uuid = UUID.randomUUID().toString(),
-                    chapterUuid = chapterUuid,
-                    version = version,
-                    xp = xp,
-                    vpCost = vpCost,
-                    isPurchasableWithVP = isPurchasableWithVP,
-                    doughCost = doughCost,
-                    isPurchasableWithDough = isPurchasableWithDough
-                )
+                fun toEntity(version: String, chapterUuid: String): LevelEntity {
+                    return LevelEntity(
+                        UUID.randomUUID().toString(),
+                        chapterUuid,
+                        version,
+                        xp,
+                        vpCost,
+                        isPurchasableWithVP,
+                        doughCost,
+                        isPurchasableWithDough
+                    )
+                }
             }
 
-            data class Reward(
+            data class RewardDto(
                 val type: String,
                 val uuid: String,
                 val amount: Int,
@@ -91,16 +98,18 @@ data class ContractDto(
                     version: String,
                     chapterUuid: String? = null,
                     levelUuid: String? = null
-                ) = RewardEntity(
-                    uuid = UUID.randomUUID().toString(),
-                    chapterUuid = chapterUuid,
-                    levelUuid = levelUuid,
-                    version = version,
-                    rewardType = type,
-                    rewardUuid = uuid,
-                    amount = amount,
-                    isHighlighted = isHighlighted
-                )
+                ): RewardEntity {
+                    return RewardEntity(
+                        UUID.randomUUID().toString(),
+                        levelUuid,
+                        chapterUuid,
+                        version,
+                        type,
+                        uuid,
+                        amount,
+                        isHighlighted
+                    )
+                }
             }
         }
     }

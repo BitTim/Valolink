@@ -5,10 +5,10 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
-import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.contract.Content
 
 @Entity(
-    tableName = "contractContents",
+    tableName = "ContractContents",
     foreignKeys = [
         ForeignKey(
             entity = ContractEntity::class,
@@ -19,7 +19,7 @@ import dev.bittim.valolink.feature.content.domain.model.contract.Contract
         )
     ]
 )
-data class ContractContentEntity(
+data class ContentEntity(
     @PrimaryKey
     val uuid: String,
     val contractUuid: String,
@@ -29,11 +29,9 @@ data class ContractContentEntity(
     val premiumRewardScheduleUuid: String?,
     val premiumVPCost: Int
 ) : GameEntity() {
-    fun toType(chapters: List<Chapter>) = Contract.Content(
-        relationType = relationType,
-        relationUuid = relationUuid,
-        premiumRewardScheduleUuid = premiumRewardScheduleUuid,
-        premiumVPCost = premiumVPCost,
-        chapters = chapters
-    )
+    fun toType(chapters: List<Chapter>): Content {
+        return Content(
+            relationType, relationUuid, premiumRewardScheduleUuid, premiumVPCost, chapters
+        )
+    }
 }

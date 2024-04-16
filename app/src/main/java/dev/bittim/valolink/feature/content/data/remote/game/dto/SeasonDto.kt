@@ -10,7 +10,7 @@ data class SeasonDto(
     val endTime: String,
     val parentUuid: String?,
     val assetPath: String
-) : GameDto<SeasonEntity>() {
+) {
     fun toEntity(version: String): SeasonEntity {
         return SeasonEntity(
             uuid = uuid,

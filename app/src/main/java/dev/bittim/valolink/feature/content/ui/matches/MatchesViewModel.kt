@@ -3,7 +3,7 @@ package dev.bittim.valolink.feature.content.ui.matches
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.content.data.repository.GameRepository
+import dev.bittim.valolink.feature.content.data.repository.game.GameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

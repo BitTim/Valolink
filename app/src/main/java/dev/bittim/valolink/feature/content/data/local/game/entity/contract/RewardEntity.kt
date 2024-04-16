@@ -7,10 +7,10 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.Reward
 
 @Entity(
-    tableName = "contractRewards",
+    tableName = "ContractRewards",
     foreignKeys = [
         ForeignKey(
-            entity = ChapterLevelEntity::class,
+            entity = LevelEntity::class,
             parentColumns = ["uuid"],
             childColumns = ["levelUuid"],
             onUpdate = ForeignKey.CASCADE,
@@ -38,10 +38,7 @@ data class RewardEntity(
 ) : GameEntity() {
     fun toType(): Reward {
         return Reward(
-            type = rewardType,
-            uuid = rewardUuid,
-            amount = amount,
-            isHighlighted = isHighlighted
+            rewardType, rewardUuid, amount, isHighlighted
         )
     }
 }

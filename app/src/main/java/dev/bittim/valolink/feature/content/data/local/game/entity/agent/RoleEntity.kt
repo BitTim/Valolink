@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.agent.Role
 
-@Entity
+@Entity(tableName = "AgentRoles")
 data class RoleEntity(
     @PrimaryKey
     val uuid: String,
@@ -17,10 +17,7 @@ data class RoleEntity(
 ) : GameEntity() {
     fun toType(): Role {
         return Role(
-            uuid = uuid,
-            displayName = displayName,
-            description = description,
-            displayIcon = displayIcon
+            uuid, displayName, description, displayIcon
         )
     }
 }

@@ -19,11 +19,10 @@ fun NavGraphBuilder.contractsScreen() {
         popExitTransition = { Transition.topLevelExit }
     ) {
         val viewModel: ContractsViewModel = hiltViewModel()
-        val contractsState by viewModel.contractsState.collectAsStateWithLifecycle()
+        val contractsState by viewModel.state.collectAsStateWithLifecycle()
 
         ContractsScreen(
-            state = contractsState,
-            onFetch = viewModel::onFetch
+            state = contractsState, getContracts = viewModel::getContracts
         )
     }
 }

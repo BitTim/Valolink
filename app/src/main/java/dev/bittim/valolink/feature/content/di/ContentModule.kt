@@ -10,12 +10,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.bittim.valolink.feature.content.data.local.game.GameConverter
 import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
-import dev.bittim.valolink.feature.content.data.repository.ApiGameRepository
 import dev.bittim.valolink.feature.content.data.repository.FirebaseUserRepository
-import dev.bittim.valolink.feature.content.data.repository.GameRepository
 import dev.bittim.valolink.feature.content.data.repository.UserRepository
+import dev.bittim.valolink.feature.content.data.repository.game.ApiGameRepository
+import dev.bittim.valolink.feature.content.data.repository.game.GameRepository
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -41,12 +42,12 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesGameDatabase(@ApplicationContext context: Context): GameDatabase {
+    fun providesGameDatabase(@ApplicationContext context: Context, moshi: Moshi): GameDatabase {
         return Room.databaseBuilder(
             context,
             GameDatabase::class.java,
             "game.db"
-        ).build()
+        ).addTypeConverter(GameConverter(moshi)).build()
     }
 
     @Provides
@@ -63,8 +64,10 @@ object ContentModule {
             .cache(cache)
             .addInterceptor { chain ->
                 val request = chain.request()
-                request.newBuilder()
-                    .header("Cache-Control", "public, max-age=" + 5)
+                request.newBuilder().header(
+                        "Cache-Control",
+                        "public, max-age=" + 5
+                    ) // API response cache valid for 5 seconds
                     .build()
                 chain.proceed(request)
             }
@@ -73,10 +76,10 @@ object ContentModule {
     
     @Provides
     @Singleton
-    fun providesGameApi(moshi: Moshi): GameApi {
+    fun providesGameApi(moshi: Moshi, okHttpClient: OkHttpClient): GameApi {
         return Retrofit.Builder()
             .baseUrl(GameApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(MoshiConverterFactory.create(moshi)).client(okHttpClient)
             .build()
             .create(GameApi::class.java)
     }

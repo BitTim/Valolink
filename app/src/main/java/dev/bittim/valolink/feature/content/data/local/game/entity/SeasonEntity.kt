@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.domain.model.Season
 import java.time.ZonedDateTime
 
-@Entity
+@Entity(tableName = "Seasons")
 data class SeasonEntity(
     @PrimaryKey
     val uuid: String,
@@ -18,10 +18,7 @@ data class SeasonEntity(
 ) : GameEntity() {
     fun toType(): Season {
         return Season(
-            uuid = uuid,
-            name = displayName,
-            startTime = ZonedDateTime.parse(startTime),
-            endTime = ZonedDateTime.parse(endTime)
+            uuid, displayName, ZonedDateTime.parse(startTime), ZonedDateTime.parse(endTime)
         )
     }
 }

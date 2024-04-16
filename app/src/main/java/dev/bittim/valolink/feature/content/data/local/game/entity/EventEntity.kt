@@ -3,8 +3,9 @@ package dev.bittim.valolink.feature.content.data.local.game.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.domain.model.Event
+import java.time.ZonedDateTime
 
-@Entity
+@Entity(tableName = "Events")
 data class EventEntity(
     @PrimaryKey
     val uuid: String,
@@ -17,7 +18,11 @@ data class EventEntity(
 ) : GameEntity() {
     fun toType(): Event {
         return Event(
-            uuid = uuid
+            uuid,
+            displayName,
+            shortDisplayName,
+            ZonedDateTime.parse(startTime),
+            ZonedDateTime.parse(endTime)
         )
     }
 }

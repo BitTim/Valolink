@@ -3,9 +3,11 @@ package dev.bittim.valolink.feature.content.data.local.game.entity.contract
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
+import dev.bittim.valolink.feature.content.domain.model.contract.Content
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.contract.ContractRelation
 
-@Entity(tableName = "contracts")
+@Entity(tableName = "Contracts")
 data class ContractEntity(
     @PrimaryKey
     val uuid: String,
@@ -18,16 +20,17 @@ data class ContractEntity(
     val freeRewardScheduleUuid: String,
     val assetPath: String
 ) : GameEntity() {
-    fun toType(content: Contract.Content): Contract {
+    fun toType(content: Content, relation: ContractRelation?): Contract {
         return Contract(
-            uuid = uuid,
-            displayName = displayName,
-            displayIcon = displayIcon,
-            shipIt = shipIt,
-            useLevelVPCostOverride = useLevelVPCostOverride,
-            levelVPCostOverride = levelVPCostOverride,
-            freeRewardScheduleUuid = freeRewardScheduleUuid,
-            content = content
+            uuid,
+            displayName,
+            displayIcon,
+            shipIt,
+            useLevelVPCostOverride,
+            levelVPCostOverride,
+            freeRewardScheduleUuid,
+            content,
+            relation
         )
     }
 }

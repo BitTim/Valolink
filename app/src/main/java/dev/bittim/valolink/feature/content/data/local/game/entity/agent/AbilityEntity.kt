@@ -7,32 +7,25 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.agent.Ability
 
 @Entity(
+    tableName = "AgentAbilities",
     foreignKeys = [
         ForeignKey(
             entity = AgentEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["agent"],
+            parentColumns = ["uuid"], childColumns = ["agentUuid"], onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
 data class AbilityEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    @PrimaryKey val uuid: String, val agentUuid: String,
     override val version: String,
-    val agent: String,
     val slot: String,
     val displayName: String,
-    val description: String,
-    val displayIcon: String
+    val description: String, val displayIcon: String?
 ) : GameEntity() {
     fun toType(): Ability {
         return Ability(
-            agent = agent,
-            slot = slot,
-            displayName = displayName,
-            description = description,
-            displayIcon = displayIcon
+            agentUuid, slot, displayName, description, displayIcon
         )
     }
 }

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.bittim.valolink"
-        minSdk = 31
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "0.1"
@@ -68,9 +68,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material.icons.extended.android)
     implementation(libs.firebase.auth)
+    implementation(libs.material)
     implementation(libs.play.services.auth)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -95,4 +95,7 @@ dependencies {
     // Room
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    // Coil
+    implementation(libs.coil.kt.coil.compose)
 }

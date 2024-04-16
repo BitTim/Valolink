@@ -8,13 +8,17 @@ data class Contract(
     val useLevelVPCostOverride: Boolean,
     val levelVPCostOverride: Int,
     val freeRewardScheduleUuid: String,
-    val content: Content,
+    val content: Content, val relation: ContractRelation?
 ) {
-    data class Content(
-        val relationType: String?,
-        val relationUuid: String?,
-        val premiumRewardScheduleUuid: String?,
-        val premiumVPCost: Int,
-        val chapters: List<Chapter>
-    )
+    fun calcTotalXp(): Int {
+        return content.chapters.map { chapter ->
+            chapter.levels.map { level ->
+                level.xp
+            }
+        }.flatten().sum()
+    }
+
+    fun calcRemainingDays(): Int? {
+        return null
+    }
 }

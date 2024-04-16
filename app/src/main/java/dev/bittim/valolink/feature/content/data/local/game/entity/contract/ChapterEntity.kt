@@ -9,10 +9,10 @@ import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
 import dev.bittim.valolink.feature.content.domain.model.contract.Reward
 
 @Entity(
-    tableName = "contractChapters",
+    tableName = "ContractChapters",
     foreignKeys = [
         ForeignKey(
-            entity = ContractContentEntity::class,
+            entity = ContentEntity::class,
             parentColumns = [ "uuid" ],
             childColumns = ["contentUuid"],
             onUpdate = ForeignKey.CASCADE,
@@ -27,9 +27,9 @@ data class ChapterEntity(
     override val version: String,
     val isEpilogue: Boolean
 ) : GameEntity() {
-    fun toType(levels: List<ChapterLevel>, freeRewards: List<Reward>?) = Chapter(
-        levels = levels,
-        freeRewards = freeRewards,
-        isEpilogue = isEpilogue
-    )
+    fun toType(levels: List<ChapterLevel>, freeRewards: List<Reward>?): Chapter {
+        return Chapter(
+            levels, freeRewards, isEpilogue
+        )
+    }
 }

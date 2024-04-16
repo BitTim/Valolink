@@ -1,18 +1,21 @@
 package dev.bittim.valolink.feature.content.data.local.game.entity.agent
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
+import dev.bittim.valolink.feature.content.domain.model.agent.Ability
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
+import dev.bittim.valolink.feature.content.domain.model.agent.Recruitment
+import dev.bittim.valolink.feature.content.domain.model.agent.Role
 
 @Entity(
+    tableName = "Agents",
     foreignKeys = [
         ForeignKey(
             entity = RoleEntity::class,
             parentColumns = ["uuid"],
-            childColumns = ["role"],
+            childColumns = ["role"], onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -24,7 +27,7 @@ data class AgentEntity(
     val displayName: String,
     val description: String,
     val developerName: String,
-    val characterTags: List<String>?,
+    val characterTags: List<String>,
     val displayIcon: String,
     val displayIconSmall: String,
     val bustPortrait: String,
@@ -39,35 +42,28 @@ data class AgentEntity(
     val isAvailableForTest: Boolean,
     val isBaseContent: Boolean,
     val role: String,
-    @Embedded val recruitmentData: RecruitmentData?,
-    @Embedded val voiceLine: VoiceLine?
 ) : GameEntity() {
-    data class RecruitmentData(
-        val counterId: String,
-        val milestoneId: String,
-        val milestoneThreshold: Int,
-        val useLevelVpCostOverride: Boolean,
-        val levelVpCostOverride: Int,
-        val startDate: String,
-        val endDate: String
-    )
-
-    data class VoiceLine(
-        val minDuration: Float,
-        val maxDuration: Float,
-        val mediaList: List<Media>
-    ) {
-        data class Media(
-            val id: Int,
-            val wwise: String,
-            val wave: String
-        )
-    }
-
-
-    fun toType(): Agent {
+    fun toType(role: Role, recruitment: Recruitment?, abilities: List<Ability>): Agent {
         return Agent(
-            uuid = uuid
+            uuid,
+            displayName,
+            description,
+            developerName,
+            characterTags,
+            displayIcon,
+            displayIconSmall,
+            bustPortrait,
+            fullPortrait,
+            fullPortraitV2,
+            killfeedPortrait,
+            background,
+            backgroundGradientColors,
+            isFullPortraitRightFacing,
+            isAvailableForTest,
+            isBaseContent,
+            role,
+            recruitment,
+            abilities
         )
     }
 }

@@ -8,7 +8,7 @@ import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
 import dev.bittim.valolink.feature.content.domain.model.contract.Reward
 
 @Entity(
-    tableName = "contractChapterLevels",
+    tableName = "ContractChapterLevels",
     foreignKeys = [
         ForeignKey(
             entity = ChapterEntity::class,
@@ -19,7 +19,7 @@ import dev.bittim.valolink.feature.content.domain.model.contract.Reward
         )
     ]
 )
-data class ChapterLevelEntity(
+data class LevelEntity(
     @PrimaryKey
     val uuid: String,
     val chapterUuid: String,
@@ -30,12 +30,9 @@ data class ChapterLevelEntity(
     val doughCost: Int,
     val isPurchasableWithDough: Boolean,
 ) : GameEntity() {
-    fun toType(reward: Reward) = ChapterLevel(
-        xp = xp,
-        vpCost = vpCost,
-        isPurchasableWithVP = isPurchasableWithVP,
-        doughCost = doughCost,
-        isPurchasableWithDough = isPurchasableWithDough,
-        reward = reward
-    )
+    fun toType(reward: Reward): ChapterLevel {
+        return ChapterLevel(
+            xp, vpCost, isPurchasableWithVP, doughCost, isPurchasableWithDough, reward
+        )
+    }
 }
