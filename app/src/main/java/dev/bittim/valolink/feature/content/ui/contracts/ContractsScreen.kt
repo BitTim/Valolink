@@ -1,17 +1,22 @@
 package dev.bittim.valolink.feature.content.ui.contracts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +35,7 @@ import dev.bittim.valolink.feature.content.ui.contracts.components.DefaultContra
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 import java.util.UUID
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContractsScreen(
     state: ContractsState, getContracts: () -> Unit
@@ -40,116 +46,163 @@ fun ContractsScreen(
         }
     }
 
+    if (state.isLoading) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+    
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            Text(
-                text = "Active", style = MaterialTheme.typography.headlineMedium
-            )
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    text = "Active",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
         }
 
         item {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
-        items(items = state.activeContracts, itemContent = {
-            DefaultContractCard(
-                displayName = it.displayName,
-                displayIcon = it.relation?.displayIcon,
-                backgroundImage = it.relation?.background,
-                backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
-                // TODO: Placeholder values as no userdata is present yet
-                remainingDays = 5,
-                collectedXp = 148660,
-                totalXp = 200000,
-                percentage = 74
-            )
-        })
+        items(items = state.activeContracts,
+            contentType = { Contract::class },
+            key = { it.uuid },
+            itemContent = {
+                DefaultContractCard(
+                    displayName = it.displayName,
+                    displayIcon = it.relation?.displayIcon,
+                    backgroundImage = it.relation?.background,
+                    backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
+                    // TODO: Placeholder values as no userdata is present yet
+                    remainingDays = 5,
+                    collectedXp = 148660,
+                    totalXp = 200000,
+                    percentage = 74
+                )
+            })
 
         item {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        item {
-            Text(
-                text = "Agents", style = MaterialTheme.typography.headlineMedium
-            )
+            Spacer(modifier = Modifier.height(20.dp))
         }
 
         item {
-            Spacer(modifier = Modifier.height(8.dp))
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    text = "Agents",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
         //TODO: Replace with Agent Carousel
-        items(items = state.agentContracts, itemContent = {
-            DefaultContractCard(
-                displayName = it.relation?.displayName ?: "",
-                displayIcon = it.relation?.displayIcon,
-                backgroundImage = it.relation?.background,
-                backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
-                // TODO: Placeholder values as no userdata is present yet
-                remainingDays = 16,
-                collectedXp = 14000,
-                totalXp = 940000,
-                percentage = 15
-            )
-        })
+        items(items = state.agentContracts,
+            contentType = { Contract::class },
+            key = { it.uuid },
+            itemContent = {
+                DefaultContractCard(
+                    displayName = it.relation?.displayName ?: "",
+                    displayIcon = it.relation?.displayIcon,
+                    backgroundImage = it.relation?.background,
+                    backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
+                    // TODO: Placeholder values as no userdata is present yet
+                    remainingDays = 16,
+                    collectedXp = 14000,
+                    totalXp = 940000,
+                    percentage = 15
+                )
+            })
 
         item {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-
-        item {
-            Text(
-                text = "Archive", style = MaterialTheme.typography.headlineMedium
-            )
+            Spacer(modifier = Modifier.height(20.dp))
         }
 
         //TODO: Implement into State and add filtering in ViewModel
         item {
-            val options = listOf("Season", "Event", "Agent")
-            var selectedIndex by remember { mutableIntStateOf(0) }
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth()
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
-                options.forEachIndexed { index, label ->
-                    SegmentedButton(selected = index == selectedIndex,
-                        onClick = { selectedIndex = index },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = options.size
-                        )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val options = listOf("Season", "Event", "Agent")
+                    var selectedIndex by remember { mutableIntStateOf(0) }
+
+                    Text(
+                        text = "Archive", style = MaterialTheme.typography.headlineMedium
+                    )
+
+                    SingleChoiceSegmentedButtonRow(
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = label)
+                        options.forEachIndexed { index, label ->
+                            SegmentedButton(
+                                selected = index == selectedIndex,
+                                onClick = { selectedIndex = index },
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index, count = options.size
+                                )
+                            ) {
+                                Text(text = label)
+                            }
+                        }
                     }
                 }
             }
         }
 
         item {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
-        items(items = state.inactiveContracts, itemContent = {
-            DefaultContractCard(
-                displayName = it.displayName,
-                displayIcon = it.relation?.displayIcon,
-                backgroundImage = it.relation?.background,
-                backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
-                remainingDays = null,
-                // TODO: Placeholder values as no userdata is present yet
-                collectedXp = 230000,
-                totalXp = 586723,
-                percentage = 39
-            )
-        })
+        items(items = state.inactiveContracts,
+            contentType = { Contract::class },
+            key = { it.uuid },
+            itemContent = {
+                DefaultContractCard(
+                    displayName = it.displayName,
+                    displayIcon = it.relation?.displayIcon,
+                    backgroundImage = it.relation?.background,
+                    backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
+                    remainingDays = null,
+                    // TODO: Placeholder values as no userdata is present yet
+                    collectedXp = 230000,
+                    totalXp = 586723,
+                    percentage = 39
+                )
+            })
 
         item {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }

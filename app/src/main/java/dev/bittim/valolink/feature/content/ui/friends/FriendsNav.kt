@@ -32,7 +32,9 @@ fun NavController.navToFriends(origin: String) {
     navigate(FriendsNavRoute) {
         popUpTo(origin) {
             inclusive = true
+            saveState = true
         }
         launchSingleTop = true
+        restoreState = true
     }
 }

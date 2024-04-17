@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.bittim.valolink.feature.content.ui.ContentNavGraph
-import dev.bittim.valolink.feature.content.ui.components.navbar.NavBar
+import dev.bittim.valolink.feature.content.ui.main.components.navbar.NavBar
 
 @Composable
 fun MainScreen(
@@ -52,8 +52,9 @@ fun MainScreen(
 
         is MainState.Content -> {
             Scaffold(
-                Modifier.fillMaxSize(),
-                bottomBar = { NavBar(navController = navController) }
+                Modifier.fillMaxSize(), bottomBar = {
+                    NavBar(navController = navController)
+                }
             ) {
                 ContentNavGraph(
                     modifier = Modifier

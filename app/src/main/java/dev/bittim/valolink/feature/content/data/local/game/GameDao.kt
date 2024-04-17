@@ -77,7 +77,7 @@ interface GameDao {
 
 
     @Query("SELECT * FROM Seasons WHERE uuid = :uuid LIMIT 1")
-    fun getSeason(uuid: String): Flow<List<SeasonEntity>>
+    fun getSeason(uuid: String): Flow<SeasonEntity?>
 
 
 
@@ -87,7 +87,7 @@ interface GameDao {
 
 
     @Query("SELECT * FROM Events WHERE uuid = :uuid LIMIT 1")
-    fun getEvent(uuid: String): Flow<List<EventEntity>>
+    fun getEvent(uuid: String): Flow<EventEntity?>
 
 
 
@@ -102,7 +102,7 @@ interface GameDao {
 
     @Transaction
     @Query("SELECT * FROM Agents WHERE uuid = :uuid LIMIT 1")
-    fun getAgent(uuid: String): Flow<List<AgentWithRecruitmentAndRoleAndAbilities>>
+    fun getAgent(uuid: String): Flow<AgentWithRecruitmentAndRoleAndAbilities?>
 
 
 

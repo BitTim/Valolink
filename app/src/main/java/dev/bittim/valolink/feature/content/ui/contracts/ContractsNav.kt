@@ -31,7 +31,9 @@ fun NavController.navToContracts(origin: String) {
     navigate(ContractsNavRoute) {
         popUpTo(origin) {
             inclusive = true
+            saveState = true
         }
         launchSingleTop = true
+        restoreState = true
     }
 }

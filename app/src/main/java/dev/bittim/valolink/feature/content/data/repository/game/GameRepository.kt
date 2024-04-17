@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
     suspend fun getApiVersion(): VersionDto?
-    suspend fun getSeason(uuid: String): Flow<Season>
-    suspend fun getAllSeasons(): Flow<List<Season>>
-    suspend fun getEvent(uuid: String): Flow<Event>
-    suspend fun getAllEvents(): Flow<List<Event>>
-    
-    suspend fun getAllContracts(): Flow<List<Contract>>
+    suspend fun getSeason(uuid: String, providedVersion: String? = null): Flow<Season>
+    suspend fun getAllSeasons(providedVersion: String? = null): Flow<List<Season>>
+    suspend fun getEvent(uuid: String, providedVersion: String? = null): Flow<Event>
+    suspend fun getAllEvents(providedVersion: String? = null): Flow<List<Event>>
 
-    suspend fun getAgent(uuid: String): Flow<Agent>
-    suspend fun getAllAgents(): Flow<List<Agent>>
+    suspend fun getAllContracts(providedVersion: String? = null): Flow<List<Contract>>
+
+    suspend fun getAgent(uuid: String, providedVersion: String? = null): Flow<Agent>
+    suspend fun getAllAgents(providedVersion: String? = null): Flow<List<Agent>>
 }

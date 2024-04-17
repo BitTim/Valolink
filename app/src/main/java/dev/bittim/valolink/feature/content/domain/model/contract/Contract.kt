@@ -7,8 +7,7 @@ data class Contract(
     val shipIt: Boolean,
     val useLevelVPCostOverride: Boolean,
     val levelVPCostOverride: Int,
-    val freeRewardScheduleUuid: String,
-    val content: Content, val relation: ContractRelation?
+    val freeRewardScheduleUuid: String, val content: Content, val relation: ContractRelation?
 ) {
     fun calcTotalXp(): Int {
         return content.chapters.map { chapter ->

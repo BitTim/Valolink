@@ -108,6 +108,7 @@ fun DefaultContractCard(
                     modifier = Modifier
                         .alpha(0.15f)
                         .fillMaxHeight(),
+
                     model = backgroundImage,
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,

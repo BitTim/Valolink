@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.content.ui.components.navbar
+package dev.bittim.valolink.feature.content.ui.main.components.navbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History

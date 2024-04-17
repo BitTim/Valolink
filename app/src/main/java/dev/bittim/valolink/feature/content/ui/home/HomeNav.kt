@@ -35,7 +35,9 @@ fun NavController.navToHome(origin: String) {
     navigate(HomeNavRoute) {
         popUpTo(origin) {
             inclusive = true
+            saveState = true
         }
         launchSingleTop = true
+        restoreState = true
     }
 }

@@ -32,7 +32,9 @@ fun NavController.navToMatches(origin: String) {
     navigate(MatchesNavRoute) {
         popUpTo(origin) {
             inclusive = true
+            saveState = true
         }
         launchSingleTop = true
+        restoreState = true
     }
 }

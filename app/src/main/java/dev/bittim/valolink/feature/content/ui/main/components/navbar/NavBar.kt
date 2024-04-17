@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.content.ui.components.navbar
+package dev.bittim.valolink.feature.content.ui.main.components.navbar
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.NavigationBar
@@ -19,10 +19,7 @@ fun NavBar(
     val currentDestination = navBackStackEntry?.destination
 
     val navItems = listOf(
-        NavBarItem.Home,
-        NavBarItem.Contracts,
-        NavBarItem.Matches,
-        NavBarItem.Friends
+        NavBarItem.Home, NavBarItem.Contracts, NavBarItem.Matches, NavBarItem.Friends
     )
 
     val isNavBarDestination = navItems.any { it.route == currentDestination?.route }
