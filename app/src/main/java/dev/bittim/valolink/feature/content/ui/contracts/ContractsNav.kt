@@ -22,7 +22,7 @@ fun NavGraphBuilder.contractsScreen() {
         val contractsState by viewModel.state.collectAsStateWithLifecycle()
 
         ContractsScreen(
-            state = contractsState, getContracts = viewModel::getContracts
+            state = contractsState
         )
     }
 }

@@ -1,6 +1,5 @@
 package dev.bittim.valolink.feature.content.ui.contracts
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +18,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -35,17 +33,10 @@ import dev.bittim.valolink.feature.content.ui.contracts.components.DefaultContra
 import dev.bittim.valolink.ui.theme.ValolinkTheme
 import java.util.UUID
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContractsScreen(
-    state: ContractsState, getContracts: () -> Unit
+    state: ContractsState
 ) {
-    if (state.activeContracts.isEmpty() && state.agentContracts.isEmpty() && state.inactiveContracts.isEmpty()) {
-        LaunchedEffect(key1 = Unit) {
-            getContracts()
-        }
-    }
-
     if (state.isLoading) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -257,6 +248,6 @@ fun ContractsScreenPreview() {
                     )
                 )
             )
-        ) {}
+        )
     }
 }

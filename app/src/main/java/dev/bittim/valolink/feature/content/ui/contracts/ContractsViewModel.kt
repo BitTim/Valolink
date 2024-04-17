@@ -18,7 +18,7 @@ class ContractsViewModel @Inject constructor(
     private val _state = MutableStateFlow(ContractsState())
     val state = _state.asStateFlow()
 
-    fun getContracts() {
+    init {
         viewModelScope.launch {
             gameRepository.getAllContracts().collect { contracts ->
                 _state.update { it.copy(isLoading = true) }
