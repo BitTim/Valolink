@@ -1,5 +1,6 @@
 package dev.bittim.valolink.feature.content.ui.contracts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import dev.bittim.valolink.feature.content.domain.model.agent.Agent
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 import dev.bittim.valolink.feature.content.ui.contracts.components.DefaultContractCard
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContractsScreen(
     state: ContractsState, onArchiveTypeFilterChange: (ArchiveTypeFilter) -> Unit
@@ -44,7 +46,7 @@ fun ContractsScreen(
             .padding(start = 16.dp, top = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item {
+        stickyHeader {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -93,7 +95,7 @@ fun ContractsScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        item {
+        stickyHeader {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -136,8 +138,7 @@ fun ContractsScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        //TODO: Implement into State and add filtering in ViewModel
-        item {
+        stickyHeader {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
