@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.agent.Ability
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
-import dev.bittim.valolink.feature.content.domain.model.agent.Recruitment
 import dev.bittim.valolink.feature.content.domain.model.agent.Role
 
 @Entity(
@@ -16,6 +15,12 @@ import dev.bittim.valolink.feature.content.domain.model.agent.Role
             entity = RoleEntity::class,
             parentColumns = ["uuid"],
             childColumns = ["role"], onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        ), ForeignKey(
+            entity = RecruitmentEntity::class,
+            parentColumns = ["uuid"],
+            childColumns = ["recruitment"],
+            onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -42,8 +47,9 @@ data class AgentEntity(
     val isAvailableForTest: Boolean,
     val isBaseContent: Boolean,
     val role: String,
+    val recruitment: String?,
 ) : GameEntity() {
-    fun toType(role: Role, recruitment: Recruitment?, abilities: List<Ability>): Agent {
+    fun toType(role: Role, abilities: List<Ability>): Agent {
         return Agent(
             uuid,
             displayName,
@@ -62,7 +68,6 @@ data class AgentEntity(
             isAvailableForTest,
             isBaseContent,
             role,
-            recruitment,
             abilities
         )
     }

@@ -15,8 +15,9 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.contract.Conte
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContractEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.RewardEntity
-import dev.bittim.valolink.feature.content.data.local.game.relation.agent.AgentWithRecruitmentAndRoleAndAbilities
-import dev.bittim.valolink.feature.content.data.local.game.relation.contract.ContractWithChaptersWithLevelsAndRewards
+import dev.bittim.valolink.feature.content.data.local.game.relation.agent.AgentWithRoleAndAbilities
+import dev.bittim.valolink.feature.content.data.local.game.relation.agent.RecruitmentWithAgentWithRoleAndAbilities
+import dev.bittim.valolink.feature.content.data.local.game.relation.contract.ContractWithContentWithChaptersWithLevelsAndRewards
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -68,9 +69,8 @@ interface GameDao {
     @Transaction
     @Upsert
     suspend fun upsertAllAgents(
-        roles: Set<RoleEntity>,
+        roles: Set<RoleEntity>, recruitment: Set<RecruitmentEntity>,
         agents: Set<AgentEntity>,
-        recruitments: Set<RecruitmentEntity>,
         abilities: Set<AbilityEntity>
     )
 
@@ -94,28 +94,32 @@ interface GameDao {
     @Query("SELECT * FROM Events ORDER BY endTime DESC")
     fun getAllEvents(): Flow<List<EventEntity>>
 
-    @Transaction
-    @Query("SELECT * FROM Contracts")
-    fun getAllContracts(): Flow<List<ContractWithChaptersWithLevelsAndRewards>>
-
 
 
     @Transaction
     @Query("SELECT * FROM Agents WHERE uuid = :uuid LIMIT 1")
-    fun getAgent(uuid: String): Flow<AgentWithRecruitmentAndRoleAndAbilities?>
+    fun getAgent(uuid: String): Flow<AgentWithRoleAndAbilities?>
+
+    @Transaction
+    @Query("SELECT * FROM Agents")
+    fun getAllAgents(): Flow<List<AgentWithRoleAndAbilities>>
 
 
 
     @Transaction
-    @Query("SELECT * FROM Agents")
-    fun getAllAgents(): Flow<List<AgentWithRecruitmentAndRoleAndAbilities>>
+    @Query("SELECT * FROM Contracts")
+    fun getAllContracts(): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
+
+
+
+    @Transaction
+    @Query("SELECT * FROM AgentRecruitments")
+    fun getAllRecruitments(): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
 
 
 
     @Query("DELETE FROM Seasons")
     suspend fun clearAllSeasons()
-
-
 
     @Query("DELETE FROM Contracts")
     suspend fun clearAllContracts()

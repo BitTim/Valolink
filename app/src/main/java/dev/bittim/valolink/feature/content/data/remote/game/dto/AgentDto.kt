@@ -50,8 +50,7 @@ data class AgentDto(
             isFullPortraitRightFacing,
             isPlayableCharacter,
             isAvailableForTest,
-            isBaseContent,
-            role.uuid
+            isBaseContent, role.uuid, recruitmentData?.milestoneId
         )
     }
 
@@ -66,13 +65,10 @@ data class AgentDto(
         val startDate: String,
         val endDate: String
     ) {
-        fun toEntity(version: String, agentUuid: String): RecruitmentEntity {
+        fun toEntity(version: String): RecruitmentEntity {
             return RecruitmentEntity(
-                UUID.randomUUID().toString(),
-                agentUuid,
-                version,
-                counterId,
                 milestoneId,
+                version,
                 milestoneThreshold,
                 useLevelVpCostOverride,
                 levelVpCostOverride,

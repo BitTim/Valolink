@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "45bd563e79ff6458def23b4775d6a650",
+    "identityHash": "173bb01bf8d46a358166bdb1adbd3acd",
     "entities": [
       {
         "tableName": "Seasons",
@@ -463,7 +463,7 @@
       },
       {
         "tableName": "Agents",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `developerName` TEXT NOT NULL, `characterTags` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `displayIconSmall` TEXT NOT NULL, `bustPortrait` TEXT NOT NULL, `fullPortrait` TEXT NOT NULL, `fullPortraitV2` TEXT NOT NULL, `killfeedPortrait` TEXT NOT NULL, `background` TEXT NOT NULL, `backgroundGradientColors` TEXT NOT NULL, `assetPath` TEXT NOT NULL, `isFullPortraitRightFacing` INTEGER NOT NULL, `isPlayableCharacter` INTEGER NOT NULL, `isAvailableForTest` INTEGER NOT NULL, `isBaseContent` INTEGER NOT NULL, `role` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`role`) REFERENCES `AgentRoles`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `developerName` TEXT NOT NULL, `characterTags` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `displayIconSmall` TEXT NOT NULL, `bustPortrait` TEXT NOT NULL, `fullPortrait` TEXT NOT NULL, `fullPortraitV2` TEXT NOT NULL, `killfeedPortrait` TEXT NOT NULL, `background` TEXT NOT NULL, `backgroundGradientColors` TEXT NOT NULL, `assetPath` TEXT NOT NULL, `isFullPortraitRightFacing` INTEGER NOT NULL, `isPlayableCharacter` INTEGER NOT NULL, `isAvailableForTest` INTEGER NOT NULL, `isBaseContent` INTEGER NOT NULL, `role` TEXT NOT NULL, `recruitment` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`role`) REFERENCES `AgentRoles`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`recruitment`) REFERENCES `AgentRecruitments`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -584,6 +584,12 @@
             "columnName": "role",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "recruitment",
+            "columnName": "recruitment",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -604,22 +610,27 @@
             "referencedColumns": [
               "uuid"
             ]
+          },
+          {
+            "table": "AgentRecruitments",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "recruitment"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
           }
         ]
       },
       {
         "tableName": "AgentRecruitments",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `agentUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `counterId` TEXT NOT NULL, `milestoneId` TEXT NOT NULL, `milestoneThreshold` INTEGER NOT NULL, `useLevelVpCostOverride` INTEGER NOT NULL, `levelVpCostOverride` INTEGER NOT NULL, `startDate` TEXT NOT NULL, `endDate` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`agentUuid`) REFERENCES `Agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `xp` INTEGER NOT NULL, `useLevelVpCostOverride` INTEGER NOT NULL, `levelVpCostOverride` INTEGER NOT NULL, `startDate` TEXT NOT NULL, `endDate` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
             "columnName": "uuid",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "agentUuid",
-            "columnName": "agentUuid",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -630,20 +641,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "counterId",
-            "columnName": "counterId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "milestoneId",
-            "columnName": "milestoneId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "milestoneThreshold",
-            "columnName": "milestoneThreshold",
+            "fieldPath": "xp",
+            "columnName": "xp",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -679,19 +678,7 @@
           ]
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "Agents",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "agentUuid"
-            ],
-            "referencedColumns": [
-              "uuid"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "AgentRoles",
@@ -815,7 +802,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '45bd563e79ff6458def23b4775d6a650')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '173bb01bf8d46a358166bdb1adbd3acd')"
     ]
   }
 }

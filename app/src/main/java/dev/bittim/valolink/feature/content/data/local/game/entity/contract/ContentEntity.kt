@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
 import dev.bittim.valolink.feature.content.domain.model.contract.Content
+import dev.bittim.valolink.feature.content.domain.model.contract.ContentRelation
 
 @Entity(
     tableName = "ContractContents",
@@ -29,9 +30,9 @@ data class ContentEntity(
     val premiumRewardScheduleUuid: String?,
     val premiumVPCost: Int
 ) : GameEntity() {
-    fun toType(chapters: List<Chapter>): Content {
+    fun toType(relation: ContentRelation?, chapters: List<Chapter>): Content {
         return Content(
-            relationType, relationUuid, premiumRewardScheduleUuid, premiumVPCost, chapters
+            relation, premiumVPCost, chapters
         )
     }
 }

@@ -1,27 +1,22 @@
 package dev.bittim.valolink.feature.content.data.local.game.entity.agent
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
+import dev.bittim.valolink.feature.content.domain.model.agent.Agent
 import dev.bittim.valolink.feature.content.domain.model.agent.Recruitment
+import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
+import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
+import dev.bittim.valolink.feature.content.domain.model.contract.Content
+import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.contract.Reward
+import java.time.ZonedDateTime
+import java.util.UUID
 
-@Entity(
-    tableName = "AgentRecruitments", foreignKeys = [ForeignKey(
-        entity = AgentEntity::class,
-        parentColumns = ["uuid"],
-        childColumns = ["agentUuid"],
-        onUpdate = ForeignKey.CASCADE,
-        onDelete = ForeignKey.CASCADE
-    )]
-)
+@Entity(tableName = "AgentRecruitments")
 data class RecruitmentEntity(
     @PrimaryKey val uuid: String,
-    val agentUuid: String,
-    override val version: String,
-    val counterId: String,
-    val milestoneId: String,
-    val milestoneThreshold: Int,
+    override val version: String, val xp: Int,
     val useLevelVpCostOverride: Boolean,
     val levelVpCostOverride: Int,
     val startDate: String,
@@ -29,13 +24,35 @@ data class RecruitmentEntity(
 ) : GameEntity() {
     fun toType(): Recruitment {
         return Recruitment(
-            counterId,
-            milestoneId,
-            milestoneThreshold,
+            uuid, xp,
             useLevelVpCostOverride,
             levelVpCostOverride,
             startDate,
             endDate
+        )
+    }
+
+    fun toContract(agent: Agent): Contract {
+        return Contract(
+            UUID.randomUUID().toString(),
+            agent.displayName,
+            useLevelVpCostOverride,
+            levelVpCostOverride,
+            Content(
+                agent, -1, listOf(
+                    Chapter(
+                        listOf(
+                            ChapterLevel(
+                                xp, 1000, false, 8000, true, Reward(
+                                    "Agent", agent.uuid, 1, false
+                                )
+                            )
+                        ), listOf(), false
+                    )
+                )
+            ),
+            ZonedDateTime.parse(startDate),
+            ZonedDateTime.parse(endDate)
         )
     }
 }

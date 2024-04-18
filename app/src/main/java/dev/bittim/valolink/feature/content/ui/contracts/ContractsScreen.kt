@@ -23,15 +23,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
-import dev.bittim.valolink.feature.content.domain.model.agent.Role
-import dev.bittim.valolink.feature.content.domain.model.contract.Content
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 import dev.bittim.valolink.feature.content.ui.contracts.components.DefaultContractCard
-import dev.bittim.valolink.ui.theme.ValolinkTheme
-import java.util.UUID
 
 @Composable
 fun ContractsScreen(
@@ -75,15 +70,25 @@ fun ContractsScreen(
             contentType = { Contract::class },
             key = { it.uuid },
             itemContent = {
+                var displayIcon: String? = null
+                var backgroundImage: String? = null
+                var backgroundGradientColors: List<String> = listOf()
+
+                if (it.content.relation is Agent) {
+                    displayIcon = it.content.relation.displayIcon
+                    backgroundImage = it.content.relation.background
+                    backgroundGradientColors = it.content.relation.backgroundGradientColors
+                }
+                
                 DefaultContractCard(
                     displayName = it.displayName,
-                    displayIcon = it.relation?.displayIcon,
-                    backgroundImage = it.relation?.background,
-                    backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
+                    displayIcon = displayIcon,
+                    backgroundImage = backgroundImage,
+                    backgroundGradientColors = backgroundGradientColors,
+                    remainingDays = it.calcRemainingDays(),
+                    totalXp = it.calcTotalXp(),
                     // TODO: Placeholder values as no userdata is present yet
-                    remainingDays = 5,
                     collectedXp = 148660,
-                    totalXp = 200000,
                     percentage = 74
                 )
             })
@@ -111,21 +116,24 @@ fun ContractsScreen(
         }
 
         //TODO: Replace with Agent Carousel
-        items(items = state.agentContracts,
+        items(
+            items = state.agentGears,
             contentType = { Contract::class },
             key = { it.uuid },
             itemContent = {
-                DefaultContractCard(
-                    displayName = it.relation?.displayName ?: "",
-                    displayIcon = it.relation?.displayIcon,
-                    backgroundImage = it.relation?.background,
-                    backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
-                    // TODO: Placeholder values as no userdata is present yet
-                    remainingDays = 16,
-                    collectedXp = 14000,
-                    totalXp = 940000,
-                    percentage = 15
-                )
+                if (it.content.relation is Agent) {
+                    DefaultContractCard(
+                        displayName = it.content.relation.displayName,
+                        displayIcon = it.content.relation.displayIcon,
+                        backgroundImage = it.content.relation.background,
+                        backgroundGradientColors = it.content.relation.backgroundGradientColors,
+                        remainingDays = it.calcRemainingDays(),
+                        totalXp = it.calcTotalXp(),
+                        // TODO: Placeholder values as no userdata is present yet
+                        collectedXp = 14000,
+                        percentage = 15
+                    )
+                }
             })
 
         item {
@@ -179,15 +187,25 @@ fun ContractsScreen(
             contentType = { Contract::class },
             key = { it.uuid },
             itemContent = {
+                var displayIcon: String? = null
+                var backgroundImage: String? = null
+                var backgroundGradientColors: List<String> = listOf()
+
+                if (it.content.relation is Agent) {
+                    displayIcon = it.content.relation.displayIcon
+                    backgroundImage = it.content.relation.background
+                    backgroundGradientColors = it.content.relation.backgroundGradientColors
+                }
+                
                 DefaultContractCard(
                     displayName = it.displayName,
-                    displayIcon = it.relation?.displayIcon,
-                    backgroundImage = it.relation?.background,
-                    backgroundGradientColors = it.relation?.backgroundGradientColors ?: listOf(),
-                    remainingDays = null,
+                    displayIcon = displayIcon,
+                    backgroundImage = backgroundImage,
+                    backgroundGradientColors = backgroundGradientColors,
+                    remainingDays = it.calcRemainingDays(),
+                    totalXp = it.calcTotalXp(),
                     // TODO: Placeholder values as no userdata is present yet
                     collectedXp = 230000,
-                    totalXp = 586723,
                     percentage = 39
                 )
             })
@@ -195,59 +213,5 @@ fun ContractsScreen(
         item {
             Spacer(modifier = Modifier.height(4.dp))
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Suppress("SpellCheckingInspection")
-@Composable
-fun ContractsScreenPreview() {
-    ValolinkTheme {
-        ContractsScreen(
-            state = ContractsState(
-                agentContracts = listOf(
-                    Contract(
-                        UUID.randomUUID().toString(),
-                        "",
-                        null,
-                        shipIt = false,
-                        useLevelVPCostOverride = false,
-                        levelVPCostOverride = 0,
-                        freeRewardScheduleUuid = UUID.randomUUID().toString(),
-                        content = Content(
-                            null, null, null, 0, listOf()
-                        ),
-                        relation = Agent(
-                            uuid = "",
-                            displayName = "Lol",
-                            description = "",
-                            developerName = "",
-                            characterTags = listOf(),
-                            displayIcon = "",
-                            displayIconSmall = "",
-                            bustPortrait = "",
-                            fullPortrait = "",
-                            fullPortraitV2 = "",
-                            killfeedPortrait = "",
-                            background = "",
-                            backgroundGradientColors = listOf(
-                                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
-                            ),
-                            isFullPortraitRightFacing = false,
-                            isAvailableForTest = false,
-                            isBaseContent = false,
-                            role = Role(
-                                uuid = UUID.randomUUID().toString(),
-                                displayName = "Role",
-                                description = "",
-                                displayIcon = ""
-                            ),
-                            recruitment = null,
-                            abilities = listOf(),
-                        )
-                    )
-                )
-            )
-        )
     }
 }

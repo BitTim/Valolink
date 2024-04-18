@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,31 +19,36 @@ class ContractsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            gameRepository.getAllContracts().collect { contracts ->
+            gameRepository.getAllActiveContracts().collect { contracts ->
                 _state.update { it.copy(isLoading = true) }
-
-                val activeContracts = contracts.filter {
-                    it.relation?.startTime != null && it.relation.endTime != null && ZonedDateTime.now()
-                        .isAfter(it.relation.startTime) && ZonedDateTime.now()
-                        .isBefore(it.relation.endTime)
-                }
-
-                val agentContracts = contracts.filter {
-                    it.content.relationType == "Agent"
-                }
-
-                val inactiveContracts = contracts.filter {
-                    (it.relation?.endTime != null && ZonedDateTime.now()
-                        .isAfter(it.relation.endTime)) && (it.relation.startTime != null && ZonedDateTime.now()
-                        .isAfter(it.relation.startTime))
-                }
 
                 _state.update {
                     it.copy(
-                        isLoading = false,
-                        activeContracts = activeContracts,
-                        agentContracts = agentContracts,
-                        inactiveContracts = inactiveContracts
+                        isLoading = false, activeContracts = contracts
+                    )
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            gameRepository.getAllAgentGears().collect { contracts ->
+                _state.update { it.copy(isLoading = true) }
+
+                _state.update {
+                    it.copy(
+                        isLoading = false, agentGears = contracts
+                    )
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            gameRepository.getAllInactiveContracts().collect { contracts ->
+                _state.update { it.copy(isLoading = true) }
+
+                _state.update {
+                    it.copy(
+                        isLoading = false, inactiveContracts = contracts
                     )
                 }
             }

@@ -8,14 +8,15 @@ import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
 import dev.bittim.valolink.feature.content.domain.model.Event
 import dev.bittim.valolink.feature.content.domain.model.Season
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
+import dev.bittim.valolink.feature.content.domain.model.contract.ContentRelation
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
-import dev.bittim.valolink.feature.content.domain.model.contract.ContractRelation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 class ApiGameRepository @Inject constructor(
@@ -130,6 +131,86 @@ class ApiGameRepository @Inject constructor(
 
 
 
+    override suspend fun getAgent(uuid: String, providedVersion: String?): Flow<Agent> {
+        val version = providedVersion ?: getApiVersion()?.version
+        if (version.isNullOrEmpty()) {
+            return flow { }
+        }
+
+        return gameDatabase.dao.getAgent(uuid).distinctUntilChanged().transform { entity ->
+            if (entity == null || entity.agent.version != version) {
+                val response = gameApi.getAgent(uuid)
+                if (response.isSuccessful) {
+                    val agentDto = response.body()!!.data!!
+                    val agent = agentDto.toEntity(version)
+                    val recruitment = agentDto.recruitmentData?.toEntity(version)
+                    val role = agentDto.role.toEntity(version)
+                    val abilities = agentDto.abilities.map {
+                        it.toEntity(version, agent.uuid)
+                    }
+
+                    gameDatabase.withTransaction {
+                        gameDatabase.dao.upsertAgent(
+                            role, agent, abilities.distinct().toSet()
+                        )
+
+                        if (recruitment != null) {
+                            gameDatabase.dao.upsertAgentRecruitment(
+                                recruitment
+                            )
+                        }
+                    }
+                }
+            } else {
+                emit(entity)
+            }
+        }.map { it.toType() }
+    }
+
+    override suspend fun getAllAgents(providedVersion: String?): Flow<List<Agent>> {
+        val version = providedVersion ?: getApiVersion()?.version
+        if (version.isNullOrEmpty()) {
+            return flow { }
+        }
+
+        return gameDatabase.dao.getAllAgents().distinctUntilChanged().transform { entities ->
+            if (entities.isEmpty() || entities.any { it.agent.version != version }) {
+                val response = gameApi.getAllAgents()
+                if (response.isSuccessful) {
+                    val agentDto = response.body()!!.data!!
+                    val agents = agentDto.map { it.toEntity(version) }
+
+                    val recruitments = agentDto.mapNotNull { data ->
+                        data.recruitmentData?.toEntity(version)
+                    }
+
+                    val roles = agentDto.map {
+                        it.role.toEntity(version)
+                    }
+
+                    val abilities = agentDto.zip(agents) { data, agent ->
+                        data.abilities.map {
+                            it.toEntity(version, agent.uuid)
+                        }
+                    }.flatten()
+
+                    gameDatabase.dao.upsertAllAgents(
+                        roles.distinct().toSet(),
+                        recruitments.distinct().toSet(),
+                        agents.distinct().toSet(),
+                        abilities.distinct().toSet()
+                    )
+                }
+            } else {
+                emit(entities)
+            }
+        }.map { agents ->
+            agents.map { it.toType() }
+        }
+    }
+
+
+
     override suspend fun getAllContracts(providedVersion: String?): Flow<List<Contract>> {
         val version = providedVersion ?: getApiVersion()?.version
         if (version.isNullOrEmpty()) {
@@ -183,64 +264,29 @@ class ApiGameRepository @Inject constructor(
                 emit(entities)
             }
         }.map { contracts ->
-                contracts.map { it.toType(findRelation(version, it.content.content).firstOrNull()) }
-        }
-    }
-
-
-
-    override suspend fun getAgent(uuid: String, providedVersion: String?): Flow<Agent> {
-        val version = providedVersion ?: getApiVersion()?.version
-        if (version.isNullOrEmpty()) {
-            return flow { }
-        }
-
-        return gameDatabase.dao.getAgent(uuid).distinctUntilChanged().transform { entity ->
-                if (entity == null || entity.agent.version != version) {
-                val response = gameApi.getAgent(uuid)
-                if (response.isSuccessful) {
-                    val agentDto = response.body()!!.data!!
-                    val agent = agentDto.toEntity(version)
-                    val recruitment = agentDto.recruitmentData?.toEntity(version, agent.uuid)
-                    val role = agentDto.role.toEntity(version)
-                    val abilities = agentDto.abilities.map {
-                        it.toEntity(version, agent.uuid)
-                    }
-
-                    gameDatabase.withTransaction {
-                        gameDatabase.dao.upsertAgent(
-                            role, agent, abilities.distinct().toSet()
-                        )
-
-                        if (recruitment != null) {
-                            gameDatabase.dao.upsertAgentRecruitment(
-                                recruitment
-                            )
-                        }
-                    }
-                }
-                } else {
-                    emit(entity)
+            contracts.map {
+                val relation = findRelation(version, it.content.content).firstOrNull()
+                it.toType(relation, relation?.startTime, relation?.endTime)
             }
-            }.map { it.toType() }
+        }
     }
 
-    override suspend fun getAllAgents(providedVersion: String?): Flow<List<Agent>> {
+    override suspend fun getAllRecruitmentsAsContracts(providedVersion: String?): Flow<List<Contract>> {
         val version = providedVersion ?: getApiVersion()?.version
         if (version.isNullOrEmpty()) {
             return flow { }
         }
 
-        return gameDatabase.dao.getAllAgents().distinctUntilChanged().transform { entities ->
-            if (entities.isEmpty() || entities.any { it.agent.version != version }) {
+        return gameDatabase.dao.getAllRecruitments().distinctUntilChanged().transform { entities ->
+            if (entities.isEmpty() || entities.any { it.recruitment.version != version }) {
                 val response = gameApi.getAllAgents()
                 if (response.isSuccessful) {
                     val agentDto = response.body()!!.data!!
                     val agents = agentDto.map { it.toEntity(version) }
 
-                    val recruitments = agentDto.zip(agents) { data, agent ->
-                        data.recruitmentData?.toEntity(version, agent.uuid)
-                    }.filterNotNull()
+                    val recruitments = agentDto.mapNotNull { data ->
+                        data.recruitmentData?.toEntity(version)
+                    }
 
                     val roles = agentDto.map {
                         it.role.toEntity(version)
@@ -253,18 +299,37 @@ class ApiGameRepository @Inject constructor(
                     }.flatten()
 
                     gameDatabase.dao.upsertAllAgents(
-                        roles.distinct().toSet(),
+                        roles.distinct().toSet(), recruitments.distinct().toSet(),
                         agents.distinct().toSet(),
-                        recruitments.distinct().toSet(),
                         abilities.distinct().toSet()
                     )
                 }
             } else {
                 emit(entities)
             }
-        }.map { agents ->
-            agents.map { it.toType() }
+        }.map { recruitments ->
+            recruitments.map { it.toContract() }
         }
+    }
+
+    override suspend fun getAllContractsAndRecruitments(providedVersion: String?): Flow<List<Contract>> {
+        return getAllRecruitmentsAsContracts().zip(getAllContracts()) { recruitments, contracts ->
+            recruitments.plus(contracts)
+        }
+    }
+
+
+
+    override suspend fun getAllActiveContracts(providedVersion: String?): Flow<List<Contract>> {
+        return getAllContractsAndRecruitments().map { contracts -> contracts.filter { it.isActive() } }
+    }
+
+    override suspend fun getAllAgentGears(providedVersion: String?): Flow<List<Contract>> {
+        return getAllContractsAndRecruitments().map { contracts -> contracts.filter { it.isAgentGear() } }
+    }
+
+    override suspend fun getAllInactiveContracts(providedVersion: String?): Flow<List<Contract>> {
+        return getAllContractsAndRecruitments().map { contracts -> contracts.filter { it.isInactive() } }
     }
 
 
@@ -272,7 +337,7 @@ class ApiGameRepository @Inject constructor(
     private suspend fun findRelation(
         version: String,
         content: ContentEntity
-    ): Flow<ContractRelation?> {
+    ): Flow<ContentRelation?> {
         if (content.relationType.isNullOrEmpty() || content.relationUuid.isNullOrEmpty()) {
             return flow { emit(null) }
         }
