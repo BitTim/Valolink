@@ -18,10 +18,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
@@ -30,7 +26,7 @@ import dev.bittim.valolink.feature.content.ui.contracts.components.DefaultContra
 
 @Composable
 fun ContractsScreen(
-    state: ContractsState
+    state: ContractsState, onArchiveTypeFilterChange: (ArchiveTypeFilter) -> Unit
 ) {
     if (state.isLoading) {
         Column(
@@ -153,9 +149,6 @@ fun ContractsScreen(
                         .padding(bottom = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    val options = listOf("Season", "Event", "Agent")
-                    var selectedIndex by remember { mutableIntStateOf(0) }
-
                     Text(
                         text = "Archive", style = MaterialTheme.typography.headlineMedium
                     )
@@ -163,15 +156,15 @@ fun ContractsScreen(
                     SingleChoiceSegmentedButtonRow(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        options.forEachIndexed { index, label ->
+                        ArchiveTypeFilter.entries.forEachIndexed { index, entry ->
                             SegmentedButton(
-                                selected = index == selectedIndex,
-                                onClick = { selectedIndex = index },
+                                selected = entry == state.archiveTypeFilter,
+                                onClick = { onArchiveTypeFilterChange(entry) },
                                 shape = SegmentedButtonDefaults.itemShape(
-                                    index = index, count = options.size
+                                    index = index, count = ArchiveTypeFilter.entries.count()
                                 )
                             ) {
-                                Text(text = label)
+                                Text(text = entry.displayName)
                             }
                         }
                     }

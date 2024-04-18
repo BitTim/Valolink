@@ -22,7 +22,7 @@ fun NavGraphBuilder.contractsScreen() {
         val contractsState by viewModel.state.collectAsStateWithLifecycle()
 
         ContractsScreen(
-            state = contractsState
+            state = contractsState, onArchiveTypeFilterChange = viewModel::onArchiveTypeFilterChange
         )
     }
 }
