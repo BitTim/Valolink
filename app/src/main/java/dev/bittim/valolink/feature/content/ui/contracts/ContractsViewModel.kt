@@ -1,5 +1,7 @@
 package dev.bittim.valolink.feature.content.ui.contracts
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.carousel.CarouselState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
 class ContractsViewModel @Inject constructor(
     private val gameRepository: GameRepository
@@ -35,12 +38,14 @@ class ContractsViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            gameRepository.getAllAgentGears().collect { contracts ->
+            gameRepository.getAllAgentGears().collect { gears ->
                 _state.update { it.copy(isLoading = true) }
 
                 _state.update {
                     it.copy(
-                        isLoading = false, agentGears = contracts
+                        isLoading = false,
+                        agentGears = gears,
+                        agentGearCarouselState = CarouselState(itemCount = gears::count)
                     )
                 }
             }

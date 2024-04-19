@@ -4,23 +4,30 @@ import android.graphics.RuntimeShader
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.feature.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.feature.content.ui.components.conditional
+import dev.bittim.valolink.feature.content.ui.util.parseAndSaturateColor
+import dev.bittim.valolink.ui.theme.ValolinkTheme
 import org.intellij.lang.annotations.Language
 
 @Language("AGSL")
@@ -43,7 +50,7 @@ val AGENT_GRADIENT_SHADER = """
 fun AgentCardBase(
     modifier: Modifier = Modifier,
     backgroundGradientColors: List<String>,
-    backgroundImage: String?,
+    backgroundImage: String?, isDisabled: Boolean = false,
     content: @Composable (Boolean) -> Unit
 ) {
     val useGradient = backgroundGradientColors.isNotEmpty() && backgroundGradientColors.count() >= 4
@@ -66,31 +73,31 @@ fun AgentCardBase(
                     shader.setFloatUniform("resolution", size.width, size.height)
                     onDrawBehind {
                         shader.setColorUniform(
-                            "color1", android.graphics.Color.parseColor(
+                            "color1", parseAndSaturateColor(
                                 "#" + backgroundGradientColors[0].substring(6) + backgroundGradientColors[0].substring(
                                     0, 6
-                                )
+                                ), if (isDisabled) 0.3f else 1f
                             )
                         )
                         shader.setColorUniform(
-                            "color2", android.graphics.Color.parseColor(
+                            "color2", parseAndSaturateColor(
                                 "#" + backgroundGradientColors[1].substring(6) + backgroundGradientColors[1].substring(
                                     0, 6
-                                )
+                                ), if (isDisabled) 0.3f else 1f
                             )
                         )
                         shader.setColorUniform(
-                            "color3", android.graphics.Color.parseColor(
+                            "color3", parseAndSaturateColor(
                                 "#" + backgroundGradientColors[2].substring(6) + backgroundGradientColors[2].substring(
                                     0, 6
-                                )
+                                ), if (isDisabled) 0.3f else 1f
                             )
                         )
                         shader.setColorUniform(
-                            "color4", android.graphics.Color.parseColor(
+                            "color4", parseAndSaturateColor(
                                 "#" + backgroundGradientColors[3].substring(6) + backgroundGradientColors[3].substring(
                                     0, 6
-                                )
+                                ), if (isDisabled) 0.3f else 1f
                             )
                         )
                         drawRect(shaderBrush)
@@ -101,16 +108,91 @@ fun AgentCardBase(
                 AsyncImage(
                     modifier = Modifier
                         .alpha(0.15f)
-                        .fillMaxHeight(),
-
+                        .fillMaxSize()
+                        .conditional(isDisabled) {
+                            blur(4.dp)
+                        },
                     model = backgroundImage,
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
                     placeholder = coilDebugPlaceholder(R.drawable.debug_agent_background_image)
                 )
             }
 
             content(useGradient)
+        }
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun AgentCardBaseHorizontalPreview() {
+    ValolinkTheme {
+        AgentCardBase(
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+        ) {
+            Box(Modifier.height(100.dp)) {}
+        }
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun AgentCardBaseVerticalPreview() {
+    ValolinkTheme {
+        AgentCardBase(
+            Modifier.width(100.dp),
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+        ) {
+            Box(Modifier.height(300.dp)) {}
+        }
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun DisabledAgentCardBaseHorizontalPreview() {
+    ValolinkTheme {
+        AgentCardBase(
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+            isDisabled = true
+        ) {
+            Box(Modifier.height(100.dp)) {}
+        }
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun DisabledAgentCardBaseVerticalPreview() {
+    ValolinkTheme {
+        AgentCardBase(
+            Modifier.width(100.dp),
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+            isDisabled = true
+        ) {
+            Box(Modifier.height(300.dp)) {}
         }
     }
 }

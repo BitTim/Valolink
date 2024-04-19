@@ -3,6 +3,7 @@ package dev.bittim.valolink.feature.content.domain.model.contract
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import java.util.Random
 
 data class Contract(
     val uuid: String,
@@ -25,7 +26,9 @@ data class Contract(
     fun isInactive(): Boolean {
         return endTime != null && ZonedDateTime.now().isAfter(endTime)
     }
-    
+
+
+
     fun calcTotalXp(): Int {
         return content.chapters.map { chapter ->
             chapter.levels.map { level ->
@@ -34,9 +37,23 @@ data class Contract(
         }.flatten().sum()
     }
 
+    fun calcLevelCount(): Int {
+        return content.chapters.sumOf { chapter ->
+            chapter.levels.count()
+        }
+    }
+
     fun calcRemainingDays(): Int? {
         if (startTime == null && endTime == null) return null
         val days = ZonedDateTime.now().until(endTime, ChronoUnit.DAYS).toInt()
         return if (days < 0) null else days
+    }
+
+
+
+    // TODO: Placeholder function to generate dummy data for UI
+    fun getRandomColllectedXP(): Int {
+        val random = Random()
+        return random.nextInt(calcTotalXp())
     }
 }
