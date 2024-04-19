@@ -321,7 +321,7 @@ class ApiGameRepository @Inject constructor(
 
 
     override suspend fun getAllActiveContracts(providedVersion: String?): Flow<List<Contract>> {
-        return getAllContractsAndRecruitments().map { contracts -> contracts.filter { it.isActive() } }
+        return getAllContractsAndRecruitments().map { contracts -> contracts.filter { it.isActive() }.sortedBy { it.endTime } }
     }
 
     override suspend fun getAllAgentGears(providedVersion: String?): Flow<List<Contract>> {
@@ -329,7 +329,7 @@ class ApiGameRepository @Inject constructor(
     }
 
     override suspend fun getAllInactiveContracts(providedVersion: String?): Flow<List<Contract>> {
-        return getAllContractsAndRecruitments().map { contracts -> contracts.filter { it.isInactive() } }
+        return getAllContractsAndRecruitments().map { contracts -> contracts.filter { it.isInactive() }.sortedByDescending { it.startTime } }
     }
 
 

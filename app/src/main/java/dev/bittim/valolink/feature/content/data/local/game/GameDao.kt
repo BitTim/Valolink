@@ -81,7 +81,7 @@ interface GameDao {
 
 
 
-    @Query("SELECT * FROM Seasons ORDER BY endTime DESC")
+    @Query("SELECT * FROM Seasons ORDER BY startTime DESC")
     fun getAllSeasons(): Flow<List<SeasonEntity>>
 
 
@@ -91,7 +91,7 @@ interface GameDao {
 
 
 
-    @Query("SELECT * FROM Events ORDER BY endTime DESC")
+    @Query("SELECT * FROM Events ORDER BY startTime DESC")
     fun getAllEvents(): Flow<List<EventEntity>>
 
 
@@ -113,7 +113,7 @@ interface GameDao {
 
 
     @Transaction
-    @Query("SELECT * FROM AgentRecruitments")
+    @Query("SELECT * FROM AgentRecruitments ORDER BY startDate DESC")
     fun getAllRecruitments(): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
 
 
