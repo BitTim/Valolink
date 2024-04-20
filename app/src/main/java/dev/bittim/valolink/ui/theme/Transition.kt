@@ -14,6 +14,18 @@ data object Transition {
 
     val topLevelExit = fadeOut(
         tween(
+            durationMillis = Motion.Duration.LONG_1, easing = Motion.Easing.motionEasingStandard
+        )
+    )
+
+    val forward = fadeIn(
+        tween(
+            durationMillis = Motion.Duration.LONG_1, easing = Motion.Easing.motionEasingStandard
+        )
+    )
+
+    val backward = fadeOut(
+        tween(
             durationMillis = Motion.Duration.LONG_1,
             easing = Motion.Easing.motionEasingStandard
         )

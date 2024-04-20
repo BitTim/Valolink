@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import dev.bittim.valolink.feature.auth.ui.AuthNavRoute
 import dev.bittim.valolink.feature.auth.ui.authNavGraph
 import dev.bittim.valolink.feature.auth.ui.navToAuthGraph
 import dev.bittim.valolink.feature.content.ui.main.MainNavRoute
@@ -28,12 +27,12 @@ fun RootNavGraph(
     ) {
         authNavGraph(
             navController = navController,
-            onNavToContentGraph = { navController.navToContentMain(AuthNavRoute) },
-            onNavToOnboardingGraph = { navController.navToContentMain(AuthNavRoute) } // TODO: Change to Onboarding graph
+            onNavToContentGraph = { navController.navToContentMain() },
+            onNavToOnboardingGraph = { navController.navToContentMain() } // TODO: Change to Onboarding graph
         )
 
         mainScreen(
-            onNavAuthGraph = { navController.navToAuthGraph(MainNavRoute) }
+            onNavAuthGraph = { navController.navToAuthGraph() }
         )
     }
 }

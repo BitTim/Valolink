@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import dev.bittim.valolink.feature.content.ui.contracts.contractsScreen
+import dev.bittim.valolink.feature.content.ui.contracts.contractsNavGraph
 import dev.bittim.valolink.feature.content.ui.friends.friendsScreen
 import dev.bittim.valolink.feature.content.ui.home.HomeNavRoute
 import dev.bittim.valolink.feature.content.ui.home.homeScreen
@@ -29,7 +29,7 @@ fun ContentNavGraph(
         homeScreen(
             onSignOutClicked = onSignOutClicked
         )
-        contractsScreen()
+        contractsNavGraph(navController)
         matchesScreen()
         friendsScreen()
     }

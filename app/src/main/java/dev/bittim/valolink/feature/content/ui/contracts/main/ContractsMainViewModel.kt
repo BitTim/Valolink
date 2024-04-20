@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.content.ui.contracts
+package dev.bittim.valolink.feature.content.ui.contracts.main
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.carousel.CarouselState
@@ -11,6 +11,7 @@ import dev.bittim.valolink.feature.content.domain.model.Season
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -18,15 +19,15 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HiltViewModel
-class ContractsViewModel @Inject constructor(
+class ContractsMainViewModel @Inject constructor(
     private val gameRepository: GameRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow(ContractsState())
+    private val _state = MutableStateFlow(ContractsMainState())
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            gameRepository.getAllActiveContracts().collect { contracts ->
+            gameRepository.getAllActiveContracts().collectLatest { contracts ->
                 _state.update { it.copy(isLoading = true) }
 
                 _state.update {
@@ -38,7 +39,7 @@ class ContractsViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            gameRepository.getAllAgentGears().collect { gears ->
+            gameRepository.getAllAgentGears().collectLatest { gears ->
                 _state.update { it.copy(isLoading = true) }
 
                 _state.update {
@@ -60,7 +61,7 @@ class ContractsViewModel @Inject constructor(
                         ArchiveTypeFilter.RECRUIT -> it.content.relation is Agent
                     }
                 }
-            }.collect { contracts ->
+            }.collectLatest { contracts ->
                 _state.update { it.copy(isLoading = true) }
 
                 _state.update {

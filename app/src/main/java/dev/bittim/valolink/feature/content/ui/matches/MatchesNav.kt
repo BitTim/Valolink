@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.bittim.valolink.ui.theme.Transition
@@ -28,9 +29,9 @@ fun NavGraphBuilder.matchesScreen() {
     }
 }
 
-fun NavController.navToMatches(origin: String) {
+fun NavController.navToMatches() {
     navigate(MatchesNavRoute) {
-        popUpTo(origin) {
+        popUpTo(graph.findStartDestination().id) {
             inclusive = true
             saveState = true
         }

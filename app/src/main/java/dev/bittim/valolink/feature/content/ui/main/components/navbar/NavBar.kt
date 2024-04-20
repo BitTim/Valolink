@@ -1,5 +1,6 @@
 package dev.bittim.valolink.feature.content.ui.main.components.navbar
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,16 +23,18 @@ fun NavBar(
         NavBarItem.Home, NavBarItem.Contracts, NavBarItem.Matches, NavBarItem.Friends
     )
 
-    val isNavBarDestination = navItems.any { it.route == currentDestination?.route }
-    if (!isNavBarDestination) return
+    val isNavBarDestination =
+        navItems.any { it.route == currentDestination?.route } || navItems.any { items -> items.nestedRoutes.any { it == currentDestination?.route } }
 
-    NavigationBar {
-        navItems.forEach {
-            AddNavItem(
-                navItem = it,
-                currentDestination = currentDestination,
-                navController = navController
-            )
+    AnimatedVisibility(visible = isNavBarDestination) {
+        NavigationBar {
+            navItems.forEach {
+                AddNavItem(
+                    navItem = it,
+                    currentDestination = currentDestination,
+                    navController = navController
+                )
+            }
         }
     }
 }
@@ -49,8 +52,7 @@ fun RowScope.AddNavItem(
     NavigationBarItem(
         icon = if (isSelected) navItem.activeIcon else navItem.inactiveIcon,
         label = { Text(text = navItem.title) },
-        selected = isSelected,
-        onClick = { navItem.navigation(navController, currentDestination?.route ?: "") },
+        selected = isSelected, onClick = { navItem.navigation(navController) },
         alwaysShowLabel = false
     )
 }

@@ -2,7 +2,9 @@
 
 package dev.bittim.valolink.feature.content.ui.contracts.components
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +25,9 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -31,15 +36,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.feature.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.feature.content.ui.components.conditional
+import dev.bittim.valolink.ui.theme.Motion
 import dev.bittim.valolink.ui.theme.ValolinkTheme
+
+data object AgentCarouselCard {
+    val minWidth: Dp = 180.dp
+    val minCompressedWidth: Dp = 64.dp
+    val preferredWidth: Dp = 272.dp
+    val height: Dp = 192.dp
+}
 
 @Composable
 fun AgentCarouselCard(
@@ -50,19 +64,31 @@ fun AgentCarouselCard(
     roleIcon: String,
     agentName: String,
     roleName: String,
-    isLocked: Boolean, isCompressed: Boolean,
+    isLocked: Boolean,
     unlockedLevels: Int,
-    totalLevels: Int, percentage: Int
+    totalLevels: Int,
+    percentage: Int,
+    maskedWidth: Float? = null,
+    isCompressedOverride: Boolean = false
 ) {
+    val density = LocalDensity.current
+    var isCompressed by remember {
+        mutableStateOf(isCompressedOverride)
+    }
+    
     AgentCardBase(
-        modifier = modifier,
+        modifier = modifier.onSizeChanged {
+            isCompressed = with(density) {
+                isCompressedOverride || it.width < AgentCarouselCard.minWidth.toPx() || if (maskedWidth != null) maskedWidth < AgentCarouselCard.minWidth.toPx() else false
+            }
+        },
         backgroundGradientColors = backgroundGradientColors,
         backgroundImage = backgroundImage,
         isDisabled = isLocked
     ) {
         Box(
             modifier = Modifier
-                .height(192.dp)
+                .height(AgentCarouselCard.height)
                 .background(
                     Brush.verticalGradient(
                         listOf(
@@ -85,82 +111,93 @@ fun AgentCarouselCard(
                 placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_full_portrait)
             )
 
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+            Crossfade(
+                targetState = isCompressed, animationSpec = tween(
+                    durationMillis = Motion.Duration.LONG_1,
+                    easing = Motion.Easing.motionEasingStandard
+                ), label = ""
             ) {
-                if (!isCompressed) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = agentName, style = MaterialTheme.typography.titleLarge
-                        )
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    if (!it) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .height(16.dp)
-                                    .aspectRatio(1f),
-                                model = roleIcon,
-                                contentDescription = null,
-                                contentScale = ContentScale.FillHeight,
-                                placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_role_icon)
+                            Text(
+                                text = agentName, style = MaterialTheme.typography.titleLarge
                             )
 
-                            Text(
-                                text = roleName, style = MaterialTheme.typography.labelMedium
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .height(16.dp)
+                                        .aspectRatio(1f),
+                                    model = roleIcon,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.FillHeight,
+                                    placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_role_icon)
+                                )
+
+                                Text(
+                                    text = roleName, style = MaterialTheme.typography.labelMedium
+                                )
+                            }
                         }
                     }
-                }
 
-                if (isCompressed) Spacer(modifier = Modifier.width(1.dp))
+                    if (it) {
+                        Spacer(modifier = Modifier.width(1.dp))
+                    }
 
-                if (!isLocked) {
-                    val animatedProgress by animateFloatAsState(
-                        targetValue = (percentage / 100f),
-                        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-                        label = ""
-                    )
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        CircularProgressIndicator(
-                            progress = {
-                                animatedProgress
-                            },
-                            modifier = Modifier
-                                .height(32.dp)
-                                .aspectRatio(1f),
-                            color = Color.White,
-                            trackColor = Color.Black.copy(alpha = 0.2f),
+                    if (!isLocked) {
+                        val animatedProgress by animateFloatAsState(
+                            targetValue = (percentage / 100f),
+                            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                            label = ""
                         )
 
-                        if (!isCompressed) {
-                            Text(
-                                text = "$unlockedLevels / $totalLevels",
-                                style = MaterialTheme.typography.labelSmall
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                progress = {
+                                    animatedProgress
+                                },
+                                modifier = Modifier
+                                    .height(32.dp)
+                                    .aspectRatio(1f),
+                                color = Color.White,
+                                trackColor = Color.Black.copy(alpha = 0.2f),
                             )
-                        }
-                    }
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        tint = Color.White,
-                        contentDescription = null
-                    )
-                }
 
-                if (isCompressed) Spacer(modifier = Modifier.width(1.dp))
+                            if (!it) {
+                                Text(
+                                    text = "$unlockedLevels / $totalLevels",
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            tint = Color.White,
+                            contentDescription = null
+                        )
+                    }
+
+                    if (it) {
+                        Spacer(modifier = Modifier.width(1.dp))
+                    }
+                }
             }
         }
     }
@@ -183,7 +220,6 @@ fun AgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = false,
-            isCompressed = false,
             3,
             10,
             30
@@ -206,7 +242,6 @@ fun LockedAgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = true,
-            isCompressed = false,
             0,
             10,
             0,
@@ -219,8 +254,7 @@ fun LockedAgentCarouselCardPreview() {
 @Preview(showBackground = true)
 @Composable
 fun SmallestAgentCarouselCardPreview() {
-    val density = LocalDensity.current
-    val width = 184.dp
+    val width = AgentCarouselCard.minWidth
 
     ValolinkTheme {
         AgentCarouselCard(
@@ -234,7 +268,6 @@ fun SmallestAgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = false,
-            isCompressed = width < density.fontScale * 184.dp,
             3,
             10,
             30
@@ -247,8 +280,7 @@ fun SmallestAgentCarouselCardPreview() {
 @Preview(showBackground = true)
 @Composable
 fun SmallestLockedAgentCarouselCardPreview() {
-    val density = LocalDensity.current
-    val width = 184.dp
+    val width = AgentCarouselCard.minWidth
 
     ValolinkTheme {
         AgentCarouselCard(
@@ -262,7 +294,6 @@ fun SmallestLockedAgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = true,
-            isCompressed = width < density.fontScale * 184.dp,
             3,
             10,
             30
@@ -287,10 +318,10 @@ fun CompressedAgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = false,
-            isCompressed = true,
             3,
             10,
-            30
+            30,
+            isCompressedOverride = true
         )
     }
 }
@@ -312,10 +343,10 @@ fun CompressedLockedAgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = true,
-            isCompressed = true,
             0,
             10,
             0,
+            isCompressedOverride = true
         )
     }
 }

@@ -1,19 +1,13 @@
 package dev.bittim.valolink.feature.content.ui.main
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.navigation.NavHostController
 import dev.bittim.valolink.feature.content.ui.ContentNavGraph
 import dev.bittim.valolink.feature.content.ui.main.components.navbar.NavBar
@@ -22,48 +16,26 @@ import dev.bittim.valolink.feature.content.ui.main.components.navbar.NavBar
 fun MainScreen(
     state: MainState,
     navController: NavHostController,
-    onCheckAuth: () -> Unit,
     onSignOutClicked: () -> Unit,
     onNavAuthGraph: () -> Unit
 ) {
-    onCheckAuth()
+    if (!state.isAuthenticated) {
+        onNavAuthGraph()
+    }
 
-    when (state) {
-        is MainState.NoAuth -> {
-            LaunchedEffect(key1 = Unit) {
-                onNavAuthGraph()
-            }
-        }
-
-        is MainState.Loading -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Authenticating...",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.padding(4.dp))
-                CircularProgressIndicator()
-            }
-        }
-
-        is MainState.Content -> {
-            Scaffold(
-                Modifier.fillMaxSize(), bottomBar = {
-                    NavBar(navController = navController)
-                }
-            ) {
-                ContentNavGraph(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it),
-                    navController = navController,
-                    onSignOutClicked = onSignOutClicked
-                )
-            }
-        }
+    Scaffold(
+        Modifier.fillMaxSize(), bottomBar = {
+            NavBar(navController = navController)
+        }, contentWindowInsets = WindowInsets.systemBars
+    ) {
+        ContentNavGraph(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    start = it.calculateLeftPadding(LocalLayoutDirection.current),
+                    bottom = it.calculateBottomPadding(),
+                    end = it.calculateRightPadding(LocalLayoutDirection.current)
+                ), navController = navController, onSignOutClicked = onSignOutClicked
+        )
     }
 }

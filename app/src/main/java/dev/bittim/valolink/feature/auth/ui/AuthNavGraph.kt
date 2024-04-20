@@ -1,6 +1,7 @@
 package dev.bittim.valolink.feature.auth.ui
 
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
 import dev.bittim.valolink.feature.auth.ui.signin.SignInNavRoute
@@ -30,9 +31,9 @@ fun NavGraphBuilder.authNavGraph(
     }
 }
 
-fun NavController.navToAuthGraph(origin: String) {
+fun NavController.navToAuthGraph() {
     navigate(AuthNavRoute) {
-        popUpTo(origin) {
+        popUpTo(graph.findStartDestination().id) {
             inclusive = true
         }
         launchSingleTop = true

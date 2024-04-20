@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.content.ui.friends
+package dev.bittim.valolink.feature.content.ui.contracts.main
 
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -9,28 +9,29 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import dev.bittim.valolink.ui.theme.Transition
 
-const val FriendsNavRoute = "friends"
+const val ContractsMainNavRoute = "main"
 
-fun NavGraphBuilder.friendsScreen() {
-    composable(
-        route = FriendsNavRoute,
+fun NavGraphBuilder.contractsMainScreen(
+    onNavToGearList: () -> Unit
+) {
+    composable(route = ContractsMainNavRoute,
         enterTransition = { Transition.topLevelEnter },
         exitTransition = { Transition.topLevelExit },
         popEnterTransition = { Transition.topLevelEnter },
-        popExitTransition = { Transition.topLevelExit }
-    ) {
-        val viewModel: FriendsViewModel = hiltViewModel()
-        val friendsState by viewModel.friendsState.collectAsStateWithLifecycle()
+        popExitTransition = { Transition.topLevelExit }) {
+        val viewModel: ContractsMainViewModel = hiltViewModel()
+        val contractsMainState by viewModel.state.collectAsStateWithLifecycle()
 
-        FriendsScreen(
-            state = friendsState,
-            onFetch = viewModel::onFetch
+        ContractsMainScreen(
+            state = contractsMainState,
+            onArchiveTypeFilterChange = viewModel::onArchiveTypeFilterChange,
+            onNavToGearList = onNavToGearList
         )
     }
 }
 
-fun NavController.navToFriends() {
-    navigate(FriendsNavRoute) {
+fun NavController.navToContractsMain() {
+    navigate(ContractsMainNavRoute) {
         popUpTo(graph.findStartDestination().id) {
             inclusive = true
             saveState = true

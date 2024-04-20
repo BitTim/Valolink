@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.feature.content.data.repository.game.GameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -13,10 +14,10 @@ import javax.inject.Inject
 class MatchesViewModel @Inject constructor(
     private val gameRepository: GameRepository
 ) : ViewModel() {
-    private var _matchesState = MutableStateFlow<MatchesState>(MatchesState.Fetching)
+    private var _matchesState = MutableStateFlow(MatchesState())
     val matchesState = _matchesState.asStateFlow()
 
     fun onFetch() = viewModelScope.launch {
-        _matchesState.value = MatchesState.Content
+        _matchesState.update { it.copy(isLoading = true) }
     }
 }

@@ -13,7 +13,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import dev.bittim.valolink.feature.content.ui.contracts.ContractsNavRoute
-import dev.bittim.valolink.feature.content.ui.contracts.navToContracts
+import dev.bittim.valolink.feature.content.ui.contracts.gearlist.ContractsGearListNavRoute
+import dev.bittim.valolink.feature.content.ui.contracts.main.ContractsMainNavRoute
+import dev.bittim.valolink.feature.content.ui.contracts.navToContractsGraph
 import dev.bittim.valolink.feature.content.ui.friends.FriendsNavRoute
 import dev.bittim.valolink.feature.content.ui.friends.navToFriends
 import dev.bittim.valolink.feature.content.ui.home.HomeNavRoute
@@ -23,10 +25,9 @@ import dev.bittim.valolink.feature.content.ui.matches.navToMatches
 
 sealed class NavBarItem(
     val title: String,
-    val route: String,
+    val route: String, val nestedRoutes: List<String> = listOf(),
     val activeIcon: @Composable () -> Unit,
-    val inactiveIcon: @Composable () -> Unit,
-    val navigation: (NavController, String) -> Unit
+    val inactiveIcon: @Composable () -> Unit, val navigation: (NavController) -> Unit
 ) {
     data object Home : NavBarItem(
         title = "Home",
@@ -39,9 +40,10 @@ sealed class NavBarItem(
     data object Contracts : NavBarItem(
         title = "Contracts",
         route = ContractsNavRoute,
+        nestedRoutes = listOf(ContractsMainNavRoute, ContractsGearListNavRoute),
         activeIcon = { Icon(imageVector = Icons.Filled.Map, contentDescription = "Map") },
         inactiveIcon = { Icon(imageVector = Icons.Outlined.Map, contentDescription = "Map") },
-        navigation = NavController::navToContracts
+        navigation = NavController::navToContractsGraph
     )
 
     data object Matches : NavBarItem(
