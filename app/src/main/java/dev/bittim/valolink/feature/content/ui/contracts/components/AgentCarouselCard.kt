@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -30,8 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.feature.content.ui.components.coilDebugPlaceholder
@@ -47,10 +50,9 @@ fun AgentCarouselCard(
     roleIcon: String,
     agentName: String,
     roleName: String,
-    isLocked: Boolean,
+    isLocked: Boolean, isCompressed: Boolean,
     unlockedLevels: Int,
-    totalLevels: Int,
-    percentage: Int,
+    totalLevels: Int, percentage: Int
 ) {
     AgentCardBase(
         modifier = modifier,
@@ -90,32 +92,36 @@ fun AgentCarouselCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = agentName, style = MaterialTheme.typography.titleLarge
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                if (!isCompressed) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .height(16.dp)
-                                .aspectRatio(1f),
-                            model = roleIcon,
-                            contentDescription = null,
-                            contentScale = ContentScale.FillHeight,
-                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_role_icon)
+                        Text(
+                            text = agentName, style = MaterialTheme.typography.titleLarge
                         )
 
-                        Text(
-                            text = roleName, style = MaterialTheme.typography.labelMedium
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .height(16.dp)
+                                    .aspectRatio(1f),
+                                model = roleIcon,
+                                contentDescription = null,
+                                contentScale = ContentScale.FillHeight,
+                                placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_role_icon)
+                            )
+
+                            Text(
+                                text = roleName, style = MaterialTheme.typography.labelMedium
+                            )
+                        }
                     }
                 }
+
+                if (isCompressed) Spacer(modifier = Modifier.width(1.dp))
 
                 if (!isLocked) {
                     val animatedProgress by animateFloatAsState(
@@ -139,10 +145,12 @@ fun AgentCarouselCard(
                             trackColor = Color.Black.copy(alpha = 0.2f),
                         )
 
-                        Text(
-                            text = "$unlockedLevels / $totalLevels",
-                            style = MaterialTheme.typography.labelSmall
-                        )
+                        if (!isCompressed) {
+                            Text(
+                                text = "$unlockedLevels / $totalLevels",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
                     }
                 } else {
                     Icon(
@@ -151,6 +159,8 @@ fun AgentCarouselCard(
                         contentDescription = null
                     )
                 }
+
+                if (isCompressed) Spacer(modifier = Modifier.width(1.dp))
             }
         }
     }
@@ -173,14 +183,13 @@ fun AgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = false,
+            isCompressed = false,
             3,
             10,
             30
         )
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
@@ -197,9 +206,116 @@ fun LockedAgentCarouselCardPreview() {
             agentName = "Clove",
             roleName = "Controller",
             isLocked = true,
+            isCompressed = false,
             0,
             10,
-            0
+            0,
+        )
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun SmallestAgentCarouselCardPreview() {
+    val density = LocalDensity.current
+    val width = 184.dp
+
+    ValolinkTheme {
+        AgentCarouselCard(
+            Modifier.width(width),
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+            fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
+            roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
+            agentName = "Clove",
+            roleName = "Controller",
+            isLocked = false,
+            isCompressed = width < density.fontScale * 184.dp,
+            3,
+            10,
+            30
+        )
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun SmallestLockedAgentCarouselCardPreview() {
+    val density = LocalDensity.current
+    val width = 184.dp
+
+    ValolinkTheme {
+        AgentCarouselCard(
+            Modifier.width(width),
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+            fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
+            roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
+            agentName = "Clove",
+            roleName = "Controller",
+            isLocked = true,
+            isCompressed = width < density.fontScale * 184.dp,
+            3,
+            10,
+            30
+        )
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun CompressedAgentCarouselCardPreview() {
+    ValolinkTheme {
+        AgentCarouselCard(
+            Modifier.width(100.dp),
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+            fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
+            roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
+            agentName = "Clove",
+            roleName = "Controller",
+            isLocked = false,
+            isCompressed = true,
+            3,
+            10,
+            30
+        )
+    }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun CompressedLockedAgentCarouselCardPreview() {
+    ValolinkTheme {
+        AgentCarouselCard(
+            Modifier.width(100.dp),
+            backgroundGradientColors = listOf(
+                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
+            ),
+            backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
+            fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
+            roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
+            agentName = "Clove",
+            roleName = "Controller",
+            isLocked = true,
+            isCompressed = true,
+            0,
+            10,
+            0,
         )
     }
 }

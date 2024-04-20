@@ -33,7 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 import dev.bittim.valolink.feature.content.ui.contracts.components.AgentCarouselCard
@@ -138,6 +140,8 @@ fun ContractsScreen(
         }
 
         item {
+            val density = LocalDensity.current
+            
             HorizontalMultiBrowseCarousel(
                 state = state.agentGearCarouselState,
                 preferredItemWidth = 300.dp,
@@ -173,7 +177,8 @@ fun ContractsScreen(
                             (unlockedLevelsList[index].toFloat() / gear.calcLevelCount()
                                 .toFloat()) * 100f
                         ).toInt(),
-                        isLocked = isLockedList[index]
+                        isLocked = isLockedList[index],
+                        isCompressed = this.carouselItemInfo.maskRect.width.dp < density.density * 184.dp
                     )
                 }
             }
