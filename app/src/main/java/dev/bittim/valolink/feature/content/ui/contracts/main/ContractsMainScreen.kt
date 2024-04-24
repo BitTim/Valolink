@@ -52,7 +52,8 @@ import kotlin.math.floor
 fun ContractsMainScreen(
     state: ContractsMainState,
     onArchiveTypeFilterChange: (ArchiveTypeFilter) -> Unit,
-    onNavToGearList: () -> Unit
+    onNavToGearList: () -> Unit,
+    onNavToAgentDetails: (String) -> Unit
 ) {
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -111,7 +112,7 @@ fun ContractsMainScreen(
                         backgroundGradientColors = it.content.relation.backgroundGradientColors
                     }
 
-                    val collected = it.getRandomColllectedXP()
+                    val collected = it.getRandomCollectedXP()
 
                     DefaultContractCard(
                         displayName = it.displayName,
@@ -187,6 +188,7 @@ fun ContractsMainScreen(
                             fullPortrait = gear.content.relation.fullPortrait,
                             roleIcon = gear.content.relation.role.displayIcon,
                             agentName = gear.content.relation.displayName,
+                            contractUuid = gear.uuid,
                             roleName = gear.content.relation.role.displayName,
                             totalLevels = gear.calcLevelCount(),
                             // TODO: Placeholder values as no userdata is present yet
@@ -196,7 +198,8 @@ fun ContractsMainScreen(
                                     .toFloat()) * 100f
                             ).toInt(),
                             isLocked = isLockedList[index],
-                            maskedWidth = carouselItemInfo.maskRect.width
+                            maskedWidth = carouselItemInfo.maskRect.width,
+                            onNavToAgentDetails = onNavToAgentDetails
                         )
                     }
                 }
@@ -255,7 +258,7 @@ fun ContractsMainScreen(
                         backgroundGradientColors = it.content.relation.backgroundGradientColors
                     }
 
-                    val collected = it.getRandomColllectedXP()
+                    val collected = it.getRandomCollectedXP()
 
                     DefaultContractCard(
                         displayName = it.displayName,

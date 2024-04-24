@@ -6,6 +6,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import dev.bittim.valolink.feature.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.feature.content.ui.components.conditional
 import dev.bittim.valolink.ui.theme.Motion
 import dev.bittim.valolink.ui.theme.ValolinkTheme
+import java.util.UUID
 
 data object AgentCarouselCard {
     val minWidth: Dp = 180.dp
@@ -63,13 +65,15 @@ fun AgentCarouselCard(
     fullPortrait: String,
     roleIcon: String,
     agentName: String,
+    contractUuid: String,
     roleName: String,
     isLocked: Boolean,
     unlockedLevels: Int,
     totalLevels: Int,
     percentage: Int,
     maskedWidth: Float? = null,
-    isCompressedOverride: Boolean = false
+    isCompressedOverride: Boolean = false,
+    onNavToAgentDetails: (String) -> Unit
 ) {
     val density = LocalDensity.current
     var isCompressed by remember {
@@ -77,11 +81,15 @@ fun AgentCarouselCard(
     }
     
     AgentCardBase(
-        modifier = modifier.onSizeChanged {
-            isCompressed = with(density) {
-                isCompressedOverride || it.width < AgentCarouselCard.minWidth.toPx() || if (maskedWidth != null) maskedWidth < AgentCarouselCard.minWidth.toPx() else false
+        modifier = modifier
+            .onSizeChanged {
+                isCompressed = with(density) {
+                    isCompressedOverride || it.width < AgentCarouselCard.minWidth.toPx() || if (maskedWidth != null) maskedWidth < AgentCarouselCard.minWidth.toPx() else false
+                }
             }
-        },
+            .clickable {
+                onNavToAgentDetails(contractUuid)
+            },
         backgroundGradientColors = backgroundGradientColors,
         backgroundImage = backgroundImage,
         isDisabled = isLocked
@@ -218,11 +226,13 @@ fun AgentCarouselCardPreview() {
             fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
             roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
             agentName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             roleName = "Controller",
             isLocked = false,
             3,
             10,
-            30
+            30,
+            onNavToAgentDetails = {}
         )
     }
 }
@@ -240,11 +250,13 @@ fun LockedAgentCarouselCardPreview() {
             fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
             roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
             agentName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             roleName = "Controller",
             isLocked = true,
             0,
             10,
             0,
+            onNavToAgentDetails = {}
         )
     }
 }
@@ -266,11 +278,13 @@ fun SmallestAgentCarouselCardPreview() {
             fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
             roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
             agentName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             roleName = "Controller",
             isLocked = false,
             3,
             10,
-            30
+            30,
+            onNavToAgentDetails = {}
         )
     }
 }
@@ -292,11 +306,13 @@ fun SmallestLockedAgentCarouselCardPreview() {
             fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
             roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
             agentName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             roleName = "Controller",
             isLocked = true,
             3,
             10,
-            30
+            30,
+            onNavToAgentDetails = {}
         )
     }
 }
@@ -316,12 +332,14 @@ fun CompressedAgentCarouselCardPreview() {
             fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
             roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
             agentName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             roleName = "Controller",
             isLocked = false,
             3,
             10,
             30,
-            isCompressedOverride = true
+            isCompressedOverride = true,
+            onNavToAgentDetails = {}
         )
     }
 }
@@ -341,12 +359,14 @@ fun CompressedLockedAgentCarouselCardPreview() {
             fullPortrait = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
             roleIcon = "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png",
             agentName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             roleName = "Controller",
             isLocked = true,
             0,
             10,
             0,
-            isCompressedOverride = true
+            isCompressedOverride = true,
+            onNavToAgentDetails = {}
         )
     }
 }

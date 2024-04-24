@@ -19,7 +19,8 @@ import dev.bittim.valolink.ui.theme.ValolinkTheme
 fun AgentCardBase(
     modifier: Modifier = Modifier,
     backgroundGradientColors: List<String>,
-    backgroundImage: String?, isDisabled: Boolean = false,
+    backgroundImage: String?,
+    isDisabled: Boolean = false,
     content: @Composable (Boolean) -> Unit
 ) {
     val useGradient = backgroundGradientColors.isNotEmpty() && backgroundGradientColors.count() >= 4

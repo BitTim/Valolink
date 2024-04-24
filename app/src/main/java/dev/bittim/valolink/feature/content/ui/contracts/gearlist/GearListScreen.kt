@@ -30,7 +30,7 @@ import dev.bittim.valolink.feature.content.ui.contracts.components.AgentCarousel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GearListScreen(
-    state: GearListState, onNavBack: () -> Unit
+    state: GearListState, onNavBack: () -> Unit, onNavToAgentDetails: (String) -> Unit
 ) {
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -71,12 +71,14 @@ fun GearListScreen(
                         fullPortrait = it.content.relation.fullPortrait,
                         roleIcon = it.content.relation.role.displayIcon,
                         agentName = it.content.relation.displayName,
+                        contractUuid = it.uuid,
                         roleName = it.content.relation.role.displayName,
                         totalLevels = it.calcLevelCount(),
                         // TODO: Fake data
                         isLocked = false,
                         unlockedLevels = 3,
-                        percentage = 30
+                        percentage = 30,
+                        onNavToAgentDetails = onNavToAgentDetails
                     )
                 }
             })

@@ -31,6 +31,9 @@ interface GameApi {
     @GET("events")
     suspend fun getAllEvents(): Response<GameApiResponse<List<EventDto>>>
 
+    @GET("contract/{uuid}")
+    suspend fun getContract(@Path("uuid") uuid: String): Response<GameApiResponse<ContractDto>>
+
     @GET("contracts")
     suspend fun getAllContracts(): Response<GameApiResponse<List<ContractDto>>>
 

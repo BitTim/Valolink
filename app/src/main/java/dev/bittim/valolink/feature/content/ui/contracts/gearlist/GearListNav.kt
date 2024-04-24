@@ -11,16 +11,18 @@ import dev.bittim.valolink.ui.theme.Transition
 const val ContractsGearListNavRoute = "gearlist"
 
 fun NavGraphBuilder.contractsGearListScreen(
-    onNavBack: () -> Unit
+    onNavBack: () -> Unit,
+    onNavToAgentDetails: (String) -> Unit
 ) {
     composable(route = ContractsGearListNavRoute,
         enterTransition = { Transition.forward },
-        popExitTransition = { Transition.backward }) {
+        popExitTransition = { Transition.backward }
+    ) {
         val viewModel: GearListViewModel = hiltViewModel()
         val gearListState by viewModel.state.collectAsStateWithLifecycle()
 
         GearListScreen(
-            state = gearListState, onNavBack = onNavBack
+            state = gearListState, onNavBack = onNavBack, onNavToAgentDetails = onNavToAgentDetails
         )
     }
 }

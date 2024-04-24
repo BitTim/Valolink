@@ -4,6 +4,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
+import dev.bittim.valolink.feature.content.ui.contracts.agentdetails.contractsAgentDetailsScreen
+import dev.bittim.valolink.feature.content.ui.contracts.agentdetails.navToContractsAgentDetails
 import dev.bittim.valolink.feature.content.ui.contracts.gearlist.contractsGearListScreen
 import dev.bittim.valolink.feature.content.ui.contracts.gearlist.navToContractsGearList
 import dev.bittim.valolink.feature.content.ui.contracts.main.ContractsMainNavRoute
@@ -16,8 +18,17 @@ fun NavGraphBuilder.contractsNavGraph(
     navigation(
         startDestination = ContractsMainNavRoute, route = ContractsNavRoute
     ) {
-        contractsMainScreen(onNavToGearList = { navController.navToContractsGearList() })
-        contractsGearListScreen(onNavBack = { navController.popBackStack() })
+        contractsMainScreen(
+            onNavToGearList = { navController.navToContractsGearList() },
+            onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) }
+        )
+        contractsGearListScreen(
+            onNavBack = { navController.popBackStack() },
+            onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) }
+        )
+        contractsAgentDetailsScreen(
+            onNavBack = { navController.popBackStack() }
+        )
     }
 }
 

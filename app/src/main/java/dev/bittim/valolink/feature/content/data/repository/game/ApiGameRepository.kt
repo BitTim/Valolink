@@ -210,6 +210,59 @@ class ApiGameRepository @Inject constructor(
     }
 
 
+    override suspend fun getContract(uuid: String, providedVersion: String?): Flow<Contract> {
+        val version = providedVersion ?: getApiVersion()?.version
+        if (version.isNullOrEmpty()) {
+            return flow { }
+        }
+
+        return gameDatabase.dao.getContract(uuid).distinctUntilChanged().transform { entity ->
+            if (entity.contract.version != version) {
+                val response = gameApi.getContract(uuid)
+                if (response.isSuccessful) {
+                    val contractDto = response.body()!!.data!!
+
+                    val contract = contractDto.toEntity(version)
+                    val content = contractDto.content.toEntity(version, contract.uuid)
+
+                    val chapterDto = contractDto.content.chapters
+                    val chapters = contractDto.content.chapters.map {
+                        it.toEntity(version, content.uuid)
+                    }
+
+                    val levelDto = chapterDto.map { it.levels }.flatten()
+                    val levels = chapterDto.zip(chapters) { data, chapter ->
+                        data.levels.map {
+                            it.toEntity(version, chapter.uuid)
+                        }
+                    }.flatten()
+
+                    val rewards = levelDto.zip(levels) { data, level ->
+                        data.reward.toEntity(version, levelUuid = level.uuid)
+                    }.plus(
+                        chapterDto.zip(chapters) { data, chapter ->
+                            data.freeRewards?.map {
+                                it.toEntity(version, chapterUuid = chapter.uuid)
+                            }.orEmpty()
+                        }.flatten()
+                    )
+
+                    gameDatabase.dao.upsertContract(
+                        contract,
+                        content,
+                        chapters.distinct().toSet(),
+                        levels.distinct().toSet(),
+                        rewards.distinct().toSet()
+                    )
+                }
+            } else {
+                emit(entity)
+            }
+        }.map {
+            val relation = findRelation(version, it.content.content).firstOrNull()
+            it.toType(relation, relation?.startTime, relation?.endTime)
+        }
+    }
 
     override suspend fun getAllContracts(providedVersion: String?): Flow<List<Contract>> {
         val version = providedVersion ?: getApiVersion()?.version

@@ -12,7 +12,8 @@ import dev.bittim.valolink.ui.theme.Transition
 const val ContractsMainNavRoute = "main"
 
 fun NavGraphBuilder.contractsMainScreen(
-    onNavToGearList: () -> Unit
+    onNavToGearList: () -> Unit,
+    onNavToAgentDetails: (String) -> Unit
 ) {
     composable(route = ContractsMainNavRoute,
         enterTransition = { Transition.topLevelEnter },
@@ -25,7 +26,8 @@ fun NavGraphBuilder.contractsMainScreen(
         ContractsMainScreen(
             state = contractsMainState,
             onArchiveTypeFilterChange = viewModel::onArchiveTypeFilterChange,
-            onNavToGearList = onNavToGearList
+            onNavToGearList = onNavToGearList,
+            onNavToAgentDetails = onNavToAgentDetails
         )
     }
 }

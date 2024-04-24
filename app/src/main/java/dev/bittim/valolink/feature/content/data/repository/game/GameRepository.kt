@@ -14,6 +14,7 @@ interface GameRepository {
     suspend fun getEvent(uuid: String, providedVersion: String? = null): Flow<Event>
     suspend fun getAllEvents(providedVersion: String? = null): Flow<List<Event>>
 
+    suspend fun getContract(uuid: String, providedVersion: String? = null): Flow<Contract>
     suspend fun getAllContracts(providedVersion: String? = null): Flow<List<Contract>>
     suspend fun getAllRecruitmentsAsContracts(providedVersion: String? = null): Flow<List<Contract>>
     suspend fun getAllContractsAndRecruitments(providedVersion: String? = null): Flow<List<Contract>>

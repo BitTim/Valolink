@@ -38,6 +38,15 @@ interface GameDao {
     suspend fun upsertAllEvents(seasons: List<EventEntity>)
 
 
+    @Transaction
+    @Upsert
+    suspend fun upsertContract(
+        contract: ContractEntity,
+        content: ContentEntity,
+        chapters: Set<ChapterEntity>,
+        levels: Set<LevelEntity>,
+        rewards: Set<RewardEntity>
+    )
 
     @Transaction
     @Upsert
@@ -105,6 +114,8 @@ interface GameDao {
     fun getAllAgents(): Flow<List<AgentWithRoleAndAbilities>>
 
 
+    @Query("SELECT * FROM Contracts WHERE uuid = :uuid LIMIT 1")
+    fun getContract(uuid: String): Flow<ContractWithContentWithChaptersWithLevelsAndRewards>
 
     @Transaction
     @Query("SELECT * FROM Contracts")

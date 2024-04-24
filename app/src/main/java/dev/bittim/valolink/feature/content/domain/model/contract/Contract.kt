@@ -52,7 +52,7 @@ data class Contract(
 
 
     // TODO: Placeholder function to generate dummy data for UI
-    fun getRandomColllectedXP(): Int {
+    fun getRandomCollectedXP(): Int {
         val random = Random()
         return random.nextInt(calcTotalXp())
     }
