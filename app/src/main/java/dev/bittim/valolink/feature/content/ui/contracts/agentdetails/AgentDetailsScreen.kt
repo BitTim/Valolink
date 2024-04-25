@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -39,9 +39,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
@@ -55,8 +60,14 @@ import dev.bittim.valolink.feature.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.feature.content.ui.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.feature.content.ui.contracts.components.AgentBackdrop
 import dev.bittim.valolink.ui.theme.ValolinkTheme
+import java.util.Random
 import java.util.UUID
 import kotlin.math.floor
+
+data object AgentDetailsScreen {
+    val maxTitleCardHeight: Dp = 352.dp
+    val minTitleCardHeight: Dp = 204.dp
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,13 +79,27 @@ fun AgentDetailsScreen(
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
     if (state.agentGear != null && state.agentGear.content.relation is Agent) {
+        val density = LocalDensity.current
+
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+        val scrollState = rememberScrollState()
+        val headerSize = with(density) {
+            max(
+                AgentDetailsScreen.minTitleCardHeight,
+                AgentDetailsScreen.maxTitleCardHeight - scrollState.value.toDp()
+            )
+        }
+
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(1f),
+            verticalArrangement = Arrangement.Top
         ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.4f),
+                    .height(headerSize),
                 colors = CardDefaults.cardColors().copy(contentColor = Color.White),
                 shape = MaterialTheme.shapes.large.copy(
                     topStart = CornerSize(0.dp),
@@ -130,8 +155,9 @@ fun AgentDetailsScreen(
                             }
                         }
 
-                        val unlockedLevels = 3
+                        val random = Random()
                         val totalLevels = state.agentGear.calcLevelCount()
+                        val unlockedLevels = random.nextInt(totalLevels)
                         val percentage =
                             floor((unlockedLevels.toFloat() / totalLevels.toFloat()) * 100f)
 
@@ -173,8 +199,10 @@ fun AgentDetailsScreen(
                                 )
                             }
                         },
+                        scrollBehavior = scrollBehavior,
                         colors = TopAppBarDefaults.topAppBarColors().copy(
                             containerColor = Color.Transparent,
+                            scrolledContainerColor = Color.Transparent,
                             titleContentColor = Color.White,
                             navigationIconContentColor = Color.White,
                             actionIconContentColor = Color.White.copy(alpha = 0.7f)
@@ -182,104 +210,138 @@ fun AgentDetailsScreen(
                     )
                 }
             }
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(top = headerSize - 16.dp)
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .offset(y = AgentDetailsScreen.maxTitleCardHeight - headerSize)
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
 
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Rewards",
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                    Text(
+                        text = "Rewards",
+                        style = MaterialTheme.typography.titleLarge
+                    )
 
-                        IconButton(onClick = onNavGearRewardsList) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                                contentDescription = null
-                            )
-                        }
-                    }
-
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = state.agentGear.content.chapters.flatMap { chapter -> chapter.levels },
-                            itemContent = {
-                                AgentRewardCard(
-                                    name = it.reward.uuid,
-                                    type = it.reward.type,
-                                    price = it.doughCost,
-                                    displayIcon = "",
-                                    currencyIcon = ""
-                                )
-                            }
+                    IconButton(onClick = onNavGearRewardsList) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowForward,
+                            contentDescription = null
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "Details",
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = state.agentGear.content.relation.displayName,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = state.agentGear.content.relation.description,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .height(16.dp)
-                                    .aspectRatio(1f),
-                                model = state.agentGear.content.relation.role.displayIcon,
-                                contentDescription = null,
-                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                                placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_role_icon)
-                            )
-                            Text(
-                                text = state.agentGear.content.relation.role.displayName,
-                                style = MaterialTheme.typography.titleMedium
+                    items(
+                        items = state.agentGear.content.chapters.flatMap { chapter -> chapter.levels },
+                        itemContent = {
+                            AgentRewardCard(
+                                name = it.reward.uuid,
+                                type = it.reward.type,
+                                price = it.doughCost,
+                                displayIcon = "",
+                                currencyIcon = ""
                             )
                         }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = state.agentGear.content.relation.displayName,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = state.agentGear.content.relation.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .height(16.dp)
+                                .aspectRatio(1f),
+                            model = state.agentGear.content.relation.role.displayIcon,
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_role_icon)
+                        )
                         Text(
-                            text = state.agentGear.content.relation.description,
-                            style = MaterialTheme.typography.bodyMedium
+                            text = state.agentGear.content.relation.role.displayName,
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
+                    Text(
+                        text = state.agentGear.content.relation.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "Abilities",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = "Placeholder",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = state.agentGear.content.relation.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = state.agentGear.content.relation.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = state.agentGear.content.relation.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = state.agentGear.content.relation.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }
