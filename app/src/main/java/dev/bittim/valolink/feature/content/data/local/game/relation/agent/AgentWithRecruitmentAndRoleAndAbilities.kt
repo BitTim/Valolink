@@ -12,9 +12,10 @@ data class AgentWithRoleAndAbilities(
         parentColumn = "role", entityColumn = "uuid"
     ) val role: RoleEntity, @Relation(
         parentColumn = "uuid", entityColumn = "agentUuid"
-    ) val abilities: List<AbilityEntity>
+    ) val abilities: Set<AbilityEntity>
 ) {
     fun toType(): Agent {
-        return agent.toType(role.toType(), abilities.map { it.toType() })
+        return agent.toType(role.toType(),
+            abilities.map { it.toType() }.filter { it.displayIcon != null }.sortedBy { it.slot })
     }
 }

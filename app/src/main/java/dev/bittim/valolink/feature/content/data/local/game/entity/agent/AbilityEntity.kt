@@ -17,7 +17,7 @@ import dev.bittim.valolink.feature.content.domain.model.agent.Ability
     ]
 )
 data class AbilityEntity(
-    @PrimaryKey val uuid: String, val agentUuid: String,
+    @PrimaryKey val id: String, val agentUuid: String,
     override val version: String,
     val slot: String,
     val displayName: String,

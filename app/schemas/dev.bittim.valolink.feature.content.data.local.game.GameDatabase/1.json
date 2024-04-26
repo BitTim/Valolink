@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "173bb01bf8d46a358166bdb1adbd3acd",
+    "identityHash": "2426e448298239d7f40c85303186fbaa",
     "entities": [
       {
         "tableName": "Seasons",
@@ -732,11 +732,11 @@
       },
       {
         "tableName": "AgentAbilities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `agentUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `slot` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `displayIcon` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`agentUuid`) REFERENCES `Agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `agentUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `slot` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `displayIcon` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`agentUuid`) REFERENCES `Agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "uuid",
-            "columnName": "uuid",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -780,7 +780,7 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "uuid"
+            "id"
           ]
         },
         "indices": [],
@@ -802,7 +802,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '173bb01bf8d46a358166bdb1adbd3acd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2426e448298239d7f40c85303186fbaa')"
     ]
   }
 }

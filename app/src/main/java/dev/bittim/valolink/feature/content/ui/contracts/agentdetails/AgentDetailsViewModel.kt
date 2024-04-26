@@ -34,4 +34,8 @@ class AgentDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    fun onAbilityChanged(index: Int) {
+        _state.update { it.copy(selectedAbility = index) }
+    }
 }

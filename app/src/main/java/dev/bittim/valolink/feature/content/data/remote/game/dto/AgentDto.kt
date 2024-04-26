@@ -4,7 +4,6 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.agent.AbilityE
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.AgentEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.RecruitmentEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.RoleEntity
-import java.util.UUID
 
 data class AgentDto(
     val uuid: String,
@@ -97,7 +96,7 @@ data class AgentDto(
     ) {
         fun toEntity(version: String, agentUuid: String): AbilityEntity {
             return AbilityEntity(
-                UUID.randomUUID().toString(),
+                agentUuid + slot,
                 agentUuid,
                 version,
                 slot,

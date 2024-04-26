@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
@@ -30,10 +33,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +55,7 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.feature.content.domain.model.agent.Ability
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
 import dev.bittim.valolink.feature.content.domain.model.agent.Role
 import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
@@ -57,6 +64,7 @@ import dev.bittim.valolink.feature.content.domain.model.contract.Content
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 import dev.bittim.valolink.feature.content.domain.model.contract.Reward
 import dev.bittim.valolink.feature.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.feature.content.ui.contracts.agentdetails.components.AbilityDetailsItem
 import dev.bittim.valolink.feature.content.ui.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.feature.content.ui.contracts.components.AgentBackdrop
 import dev.bittim.valolink.ui.theme.ValolinkTheme
@@ -72,7 +80,7 @@ data object AgentDetailsScreen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgentDetailsScreen(
-    state: AgentDetailsState,
+    state: AgentDetailsState, onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit
 ) {
@@ -88,6 +96,18 @@ fun AgentDetailsScreen(
                 AgentDetailsScreen.minTitleCardHeight,
                 AgentDetailsScreen.maxTitleCardHeight - scrollState.value.toDp()
             )
+        }
+
+        val abilityPagerState = rememberPagerState {
+            state.agentGear.content.relation.abilities.count()
+        }
+        
+        LaunchedEffect(state.selectedAbility) {
+            abilityPagerState.animateScrollToPage(state.selectedAbility)
+        }
+
+        LaunchedEffect(abilityPagerState.currentPage, abilityPagerState.isScrollInProgress) {
+            if (!abilityPagerState.isScrollInProgress) onAbilityTabChanged(abilityPagerState.currentPage)
         }
 
         Column(
@@ -272,10 +292,11 @@ fun AgentDetailsScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
@@ -289,6 +310,7 @@ fun AgentDetailsScreen(
                 }
 
                 Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Row(
@@ -319,36 +341,53 @@ fun AgentDetailsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         text = "Abilities",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    Text(
-                        text = "Placeholder",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = state.agentGear.content.relation.description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = state.agentGear.content.relation.description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = state.agentGear.content.relation.description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = state.agentGear.content.relation.description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+
+                    TabRow(selectedTabIndex = state.selectedAbility) {
+                        state.agentGear.content.relation.abilities.forEachIndexed { index, ability ->
+                            val isSelected = index == state.selectedAbility
+
+                            Tab(selected = isSelected,
+                                onClick = { onAbilityTabChanged(index) },
+                                icon = {
+                                    AsyncImage(
+                                        modifier = Modifier.padding(12.dp),
+                                        model = ability.displayIcon,
+                                        contentDescription = ability.displayName,
+                                        colorFilter = ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
+                                        placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_ability_icon)
+                                    )
+                                })
+                        }
+                    }
+
+                    HorizontalPager(
+                        modifier = Modifier.fillMaxWidth(), state = abilityPagerState
+                    ) { index ->
+                        val ability = state.agentGear.content.relation.abilities[index]
+
+                        AbilityDetailsItem(
+                            modifier = Modifier.padding(16.dp),
+                            displayName = ability.displayName,
+                            slot = ability.slot,
+                            description = ability.description,
+                            displayIcon = ability.displayIcon
+                        )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(AgentDetailsScreen.maxTitleCardHeight - headerSize + 16.dp))
         }
     }
 }
 
-@Preview(showBackground = true)
+
+
+@Preview(showBackground = true, heightDp = 2000)
 @Composable
 fun AgentDetailsScreenPreview() {
     ValolinkTheme {
@@ -389,7 +428,33 @@ fun AgentDetailsScreenPreview() {
                                 "Controllers are experts in slicing up dangerous territory to set their team up for success.",
                                 "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png"
                             ),
-                            listOf()
+                            listOf(
+                                Ability(
+                                    UUID.randomUUID().toString(),
+                                    "Grenade",
+                                    "Pick-Me-Up",
+                                    "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
+                                    "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
+                                ), Ability(
+                                    UUID.randomUUID().toString(),
+                                    "Aility2",
+                                    "Pick-Me-Up",
+                                    "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
+                                    "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
+                                ), Ability(
+                                    UUID.randomUUID().toString(),
+                                    "Ultimate",
+                                    "Pick-Me-Up",
+                                    "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
+                                    "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
+                                ), Ability(
+                                    UUID.randomUUID().toString(),
+                                    "Ability1",
+                                    "Pick-Me-Up",
+                                    "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
+                                    "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
+                                )
+                            )
                         ),
                         -1,
                         listOf(
@@ -430,7 +495,7 @@ fun AgentDetailsScreenPreview() {
                     null,
                     null
                 )
-            ),
+            ), onAbilityTabChanged = {},
             onNavBack = {},
             onNavGearRewardsList = {}
         )
