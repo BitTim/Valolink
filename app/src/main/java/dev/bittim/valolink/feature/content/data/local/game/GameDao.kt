@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import dev.bittim.valolink.feature.content.data.local.game.entity.CurrencyEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.EventEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.SeasonEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.AbilityEntity
@@ -85,6 +86,13 @@ interface GameDao {
 
 
 
+    @Upsert
+    suspend fun upsertCurrency(currency: CurrencyEntity)
+
+    // ================================
+    //  Queries
+    // ================================
+
     @Query("SELECT * FROM Seasons WHERE uuid = :uuid LIMIT 1")
     fun getSeason(uuid: String): Flow<SeasonEntity?>
 
@@ -129,9 +137,6 @@ interface GameDao {
 
 
 
-    @Query("DELETE FROM Seasons")
-    suspend fun clearAllSeasons()
-
-    @Query("DELETE FROM Contracts")
-    suspend fun clearAllContracts()
+    @Query("SELECT * FROM Currencies WHERE uuid = :uuid LIMIT 1")
+    fun getCurrency(uuid: String): Flow<CurrencyEntity>
 }

@@ -5,6 +5,7 @@ import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
 import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
+import dev.bittim.valolink.feature.content.domain.model.Currency
 import dev.bittim.valolink.feature.content.domain.model.Event
 import dev.bittim.valolink.feature.content.domain.model.Season
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
@@ -410,5 +411,25 @@ class ApiGameRepository @Inject constructor(
 
             else     -> flow { emit(null) }
         }
+    }
+
+
+
+    override suspend fun getCurrency(uuid: String, providedVersion: String?): Flow<Currency> {
+        val version = providedVersion ?: getApiVersion()?.version
+        if (version.isNullOrEmpty()) {
+            return flow { }
+        }
+        
+        return gameDatabase.dao.getCurrency(uuid).distinctUntilChanged().transform { entity ->
+            if (entity == null || entity.version != version) {
+                val response = gameApi.getCurrency(uuid)
+                if (response.isSuccessful) {
+                    gameDatabase.dao.upsertCurrency(response.body()!!.data!!.toEntity(version))
+                }
+            } else {
+                emit(entity)
+            }
+        }.map { it.toType() }
     }
 }

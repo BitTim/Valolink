@@ -1,6 +1,7 @@
 package dev.bittim.valolink.feature.content.data.repository.game
 
 import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
+import dev.bittim.valolink.feature.content.domain.model.Currency
 import dev.bittim.valolink.feature.content.domain.model.Event
 import dev.bittim.valolink.feature.content.domain.model.Season
 import dev.bittim.valolink.feature.content.domain.model.agent.Agent
@@ -25,4 +26,6 @@ interface GameRepository {
 
     suspend fun getAgent(uuid: String, providedVersion: String? = null): Flow<Agent>
     suspend fun getAllAgents(providedVersion: String? = null): Flow<List<Agent>>
+
+    suspend fun getCurrency(uuid: String, providedVersion: String? = null): Flow<Currency>
 }

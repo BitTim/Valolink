@@ -2,6 +2,7 @@ package dev.bittim.valolink.feature.content.data.remote.game
 
 import dev.bittim.valolink.feature.content.data.remote.game.dto.AgentDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.ContractDto
+import dev.bittim.valolink.feature.content.data.remote.game.dto.CurrencyDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.EventDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.SeasonDto
 import dev.bittim.valolink.feature.content.data.remote.game.dto.VersionDto
@@ -47,6 +48,14 @@ interface GameApi {
     @GET("agents?isPlayableCharacter=true")
     suspend fun getAllAgents(): Response<GameApiResponse<List<AgentDto>>>
 
+
+
+    @GET("currencies/{uuid}")
+    suspend fun getCurrency(@Path("uuid") uuid: String): Response<GameApiResponse<CurrencyDto>>
+
+    
+    
+    
     companion object {
         const val BASE_URL = "https://valorant-api.com/v1/"
     }

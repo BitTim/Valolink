@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,7 +40,7 @@ fun AgentRewardCard(
     type: String,
     price: Int,
     displayIcon: String,
-    currencyIcon: String,
+    currencyIcon: String, isUnlocked: Boolean = false
 ) {
     Card(
         modifier = modifier
@@ -89,6 +90,7 @@ fun AgentRewardCard(
                                     .aspectRatio(1f),
                                 model = currencyIcon,
                                 contentDescription = null,
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
                                 placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_kingdom_kreds)
                             )
 

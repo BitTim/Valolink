@@ -273,8 +273,7 @@ fun AgentDetailsScreen(
                                 name = it.reward.uuid,
                                 type = it.reward.type,
                                 price = it.doughCost,
-                                displayIcon = "",
-                                currencyIcon = ""
+                                displayIcon = "", currencyIcon = state.dough?.displayIcon ?: ""
                             )
                         }
                     )

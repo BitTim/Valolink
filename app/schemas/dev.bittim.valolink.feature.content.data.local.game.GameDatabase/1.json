@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2426e448298239d7f40c85303186fbaa",
+    "identityHash": "8687eb2310061527cc2902b30f1f6ec5",
     "entities": [
       {
         "tableName": "Seasons",
@@ -797,12 +797,62 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "Currencies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayNameSingular` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `largeIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayNameSingular",
+            "columnName": "displayNameSingular",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "largeIcon",
+            "columnName": "largeIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2426e448298239d7f40c85303186fbaa')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8687eb2310061527cc2902b30f1f6ec5')"
     ]
   }
 }

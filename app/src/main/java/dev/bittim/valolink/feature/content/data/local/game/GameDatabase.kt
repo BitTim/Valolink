@@ -3,6 +3,7 @@ package dev.bittim.valolink.feature.content.data.local.game
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import dev.bittim.valolink.feature.content.data.local.game.entity.CurrencyEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.EventEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.SeasonEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.AbilityEntity
@@ -22,7 +23,9 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.contract.Rewar
         ContractEntity::class, ContentEntity::class,
         ChapterEntity::class, LevelEntity::class, RewardEntity::class,
 
-        AgentEntity::class, RecruitmentEntity::class, RoleEntity::class, AbilityEntity::class
+        AgentEntity::class, RecruitmentEntity::class, RoleEntity::class, AbilityEntity::class,
+
+        CurrencyEntity::class
     ],
     version = 1
 )
