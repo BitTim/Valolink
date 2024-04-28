@@ -224,17 +224,19 @@ class ApiGameRepository @Inject constructor(
                     val contractDto = response.body()!!.data!!
 
                     val contract = contractDto.toEntity(version)
-                    val content = contractDto.content.toEntity(version, contract.uuid)
+                    val content = contractDto.content.toEntity(
+                        contract.freeRewardScheduleUuid, version, contract.uuid
+                    )
 
                     val chapterDto = contractDto.content.chapters
-                    val chapters = contractDto.content.chapters.map {
-                        it.toEntity(version, content.uuid)
+                    val chapters = contractDto.content.chapters.mapIndexed { index, chapter ->
+                        chapter.toEntity(index, version, content.uuid)
                     }
 
                     val levelDto = chapterDto.map { it.levels }.flatten()
                     val levels = chapterDto.zip(chapters) { data, chapter ->
-                        data.levels.map {
-                            it.toEntity(version, chapter.uuid)
+                        data.levels.mapIndexed { index, level ->
+                            level.toEntity(index, version, chapter.uuid)
                         }
                     }.flatten()
 
@@ -279,20 +281,22 @@ class ApiGameRepository @Inject constructor(
                     val contracts = contractDto.map { it.toEntity(version) }
 
                     val contents = contractDto.zip(contracts) { data, contract ->
-                        data.content.toEntity(version, contract.uuid)
+                        data.content.toEntity(
+                            contract.freeRewardScheduleUuid, version, contract.uuid
+                        )
                     }
 
                     val chapterDto = contractDto.map { it.content.chapters }.flatten()
                     val chapters = contractDto.zip(contents) { data, content ->
-                        data.content.chapters.map {
-                            it.toEntity(version, content.uuid)
+                        data.content.chapters.mapIndexed { index, chapter ->
+                            chapter.toEntity(index, version, content.uuid)
                         }
                     }.flatten()
 
                     val levelDto = chapterDto.map { it.levels }.flatten()
                     val levels = chapterDto.zip(chapters) { data, chapter ->
-                        data.levels.map {
-                            it.toEntity(version, chapter.uuid)
+                        data.levels.mapIndexed { index, level ->
+                            level.toEntity(index, version, chapter.uuid)
                         }
                     }.flatten()
 

@@ -2,6 +2,7 @@ package dev.bittim.valolink.feature.content.data.local.game.entity.agent
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.agent.Ability
@@ -22,7 +23,9 @@ import dev.bittim.valolink.feature.content.domain.model.agent.Role
             childColumns = ["recruitment"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
-        )
+        )], indices = [Index(
+        value = ["uuid"], unique = true
+    )
     ]
 )
 data class AgentEntity(

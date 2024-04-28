@@ -39,9 +39,9 @@ data class ContractDto(
         val premiumRewardScheduleUuid: String?,
         val premiumVPCost: Int
     ) {
-        fun toEntity(version: String, contractUuid: String): ContentEntity {
+        fun toEntity(uuid: String, version: String, contractUuid: String): ContentEntity {
             return ContentEntity(
-                UUID.randomUUID().toString(),
+                uuid,
                 contractUuid,
                 version,
                 relationType,
@@ -58,9 +58,9 @@ data class ContractDto(
             val levels: List<ChapterLevelDto>,
             val freeRewards: List<RewardDto>?
         ) {
-            fun toEntity(version: String, contentUuid: String): ChapterEntity {
+            fun toEntity(index: Int, version: String, contentUuid: String): ChapterEntity {
                 return ChapterEntity(
-                    UUID.randomUUID().toString(), contentUuid, version, isEpilogue
+                    contentUuid + "_" + index, contentUuid, version, isEpilogue
                 )
             }
 
@@ -74,9 +74,9 @@ data class ContractDto(
                 val doughCost: Int,
                 val isPurchasableWithDough: Boolean
             ) {
-                fun toEntity(version: String, chapterUuid: String): LevelEntity {
+                fun toEntity(index: Int, version: String, chapterUuid: String): LevelEntity {
                     return LevelEntity(
-                        UUID.randomUUID().toString(),
+                        chapterUuid + "_" + index,
                         chapterUuid,
                         version,
                         xp,
@@ -100,7 +100,7 @@ data class ContractDto(
                     levelUuid: String? = null
                 ): RewardEntity {
                     return RewardEntity(
-                        UUID.randomUUID().toString(),
+                        chapterUuid ?: levelUuid ?: UUID.randomUUID().toString(),
                         levelUuid,
                         chapterUuid,
                         version,

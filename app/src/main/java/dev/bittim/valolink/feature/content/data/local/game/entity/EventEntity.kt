@@ -1,11 +1,16 @@
 package dev.bittim.valolink.feature.content.data.local.game.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.domain.model.Event
 import java.time.ZonedDateTime
 
-@Entity(tableName = "Events")
+@Entity(
+    tableName = "Events", indices = [Index(
+        value = ["uuid"], unique = true
+    )]
+)
 data class EventEntity(
     @PrimaryKey
     val uuid: String,

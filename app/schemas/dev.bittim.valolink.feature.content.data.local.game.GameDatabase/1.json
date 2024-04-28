@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8687eb2310061527cc2902b30f1f6ec5",
+    "identityHash": "337db69d33740590d905681c007bfe69",
     "entities": [
       {
         "tableName": "Seasons",
@@ -57,7 +57,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Seasons_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Seasons_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -113,7 +123,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Events_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Events_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -181,7 +201,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Contracts_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Contracts_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -237,7 +267,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_ContractContents_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ContractContents_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "Contracts",
@@ -287,7 +327,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_ContractChapters_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ContractChapters_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "ContractContents",
@@ -361,7 +411,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_ContractChapterLevels_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ContractChapterLevels_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "ContractChapters",
@@ -435,7 +495,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_ContractRewards_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ContractRewards_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "ContractChapterLevels",
@@ -598,7 +668,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Agents_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Agents_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "AgentRoles",
@@ -677,7 +757,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_AgentRecruitments_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_AgentRecruitments_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -727,7 +817,17 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_AgentRoles_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_AgentRoles_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -783,7 +883,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_AgentAbilities_id",
+            "unique": true,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_AgentAbilities_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "Agents",
@@ -845,14 +955,24 @@
             "uuid"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Currencies_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Currencies_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8687eb2310061527cc2902b30f1f6ec5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '337db69d33740590d905681c007bfe69')"
     ]
   }
 }

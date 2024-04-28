@@ -2,6 +2,7 @@ package dev.bittim.valolink.feature.content.data.local.game.entity.contract
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.Chapter
@@ -17,8 +18,9 @@ import dev.bittim.valolink.feature.content.domain.model.contract.Reward
             childColumns = ["contentUuid"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
-        )
-    ] 
+        )], indices = [Index(
+        value = ["uuid"], unique = true
+    )]
 )
 data class ChapterEntity(
     @PrimaryKey

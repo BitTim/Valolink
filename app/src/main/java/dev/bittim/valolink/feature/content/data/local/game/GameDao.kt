@@ -138,5 +138,5 @@ interface GameDao {
 
 
     @Query("SELECT * FROM Currencies WHERE uuid = :uuid LIMIT 1")
-    fun getCurrency(uuid: String): Flow<CurrencyEntity>
+    fun getCurrency(uuid: String): Flow<CurrencyEntity?>
 }

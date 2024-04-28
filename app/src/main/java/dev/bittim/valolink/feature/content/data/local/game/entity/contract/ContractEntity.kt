@@ -1,13 +1,18 @@
 package dev.bittim.valolink.feature.content.data.local.game.entity.contract
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.Content
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 import java.time.ZonedDateTime
 
-@Entity(tableName = "Contracts")
+@Entity(
+    tableName = "Contracts", indices = [Index(
+        value = ["uuid"], unique = true
+    )]
+)
 data class ContractEntity(
     @PrimaryKey
     val uuid: String,
