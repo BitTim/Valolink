@@ -69,15 +69,15 @@ class AgentApiRepository @Inject constructor(
             }
 
             gameDatabase.withTransaction {
-                gameDatabase.agentDao.upsertAgent(
-                    role, agent, abilities.distinct().toSet()
-                )
-
                 if (recruitment != null) {
                     gameDatabase.contractsDao.upsertAgentRecruitment(
                         recruitment
                     )
                 }
+                
+                gameDatabase.agentDao.upsertAgent(
+                    role, agent, abilities.distinct().toSet()
+                )
             }
         }
     }
@@ -105,14 +105,14 @@ class AgentApiRepository @Inject constructor(
             }.flatten()
 
             gameDatabase.withTransaction {
+                gameDatabase.contractsDao.upsertMultipleAgentRecruitments(
+                    recruitments.distinct().toSet()
+                )
+                
                 gameDatabase.agentDao.upsertAllAgents(
                     roles.distinct().toSet(),
                     agents.distinct().toSet(),
                     abilities.distinct().toSet()
-                )
-
-                gameDatabase.contractsDao.upsertMultipleAgentRecruitments(
-                    recruitments.distinct().toSet()
                 )
             }
         }
