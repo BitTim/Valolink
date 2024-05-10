@@ -13,6 +13,6 @@ data class ContractsMainState @OptIn(ExperimentalMaterial3Api::class) constructo
     val agentGearCarouselState: CarouselState = CarouselState(itemCount = agentGears::count)
 )
 
-enum class ArchiveTypeFilter(val displayName: String) {
-    SEASON("Season"), EVENT("Event"), RECRUIT("Recruit")
+enum class ArchiveTypeFilter(val displayName: String, val internalType: String) {
+    SEASON("Season", "Season"), EVENT("Event", "Event"), RECRUIT("Recruit", "Recruitment")
 }

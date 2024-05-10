@@ -15,8 +15,18 @@ import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
 import dev.bittim.valolink.feature.content.data.repository.FirebaseUserRepository
 import dev.bittim.valolink.feature.content.data.repository.UserRepository
-import dev.bittim.valolink.feature.content.data.repository.game.ApiGameRepository
-import dev.bittim.valolink.feature.content.data.repository.game.GameRepository
+import dev.bittim.valolink.feature.content.data.repository.game.AgentApiRepository
+import dev.bittim.valolink.feature.content.data.repository.game.AgentRepository
+import dev.bittim.valolink.feature.content.data.repository.game.ContractApiRepository
+import dev.bittim.valolink.feature.content.data.repository.game.ContractRepository
+import dev.bittim.valolink.feature.content.data.repository.game.CurrencyApiRepository
+import dev.bittim.valolink.feature.content.data.repository.game.CurrencyRepository
+import dev.bittim.valolink.feature.content.data.repository.game.EventApiRepository
+import dev.bittim.valolink.feature.content.data.repository.game.EventRepository
+import dev.bittim.valolink.feature.content.data.repository.game.SeasonApiRepository
+import dev.bittim.valolink.feature.content.data.repository.game.SeasonRepository
+import dev.bittim.valolink.feature.content.data.repository.game.VersionApiRepository
+import dev.bittim.valolink.feature.content.data.repository.game.VersionRepository
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -26,12 +36,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ContentModule {
-    @Provides
-    @Singleton
-    fun provideUserRepository(auth: FirebaseAuth): UserRepository {
-        return FirebaseUserRepository(auth)
-    }
-
+    // --------------------------------
+    //  Database
+    // --------------------------------
     @Provides
     @Singleton
     fun providesMoshi(): Moshi {
@@ -49,6 +56,10 @@ object ContentModule {
             "game.db"
         ).addTypeConverter(GameConverter(moshi)).build()
     }
+
+    // --------------------------------
+    //  Api
+    // --------------------------------
 
     @Provides
     @Singleton
@@ -84,9 +95,83 @@ object ContentModule {
             .create(GameApi::class.java)
     }
 
+    // --------------------------------
+    //  Repositories
+    // --------------------------------
+
     @Provides
     @Singleton
-    fun providesGameRepository(gameDatabase: GameDatabase, gameApi: GameApi): GameRepository {
-        return ApiGameRepository(gameDatabase, gameApi)
+    fun provideUserRepository(auth: FirebaseAuth): UserRepository {
+        return FirebaseUserRepository(auth)
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun providesVersionRepository(gameDatabase: GameDatabase, gameApi: GameApi): VersionRepository {
+        return VersionApiRepository(gameApi)
+    }
+    
+    
+
+    @Provides
+    @Singleton
+    fun providesSeasonRepository(
+        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+    ): SeasonRepository {
+        return SeasonApiRepository(gameDatabase, gameApi, versionRepository)
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun providesEventRepository(
+        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+    ): EventRepository {
+        return EventApiRepository(gameDatabase, gameApi, versionRepository)
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun providesAgentRepository(
+        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+    ): AgentRepository {
+        return AgentApiRepository(gameDatabase, gameApi, versionRepository)
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun providesContractRepository(
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
+        seasonRepository: SeasonRepository,
+        eventRepository: EventRepository,
+        agentRepository: AgentRepository
+    ): ContractRepository {
+        return ContractApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository,
+            seasonRepository,
+            eventRepository,
+            agentRepository
+        )
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun providesCurrencyRepository(
+        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+    ): CurrencyRepository {
+        return CurrencyApiRepository(gameDatabase, gameApi, versionRepository)
     }
 }

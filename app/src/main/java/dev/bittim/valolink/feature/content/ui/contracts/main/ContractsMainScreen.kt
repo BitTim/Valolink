@@ -119,7 +119,7 @@ fun ContractsMainScreen(
                         displayIcon = displayIcon,
                         backgroundImage = backgroundImage,
                         backgroundGradientColors = backgroundGradientColors,
-                        remainingDays = it.calcRemainingDays(),
+                        remainingDays = it.content.relation?.calcRemainingDays(),
                         totalXp = it.calcTotalXp(),
                         // TODO: Placeholder values as no userdata is present yet
                         collectedXp = collected,
@@ -265,7 +265,7 @@ fun ContractsMainScreen(
                         displayIcon = displayIcon,
                         backgroundImage = backgroundImage,
                         backgroundGradientColors = backgroundGradientColors,
-                        remainingDays = it.calcRemainingDays(),
+                        remainingDays = it.content.relation?.calcRemainingDays(),
                         totalXp = it.calcTotalXp(),
                         // TODO: Placeholder values as no userdata is present yet
                         collectedXp = collected,

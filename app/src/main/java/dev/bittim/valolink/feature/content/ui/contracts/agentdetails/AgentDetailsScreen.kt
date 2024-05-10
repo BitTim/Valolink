@@ -270,8 +270,8 @@ fun AgentDetailsScreen(
                         items = state.agentGear.content.chapters.flatMap { chapter -> chapter.levels },
                         itemContent = {
                             AgentRewardCard(
-                                name = it.reward.uuid,
-                                type = it.reward.type,
+                                name = it.reward.rewardUuid ?: "",
+                                type = it.reward.rewardType ?: "",
                                 price = it.doughCost,
                                 displayIcon = "", currencyIcon = state.dough?.displayIcon ?: ""
                             )
@@ -468,8 +468,7 @@ fun AgentDetailsScreenPreview() {
                                         Reward(
                                             "Spray",
                                             "7221ab04-4a64-9a0f-ba1e-e7a423f5ed4b",
-                                            1,
-                                            false
+                                            1, false, null
                                         )
                                     ),
                                     ChapterLevel(
@@ -481,8 +480,7 @@ fun AgentDetailsScreenPreview() {
                                         Reward(
                                             "PlayerCard",
                                             "faa3c3b5-4b0b-1f20-b383-01b7b83126ff",
-                                            1,
-                                            false
+                                            1, false, null
                                         )
                                     )
                                 ),
@@ -490,9 +488,7 @@ fun AgentDetailsScreenPreview() {
                                 false
                             )
                         )
-                    ),
-                    null,
-                    null
+                    )
                 )
             ), onAbilityTabChanged = {},
             onNavBack = {},

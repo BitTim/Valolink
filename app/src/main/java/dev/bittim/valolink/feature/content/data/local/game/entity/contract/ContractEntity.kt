@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.Content
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
-import java.time.ZonedDateTime
 
 @Entity(
     tableName = "Contracts", indices = [Index(
@@ -25,13 +24,9 @@ data class ContractEntity(
     val freeRewardScheduleUuid: String,
     val assetPath: String
 ) : GameEntity() {
-    fun toType(content: Content, startTime: ZonedDateTime?, endTime: ZonedDateTime?): Contract {
+    fun toType(content: Content): Contract {
         return Contract(
-            uuid,
-            displayName,
-            useLevelVPCostOverride,
-            levelVPCostOverride,
-            content, startTime, endTime
+            uuid, displayName, useLevelVPCostOverride, levelVPCostOverride, content
         )
     }
 }

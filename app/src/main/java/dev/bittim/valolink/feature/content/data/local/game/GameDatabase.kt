@@ -3,6 +3,11 @@ package dev.bittim.valolink.feature.content.data.local.game
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import dev.bittim.valolink.feature.content.data.local.game.dao.AgentDao
+import dev.bittim.valolink.feature.content.data.local.game.dao.ContractsDao
+import dev.bittim.valolink.feature.content.data.local.game.dao.CurrencyDao
+import dev.bittim.valolink.feature.content.data.local.game.dao.EventDao
+import dev.bittim.valolink.feature.content.data.local.game.dao.SeasonDao
 import dev.bittim.valolink.feature.content.data.local.game.entity.CurrencyEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.EventEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.SeasonEntity
@@ -31,5 +36,9 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.contract.Rewar
 )
 @TypeConverters(GameConverter::class)
 abstract class GameDatabase : RoomDatabase() {
-    abstract val dao: GameDao
+    abstract val agentDao: AgentDao
+    abstract val contractsDao: ContractsDao
+    abstract val currencyDao: CurrencyDao
+    abstract val eventDao: EventDao
+    abstract val seasonDao: SeasonDao
 }

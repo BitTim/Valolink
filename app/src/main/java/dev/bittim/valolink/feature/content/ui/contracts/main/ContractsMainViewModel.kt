@@ -5,31 +5,29 @@ import androidx.compose.material3.carousel.CarouselState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.content.data.repository.game.GameRepository
-import dev.bittim.valolink.feature.content.domain.model.Event
-import dev.bittim.valolink.feature.content.domain.model.Season
-import dev.bittim.valolink.feature.content.domain.model.agent.Agent
+import dev.bittim.valolink.feature.content.data.repository.game.ContractRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ContractsMainViewModel @Inject constructor(
-    private val gameRepository: GameRepository
+    private val contractRepository: ContractRepository
 ) : ViewModel() {
+    private val _filterState = MutableStateFlow(ArchiveTypeFilter.SEASON)
+    
     private val _state = MutableStateFlow(ContractsMainState())
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            gameRepository.getAllActiveContracts().collectLatest { contracts ->
-                _state.update { it.copy(isLoading = true) }
-
+            contractRepository.getActiveContracts().collectLatest { contracts ->
                 _state.update {
                     it.copy(
                         isLoading = false, activeContracts = contracts
@@ -39,9 +37,7 @@ class ContractsMainViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            gameRepository.getAllAgentGears().collectLatest { gears ->
-                _state.update { it.copy(isLoading = true) }
-
+            contractRepository.getAgentGears().collectLatest { gears ->
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -53,17 +49,9 @@ class ContractsMainViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            gameRepository.getAllInactiveContracts().combine(state) { contracts, state ->
-                contracts.filter {
-                    when (state.archiveTypeFilter) {
-                        ArchiveTypeFilter.SEASON  -> it.content.relation is Season
-                        ArchiveTypeFilter.EVENT   -> it.content.relation is Event
-                        ArchiveTypeFilter.RECRUIT -> it.content.relation is Agent
-                    }
-                }
+            _filterState.flatMapLatest {
+                contractRepository.getInactiveContracts(it.internalType)
             }.collectLatest { contracts ->
-                _state.update { it.copy(isLoading = true) }
-
                 _state.update {
                     it.copy(
                         isLoading = false, inactiveContracts = contracts
@@ -75,5 +63,6 @@ class ContractsMainViewModel @Inject constructor(
 
     fun onArchiveTypeFilterChange(archiveTypeFilter: ArchiveTypeFilter) {
         _state.update { it.copy(archiveTypeFilter = archiveTypeFilter) }
+        _filterState.update { archiveTypeFilter }
     }
 }

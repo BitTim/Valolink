@@ -11,7 +11,7 @@ import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
 import dev.bittim.valolink.feature.content.domain.model.contract.Content
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
 import dev.bittim.valolink.feature.content.domain.model.contract.Reward
-import java.time.ZonedDateTime
+import java.time.Instant
 import java.util.UUID
 
 @Entity(
@@ -38,26 +38,28 @@ data class RecruitmentEntity(
     }
 
     fun toContract(agent: Agent): Contract {
+        val agentWithTime = agent.copy(
+            startTime = Instant.parse(startDate), endTime = Instant.parse(endDate)
+        )
+        
         return Contract(
             UUID.randomUUID().toString(),
             agent.displayName,
             useLevelVpCostOverride,
             levelVpCostOverride,
             Content(
-                agent, -1, listOf(
+                agentWithTime, -1, listOf(
                     Chapter(
                         listOf(
                             ChapterLevel(
                                 xp, 1000, false, 8000, true, Reward(
-                                    "Agent", agent.uuid, 1, false
+                                    "Agent", agent.uuid, 1, false, null
                                 )
                             )
                         ), listOf(), false
                     )
                 )
-            ),
-            ZonedDateTime.parse(startDate),
-            ZonedDateTime.parse(endDate)
+            )
         )
     }
 }

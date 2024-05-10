@@ -1,6 +1,5 @@
 package dev.bittim.valolink.feature.content.ui.main.components.navbar
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -26,7 +25,7 @@ fun NavBar(
     val isNavBarDestination =
         navItems.any { it.route == currentDestination?.route } || navItems.any { items -> items.nestedRoutes.any { it == currentDestination?.route } }
 
-    AnimatedVisibility(visible = isNavBarDestination) {
+    if (isNavBarDestination) {
         NavigationBar {
             navItems.forEach {
                 AddNavItem(

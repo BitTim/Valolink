@@ -1,7 +1,8 @@
 package dev.bittim.valolink.feature.content.domain.model.agent
 
 import dev.bittim.valolink.feature.content.domain.model.contract.ContentRelation
-import java.time.ZonedDateTime
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 data class Agent(
     val uuid: String,
@@ -23,6 +24,13 @@ data class Agent(
     val role: Role,
     val abilities: List<Ability>,
 
-    override val startTime: ZonedDateTime? = null,
-    override val endTime: ZonedDateTime? = null
-) : ContentRelation()
+    override val startTime: Instant? = null, override val endTime: Instant? = null
+) : ContentRelation() {
+
+    override fun calcRemainingDays(): Int? {
+        if (startTime == null || endTime == null) return null
+
+        val days = Instant.now().until(endTime, ChronoUnit.DAYS).toInt()
+        return if (days < 0) null else days
+    }
+}

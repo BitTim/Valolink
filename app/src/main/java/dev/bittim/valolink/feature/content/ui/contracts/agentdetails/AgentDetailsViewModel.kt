@@ -3,7 +3,8 @@ package dev.bittim.valolink.feature.content.ui.contracts.agentdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.content.data.repository.game.GameRepository
+import dev.bittim.valolink.feature.content.data.repository.game.ContractRepository
+import dev.bittim.valolink.feature.content.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.feature.content.domain.model.Currency
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AgentDetailsViewModel @Inject constructor(
-    private val gameRepository: GameRepository
+    private val contractRepository: ContractRepository,
+    private val currencyRepository: CurrencyRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(AgentDetailsState())
     val state = _state.asStateFlow()
@@ -25,7 +27,7 @@ class AgentDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            gameRepository.getContract(uuid).collectLatest { contract ->
+            contractRepository.getContract(uuid).collectLatest { contract ->
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -38,7 +40,7 @@ class AgentDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            gameRepository.getCurrency(Currency.doughUuid).collectLatest { currency ->
+            currencyRepository.getCurrency(Currency.doughUuid).collectLatest { currency ->
                 _state.update { it.copy(isLoading = false, dough = currency) }
             }
         }

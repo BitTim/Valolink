@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.domain.model.Event
-import java.time.ZonedDateTime
+import java.time.Instant
 
 @Entity(
     tableName = "Events", indices = [Index(
@@ -23,11 +23,7 @@ data class EventEntity(
 ) : GameEntity() {
     fun toType(): Event {
         return Event(
-            uuid,
-            displayName,
-            shortDisplayName,
-            ZonedDateTime.parse(startTime),
-            ZonedDateTime.parse(endTime)
+            uuid, displayName, shortDisplayName, Instant.parse(startTime), Instant.parse(endTime)
         )
     }
 }

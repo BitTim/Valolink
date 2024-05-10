@@ -6,7 +6,6 @@ import dev.bittim.valolink.feature.content.data.local.game.entity.contract.Conte
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContractEntity
 import dev.bittim.valolink.feature.content.domain.model.contract.ContentRelation
 import dev.bittim.valolink.feature.content.domain.model.contract.Contract
-import java.time.ZonedDateTime
 
 data class ContractWithContentWithChaptersWithLevelsAndRewards(
     @Embedded val contract: ContractEntity,
@@ -18,12 +17,10 @@ data class ContractWithContentWithChaptersWithLevelsAndRewards(
     val content: ContentWithChaptersWithLevelsAndRewards
 ) {
     fun toType(
-        relation: ContentRelation?,
-        startTime: ZonedDateTime?,
-        endTime: ZonedDateTime?
+        relation: ContentRelation?
     ): Contract {
         return contract.toType(
-            content.toType(relation), startTime, endTime
+            content.toType(relation)
         )
     }
 }

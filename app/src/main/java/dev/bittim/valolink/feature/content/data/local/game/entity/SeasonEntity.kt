@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.domain.model.Season
-import java.time.ZonedDateTime
+import java.time.Instant
 
 @Entity(
     tableName = "Seasons", indices = [Index(
@@ -23,7 +23,7 @@ data class SeasonEntity(
 ) : GameEntity() {
     fun toType(): Season {
         return Season(
-            uuid, displayName, ZonedDateTime.parse(startTime), ZonedDateTime.parse(endTime)
+            uuid, displayName, Instant.parse(startTime), Instant.parse(endTime)
         )
     }
 }
