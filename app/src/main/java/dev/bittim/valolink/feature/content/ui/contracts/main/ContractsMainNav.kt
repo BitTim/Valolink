@@ -13,7 +13,8 @@ const val ContractsMainNavRoute = "main"
 
 fun NavGraphBuilder.contractsMainScreen(
     onNavToGearList: () -> Unit,
-    onNavToAgentDetails: (String) -> Unit
+    onNavToAgentDetails: (String) -> Unit,
+    onNavToContractDetails: (String) -> Unit
 ) {
     composable(route = ContractsMainNavRoute,
         enterTransition = { Transition.topLevelEnter },
@@ -27,7 +28,8 @@ fun NavGraphBuilder.contractsMainScreen(
             state = contractsMainState,
             onArchiveTypeFilterChange = viewModel::onArchiveTypeFilterChange,
             onNavToGearList = onNavToGearList,
-            onNavToAgentDetails = onNavToAgentDetails
+            onNavToAgentDetails = onNavToAgentDetails,
+            onNavToContractDetails = onNavToContractDetails
         )
     }
 }

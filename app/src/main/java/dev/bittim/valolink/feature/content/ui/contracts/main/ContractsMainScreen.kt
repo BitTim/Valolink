@@ -53,7 +53,8 @@ fun ContractsMainScreen(
     state: ContractsMainState,
     onArchiveTypeFilterChange: (ArchiveTypeFilter) -> Unit,
     onNavToGearList: () -> Unit,
-    onNavToAgentDetails: (String) -> Unit
+    onNavToAgentDetails: (String) -> Unit,
+    onNavToContractDetails: (String) -> Unit
 ) {
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -115,7 +116,7 @@ fun ContractsMainScreen(
                     val collected = it.getRandomCollectedXP()
 
                     DefaultContractCard(
-                        displayName = it.displayName,
+                        displayName = it.displayName, contractUuid = it.uuid,
                         displayIcon = displayIcon,
                         backgroundImage = backgroundImage,
                         backgroundGradientColors = backgroundGradientColors,
@@ -125,7 +126,7 @@ fun ContractsMainScreen(
                         collectedXp = collected,
                         percentage = floor(
                             (collected.toFloat() / it.calcTotalXp().toFloat()) * 100f
-                        ).toInt()
+                        ).toInt(), onNavToContractDetails = onNavToContractDetails
                     )
                 })
 
@@ -261,7 +262,7 @@ fun ContractsMainScreen(
                     val collected = it.getRandomCollectedXP()
 
                     DefaultContractCard(
-                        displayName = it.displayName,
+                        displayName = it.displayName, contractUuid = it.uuid,
                         displayIcon = displayIcon,
                         backgroundImage = backgroundImage,
                         backgroundGradientColors = backgroundGradientColors,
@@ -271,7 +272,7 @@ fun ContractsMainScreen(
                         collectedXp = collected,
                         percentage = floor(
                             (collected.toFloat() / it.calcTotalXp().toFloat()) * 100f
-                        ).toInt()
+                        ).toInt(), onNavToContractDetails = onNavToContractDetails
                     )
                 })
 

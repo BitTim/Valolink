@@ -1,6 +1,7 @@
 package dev.bittim.valolink.feature.content.ui.contracts.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,21 +28,21 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.feature.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.ui.theme.ValolinkTheme
+import java.util.UUID
 
 @Composable
 fun DefaultContractCard(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier, contractUuid: String,
     displayName: String,
     displayIcon: String?,
     backgroundImage: String?,
     backgroundGradientColors: List<String>,
     remainingDays: Int?,
     collectedXp: Int,
-    totalXp: Int,
-    percentage: Int
+    totalXp: Int, percentage: Int, onNavToContractDetails: (String) -> Unit
 ) {
     AgentCardBase(
-        modifier = modifier,
+        modifier = modifier.clickable { onNavToContractDetails(contractUuid) },
         backgroundGradientColors = backgroundGradientColors,
         backgroundImage = backgroundImage
     ) { useGradient ->
@@ -130,6 +131,7 @@ fun DefaultAgentContractCardPreview() {
     ValolinkTheme {
         DefaultContractCard(
             displayName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             displayIcon = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
             backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
             backgroundGradientColors = listOf(
@@ -138,7 +140,8 @@ fun DefaultAgentContractCardPreview() {
             remainingDays = null,
             collectedXp = 0,
             totalXp = 200000,
-            percentage = 0
+            percentage = 0,
+            onNavToContractDetails = {}
         )
     }
 }
@@ -151,6 +154,7 @@ fun DefaultAgentContractCardWithTimePreview() {
     ValolinkTheme {
         DefaultContractCard(
             displayName = "Clove",
+            contractUuid = UUID.randomUUID().toString(),
             displayIcon = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
             backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
             backgroundGradientColors = listOf(
@@ -159,7 +163,8 @@ fun DefaultAgentContractCardWithTimePreview() {
             remainingDays = 5,
             collectedXp = 148660,
             totalXp = 200000,
-            percentage = 74
+            percentage = 74,
+            onNavToContractDetails = {}
         )
     }
 }
@@ -171,14 +176,13 @@ fun DefaultAgentContractCardWithTimePreview() {
 fun DefaultContractCardPreview() {
     ValolinkTheme {
         DefaultContractCard(
-            displayName = "Ignition: Act I",
+            displayName = "Ignition: Act I", contractUuid = UUID.randomUUID().toString(),
             displayIcon = null,
             backgroundImage = null,
             backgroundGradientColors = listOf(),
             remainingDays = null,
             collectedXp = 0,
-            totalXp = 0,
-            percentage = 0
+            totalXp = 0, percentage = 0, onNavToContractDetails = {}
         )
     }
 }
@@ -190,14 +194,13 @@ fun DefaultContractCardPreview() {
 fun DefaultContractCardWithTimePreview() {
     ValolinkTheme {
         DefaultContractCard(
-            displayName = "Ignition: Act I",
+            displayName = "Ignition: Act I", contractUuid = UUID.randomUUID().toString(),
             displayIcon = null,
             backgroundImage = null,
             backgroundGradientColors = listOf(),
             remainingDays = 5,
             collectedXp = 148660,
-            totalXp = 200000,
-            percentage = 74
+            totalXp = 200000, percentage = 74, onNavToContractDetails = {}
         )
     }
 }
