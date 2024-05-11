@@ -18,7 +18,7 @@ data class Spray(
             uuid = uuid,
             type = "Spray",
             displayName = displayName,
-            displayIcon = animationPng ?: fullTransparentIcon ?: displayIcon,
+            displayIcon = animationPng ?: animationGif ?: fullTransparentIcon ?: displayIcon
         )
     }
 }

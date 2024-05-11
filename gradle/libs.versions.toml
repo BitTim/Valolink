@@ -1,5 +1,6 @@
 [versions]
 agp = "8.4.0"
+apng = "1.11.0"
 coilComposeVersion = "2.6.0"
 converterMoshi = "2.11.0"
 hiltAndroid = "2.51.1"
@@ -32,6 +33,8 @@ androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-com
 androidx-material-icons-extended-android = { module = "androidx.compose.material:material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+apng = { module = "com.linecorp:apng", version.ref = "apng" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilComposeVersion" }
 coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }

@@ -98,4 +98,6 @@ dependencies {
 
     // Coil
     implementation(libs.coil.kt.coil.compose)
+    implementation(libs.coil.gif)
+    implementation(libs.apng)
 }
