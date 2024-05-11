@@ -1,5 +1,9 @@
 package dev.bittim.valolink.feature.content.domain.model.contract
 
-abstract class RewardRelation {
-    abstract val displayIcon: String
-}
+data class RewardRelation(
+    val uuid: String,
+    val type: String,
+    val displayIcon: String,
+    val displayName: String,
+    val displayNameSingular: String? = null
+)

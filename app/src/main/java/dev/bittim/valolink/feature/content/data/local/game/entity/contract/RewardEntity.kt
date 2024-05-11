@@ -41,7 +41,7 @@ data class RewardEntity(
 ) : GameEntity() {
     fun toType(): Reward {
         return Reward(
-            rewardType, rewardUuid, amount, isHighlighted, null
+            rewardType, rewardUuid, amount, isHighlighted
         )
     }
 }

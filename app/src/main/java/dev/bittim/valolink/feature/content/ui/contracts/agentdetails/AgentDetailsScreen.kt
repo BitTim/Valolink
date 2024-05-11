@@ -267,13 +267,14 @@ fun AgentDetailsScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(
-                        items = state.agentGear.content.chapters.flatMap { chapter -> chapter.levels },
+                        items = state.rewards,
                         itemContent = {
                             AgentRewardCard(
-                                name = it.reward.rewardUuid ?: "",
-                                type = it.reward.rewardType ?: "",
-                                price = it.doughCost,
-                                displayIcon = "", currencyIcon = state.dough?.displayIcon ?: ""
+                                name = it.first.displayName,
+                                type = it.first.type,
+                                displayIcon = it.first.displayIcon,
+                                price = it.second.doughCost,
+                                currencyIcon = state.dough?.displayIcon ?: ""
                             )
                         }
                     )
@@ -399,7 +400,7 @@ fun AgentDetailsScreenPreview() {
                     false,
                     -1,
                     Content(
-                        Agent(
+                        relation = Agent(
                             UUID.randomUUID().toString(),
                             "Clove",
                             "Scottish troublemaker Clove makes mischief for enemies in both the heat of combat and the cold of death. The young immortal keeps foes guessing, even from beyond the grave, their return to the living only ever a moment away.",
@@ -413,21 +414,18 @@ fun AgentDetailsScreenPreview() {
                             "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/killfeedportrait.png",
                             "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
                             listOf(
-                                "f17cadff",
-                                "062261ff",
-                                "c347c7ff",
-                                "f1db6fff"
+                                "f17cadff", "062261ff", "c347c7ff", "f1db6fff"
                             ),
                             false,
-                            true,
-                            false,
-                            Role(
+                            isAvailableForTest = true,
+                            isBaseContent = false,
+                            role = Role(
                                 UUID.randomUUID().toString(),
                                 "Controller",
                                 "Controllers are experts in slicing up dangerous territory to set their team up for success.",
                                 "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png"
                             ),
-                            listOf(
+                            abilities = listOf(
                                 Ability(
                                     UUID.randomUUID().toString(),
                                     "Grenade",
@@ -454,38 +452,21 @@ fun AgentDetailsScreenPreview() {
                                     "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
                                 )
                             )
-                        ),
-                        -1,
-                        listOf(
+                        ), premiumVPCost = -1, chapters = listOf(
                             Chapter(
                                 listOf(
                                     ChapterLevel(
-                                        20000,
-                                        0,
-                                        false,
-                                        2000,
-                                        true,
-                                        Reward(
+                                        20000, 0, false, 2000, true, Reward(
                                             "Spray",
-                                            "7221ab04-4a64-9a0f-ba1e-e7a423f5ed4b",
-                                            1, false, null
+                                            "7221ab04-4a64-9a0f-ba1e-e7a423f5ed4b", 1, false
                                         )
-                                    ),
-                                    ChapterLevel(
-                                        30000,
-                                        0,
-                                        false,
-                                        2500,
-                                        true,
-                                        Reward(
+                                    ), ChapterLevel(
+                                        30000, 0, false, 2500, true, Reward(
                                             "PlayerCard",
-                                            "faa3c3b5-4b0b-1f20-b383-01b7b83126ff",
-                                            1, false, null
+                                            "faa3c3b5-4b0b-1f20-b383-01b7b83126ff", 1, false
                                         )
                                     )
-                                ),
-                                null,
-                                false
+                                ), null, false
                             )
                         )
                     )

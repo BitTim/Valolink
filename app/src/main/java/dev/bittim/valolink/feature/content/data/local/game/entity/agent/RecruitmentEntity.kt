@@ -53,7 +53,7 @@ data class RecruitmentEntity(
                         listOf(
                             ChapterLevel(
                                 xp, 1000, false, 8000, true, Reward(
-                                    "Agent", agent.uuid, 1, false, null
+                                    "Agent", agent.uuid, 1, false
                                 )
                             )
                         ), listOf(), false
