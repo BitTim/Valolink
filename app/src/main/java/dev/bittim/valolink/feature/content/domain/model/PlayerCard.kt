@@ -12,12 +12,13 @@ data class PlayerCard(
     val wideArt: String,
     val largeArt: String
 ) {
-    fun asRewardRelation(): RewardRelation {
+    fun asRewardRelation(amount: Int): RewardRelation {
         return RewardRelation(
             uuid = uuid,
             type = "Card",
             displayName = displayName,
-            displayIcon = displayIcon,
+            displayIcon = largeArt,
+            amount = amount
         )
     }
 }

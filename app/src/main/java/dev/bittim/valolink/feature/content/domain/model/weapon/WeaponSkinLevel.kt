@@ -9,9 +9,13 @@ data class WeaponSkinLevel(
     val displayIcon: String,
     val streamedVideo: String?
 ) {
-    fun asRewardRelation(): RewardRelation {
+    fun asRewardRelation(amount: Int): RewardRelation {
         return RewardRelation(
-            uuid = uuid, type = "Weapon Skin", displayName = displayName, displayIcon = displayIcon
+            uuid = uuid,
+            type = "Weapon Skin",
+            displayName = displayName,
+            displayIcon = displayIcon,
+            amount = amount
         )
     }
 }

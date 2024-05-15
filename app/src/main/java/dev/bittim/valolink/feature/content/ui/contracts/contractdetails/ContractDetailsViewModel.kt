@@ -106,23 +106,23 @@ class ContractDetailsViewModel @Inject constructor(
     ): Flow<Pair<RewardRelation, ChapterLevel>> {
         return when (type) {
             "Currency"             -> currencyRepository.getCurrency(uuid)
-                .map { Pair(it.asRewardRelation(), level) }
+                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
             "Spray"                -> sprayRepository.getSpray(uuid)
-                .map { Pair(it.asRewardRelation(), level) }
+                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
             "PlayerCard"           -> playerCardRepository.getPlayerCard(uuid)
-                .map { Pair(it.asRewardRelation(), level) }
+                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
             "Title"                -> playerTitleRepository.getPlayerTitle(uuid)
-                .map { Pair(it.asRewardRelation(), level) }
+                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
             "EquippableCharmLevel" -> buddyLevelRepository.getBuddyLevel(uuid)
-                .map { Pair(it.asRewardRelation(), level) }
+                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
             "EquippableSkinLevel"  -> weaponSkinLevelRepository.getWeaponSkinLevel(
                 uuid
-            ).map { Pair(it.asRewardRelation(), level) }
+            ).map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
             else                   -> flow { }
         }

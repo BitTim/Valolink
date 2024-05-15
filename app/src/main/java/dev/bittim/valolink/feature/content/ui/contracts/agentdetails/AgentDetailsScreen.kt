@@ -273,7 +273,7 @@ fun AgentDetailsScreen(
                                 name = it.first.displayName,
                                 type = it.first.type,
                                 displayIcon = it.first.displayIcon,
-                                price = it.second.doughCost,
+                                price = it.second.doughCost, amount = it.first.amount,
                                 currencyIcon = state.dough?.displayIcon ?: ""
                             )
                         }

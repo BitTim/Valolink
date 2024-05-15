@@ -53,23 +53,23 @@ class AgentDetailsViewModel @Inject constructor(
                     contract?.content?.chapters?.flatMap { it.levels }?.map { level ->
                         when (level.reward.rewardType) {
                             "Currency"             -> currencyRepository.getCurrency(level.reward.rewardUuid)
-                                .map { Pair(it.asRewardRelation(), level) }
+                                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
                             "Spray"                -> sprayRepository.getSpray(level.reward.rewardUuid)
-                                .map { Pair(it.asRewardRelation(), level) }
+                                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
                             "PlayerCard"           -> playerCardRepository.getPlayerCard(level.reward.rewardUuid)
-                                .map { Pair(it.asRewardRelation(), level) }
+                                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
                             "Title"                -> playerTitleRepository.getPlayerTitle(level.reward.rewardUuid)
-                                .map { Pair(it.asRewardRelation(), level) }
+                                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
                             "EquippableCharmLevel" -> buddyLevelRepository.getBuddyLevel(level.reward.rewardUuid)
-                                .map { Pair(it.asRewardRelation(), level) }
+                                .map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
                             "EquippableSkinLevel"  -> weaponSkinLevelRepository.getWeaponSkinLevel(
                                 level.reward.rewardUuid
-                            ).map { Pair(it.asRewardRelation(), level) }
+                            ).map { Pair(it.asRewardRelation(level.reward.amount), level) }
 
                             else                   -> flow { }
                         }

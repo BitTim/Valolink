@@ -109,7 +109,7 @@ fun ContractDetailsScreen(
                                 name = it.first.displayName,
                                 type = it.first.type,
                                 displayIcon = it.first.displayIcon,
-                                price = it.second.vpCost,
+                                price = it.second.vpCost, amount = it.first.amount,
                                 currencyIcon = state.vp?.displayIcon ?: ""
                             )
                         })
@@ -146,7 +146,7 @@ fun ContractDetailsScreen(
                                 name = it.first.displayName,
                                 type = it.first.type,
                                 displayIcon = it.first.displayIcon,
-                                price = it.second.vpCost,
+                                price = it.second.vpCost, amount = it.first.amount,
                                 currencyIcon = state.vp?.displayIcon ?: ""
                             )
                         })
