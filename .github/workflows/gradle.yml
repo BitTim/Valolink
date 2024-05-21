@@ -42,13 +42,10 @@ jobs:
         run: |
           echo $GOOGLE_SERVICES_BASE64 > google-services-b64.txt
           base64 -d google-services-b64.txt > google-services.json
+          echo ls -R
         
       # Run Tests Build
       - name: Run gradle test
-        env:
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew test
 
       # This will decode the keystore from base 64 text representation that we have stored in secrets
@@ -56,9 +53,6 @@ jobs:
       - name: Decode Keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE_64 }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
         run: |
           echo $KEYSTORE_BASE64 > keystore-b64.txt
