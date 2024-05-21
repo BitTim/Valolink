@@ -26,7 +26,6 @@ android {
             }
     }
 
-    val versionCode: Int
     val majorVersion: Int
     val minorVersion: Int
     val patchVersion: Int
@@ -41,22 +40,20 @@ android {
         minorVersion = versionProperties.getProperty("MINOR").toInt()
         patchVersion = versionProperties.getProperty("PATCH").toInt()
         buildVersion = versionProperties.getProperty("BUILD").toInt() + 1
-        versionCode = versionProperties.getProperty("VERSIONCODE").toInt() + 1
 
         versionProperties.setProperty("BUILD", buildVersion.toString())
-        versionProperties.setProperty("VERSIONCODE", versionCode.toString())
         versionProperties.store(versionPropertiesFile.writer(), null)
     } else {
         throw GradleException("Could not read version.properties file")
     }
 
-    val versionName = "v$majorVersion.$minorVersion.$patchVersion.$buildVersion($versionCode)"
+    val versionName = "v$majorVersion.$minorVersion.$patchVersion-$buildVersion"
     
     defaultConfig {
         applicationId = "dev.bittim.valolink"
         minSdk = 33
         targetSdk = 34
-        this.versionCode = versionCode
+        this.versionCode = buildVersion
         this.versionName = versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
