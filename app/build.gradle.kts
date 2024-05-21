@@ -84,12 +84,9 @@ android {
         keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
     } else {
         println("Could not read keystore.properties file, using environment variables instead")
-        storePassword = System.getenv("STORE_PASSWORD")
-            ?: throw GradleException("STORE_PASSWORD environment variable cannot be null. Did you forget to add it to the keystore.properties file in the app folder?")
-        keyAlias = System.getenv("KEY_ALIAS")
-            ?: throw GradleException("KEY_ALIAS environment variable cannot be null. Did you forget to add it to the keystore.properties file in the app folder?")
-        keyPassword = System.getenv("KEY_PASSWORD")
-            ?: throw GradleException("KEY_PASSWORD environment variable cannot be null. Did you forget to add it to the keystore.properties file in the app folder?")
+        storePassword = System.getenv("STORE_PASSWORD") ?: ""
+        keyAlias = System.getenv("KEY_ALIAS") ?: ""
+        keyPassword = System.getenv("KEY_PASSWORD") ?: ""
     }
     
     signingConfigs {
