@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -12,12 +15,49 @@ android {
     namespace = "dev.bittim.valolink"
     compileSdk = 34
 
+    // Determine version
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+            .forEach { output ->
+                val outputFileName = "Valolink-${variant.baseName}-${variant.versionName}.apk"
+                println("Output file name: $outputFileName")
+                output.outputFileName = outputFileName
+            }
+    }
+
+    val versionCode: Int
+    val majorVersion: Int
+    val minorVersion: Int
+    val patchVersion: Int
+    val buildVersion: Int
+
+    val versionPropertiesFile = file("version.properties")
+    if (versionPropertiesFile.canRead()) {
+        val versionProperties = Properties()
+        versionProperties.load(FileInputStream(versionPropertiesFile))
+
+        majorVersion = versionProperties.getProperty("MAJOR").toInt()
+        minorVersion = versionProperties.getProperty("MINOR").toInt()
+        patchVersion = versionProperties.getProperty("PATCH").toInt()
+        buildVersion = versionProperties.getProperty("BUILD").toInt() + 1
+        versionCode = versionProperties.getProperty("VERSIONCODE").toInt() + 1
+
+        versionProperties.setProperty("BUILD", buildVersion.toString())
+        versionProperties.setProperty("VERSIONCODE", versionCode.toString())
+        versionProperties.store(versionPropertiesFile.writer(), null)
+    } else {
+        throw GradleException("Could not read version.properties file")
+    }
+
+    val versionName = "v$majorVersion.$minorVersion.$patchVersion.$buildVersion($versionCode)"
+    
     defaultConfig {
         applicationId = "dev.bittim.valolink"
         minSdk = 33
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1"
+        this.versionCode = versionCode
+        this.versionName = versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -29,12 +69,35 @@ android {
         }
     }
 
+    // Retrieve signing information
+    val storePassword: String
+    val keyAlias: String
+    val keyPassword: String
+
+    val keystorePropertiesFile = file("keystore.properties")
+    if (keystorePropertiesFile.canRead()) {
+        val keystoreProperties = Properties()
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+        storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
+        keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
+        keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
+    } else {
+        println("Could not read keystore.properties file, using environment variables instead")
+        storePassword = System.getenv("STORE_PASSWORD")
+            ?: throw GradleException("STORE_PASSWORD environment variable cannot be null. Did you forget to add it to the keystore.properties file in the app folder?")
+        keyAlias = System.getenv("KEY_ALIAS")
+            ?: throw GradleException("KEY_ALIAS environment variable cannot be null. Did you forget to add it to the keystore.properties file in the app folder?")
+        keyPassword = System.getenv("KEY_PASSWORD")
+            ?: throw GradleException("KEY_PASSWORD environment variable cannot be null. Did you forget to add it to the keystore.properties file in the app folder?")
+    }
+    
     signingConfigs {
         create("release") {
             storeFile = file("../keystore.jks")
-            storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("RELEASE_KEYSTORE_ALIAS")
-            keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
+            this.storePassword = storePassword
+            this.keyAlias = keyAlias
+            this.keyPassword = keyPassword
         }
     }
     
