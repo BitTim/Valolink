@@ -7,6 +7,8 @@ on:
   workflow_dispatch:
 
 env:
+  repository_name: Valolink
+
   # The name of the main module repository
   main_project_module: app
 
@@ -34,15 +36,13 @@ jobs:
         run: chmod +x ./gradlew
 
       # This will decode the google-services.json from base 64 text representation that we have stored in secrets
-      # and generates and keystore file and gets stored in /android-app path
+      # and generates and keystore file and gets stored in main module path
       - name: Decode google-services.json
         env:
           GOOGLE_SERVICES_BASE64: ${{ secrets.GOOGLE_SERVICES_BASE_64 }}
 
         run: |
-          echo $GOOGLE_SERVICES_BASE64 > google-services-b64.txt
-          base64 -d google-services-b64.txt > google-services.json
-          echo ls -R
+          echo $GOOGLE_SERVICES_BASE64 | base64 -di > $main_project_module/google-services.json
         
       # Run Tests Build
       - name: Run gradle test
@@ -55,8 +55,7 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE_64 }}
 
         run: |
-          echo $KEYSTORE_BASE64 > keystore-b64.txt
-          base64 -d keystore-b64.txt > keystore.jks
+          echo $KEYSTORE_BASE64 | base64 -di > keystore.jks
 
       - name: Build Release apk
         env:
