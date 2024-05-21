@@ -71,7 +71,7 @@ jobs:
 
       - name: Get current date
         id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        run: echo "date=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
 
       - name: Get release file aab path
         id: releaseAab
@@ -82,13 +82,13 @@ jobs:
         run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
 
       - name: Upload Release Build APK to Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-           name: Valolink Nightly ${{ steps.date.outputs.date }}
+           name: Valolink Nightly ${{ steps.date.outputs.date }} APK
            path: ${{ steps.releaseApk.outputs.apkfile }}
 
       - name: Upload Release Build AAB to Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-           name: Valolink Nightly ${{ steps.date.outputs.date }}
+           name: Valolink Nightly ${{ steps.date.outputs.date }} AAB
            path: ${{ steps.releaseAab.outputs.aabfile }}
