@@ -1,0 +1,80 @@
+name: Nightly Builds
+on:
+  schedule:
+    - cron:  '0, 0, *, *, *'
+
+   # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  # The name of the main module repository
+  main_project_module: app
+
+  # The name of the Play Store
+  playstore_name: Valolink
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checking out branch
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2.0.10
+
+      - name: Making gradlew executable
+        run: chmod +x ./gradlew
+
+      # Run Tests Build
+      - name: Run gradle tests
+        run: ./gradlew test
+
+      # This will decode the keystore from base 64 text representation that we have stored in secrets
+      # and generates and keystore file and gets stored in /android-app path
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.KEYSTORE_BASE_64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ secrets.KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+        run: |
+          echo $ENCODED_STRING > keystore-b64.txt
+          base64 -d keystore-b64.txt > keystore.jks
+
+      - name: Build Release apk
+        env:
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ secrets.KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Build Release bundle
+        env:
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ secrets.KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew bundleRelease --stacktrace
+
+      # Upload Artifact Build
+      # Noted For Output [main_project_module]/build/outputs/apk/release/
+      - name: Upload APK Release - ${{ env.repository_name }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) release generated
+          path: ${{ env.main_project_module }}/build/outputs/apk/release/
+
+      # Noted For Output [main_project_module]/build/outputs/bundle/release/
+      - name: Upload AAB (App Bundle) Release - ${{ env.repository_name }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - App bundle(s) AAB release generated
+          path: ${{ env.main_project_module }}/build/outputs/bundle/release/
