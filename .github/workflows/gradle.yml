@@ -1,7 +1,8 @@
 name: Nightly Builds
 on:
-  schedule:
-    - cron:  '0, 0, *, *, *'
+  push:
+    branches:
+      - main
 
    # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -92,3 +93,11 @@ jobs:
         with:
            name: Valolink Nightly ${{ steps.date.outputs.date }} AAB
            path: ${{ steps.releaseAab.outputs.aabfile }}
+
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+           appId: ${{secrets.FIREBASE_APP_ID}}
+           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+           groups: testers
+           file: ${{ steps.releaseAab.outputs.aabfile }}
