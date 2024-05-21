@@ -21,6 +21,7 @@ object AuthModule {
     @Provides
     @Singleton
     fun provideAuthRepository(auth: FirebaseAuth): AuthRepository {
+        //auth.useEmulator("127.0.0.1", 9099)
         return FirebaseAuthRepository(auth)
     }
 
