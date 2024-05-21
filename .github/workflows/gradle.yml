@@ -7,8 +7,6 @@ on:
   workflow_dispatch:
 
 env:
-  repository_name: Valolink
-
   # The name of the main module repository
   main_project_module: app
 
@@ -16,7 +14,7 @@ env:
   playstore_name: Valolink
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
@@ -71,17 +69,26 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew bundleRelease --stacktrace
 
-      # Upload Artifact Build
-      # Noted For Output [main_project_module]/build/outputs/apk/release/
-      - name: Upload APK Release - ${{ env.repository_name }}
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) release generated
-          path: ${{ env.main_project_module }}/build/outputs/apk/release/
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 
-      # Noted For Output [main_project_module]/build/outputs/bundle/release/
-      - name: Upload AAB (App Bundle) Release - ${{ env.repository_name }}
-        uses: actions/upload-artifact@main
+      - name: Get release file aab path
+        id: releaseAab
+        run: echo "aabfile=$(find app/build/outputs/bundle/release/*.aab)" >> $GITHUB_OUTPUT
+
+      - name: Get release file apk path
+        id: releaseApk
+        run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
+
+      - name: Upload Release Build APK to Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - App bundle(s) AAB release generated
-          path: ${{ env.main_project_module }}/build/outputs/bundle/release/
+           name: Valolink Nightly ${{ steps.date.outputs.date }}
+           path: ${{ steps.releaseApk.outputs.apkfile }}
+
+      - name: Upload Release Build AAB to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+           name: Valolink Nightly ${{ steps.date.outputs.date }}
+           path: ${{ steps.releaseAab.outputs.aabfile }}
