@@ -159,13 +159,17 @@ jobs:
       - name: Get current version name
         id: versionName
         run: echo "versionName=$(echo v${{ steps.versionProperties.outputs.MAJOR }}.${{ steps.versionProperties.outputs.MINOR }}.${{ steps.versionProperties.outputs.PATCH }}-${{ steps.versionProperties.outputs.BUILD }})" >> $GITHUB_OUTPUT
-          
+
       - name: Create tag
-        uses: rickstaa/action-create-tag@v1
+        uses: actions/github-script@v5
         with:
-          tag: "${{ steps.versionName.outputs.versionName }}_${{ steps.date.outputs.date }}"
-          tag_exists_error: false
-          message: "${{ env.app_name }} Nightly ${{ steps.versionName.outputs.versionName }} (${{ steps.date.outputs.date }})"
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.versionName.outputs.versionName }}_${{ steps.date.outputs.date }}',
+              sha: context.sha
+            })
 
   
 
