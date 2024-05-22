@@ -114,21 +114,21 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew bundleRelease --stacktrace
 
-      - name: Get release file aab path
-        id: releaseAab
-        run: echo "aabfile=$(find app/build/outputs/bundle/release/*.aab)" >> $GITHUB_OUTPUT
-
       - name: Get release file apk path
         id: releaseApk
         run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
 
       - name: Get release file aab path
-        id: aabArtifact
-        run: echo "aabArtifact=$(${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} AAB)" >> $GITHUB_OUTPUT
+        id: releaseAab
+        run: echo "aabfile=$(find app/build/outputs/bundle/release/*.aab)" >> $GITHUB_OUTPUT
 
       - name: Get release file apk path
         id: apkArtifact
         run: echo "apkArtifact=$(echo ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} APK)" >> $GITHUB_OUTPUT
+
+      - name: Get release file aab path
+        id: aabArtifact
+        run: echo "aabArtifact=$(echo ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} AAB)" >> $GITHUB_OUTPUT
 
       - name: Upload Release Build APK to Artifacts
         uses: actions/upload-artifact@v4
