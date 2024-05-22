@@ -150,7 +150,7 @@ jobs:
         run: echo "date=$(date +'%d-%m-%Y_%H-%M')" >> $GITHUB_OUTPUT
 
       - name: Read all values from version.properties
-        uses: BrycensRanch/read-properties-action@latest
+        uses: BrycensRanch/read-properties-action@v1
         id: versionProperties
         with:
           file: app/version.properties
