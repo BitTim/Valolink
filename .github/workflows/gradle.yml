@@ -1,4 +1,4 @@
-name: Nightly Snapshot
+name: "Nightly Snapshot"
 on:
   schedule:
     - cron: "0, 0, *, *, *"
