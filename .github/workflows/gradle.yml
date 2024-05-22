@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       doRebuild: ${{ steps.decideRebuild.outputs.doRebuild }}
+      prevTag: ${{ steps.previoustag.outputs.tag }}
 
     steps:
       - name: Checking out branch
@@ -50,35 +51,12 @@ jobs:
             echo "doRebuild=true" >> $GITHUB_OUTPUT
           fi
 
-  GetChanges:
+  Build:
     needs: [CheckNewCommits]
     if: needs.CheckNewCommits.outputs.doRebuild == 'true'
     runs-on: ubuntu-latest
     outputs:
-      changes: ${{ steps.changes.outputs.changes }}
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          # you need full history to collect changes correctly
-          fetch-depth: 0
-
-      - name: Get Changes between Tags
-        id: changes
-        uses: simbo/changes-between-tags-action@v1
-
-      - name: Create whatsnew directory and file
-        env:
-          CHANGES: ${{ steps.changes.outputs.changes }}
-        run: |
-          mkdir whatsnew
-          echo "$CHANGES" > whatsnew/whatsnew-en-US
-
-  Build:
-    needs: [CheckNewCommits, GetChanges]
-    if: needs.CheckNewCommits.outputs.doRebuild == 'true'
-    runs-on: ubuntu-latest
+      aabfile: ${{ steps.releaseAab.outputs.aabfile }}
 
     steps:
       - name: Checking out branch
@@ -130,32 +108,6 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew bundleRelease --stacktrace
 
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-      - name: Read all values from version.properties
-        uses: BrycensRanch/read-properties-action@latest
-        id: versionProperties
-        with:
-          file: app/version.properties
-          all: true
-
-      - name: Get current version name
-        id: versionName
-        run: echo "versionName=$(echo v${{ steps.versionProperties.outputs.MAJOR }}.${{ steps.versionProperties.outputs.MINOR }}.${{ steps.versionProperties.outputs.PATCH }}-${{ steps.versionProperties.outputs.BUILD }})" >> $GITHUB_OUTPUT
-        
-      - name: Create tag
-        uses: actions/github-script@v5
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ env.app_name }} Nightly ${{ steps.versionName.outputs.versionName }} (${{ steps.date.outputs.date }})',
-              sha: context.sha
-            })
-
       - name: Get release file aab path
         id: releaseAab
         run: echo "aabfile=$(find app/build/outputs/bundle/release/*.aab)" >> $GITHUB_OUTPUT
@@ -176,12 +128,72 @@ jobs:
            name: ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} AAB
            path: ${{ steps.releaseAab.outputs.aabfile }}
 
+
+
+  CreateNewTag:
+    needs: [Build]
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+      versionName: ${{ steps.versionName.outputs.versionName }}
+  
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%d-%m-%Y_%H-%M')" >> $GITHUB_OUTPUT
+
+      - name: Read all values from version.properties
+        uses: BrycensRanch/read-properties-action@latest
+        id: versionProperties
+        with:
+          file: app/version.properties
+          all: true
+
+      - name: Get current version name
+        id: versionName
+        run: echo "versionName=$(echo v${{ steps.versionProperties.outputs.MAJOR }}.${{ steps.versionProperties.outputs.MINOR }}.${{ steps.versionProperties.outputs.PATCH }}-${{ steps.versionProperties.outputs.BUILD }})" >> $GITHUB_OUTPUT
+        
+      - name: Create tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.versionName.outputs.versionName }}_${{ steps.date.outputs.date }}',
+              sha: context.sha
+            })
+
+  
+
+  Deploy:
+    needs: [CheckNewCommits, Build, CreateNewTag]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate Changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.CheckNewCommits.outputs.prevTag }}
+          writeToFile: false
+
+      - name: Create whatsnew directory and file
+        env:
+          CHANGES: ${{ steps.changelog.outputs.changes }}
+        run: |
+          mkdir whatsnew
+          echo "$CHANGES" > whatsnew/whatsnew-en-US
+
       - name: Upload artifact to Google Play Internal track
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: ${{ env.package_name }}
-          releaseFile: ${{ steps.releaseAab.outputs.aabfile }}
+          releaseFile: ${{ needs.Build.outputs.aabfile }}
           track: internal
           whatsNewDirectory: /whatsnew
           mappingFile: /app/build/outputs/mapping/release/mapping.txt
