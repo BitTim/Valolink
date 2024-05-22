@@ -125,7 +125,7 @@ jobs:
         run: echo "apkName=$(basename ${{ steps.apkFile.outputs.apkFile }})" >> $GITHUB_OUTPUT
 
       - name: Get AAB file name
-        id: aabArtifact
+        id: aabName
         run: echo "aabName=$(basename ${{ steps.aabFile.outputs.aabFile }})" >> $GITHUB_OUTPUT
 
       - name: Upload Release Build APK to Artifacts
