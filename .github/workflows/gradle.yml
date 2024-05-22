@@ -188,6 +188,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.CreateNewTag.outputs.tag }}
           writeToFile: false
+          includeInvalidCommits: true
 
       - name: Create whatsnew directory and file
         env:
