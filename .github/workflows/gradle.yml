@@ -1,9 +1,9 @@
 name: "Nightly Snapshot"
 on:
   schedule:
-    - cron: "0, 0, *, *, *"
+    - cron: "0 0 * * *"
 
-   # Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
@@ -28,7 +28,7 @@ jobs:
 
       - name: Get latest commit SHA
         id: latestsha
-        run: echo "sha=$(git rev-parse HEAD)" > $GITHUB_OUTPUT
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Get Previous tag
         id: previoustag
@@ -36,7 +36,7 @@ jobs:
 
       - name: Get commit SHA of latest Tag
         id: tagsha
-        run: echo "sha=$(git rev-list -n 1 ${{ steps.previoustag.outputs.tag }})" > $GITHUB_OUTPUT
+        run: echo "sha=$(git rev-list -n 1 ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
 
       - name: Decide rebuild
         id: decideRebuild
@@ -44,13 +44,11 @@ jobs:
           LATEST_SHA: ${{ steps.latestsha.outputs.sha }}
           TAG_SHA: ${{ steps.tagsha.outputs.sha }}
         run: |
-          if [[$LATEST_SHA == $TAG_SHA]]; then
-            echo "doRebuild=false" > $GITHUB_OUTPUT
+          if [[ $LATEST_SHA == $TAG_SHA ]]; then
+            echo "doRebuild=false" >> $GITHUB_OUTPUT
           else
-            echo "doRebuild=true" > $GITHUB_OUTPUT
+            echo "doRebuild=true" >> $GITHUB_OUTPUT
           fi
-
-
 
   GetChanges:
     needs: [CheckNewCommits]
@@ -77,8 +75,6 @@ jobs:
           mkdir whatsnew
           echo "$CHANGES" > whatsnew/whatsnew-en-US
 
-
-    
   Build:
     needs: [CheckNewCommits, GetChanges]
     if: needs.CheckNewCommits.outputs.doRebuild == 'true'
@@ -105,7 +101,6 @@ jobs:
       - name: Decode google-services.json
         env:
           GOOGLE_SERVICES_BASE64: ${{ secrets.GOOGLE_SERVICES_BASE_64 }}
-
         run: |
           echo $GOOGLE_SERVICES_BASE64 | base64 -di > $main_project_module/google-services.json
         
@@ -118,7 +113,6 @@ jobs:
       - name: Decode Keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE_64 }}
-
         run: |
           echo $KEYSTORE_BASE64 | base64 -di > keystore.jks
 
@@ -141,7 +135,7 @@ jobs:
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Read all values from version.properties
-      - uses: BrycensRanch/read-properties-action@latest
+        uses: BrycensRanch/read-properties-action@latest
         id: versionProperties
         with:
           file: app/version.properties
@@ -158,7 +152,7 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'refs/tags/${{ app_name }} Nightly ${{ steps.versionName.outputs.versionName }} (${{ steps.date.output.date }})',
+              ref: 'refs/tags/${{ env.app_name }} Nightly ${{ steps.versionName.outputs.versionName }} (${{ steps.date.outputs.date }})',
               sha: context.sha
             })
 
@@ -173,20 +167,20 @@ jobs:
       - name: Upload Release Build APK to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: ${{ app_name }} Nightly ${{ steps.date.outputs.date }} APK
+           name: ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} APK
            path: ${{ steps.releaseApk.outputs.apkfile }}
 
       - name: Upload Release Build AAB to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: ${{ app_name }} Nightly ${{ steps.date.outputs.date }} AAB
+           name: ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} AAB
            path: ${{ steps.releaseAab.outputs.aabfile }}
 
       - name: Upload artifact to Google Play Internal track
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: ${{ package_name }}
+          packageName: ${{ env.package_name }}
           releaseFile: ${{ steps.releaseAab.outputs.aabfile }}
           track: internal
           whatsNewDirectory: /whatsnew
