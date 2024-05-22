@@ -1,4 +1,4 @@
-name: "Nightly Snapshot"
+name: Nightly Snapshot
 on:
   schedule:
     - cron: "0 0 * * *"
@@ -50,6 +50,8 @@ jobs:
           else
             echo "doRebuild=true" >> $GITHUB_OUTPUT
           fi
+
+
 
   Build:
     needs: [CheckNewCommits]
@@ -177,7 +179,7 @@ jobs:
         id: changelog
         uses: requarks/changelog-action@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN_GITHUB }}
           tag: ${{ needs.CheckNewCommits.outputs.prevTag }}
           writeToFile: false
 
