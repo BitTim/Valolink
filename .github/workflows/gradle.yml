@@ -59,7 +59,10 @@ jobs:
     if: needs.CheckNewCommits.outputs.doRebuild == 'true'
     runs-on: ubuntu-latest
     outputs:
+      apkfile: ${{ steps.releaseApk.outputs.apkfile }}
       aabfile: ${{ steps.releaseAab.outputs.aabfile }}
+      apkArtifact: ${{ steps.apkArtifact.outputs.apkArtifacts }}
+      aabArtifact: ${{ steps.aabArtifact.outputs.aabArtifacts }}
 
     steps:
       - name: Checking out branch
@@ -119,16 +122,24 @@ jobs:
         id: releaseApk
         run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
 
+      - name: Get release file aab path
+        id: aabArtifact
+        run: echo "aabArtifact=$(${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} AAB)" >> $GITHUB_OUTPUT
+
+      - name: Get release file apk path
+        id: apkArtifact
+        run: echo "apkArtifact=$(echo ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} APK)" >> $GITHUB_OUTPUT
+
       - name: Upload Release Build APK to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} APK
+           name: ${{ steps.apkArtifact.outputs.apkArtifact }}
            path: ${{ steps.releaseApk.outputs.apkfile }}
 
       - name: Upload Release Build AAB to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} AAB
+           name: ${{ steps.aabArtifact.outputs.aabArtifact }}
            path: ${{ steps.releaseAab.outputs.aabfile }}
 
 
@@ -196,6 +207,12 @@ jobs:
         run: |
           mkdir whatsnew
           echo "$CHANGES" > whatsnew/whatsnew-en-US
+
+      - name: Download artifact of release AAB
+        uses: actions/download-artifact@master
+        with:
+          name: ${{ needs.Build.outputs.aabArtifact }}
+          path: ${{ needs.Build.outputs.aabfile }}
 
       - name: Upload artifact to Google Play Internal track
         uses: r0adkll/upload-google-play@v1
