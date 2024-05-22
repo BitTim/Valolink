@@ -44,7 +44,7 @@ jobs:
           LATEST_SHA: ${{ steps.latestsha.outputs.sha }}
           TAG_SHA: ${{ steps.tagsha.outputs.sha }}
         run: |
-          if [[$LATEST_SHA == TAG_SHA]]; then
+          if [[$LATEST_SHA == $TAG_SHA]]; then
             echo "doRebuild=false" > $GITHUB_OUTPUT
           else
             echo "doRebuild=true" > $GITHUB_OUTPUT
