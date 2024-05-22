@@ -1,8 +1,7 @@
 name: Nightly Builds
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: "0, 0, *, *, *"
 
    # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -11,11 +10,78 @@ env:
   # The name of the main module repository
   main_project_module: app
 
-  # The name of the Play Store
-  playstore_name: Valolink
+  # The name of the App
+  app_name: Valolink
+
+  # The name of the android app package
+  package_name: dev.bittim.valolink
 
 jobs:
+  CheckNewCommits:
+    runs-on: ubuntu-latest
+    outputs:
+      doRebuild: ${{ steps.decideRebuild.outputs.doRebuild }}
+
+    steps:
+      - name: Checking out branch
+        uses: actions/checkout@v4
+
+      - name: Get latest commit SHA
+        id: latestsha
+        run: echo "sha=$(git rev-parse HEAD)" > $GITHUB_OUTPUT
+
+      - name: Get Previous tag
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - name: Get commit SHA of latest Tag
+        id: tagsha
+        run: echo "sha=$(git rev-list -n 1 ${{ steps.previoustag.outputs.tag }})" > $GITHUB_OUTPUT
+
+      - name: Decide rebuild
+        id: decideRebuild
+        env:
+          LATEST_SHA: ${{ steps.latestsha.outputs.sha }}
+          TAG_SHA: ${{ steps.tagsha.outputs.sha }}
+        run: |
+          if [[$LATEST_SHA == TAG_SHA]]; then
+            echo "doRebuild=false" > $GITHUB_OUTPUT
+          else
+            echo "doRebuild=true" > $GITHUB_OUTPUT
+          fi
+
+
+
+  GetChanges:
+    needs: [CheckNewCommits]
+    if: needs.CheckNewCommits.outputs.doRebuild == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      changes: ${{ steps.changes.outputs.changes }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # you need full history to collect changes correctly
+          fetch-depth: 0
+
+      - name: Get Changes between Tags
+        id: changes
+        uses: simbo/changes-between-tags-action@v1
+
+      - name: Create whatsnew directory and file
+        env:
+          CHANGES: ${{ steps.changes.outputs.changes }}
+        run: |
+          mkdir whatsnew
+          echo "$CHANGES" > whatsnew/whatsnew-en-US
+
+
+    
   Build:
+    needs: [CheckNewCommits, GetChanges]
+    if: needs.CheckNewCommits.outputs.doRebuild == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -74,6 +140,28 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
+      - name: Read all values from version.properties
+      - uses: BrycensRanch/read-properties-action@latest
+        id: versionProperties
+        with:
+          file: app/version.properties
+          all: true
+
+      - name: Get current version name
+        id: versionName
+        run: echo "versionName=$(echo v${{ steps.versionProperties.outputs.MAJOR }}.${{ steps.versionProperties.outputs.MINOR }}.${{ steps.versionProperties.outputs.PATCH }}-${{ steps.versionProperties.outputs.BUILD }})" >> $GITHUB_OUTPUT
+        
+      - name: Create tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ app_name }} Nightly ${{ steps.versionName.outputs.versionName }} (${{ steps.date.output.date }})',
+              sha: context.sha
+            })
+
       - name: Get release file aab path
         id: releaseAab
         run: echo "aabfile=$(find app/build/outputs/bundle/release/*.aab)" >> $GITHUB_OUTPUT
@@ -85,19 +173,21 @@ jobs:
       - name: Upload Release Build APK to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: Valolink Nightly ${{ steps.date.outputs.date }} APK
+           name: ${{ app_name }} Nightly ${{ steps.date.outputs.date }} APK
            path: ${{ steps.releaseApk.outputs.apkfile }}
 
       - name: Upload Release Build AAB to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: Valolink Nightly ${{ steps.date.outputs.date }} AAB
+           name: ${{ app_name }} Nightly ${{ steps.date.outputs.date }} AAB
            path: ${{ steps.releaseAab.outputs.aabfile }}
 
-      - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+      - name: Upload artifact to Google Play Internal track
+        uses: r0adkll/upload-google-play@v1
         with:
-           appId: ${{secrets.FIREBASE_APP_ID}}
-           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-           groups: testers
-           file: ${{ steps.releaseApk.outputs.apkfile }}
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ package_name }}
+          releaseFile: ${{ steps.releaseAab.outputs.aabfile }}
+          track: internal
+          whatsNewDirectory: /whatsnew
+          mappingFile: /app/build/outputs/mapping/release/mapping.txt
