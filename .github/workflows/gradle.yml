@@ -59,10 +59,8 @@ jobs:
     if: needs.CheckNewCommits.outputs.doRebuild == 'true'
     runs-on: ubuntu-latest
     outputs:
-      apkfile: ${{ steps.releaseApk.outputs.apkfile }}
-      aabfile: ${{ steps.releaseAab.outputs.aabfile }}
-      apkArtifact: ${{ steps.apkArtifact.outputs.apkArtifacts }}
-      aabArtifact: ${{ steps.aabArtifact.outputs.aabArtifacts }}
+      apkName: ${{ steps.apkName.outputs.apkName }}
+      aabName: ${{ steps.aabName.outputs.aabName }}
 
     steps:
       - name: Checking out branch
@@ -114,33 +112,33 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew bundleRelease --stacktrace
 
-      - name: Get release file apk path
-        id: releaseApk
-        run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
+      - name: Get APK file path
+        id: apkFile
+        run: echo "apkFile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
 
-      - name: Get release file aab path
-        id: releaseAab
-        run: echo "aabfile=$(find app/build/outputs/bundle/release/*.aab)" >> $GITHUB_OUTPUT
+      - name: Get AAB file path
+        id: aabFile
+        run: echo "aabFile=$(find app/build/outputs/bundle/release/*.aab)" >> $GITHUB_OUTPUT
 
-      - name: Get release file apk path
-        id: apkArtifact
-        run: echo "apkArtifact=$(echo ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} APK)" >> $GITHUB_OUTPUT
+      - name: Get APK file name
+        id: apkName
+        run: echo "apkName=$(basename ${{ steps.apkFile.outputs.apkFile }})" >> $GITHUB_OUTPUT
 
-      - name: Get release file aab path
+      - name: Get AAB file name
         id: aabArtifact
-        run: echo "aabArtifact=$(echo ${{ env.app_name }} Nightly ${{ steps.date.outputs.date }} AAB)" >> $GITHUB_OUTPUT
+        run: echo "aabName=$(basename ${{ steps.aabFile.outputs.aabFile }})" >> $GITHUB_OUTPUT
 
       - name: Upload Release Build APK to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: ${{ steps.apkArtifact.outputs.apkArtifact }}
-           path: ${{ steps.releaseApk.outputs.apkfile }}
+           name: ${{ steps.apkName.outputs.apkName }}
+           path: ${{ steps.apkFile.outputs.apkFile }}
 
       - name: Upload Release Build AAB to Artifacts
         uses: actions/upload-artifact@v4
         with:
-           name: ${{ steps.aabArtifact.outputs.aabArtifact }}
-           path: ${{ steps.releaseAab.outputs.aabfile }}
+           name: ${{ steps.aabName.outputs.aabName }}
+           path: ${{ steps.aabFile.outputs.aabFile }}
 
 
 
@@ -211,15 +209,14 @@ jobs:
       - name: Download artifact of release AAB
         uses: actions/download-artifact@master
         with:
-          name: ${{ needs.Build.outputs.aabArtifact }}
-          path: ${{ needs.Build.outputs.aabfile }}
+          name: ${{ needs.Build.outputs.aabName }}
 
       - name: Upload artifact to Google Play Internal track
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: ${{ env.package_name }}
-          releaseFiles: ${{ needs.Build.outputs.aabfile }}
+          releaseFiles: ${{ needs.Build.outputs.aabName }}
           track: internal
           whatsNewDirectory: /whatsnew
           mappingFile: /app/build/outputs/mapping/release/mapping.txt
