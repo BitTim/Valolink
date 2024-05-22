@@ -160,16 +160,12 @@ jobs:
         id: versionName
         run: echo "versionName=$(echo v${{ steps.versionProperties.outputs.MAJOR }}.${{ steps.versionProperties.outputs.MINOR }}.${{ steps.versionProperties.outputs.PATCH }}-${{ steps.versionProperties.outputs.BUILD }})" >> $GITHUB_OUTPUT
 
-      - name: Create tag
-        uses: actions/github-script@v5
+      - name: Create Tag
+        uses: piszmog/create-tag@v1
         with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ steps.versionName.outputs.versionName }}_${{ steps.date.outputs.date }}',
-              sha: context.sha
-            })
+          version: ${{ steps.versionName.outputs.versionName }}_${{ steps.date.outputs.date }}
+          message: ${{ env.app_name }} Nightly ${{ steps.versionName.outputs.versionName }} (${{ steps.date.outputs.date }})
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   
 
