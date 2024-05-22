@@ -202,7 +202,7 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: ${{ env.package_name }}
-          releaseFile: ${{ needs.Build.outputs.aabfile }}
+          releaseFiles: ${{ needs.Build.outputs.aabfile }}
           track: internal
           whatsNewDirectory: /whatsnew
           mappingFile: /app/build/outputs/mapping/release/mapping.txt
