@@ -184,7 +184,7 @@ jobs:
         id: changelog
         uses: requarks/changelog-action@v1
         with:
-          token: ${{ secrets.TOKEN_GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.CheckNewCommits.outputs.prevTag }}
           writeToFile: false
 
