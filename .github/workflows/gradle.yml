@@ -21,7 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       doRebuild: ${{ steps.decideRebuild.outputs.doRebuild }}
-      prevTag: ${{ steps.previoustag.outputs.tag }}
 
     steps:
       - name: Checking out branch
@@ -140,6 +139,7 @@ jobs:
     outputs:
       date: ${{ steps.date.outputs.date }}
       versionName: ${{ steps.versionName.outputs.versionName }}
+      tag: ${{ steps.tag.outputs.tag }}
   
     steps:
       - name: checkout
@@ -162,16 +162,20 @@ jobs:
         id: versionName
         run: echo "versionName=$(echo v${{ steps.versionProperties.outputs.MAJOR }}.${{ steps.versionProperties.outputs.MINOR }}.${{ steps.versionProperties.outputs.PATCH }}-${{ steps.versionProperties.outputs.BUILD }})" >> $GITHUB_OUTPUT
 
+      - name: Generate tag name
+        id: tag
+        run: echo "tag=$(echo ${{ steps.versionName.outputs.versionName }}_${{ steps.date.outputs.date }})" >> $GITHUB_OUTPUT
+
       - name: Create Tag
         uses: ydataai/create-tag@v1
         with:
-          tag: ${{ steps.versionName.outputs.versionName }}_${{ steps.date.outputs.date }}
+          tag: ${{ steps.tag.outputs.tag }}
           message: ${{ env.app_name }} Nightly ${{ steps.versionName.outputs.versionName }} (${{ steps.date.outputs.date }})
 
   
 
   Deploy:
-    needs: [CheckNewCommits, Build, CreateNewTag]
+    needs: [Build, CreateNewTag]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -182,7 +186,7 @@ jobs:
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.CheckNewCommits.outputs.prevTag }}
+          tag: ${{ needs.CreateNewTag.outputs.tag }}
           writeToFile: false
 
       - name: Create whatsnew directory and file
