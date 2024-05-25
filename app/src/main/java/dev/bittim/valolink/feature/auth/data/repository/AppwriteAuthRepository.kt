@@ -1,13 +1,9 @@
 package dev.bittim.valolink.feature.auth.data.repository
 
-import dev.bittim.valolink.core.domain.Result
 import io.appwrite.ID
 import io.appwrite.exceptions.AppwriteException
 import io.appwrite.models.User
 import io.appwrite.services.Account
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class AppwriteAuthRepository @Inject constructor(
@@ -17,35 +13,33 @@ class AppwriteAuthRepository @Inject constructor(
         return try {
             account.get()
         } catch (e: AppwriteException) {
+            e.printStackTrace()
             null
         }
     }
 
-    override fun signIn(
+    override suspend fun signIn(
         email: String,
         password: String,
-    ): Flow<Result<User<Map<String, Any>>?, AuthRepository.AuthError>> {
-        return flow<Result<User<Map<String, Any>>?, AuthRepository.AuthError>> {
-            emit(Result.Loading())
+    ): User<Map<String, Any>>? {
+        return try {
             account.createEmailPasswordSession(
                 email,
                 password
             )
-            val result = getUser()
-            emit(Result.Success(result))
-        }.catch {
-            it.printStackTrace()
-            emit(Result.Error(AuthRepository.AuthError.GENERIC)) // "it" contains error
+            getUser()
+        } catch (e: AppwriteException) {
+            e.printStackTrace()
+            null
         }
     }
 
-    override fun signUp(
+    override suspend fun signUp(
         email: String,
         username: String,
         password: String,
-    ): Flow<Result<User<Map<String, Any>>?, AuthRepository.AuthError>> {
-        return flow<Result<User<Map<String, Any>>?, AuthRepository.AuthError>> {
-            emit(Result.Loading())
+    ): User<Map<String, Any>>? {
+        return try {
             account.create(
                 ID.unique(),
                 email,
@@ -55,25 +49,15 @@ class AppwriteAuthRepository @Inject constructor(
                 email,
                 password
             )
-            val result = account.updateName(username)
-            emit(Result.Success(result))
-        }.catch {
-            it.printStackTrace()
-            emit(Result.Error(AuthRepository.AuthError.GENERIC)) // "it" contains error
-        }
-    }
-
-    override fun forgotPassword(email: String): Flow<Result<Unit, AuthRepository.AuthError>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun checkSessionExists(): Boolean {
-        return try {
-            account.getSession("current")
-            true
+            account.updateName(username)
         } catch (e: AppwriteException) {
             e.printStackTrace()
-            false
+            null
         }
+    }
+
+    // TODO: Not yet implemented
+    override fun forgotPassword(email: String): Boolean {
+        return true
     }
 }

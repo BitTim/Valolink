@@ -15,16 +15,16 @@ object SignInNav
 
 fun NavGraphBuilder.signInScreen(
     onNavToContent: () -> Unit,
-    onNavToSignUp: () -> Unit
+    onNavToSignUp: () -> Unit,
 ) {
     composable<SignInNav> {
         val viewModel: SignInViewModel = hiltViewModel()
-        val signInState by viewModel.signInState.collectAsStateWithLifecycle()
+        val signInState by viewModel.state.collectAsStateWithLifecycle()
 
         SignInScreen(
             state = signInState,
             snackbarHostState = viewModel.snackbarHostState,
-            
+
             onEmailValueChange = viewModel::onEmailChange,
             onPasswordValueChange = viewModel::onPasswordChange,
             onForgotEmailValueChange = viewModel::onForgotEmailChange,

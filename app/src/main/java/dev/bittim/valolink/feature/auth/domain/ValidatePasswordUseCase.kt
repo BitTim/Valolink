@@ -1,29 +1,20 @@
 package dev.bittim.valolink.feature.auth.domain
 
-import dev.bittim.valolink.core.domain.Error
-import dev.bittim.valolink.core.domain.Result
-
 class ValidatePasswordUseCase {
     operator fun invoke(
         password: String,
-        confirmPassword: String? = null
-    ): Result<Unit, PasswordError> {
+        confirmPassword: String? = null,
+    ): String? {
         if (confirmPassword != null && password != confirmPassword) {
-            return Result.Error(PasswordError.MISMATCH)
+            return "Passwords do not match"
         }
 
         if (password.isEmpty()) {
-            return Result.Error(PasswordError.EMPTY)
+            return "Password cannot be empty"
         } else if (password.length < 8) {
-            return Result.Error(PasswordError.TOO_SHORT)
+            return "Password must be at least 8 characters long"
         }
 
-        return Result.Success(Unit)
-    }
-
-    enum class PasswordError : Error {
-        EMPTY,
-        MISMATCH,
-        TOO_SHORT
+        return null
     }
 }

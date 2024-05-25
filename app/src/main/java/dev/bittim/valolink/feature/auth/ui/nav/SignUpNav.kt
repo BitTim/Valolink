@@ -19,7 +19,7 @@ fun NavGraphBuilder.signUpScreen(
 ) {
     composable<SignUpNav> {
         val viewModel: SignUpViewModel = hiltViewModel()
-        val signUpState by viewModel.signUpState.collectAsStateWithLifecycle()
+        val signUpState by viewModel.state.collectAsStateWithLifecycle()
 
         SignUpScreen(
             signUpState,

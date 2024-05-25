@@ -28,8 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.R
-import dev.bittim.valolink.core.ui.UiText
 import dev.bittim.valolink.feature.auth.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.feature.auth.ui.screens.signin.components.ForgotAlertDialog
 import dev.bittim.valolink.ui.theme.ValolinkTheme
@@ -46,152 +44,146 @@ fun SignInScreen(
     onSignInClicked: () -> Unit,
     onForgotClicked: () -> Unit,
     onNavContent: () -> Unit,
-    onNavSignUp: () -> Unit
+    onNavSignUp: () -> Unit,
 ) {
-    Scaffold(
-        Modifier.padding(16.dp),
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        }
-    ) {
+    Scaffold(Modifier.padding(16.dp),
+             snackbarHost = {
+                 SnackbarHost(hostState = snackbarHostState)
+             }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
             verticalArrangement = Arrangement.Center
         ) {
-            when (state) {
-                is SignInState.Loading -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Signing in",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        Spacer(modifier = Modifier.padding(16.dp))
-                        CircularProgressIndicator()
-                    }
+            if (state.isSuccess) {
+                LaunchedEffect(key1 = Unit) {
+                    onNavContent()
                 }
+            }
 
-                is SignInState.Success -> {
-                    LaunchedEffect(key1 = Unit) {
-                        onNavContent()
-                    }
-                }
-
-                is SignInState.Input -> {
+            if (state.isLoading) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
-                        text = "Sign in to Valolink",
-                        style = MaterialTheme.typography.headlineMedium
+                        text = "Signing in",
+                        style = MaterialTheme.typography.titleMedium
                     )
 
                     Spacer(modifier = Modifier.padding(16.dp))
+                    CircularProgressIndicator()
+                }
+            } else {
+                Text(
+                    text = "Sign in to Valolink",
+                    style = MaterialTheme.typography.headlineMedium
+                )
 
-                    OutlinedTextFieldWithError(
-                        label = "Email",
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Email,
-                                contentDescription = "Email"
-                            )
-                        },
-                        value = state.email,
-                        error = state.emailError,
-                        enableVisibilityToggle = false,
-                        onValueChange = onEmailValueChange
-                    )
+                Spacer(modifier = Modifier.padding(16.dp))
 
-                    Spacer(modifier = Modifier.padding(8.dp))
-
-                    OutlinedTextFieldWithError(
-                        label = "Password",
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Password,
-                                contentDescription = "Password"
-                            )
-                        },
-                        value = state.password,
-                        error = state.passwordError,
-                        enableVisibilityToggle = true,
-                        onValueChange = onPasswordValueChange
-                    )
-
-                    Spacer(modifier = Modifier.padding(8.dp))
-
-                    if (state.authError != null) {
-                        Text(
-                            text = state.authError.asString(),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error
+                OutlinedTextFieldWithError(
+                    label = "Email",
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Email,
+                            contentDescription = "Email"
                         )
-                    }
+                    },
+                    value = state.email,
+                    error = state.emailError,
+                    enableVisibilityToggle = false,
+                    onValueChange = onEmailValueChange
+                )
 
-                    Spacer(modifier = Modifier.padding(16.dp))
+                Spacer(modifier = Modifier.padding(8.dp))
 
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = onSignInClicked
+                OutlinedTextFieldWithError(
+                    label = "Password",
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Password,
+                            contentDescription = "Password"
+                        )
+                    },
+                    value = state.password,
+                    error = state.passwordError,
+                    enableVisibilityToggle = true,
+                    onValueChange = onPasswordValueChange
+                )
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                if (state.authError != null) {
+                    Text(
+                        text = state.authError,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                Spacer(modifier = Modifier.padding(16.dp))
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onSignInClicked
+                ) {
+                    Text(
+                        text = "Sign in",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                TextButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onForgotClicked
+                ) {
+                    Text(
+                        text = "Forgot password?",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(16.dp),
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .weight(2f)
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        text = "Don't have an account?",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    FilledTonalButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        onClick = onNavSignUp
                     ) {
                         Text(
-                            text = "Sign in",
+                            text = "Sign up",
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
+                }
 
-                    TextButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = onForgotClicked
-                    ) {
-                        Text(
-                            text = "Forgot password?",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(16.dp),
+                if (state.showForgotDialog) {
+                    ForgotAlertDialog(
+                        email = state.forgotEmail,
+                        emailError = state.forgotEmailError,
+                        onEmailValueChange = onForgotEmailValueChange,
+                        onDismissRequest = onForgotDismissRequest,
+                        onConfirmation = onForgotConfirmation
                     )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .weight(2f)
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            text = "Don't have an account?",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-
-                        FilledTonalButton(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                            onClick = onNavSignUp
-                        ) {
-                            Text(
-                                text = "Sign up",
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                    }
-
-                    if (state.showForgotDialog) {
-                        ForgotAlertDialog(
-                            email = state.forgotEmail,
-                            emailError = state.forgotEmailError,
-                            onEmailValueChange = onForgotEmailValueChange,
-                            onDismissRequest = onForgotDismissRequest,
-                            onConfirmation = onForgotConfirmation
-                        )
-                    }
                 }
             }
         }
@@ -202,11 +194,17 @@ fun SignInScreen(
 @Composable
 fun LoadingSignInScreenPreview() {
     ValolinkTheme {
-        SignInScreen(
-            state = SignInState.Loading,
-            snackbarHostState = remember { SnackbarHostState() },
-            {}, {}, {}, {}, {}, {}, {}, {}, {}
-        )
+        SignInScreen(state = SignInState(isLoading = true),
+                     snackbarHostState = remember { SnackbarHostState() },
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {})
     }
 }
 
@@ -214,20 +212,17 @@ fun LoadingSignInScreenPreview() {
 @Composable
 fun InputSignInScreenPreview() {
     ValolinkTheme {
-        SignInScreen(
-            state = SignInState.Input(
-                email = "",
-                password = "",
-                emailError = null,
-                passwordError = null,
-                authError = null,
-                showForgotDialog = false,
-                forgotEmail = "",
-                forgotEmailError = null
-            ),
-            snackbarHostState = remember { SnackbarHostState() },
-            {}, {}, {}, {}, {}, {}, {}, {}, {}
-        )
+        SignInScreen(state = SignInState(),
+                     snackbarHostState = remember { SnackbarHostState() },
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {})
     }
 }
 
@@ -235,20 +230,26 @@ fun InputSignInScreenPreview() {
 @Composable
 fun ForgotInputSignInScreenPreview() {
     ValolinkTheme {
-        SignInScreen(
-            state = SignInState.Input(
-                email = "",
-                password = "",
-                emailError = null,
-                passwordError = null,
-                authError = null,
-                showForgotDialog = true,
-                forgotEmail = "",
-                forgotEmailError = null
-            ),
-            snackbarHostState = remember { SnackbarHostState() },
-            {}, {}, {}, {}, {}, {}, {}, {}, {}
-        )
+        SignInScreen(state = SignInState(
+            email = "",
+            password = "",
+            emailError = null,
+            passwordError = null,
+            authError = null,
+            showForgotDialog = true,
+            forgotEmail = "",
+            forgotEmailError = null
+        ),
+                     snackbarHostState = remember { SnackbarHostState() },
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {})
     }
 }
 
@@ -256,19 +257,25 @@ fun ForgotInputSignInScreenPreview() {
 @Composable
 fun ErrorInputSignInScreenPreview() {
     ValolinkTheme {
-        SignInScreen(
-            state = SignInState.Input(
-                email = "test@mailcom",
-                password = "Password",
-                emailError = UiText.DynamicString(""),
-                passwordError = UiText.DynamicString(""),
-                authError = UiText.StringResource(R.string.error_auth_generic),
-                showForgotDialog = false,
-                forgotEmail = "",
-                forgotEmailError = null
-            ),
-            snackbarHostState = remember { SnackbarHostState() },
-            {}, {}, {}, {}, {}, {}, {}, {}, {}
-        )
+        SignInScreen(state = SignInState(
+            email = "test@mailcom",
+            password = "Password",
+            emailError = "",
+            passwordError = "",
+            authError = "Something went wrong",
+            showForgotDialog = false,
+            forgotEmail = "",
+            forgotEmailError = null
+        ),
+                     snackbarHostState = remember { SnackbarHostState() },
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {})
     }
 }
