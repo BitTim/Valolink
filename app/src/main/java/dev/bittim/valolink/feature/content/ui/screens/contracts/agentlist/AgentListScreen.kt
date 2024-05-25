@@ -24,7 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.feature.content.domain.model.agent.Agent
+import dev.bittim.valolink.feature.content.domain.model.game.agent.Agent
 import dev.bittim.valolink.feature.content.ui.screens.contracts.components.AgentCarouselCard
 
 

@@ -16,21 +16,20 @@ import kotlinx.serialization.Serializable
 object HomeNav
 
 fun NavGraphBuilder.homeScreen(
-    onSignOutClicked: () -> Unit
+    onSignOutClicked: () -> Unit,
+    navToOnboarding: () -> Unit,
 ) {
-    composable<HomeNav>(
-        enterTransition = { Transition.topLevelEnter },
-        exitTransition = { Transition.topLevelExit },
-        popEnterTransition = { Transition.topLevelEnter },
-        popExitTransition = { Transition.topLevelExit }
-    ) {
+    composable<HomeNav>(enterTransition = { Transition.topLevelEnter },
+                        exitTransition = { Transition.topLevelExit },
+                        popEnterTransition = { Transition.topLevelEnter },
+                        popExitTransition = { Transition.topLevelExit }) {
         val viewModel: HomeViewModel = hiltViewModel()
-        val homeState by viewModel.homeState.collectAsStateWithLifecycle()
+        val homeState by viewModel.state.collectAsStateWithLifecycle()
 
         HomeScreen(
             state = homeState,
-            onFetch = viewModel::onFetch,
-            onSignOutClicked = onSignOutClicked
+            onSignOutClicked = onSignOutClicked,
+            navToOnboarding = navToOnboarding
         )
     }
 }

@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val authRepo: AuthRepository,
-    private val validationUseCases: ValidationUseCases
+    private val validationUseCases: ValidationUseCases,
 ) : ViewModel() {
     private var _signInState = MutableStateFlow<SignInState>(
         SignInState.Input(
@@ -35,14 +35,22 @@ class SignInViewModel @Inject constructor(
     )
     val signInState = _signInState.asStateFlow()
     val snackbarHostState = SnackbarHostState()
-    
+
+    init {
+        viewModelScope.launch {
+            if (authRepo.checkSessionExists()) {
+                _signInState.value = SignInState.Success
+            }
+        }
+    }
+
     fun onSignInClicked() = viewModelScope.launch {
         if (_signInState.value !is SignInState.Input) return@launch
         val state = _signInState.value as SignInState.Input
 
         val emailError: UiText? = validateEmail(state.email)
         val passwordError: UiText? = validatePassword(state.password)
-        
+
         if (emailError != null || passwordError != null) {
             _signInState.update {
                 if (it is SignInState.Input) {
@@ -58,30 +66,34 @@ class SignInViewModel @Inject constructor(
             return@launch
         }
 
-        authRepo.signIn(state.email, state.password).collectLatest { result ->
-            when (result) {
-                is Result.Loading -> {
-                    _signInState.value = SignInState.Loading
-                }
+        authRepo.signIn(
+            state.email,
+            state.password
+        )
+            .collectLatest { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        _signInState.value = SignInState.Loading
+                    }
 
-                is Result.Success -> {
-                    _signInState.value = SignInState.Success
-                }
+                    is Result.Success -> {
+                        _signInState.value = SignInState.Success
+                    }
 
-                is Result.Error -> {
-                    _signInState.value = SignInState.Input(
-                        email = state.email,
-                        password = state.password,
-                        emailError = UiText.DynamicString(""),
-                        passwordError = UiText.DynamicString(""),
-                        authError = result.error.asUiText(),
-                        showForgotDialog = state.showForgotDialog,
-                        forgotEmail = state.forgotEmail,
-                        forgotEmailError = state.forgotEmailError
-                    )
+                    is Result.Error   -> {
+                        _signInState.value = SignInState.Input(
+                            email = state.email,
+                            password = state.password,
+                            emailError = UiText.DynamicString(""),
+                            passwordError = UiText.DynamicString(""),
+                            authError = result.error.asUiText(),
+                            showForgotDialog = state.showForgotDialog,
+                            forgotEmail = state.forgotEmail,
+                            forgotEmailError = state.forgotEmailError
+                        )
+                    }
                 }
             }
-        }
     }
 
     fun onForgotConfirmation() = viewModelScope.launch {
@@ -104,30 +116,32 @@ class SignInViewModel @Inject constructor(
             return@launch
         }
 
-        authRepo.forgotPassword(state.forgotEmail).collectLatest { result ->
-            when (result) {
-                is Result.Loading -> {}
-                is Result.Success -> {
-                    viewModelScope.launch {
-                        snackbarHostState.showSnackbar("Sent password reset request to ${state.forgotEmail}")
-                    }
-                    onForgotDismiss()
-                }
+        authRepo.forgotPassword(state.forgotEmail)
+            .collectLatest { result ->
+                when (result) {
+                    is Result.Loading -> {}
 
-                is Result.Error -> {
-                    _signInState.value = SignInState.Input(
-                        email = state.email,
-                        password = state.password,
-                        emailError = state.emailError,
-                        passwordError = state.passwordError,
-                        authError = state.authError,
-                        showForgotDialog = true,
-                        forgotEmail = state.forgotEmail,
-                        forgotEmailError = result.error.asUiText() // Handle string conversion
-                    )
+                    is Result.Success -> {
+                        viewModelScope.launch {
+                            snackbarHostState.showSnackbar("Sent password reset request to ${state.forgotEmail}")
+                        }
+                        onForgotDismiss()
+                    }
+
+                    is Result.Error   -> {
+                        _signInState.value = SignInState.Input(
+                            email = state.email,
+                            password = state.password,
+                            emailError = state.emailError,
+                            passwordError = state.passwordError,
+                            authError = state.authError,
+                            showForgotDialog = true,
+                            forgotEmail = state.forgotEmail,
+                            forgotEmailError = result.error.asUiText() // Handle string conversion
+                        )
+                    }
                 }
             }
-        }
     }
 
 
@@ -137,7 +151,7 @@ class SignInViewModel @Inject constructor(
                 result.error.asUiText()
             }
 
-            else -> null
+            else            -> null
         }
     }
 
@@ -147,10 +161,10 @@ class SignInViewModel @Inject constructor(
                 result.error.asUiText()
             }
 
-            else -> null
+            else            -> null
         }
     }
-    
+
 
 
     fun onForgotClicked() {

@@ -1,6 +1,6 @@
 package dev.bittim.valolink.feature.content.data.repository.game
 
-import dev.bittim.valolink.feature.content.domain.model.buddy.BuddyLevel
+import dev.bittim.valolink.feature.content.domain.model.game.buddy.BuddyLevel
 import kotlinx.coroutines.flow.Flow
 
 interface BuddyLevelRepository {

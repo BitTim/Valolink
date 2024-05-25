@@ -37,8 +37,8 @@ fun SignUpScreen(
     onPasswordValueChange: (String) -> Unit,
     onConfirmPasswordValueChange: (String) -> Unit,
     onSignUpClicked: () -> Unit,
-    onNavToOnboardingGraph: () -> Unit,
-    onNavToSignIn: () -> Unit
+    onNavToContent: () -> Unit,
+    onNavToSignIn: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -65,11 +65,11 @@ fun SignUpScreen(
 
             is SignUpState.Success -> {
                 LaunchedEffect(key1 = Unit) {
-                    onNavToOnboardingGraph()
+                    onNavToContent()
                 }
             }
 
-            is SignUpState.Input -> {
+            is SignUpState.Input   -> {
                 Text(
                     text = "Create a new Valolink account",
                     style = MaterialTheme.typography.headlineMedium
@@ -206,10 +206,14 @@ fun SignUpScreen(
 @Composable
 fun LoadingSignUpScreenPreview() {
     ValolinkTheme {
-        SignUpScreen(
-            state = SignUpState.Loading,
-            {}, {}, {}, {}, {}, {}, {}
-        )
+        SignUpScreen(state = SignUpState.Loading,
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {})
     }
 }
 
@@ -217,20 +221,24 @@ fun LoadingSignUpScreenPreview() {
 @Composable
 fun InputSignUpScreenPreview() {
     ValolinkTheme {
-        SignUpScreen(
-            state = SignUpState.Input(
-                email = "",
-                username = "",
-                password = "",
-                confirmPassword = "",
-                emailError = null,
-                usernameError = null,
-                passwordError = null,
-                confirmPasswordError = null,
-                authError = null
-            ),
-            {}, {}, {}, {}, {}, {}, {}
-        )
+        SignUpScreen(state = SignUpState.Input(
+            email = "",
+            username = "",
+            password = "",
+            confirmPassword = "",
+            emailError = null,
+            usernameError = null,
+            passwordError = null,
+            confirmPasswordError = null,
+            authError = null
+        ),
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {})
     }
 }
 
@@ -238,19 +246,23 @@ fun InputSignUpScreenPreview() {
 @Composable
 fun ErrorInputSignUpScreenPreview() {
     ValolinkTheme {
-        SignUpScreen(
-            state = SignUpState.Input(
-                email = "",
-                username = "",
-                password = "",
-                confirmPassword = "",
-                emailError = UiText.DynamicString(""),
-                usernameError = UiText.DynamicString(""),
-                passwordError = UiText.DynamicString(""),
-                confirmPasswordError = UiText.DynamicString(""),
-                authError = UiText.StringResource(R.string.error_auth_generic)
-            ),
-            {}, {}, {}, {}, {}, {}, {}
-        )
+        SignUpScreen(state = SignUpState.Input(
+            email = "",
+            username = "",
+            password = "",
+            confirmPassword = "",
+            emailError = UiText.DynamicString(""),
+            usernameError = UiText.DynamicString(""),
+            passwordError = UiText.DynamicString(""),
+            confirmPasswordError = UiText.DynamicString(""),
+            authError = UiText.StringResource(R.string.error_auth_generic)
+        ),
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {},
+                     {})
     }
 }

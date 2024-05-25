@@ -18,27 +18,28 @@ fun MainScreen(
     state: MainState,
     navController: NavHostController,
     onSignOutClicked: () -> Unit,
-    onNavAuthGraph: () -> Unit
+    onNavAuthGraph: () -> Unit,
 ) {
     if (!state.isAuthenticated) {
-        onNavAuthGraph()
+        //onNavAuthGraph()
     }
 
     var currentDestination by rememberSaveable { mutableStateOf(NavItem.Home) }
 
-    NavigationSuiteScaffold(modifier = Modifier.fillMaxSize(), navigationSuiteItems = {
-        NavItem.entries.forEach {
-            val isSelected = it == currentDestination
+    NavigationSuiteScaffold(modifier = Modifier.fillMaxSize(),
+                            navigationSuiteItems = {
+                                NavItem.entries.forEach {
+                                    val isSelected = it == currentDestination
 
-            item(icon = if (isSelected) it.activeIcon else it.inactiveIcon,
-                label = { Text(it.title) },
-                selected = isSelected,
-                onClick = {
-                    currentDestination = it
-                    it.navigation(navController)
-                })
-        }
-    }) {
+                                    item(icon = if (isSelected) it.activeIcon else it.inactiveIcon,
+                                         label = { Text(it.title) },
+                                         selected = isSelected,
+                                         onClick = {
+                                             currentDestination = it
+                                             it.navigation(navController)
+                                         })
+                                }
+                            }) {
         ContentNavGraph(
             modifier = Modifier.fillMaxSize(),
             navController = navController,

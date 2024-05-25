@@ -3,7 +3,7 @@ package dev.bittim.valolink.feature.content.data.repository.game
 import androidx.room.withTransaction
 import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
-import dev.bittim.valolink.feature.content.domain.model.agent.Agent
+import dev.bittim.valolink.feature.content.domain.model.game.agent.Agent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class AgentApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
-    private val versionRepository: VersionRepository
+    private val versionRepository: VersionRepository,
 ) : AgentRepository {
     // --------------------------------
     //  Query from Database
@@ -21,18 +21,27 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getAgent(uuid: String, providedVersion: String?): Flow<Agent> {
+    override suspend fun getAgent(
+        uuid: String,
+        providedVersion: String?,
+    ): Flow<Agent> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.agentDao.getAgent(uuid).distinctUntilChanged().transform { agent ->
-            if (agent == null || agent.agent.version != version) {
-                fetchAgent(uuid, version)
-            } else {
-                emit(agent)
+        return gameDatabase.agentDao.getAgent(uuid)
+            .distinctUntilChanged()
+            .transform { agent ->
+                if (agent == null || agent.agent.version != version) {
+                    fetchAgent(
+                        uuid,
+                        version
+                    )
+                } else {
+                    emit(agent)
+                }
             }
-        }.map {
-            it.toType()
-        }
+            .map {
+                it.toType()
+            }
     }
 
     // -------- [ Bulk queries ] --------
@@ -40,15 +49,32 @@ class AgentApiRepository @Inject constructor(
     override suspend fun getAllAgents(providedVersion: String?): Flow<List<Agent>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.agentDao.getAllAgents().distinctUntilChanged().transform { agents ->
-            if (agents.isEmpty() || agents.any { it.agent.version != version }) {
-                fetchAgents(version)
-            } else {
-                emit(agents)
+        return gameDatabase.agentDao.getAllAgents()
+            .distinctUntilChanged()
+            .transform { agents ->
+                if (agents.isEmpty() || agents.any { it.agent.version != version }) {
+                    fetchAgents(version)
+                } else {
+                    emit(agents)
+                }
             }
-        }.map { agents ->
-            agents.map { it.toType() }
-        }
+            .map { agents ->
+                agents.map { it.toType() }
+            }
+    }
+
+    override suspend fun getAllBaseAgentUuids(providedVersion: String?): Flow<List<String>> {
+        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+
+        return gameDatabase.agentDao.getAllBaseAgentUuids()
+            .distinctUntilChanged()
+            .transform { agentMaps ->
+                if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
+                    fetchAgents(version)
+                } else {
+                    emit(agentMaps.keys.toList())
+                }
+            }
     }
 
     // --------------------------------
@@ -57,7 +83,10 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchAgent(uuid: String, version: String) {
+    override suspend fun fetchAgent(
+        uuid: String,
+        version: String,
+    ) {
         val response = gameApi.getAgent(uuid)
         if (response.isSuccessful) {
             val agentDto = response.body()!!.data!!
@@ -65,7 +94,10 @@ class AgentApiRepository @Inject constructor(
             val recruitment = agentDto.recruitmentData?.toEntity(version)
             val role = agentDto.role.toEntity(version)
             val abilities = agentDto.abilities.map {
-                it.toEntity(version, agent.uuid)
+                it.toEntity(
+                    version,
+                    agent.uuid
+                )
             }
 
             gameDatabase.withTransaction {
@@ -74,9 +106,12 @@ class AgentApiRepository @Inject constructor(
                         recruitment
                     )
                 }
-                
+
                 gameDatabase.agentDao.upsertAgent(
-                    role, agent, abilities.distinct().toSet()
+                    role,
+                    agent,
+                    abilities.distinct()
+                        .toSet()
                 )
             }
         }
@@ -100,19 +135,27 @@ class AgentApiRepository @Inject constructor(
 
             val abilities = agentDto.zip(agents) { data, agent ->
                 data.abilities.map {
-                    it.toEntity(version, agent.uuid)
+                    it.toEntity(
+                        version,
+                        agent.uuid
+                    )
                 }
-            }.flatten()
+            }
+                .flatten()
 
             gameDatabase.withTransaction {
                 gameDatabase.contractsDao.upsertMultipleAgentRecruitments(
-                    recruitments.distinct().toSet()
+                    recruitments.distinct()
+                        .toSet()
                 )
-                
+
                 gameDatabase.agentDao.upsertAllAgents(
-                    roles.distinct().toSet(),
-                    agents.distinct().toSet(),
-                    abilities.distinct().toSet()
+                    roles.distinct()
+                        .toSet(),
+                    agents.distinct()
+                        .toSet(),
+                    abilities.distinct()
+                        .toSet()
                 )
             }
         }

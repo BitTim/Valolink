@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.AgentEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.RecruitmentEntity
-import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.game.contract.Contract
 
 data class RecruitmentWithAgentWithRoleAndAbilities(
     @Embedded val recruitment: RecruitmentEntity, @Relation(

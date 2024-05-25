@@ -5,7 +5,7 @@ import androidx.room.Relation
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.AbilityEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.AgentEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.agent.RoleEntity
-import dev.bittim.valolink.feature.content.domain.model.agent.Agent
+import dev.bittim.valolink.feature.content.domain.model.game.agent.Agent
 
 data class AgentWithRoleAndAbilities(
     @Embedded val agent: AgentEntity, @Relation(

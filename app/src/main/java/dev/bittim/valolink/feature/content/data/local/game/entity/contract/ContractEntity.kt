@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
-import dev.bittim.valolink.feature.content.domain.model.contract.Content
-import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.game.contract.Content
+import dev.bittim.valolink.feature.content.domain.model.game.contract.Contract
 
 @Entity(
     tableName = "Contracts", indices = [Index(

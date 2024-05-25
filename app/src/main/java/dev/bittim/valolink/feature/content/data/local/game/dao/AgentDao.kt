@@ -1,6 +1,7 @@
 package dev.bittim.valolink.feature.content.data.local.game.dao
 
 import androidx.room.Dao
+import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -19,15 +20,17 @@ interface AgentDao {
     @Transaction
     @Upsert
     suspend fun upsertAgent(
-        role: RoleEntity, agent: AgentEntity, abilities: Set<AbilityEntity>
+        role: RoleEntity,
+        agent: AgentEntity,
+        abilities: Set<AbilityEntity>,
     )
-
-
 
     @Transaction
     @Upsert
     suspend fun upsertAllAgents(
-        roles: Set<RoleEntity>, agents: Set<AgentEntity>, abilities: Set<AbilityEntity>
+        roles: Set<RoleEntity>,
+        agents: Set<AgentEntity>,
+        abilities: Set<AbilityEntity>,
     )
 
     // --------------------------------
@@ -38,9 +41,10 @@ interface AgentDao {
     @Query("SELECT * FROM Agents WHERE uuid = :uuid LIMIT 1")
     fun getAgent(uuid: String): Flow<AgentWithRoleAndAbilities?>
 
-
-
     @Transaction
     @Query("SELECT * FROM Agents")
     fun getAllAgents(): Flow<List<AgentWithRoleAndAbilities>>
+
+    @Query("SELECT uuid, version FROM Agents WHERE isBaseContent = TRUE")
+    fun getAllBaseAgentUuids(): Flow<Map<@MapColumn(columnName = "uuid") String, @MapColumn(columnName = "version") String>>
 }

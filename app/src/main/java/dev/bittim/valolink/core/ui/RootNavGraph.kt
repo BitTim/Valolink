@@ -25,8 +25,7 @@ fun RootNavGraph(
     ) {
         authNavGraph(
             navController = navController,
-            onNavToContentGraph = { navController.navToContentMain() },
-            onNavToOnboardingGraph = { navController.navToContentMain() } // TODO: Change to Onboarding graph
+            onNavToContentGraph = { navController.navToContentMain() }
         )
 
         mainScreen(

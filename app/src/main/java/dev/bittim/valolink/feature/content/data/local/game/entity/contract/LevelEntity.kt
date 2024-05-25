@@ -5,26 +5,28 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
-import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
-import dev.bittim.valolink.feature.content.domain.model.contract.Reward
+import dev.bittim.valolink.feature.content.domain.model.game.contract.ChapterLevel
+import dev.bittim.valolink.feature.content.domain.model.game.contract.Reward
 
 @Entity(
     tableName = "ContractChapterLevels",
-    foreignKeys = [
-        ForeignKey(
-            entity = ChapterEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["chapterUuid"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )], indices = [Index(
-        value = ["uuid"], unique = true
-    )
-    ]
+    foreignKeys = [ForeignKey(
+        entity = ChapterEntity::class,
+        parentColumns = ["uuid"],
+        childColumns = ["chapterUuid"],
+        onUpdate = ForeignKey.CASCADE,
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(
+        value = ["uuid"],
+        unique = true
+    ), Index(
+        value = ["chapterUuid"],
+        unique = false
+    )]
 )
 data class LevelEntity(
-    @PrimaryKey
-    val uuid: String,
+    @PrimaryKey val uuid: String,
     val chapterUuid: String,
     override val version: String,
     val xp: Int,
@@ -35,7 +37,12 @@ data class LevelEntity(
 ) : GameEntity() {
     fun toType(reward: Reward): ChapterLevel {
         return ChapterLevel(
-            xp, vpCost, isPurchasableWithVP, doughCost, isPurchasableWithDough, reward
+            xp,
+            vpCost,
+            isPurchasableWithVP,
+            doughCost,
+            isPurchasableWithDough,
+            reward
         )
     }
 }

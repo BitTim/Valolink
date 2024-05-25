@@ -3,7 +3,7 @@ package dev.bittim.valolink.feature.content.data.local.game.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dev.bittim.valolink.feature.content.domain.model.Event
+import dev.bittim.valolink.feature.content.domain.model.game.Event
 import java.time.Instant
 
 @Entity(

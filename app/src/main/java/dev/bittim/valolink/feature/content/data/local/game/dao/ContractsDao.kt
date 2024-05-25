@@ -27,17 +27,13 @@ interface ContractsDao {
         content: ContentEntity,
         chapters: Set<ChapterEntity>,
         levels: Set<LevelEntity>,
-        rewards: Set<RewardEntity>
+        rewards: Set<RewardEntity>,
     )
-
-
 
     @Upsert
     suspend fun upsertAgentRecruitment(
-        recruitment: RecruitmentEntity
+        recruitment: RecruitmentEntity,
     )
-
-
 
     @Transaction
     @Upsert
@@ -46,15 +42,13 @@ interface ContractsDao {
         contents: Set<ContentEntity>,
         chapters: Set<ChapterEntity>,
         levels: Set<LevelEntity>,
-        rewards: Set<RewardEntity>
+        rewards: Set<RewardEntity>,
     )
-
-
 
     @Transaction
     @Upsert
     suspend fun upsertMultipleAgentRecruitments(
-        recruitments: Set<RecruitmentEntity>
+        recruitments: Set<RecruitmentEntity>,
     )
 
     // --------------------------------
@@ -63,16 +57,17 @@ interface ContractsDao {
 
     // -------- [ Single Object ] --------
 
+    @Transaction
     @Query("SELECT * FROM Contracts WHERE uuid = :uuid LIMIT 1")
     fun getContract(uuid: String): Flow<ContractWithContentWithChaptersWithLevelsAndRewards?>
 
-
-
+    @Transaction
     @Query("SELECT * FROM AgentRecruitments WHERE uuid = :uuid LIMIT 1")
     fun getRecruitment(uuid: String): Flow<RecruitmentWithAgentWithRoleAndAbilities?>
 
     // -------- [ Active ] --------
 
+    @Transaction
     @Query(
         """
         SELECT Contracts.* FROM Contracts
@@ -89,8 +84,7 @@ interface ContractsDao {
     )
     fun getActiveContracts(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 
-
-
+    @Transaction
     @Query(
         """
         SELECT * FROM AgentRecruitments
@@ -103,6 +97,7 @@ interface ContractsDao {
 
     // -------- [ Inactive ] --------
 
+    @Transaction
     @Query(
         """
         SELECT Contracts.* FROM Contracts
@@ -116,8 +111,7 @@ interface ContractsDao {
     )
     fun getInactiveSeasonContracts(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 
-
-
+    @Transaction
     @Query(
         """
         SELECT Contracts.* FROM Contracts
@@ -131,8 +125,7 @@ interface ContractsDao {
     )
     fun getInactiveEventContracts(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 
-
-
+    @Transaction
     @Query(
         """
         SELECT * FROM AgentRecruitments
@@ -145,6 +138,7 @@ interface ContractsDao {
 
     // -------- [ Agent Gears ] --------
 
+    @Transaction
     @Query(
         """
         SELECT Contracts.* FROM Contracts

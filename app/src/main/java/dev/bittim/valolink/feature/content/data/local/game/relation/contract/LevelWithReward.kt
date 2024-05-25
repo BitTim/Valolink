@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.RewardEntity
-import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
+import dev.bittim.valolink.feature.content.domain.model.game.contract.ChapterLevel
 
 data class LevelWithReward(
     @Embedded val level: LevelEntity,

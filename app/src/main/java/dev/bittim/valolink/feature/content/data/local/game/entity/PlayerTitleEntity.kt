@@ -3,7 +3,7 @@ package dev.bittim.valolink.feature.content.data.local.game.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dev.bittim.valolink.feature.content.domain.model.PlayerTitle
+import dev.bittim.valolink.feature.content.domain.model.game.PlayerTitle
 
 @Entity(
     tableName = "PlayerTitles", indices = [Index(value = ["uuid"], unique = true)]

@@ -14,8 +14,8 @@ import kotlinx.serialization.Serializable
 object SignUpNav
 
 fun NavGraphBuilder.signUpScreen(
-    onNavToOnboardingGraph: () -> Unit,
-    onNavToSignIn: () -> Unit
+    onNavToContent: () -> Unit,
+    onNavToSignIn: () -> Unit,
 ) {
     composable<SignUpNav> {
         val viewModel: SignUpViewModel = hiltViewModel()
@@ -28,7 +28,7 @@ fun NavGraphBuilder.signUpScreen(
             onPasswordValueChange = viewModel::onPasswordChange,
             onConfirmPasswordValueChange = viewModel::onConfirmPasswordChange,
             onSignUpClicked = viewModel::onSignUpClicked,
-            onNavToOnboardingGraph = onNavToOnboardingGraph,
+            onNavToContent = onNavToContent,
             onNavToSignIn = onNavToSignIn,
         )
     }

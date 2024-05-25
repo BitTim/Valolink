@@ -40,32 +40,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.feature.content.domain.model.agent.Agent
-import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.game.agent.Agent
+import dev.bittim.valolink.feature.content.domain.model.game.contract.Contract
 import dev.bittim.valolink.feature.content.ui.screens.contracts.components.AgentCarouselCard
 import dev.bittim.valolink.feature.content.ui.screens.contracts.components.DefaultContractCard
 import java.util.Random
 import kotlin.math.floor
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalFoundationApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun ContractsMainScreen(
     state: ContractsMainState,
     onArchiveTypeFilterChange: (ArchiveTypeFilter) -> Unit,
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
-    onNavToContractDetails: (String) -> Unit
+    onNavToContractDetails: (String) -> Unit,
 ) {
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopAppBar(title = { Text(text = "Valolink") }, actions = {
-            IconButton(onClick = { }) {
-                Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null)
-            }
-        }, scrollBehavior = scrollBehaviour, windowInsets = WindowInsets.statusBars
+        TopAppBar(
+            title = { Text(text = "Valolink") },
+            actions = {
+                IconButton(onClick = { }) {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = null
+                    )
+                }
+            },
+            scrollBehavior = scrollBehaviour,
+            windowInsets = WindowInsets.statusBars
         )
 
         if (state.isLoading) {
@@ -81,7 +91,11 @@ fun ContractsMainScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                .padding(
+                    start = 16.dp,
+                    top = 16.dp,
+                    end = 16.dp
+                )
                 .nestedScroll(scrollBehaviour.nestedScrollConnection),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -100,35 +114,38 @@ fun ContractsMainScreen(
             }
 
             items(items = state.activeContracts,
-                contentType = { Contract::class },
-                key = { it.uuid },
-                itemContent = {
-                    var displayIcon: String? = null
-                    var backgroundImage: String? = null
-                    var backgroundGradientColors: List<String> = listOf()
+                  contentType = { Contract::class },
+                  key = { it.uuid },
+                  itemContent = {
+                      var displayIcon: String? = null
+                      var backgroundImage: String? = null
+                      var backgroundGradientColors: List<String> = listOf()
 
-                    if (it.content.relation is Agent) {
-                        displayIcon = it.content.relation.displayIcon
-                        backgroundImage = it.content.relation.background
-                        backgroundGradientColors = it.content.relation.backgroundGradientColors
-                    }
+                      if (it.content.relation is Agent) {
+                          displayIcon = it.content.relation.displayIcon
+                          backgroundImage = it.content.relation.background
+                          backgroundGradientColors = it.content.relation.backgroundGradientColors
+                      }
 
-                    val collected = it.getRandomCollectedXP()
+                      val collected = it.getRandomCollectedXP()
 
-                    DefaultContractCard(
-                        displayName = it.displayName, contractUuid = it.uuid,
-                        displayIcon = displayIcon,
-                        backgroundImage = backgroundImage,
-                        backgroundGradientColors = backgroundGradientColors,
-                        remainingDays = it.content.relation?.calcRemainingDays(),
-                        totalXp = it.calcTotalXp(),
-                        // TODO: Placeholder values as no userdata is present yet
-                        collectedXp = collected,
-                        percentage = floor(
-                            (collected.toFloat() / it.calcTotalXp().toFloat()) * 100f
-                        ).toInt(), onNavToContractDetails = onNavToContractDetails
-                    )
-                })
+                      DefaultContractCard(
+                          displayName = it.displayName,
+                          contractUuid = it.uuid,
+                          displayIcon = displayIcon,
+                          backgroundImage = backgroundImage,
+                          backgroundGradientColors = backgroundGradientColors,
+                          remainingDays = it.content.relation?.calcRemainingDays(),
+                          totalXp = it.calcTotalXp(),
+                          // TODO: Placeholder values as no userdata is present yet
+                          collectedXp = collected,
+                          percentage = floor(
+                              (collected.toFloat() / it.calcTotalXp()
+                                  .toFloat()) * 100f
+                          ).toInt(),
+                          onNavToContractDetails = onNavToContractDetails
+                      )
+                  })
 
             item {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -146,7 +163,8 @@ fun ContractsMainScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Agents", style = MaterialTheme.typography.headlineMedium
+                            text = "Agents",
+                            style = MaterialTheme.typography.headlineMedium
                         )
 
                         IconButton(onClick = { onNavToGearList() }) {
@@ -223,7 +241,8 @@ fun ContractsMainScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Archive", style = MaterialTheme.typography.headlineMedium
+                            text = "Archive",
+                            style = MaterialTheme.typography.headlineMedium
                         )
 
                         SingleChoiceSegmentedButtonRow(
@@ -234,7 +253,8 @@ fun ContractsMainScreen(
                                     selected = entry == state.archiveTypeFilter,
                                     onClick = { onArchiveTypeFilterChange(entry) },
                                     shape = SegmentedButtonDefaults.itemShape(
-                                        index = index, count = ArchiveTypeFilter.entries.count()
+                                        index = index,
+                                        count = ArchiveTypeFilter.entries.count()
                                     )
                                 ) {
                                     Text(text = entry.displayName)
@@ -246,35 +266,38 @@ fun ContractsMainScreen(
             }
 
             items(items = state.inactiveContracts,
-                contentType = { Contract::class },
-                key = { it.uuid },
-                itemContent = {
-                    var displayIcon: String? = null
-                    var backgroundImage: String? = null
-                    var backgroundGradientColors: List<String> = listOf()
+                  contentType = { Contract::class },
+                  key = { it.uuid },
+                  itemContent = {
+                      var displayIcon: String? = null
+                      var backgroundImage: String? = null
+                      var backgroundGradientColors: List<String> = listOf()
 
-                    if (it.content.relation is Agent) {
-                        displayIcon = it.content.relation.displayIcon
-                        backgroundImage = it.content.relation.background
-                        backgroundGradientColors = it.content.relation.backgroundGradientColors
-                    }
+                      if (it.content.relation is Agent) {
+                          displayIcon = it.content.relation.displayIcon
+                          backgroundImage = it.content.relation.background
+                          backgroundGradientColors = it.content.relation.backgroundGradientColors
+                      }
 
-                    val collected = it.getRandomCollectedXP()
+                      val collected = it.getRandomCollectedXP()
 
-                    DefaultContractCard(
-                        displayName = it.displayName, contractUuid = it.uuid,
-                        displayIcon = displayIcon,
-                        backgroundImage = backgroundImage,
-                        backgroundGradientColors = backgroundGradientColors,
-                        remainingDays = it.content.relation?.calcRemainingDays(),
-                        totalXp = it.calcTotalXp(),
-                        // TODO: Placeholder values as no userdata is present yet
-                        collectedXp = collected,
-                        percentage = floor(
-                            (collected.toFloat() / it.calcTotalXp().toFloat()) * 100f
-                        ).toInt(), onNavToContractDetails = onNavToContractDetails
-                    )
-                })
+                      DefaultContractCard(
+                          displayName = it.displayName,
+                          contractUuid = it.uuid,
+                          displayIcon = displayIcon,
+                          backgroundImage = backgroundImage,
+                          backgroundGradientColors = backgroundGradientColors,
+                          remainingDays = it.content.relation?.calcRemainingDays(),
+                          totalXp = it.calcTotalXp(),
+                          // TODO: Placeholder values as no userdata is present yet
+                          collectedXp = collected,
+                          percentage = floor(
+                              (collected.toFloat() / it.calcTotalXp()
+                                  .toFloat()) * 100f
+                          ).toInt(),
+                          onNavToContractDetails = onNavToContractDetails
+                      )
+                  })
 
             item {
                 Spacer(modifier = Modifier.height(4.dp))

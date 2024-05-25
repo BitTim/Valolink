@@ -2,7 +2,6 @@ package dev.bittim.valolink.feature.content.di
 
 import android.content.Context
 import androidx.room.Room
-import com.google.firebase.auth.FirebaseAuth
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -13,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.bittim.valolink.feature.content.data.local.game.GameConverter
 import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
-import dev.bittim.valolink.feature.content.data.repository.FirebaseUserRepository
+import dev.bittim.valolink.feature.content.data.repository.AppwriteUserRepository
 import dev.bittim.valolink.feature.content.data.repository.UserRepository
 import dev.bittim.valolink.feature.content.data.repository.game.AgentApiRepository
 import dev.bittim.valolink.feature.content.data.repository.game.AgentRepository
@@ -37,6 +36,9 @@ import dev.bittim.valolink.feature.content.data.repository.game.VersionApiReposi
 import dev.bittim.valolink.feature.content.data.repository.game.VersionRepository
 import dev.bittim.valolink.feature.content.data.repository.game.WeaponSkinLevelApiRepository
 import dev.bittim.valolink.feature.content.data.repository.game.WeaponSkinLevelRepository
+import io.appwrite.services.Account
+import io.appwrite.services.Databases
+import io.appwrite.services.Realtime
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -59,12 +61,17 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesGameDatabase(@ApplicationContext context: Context, moshi: Moshi): GameDatabase {
+    fun providesGameDatabase(
+        @ApplicationContext context: Context,
+        moshi: Moshi,
+    ): GameDatabase {
         return Room.databaseBuilder(
             context,
             GameDatabase::class.java,
             "game.db"
-        ).addTypeConverter(GameConverter(moshi)).build()
+        )
+            .addTypeConverter(GameConverter(moshi))
+            .build()
     }
 
     // --------------------------------
@@ -75,7 +82,10 @@ object ContentModule {
     @Singleton
     fun providesCache(@ApplicationContext context: Context): Cache {
         val cacheSize: Long = 5 * 1024 * 1024 // 5 MB
-        return Cache(context.cacheDir, cacheSize)
+        return Cache(
+            context.cacheDir,
+            cacheSize
+        )
     }
 
     @Provides
@@ -85,7 +95,8 @@ object ContentModule {
             .cache(cache)
             .addInterceptor { chain ->
                 val request = chain.request()
-                request.newBuilder().header(
+                request.newBuilder()
+                    .header(
                         "Cache-Control",
                         "public, max-age=" + 5
                     ) // API response cache valid for 5 seconds
@@ -94,13 +105,17 @@ object ContentModule {
             }
             .build()
     }
-    
+
     @Provides
     @Singleton
-    fun providesGameApi(moshi: Moshi, okHttpClient: OkHttpClient): GameApi {
+    fun providesGameApi(
+        moshi: Moshi,
+        okHttpClient: OkHttpClient,
+    ): GameApi {
         return Retrofit.Builder()
             .baseUrl(GameApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi)).client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(okHttpClient)
             .build()
             .create(GameApi::class.java)
     }
@@ -111,49 +126,65 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(auth: FirebaseAuth): UserRepository {
-        return FirebaseUserRepository(auth)
+    fun provideUserRepository(
+        realtime: Realtime,
+        account: Account,
+        databases: Databases,
+    ): UserRepository {
+        return AppwriteUserRepository(
+            realtime,
+            account,
+            databases
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesVersionRepository(gameApi: GameApi): VersionRepository {
         return VersionApiRepository(gameApi)
     }
-    
-    
 
     @Provides
     @Singleton
     fun providesSeasonRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): SeasonRepository {
-        return SeasonApiRepository(gameDatabase, gameApi, versionRepository)
+        return SeasonApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesEventRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): EventRepository {
-        return EventApiRepository(gameDatabase, gameApi, versionRepository)
+        return EventApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesAgentRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): AgentRepository {
-        return AgentApiRepository(gameDatabase, gameApi, versionRepository)
+        return AgentApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
@@ -163,7 +194,7 @@ object ContentModule {
         versionRepository: VersionRepository,
         seasonRepository: SeasonRepository,
         eventRepository: EventRepository,
-        agentRepository: AgentRepository
+        agentRepository: AgentRepository,
     ): ContractRepository {
         return ContractApiRepository(
             gameDatabase,
@@ -175,63 +206,87 @@ object ContentModule {
         )
     }
 
-
-
     @Provides
     @Singleton
     fun providesCurrencyRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): CurrencyRepository {
-        return CurrencyApiRepository(gameDatabase, gameApi, versionRepository)
+        return CurrencyApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesSprayRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): SprayRepository {
-        return SprayApiRepository(gameDatabase, gameApi, versionRepository)
+        return SprayApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesPlayerTitleRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): PlayerTitleRepository {
-        return PlayerTitleApiRepository(gameDatabase, gameApi, versionRepository)
+        return PlayerTitleApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesPlayerCardRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): PlayerCardRepository {
-        return PlayerCardApiRepository(gameDatabase, gameApi, versionRepository)
+        return PlayerCardApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesBuddyLevelRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): BuddyLevelRepository {
-        return BuddyLevelApiRepository(gameDatabase, gameApi, versionRepository)
+        return BuddyLevelApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
-
-
 
     @Provides
     @Singleton
     fun providesWeaponSkinLevelRepository(
-        gameDatabase: GameDatabase, gameApi: GameApi, versionRepository: VersionRepository
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+        versionRepository: VersionRepository,
     ): WeaponSkinLevelRepository {
-        return WeaponSkinLevelApiRepository(gameDatabase, gameApi, versionRepository)
+        return WeaponSkinLevelApiRepository(
+            gameDatabase,
+            gameApi,
+            versionRepository
+        )
     }
 }

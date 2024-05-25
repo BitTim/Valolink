@@ -2,7 +2,7 @@ package dev.bittim.valolink.feature.content.ui.screens.contracts.main
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.carousel.CarouselState
-import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.game.contract.Contract
 
 data class ContractsMainState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val isLoading: Boolean = true,

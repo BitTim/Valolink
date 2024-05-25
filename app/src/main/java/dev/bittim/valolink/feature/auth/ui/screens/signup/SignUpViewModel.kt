@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val authRepo: AuthRepository,
-    private val validationUseCases: ValidationUseCases
+    private val validationUseCases: ValidationUseCases,
 ) : ViewModel() {
     private var _signUpState = MutableStateFlow<SignUpState>(
         SignUpState.Input(
@@ -35,13 +35,24 @@ class SignUpViewModel @Inject constructor(
     )
     val signUpState = _signUpState.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            if (authRepo.checkSessionExists()) {
+                _signUpState.value = SignUpState.Success
+            }
+        }
+    }
+
     fun onSignUpClicked() = viewModelScope.launch {
         if (_signUpState.value !is SignUpState.Input) return@launch
         val state = _signUpState.value as SignUpState.Input
 
         val emailError: UiText? = validateEmail(state.email)
         val usernameError: UiText? = validateUsername(state.username)
-        val passwordError: UiText? = validatePassword(state.password, state.confirmPassword)
+        val passwordError: UiText? = validatePassword(
+            state.password,
+            state.confirmPassword
+        )
 
         if (emailError != null || usernameError != null || passwordError != null) {
             _signUpState.update {
@@ -60,31 +71,36 @@ class SignUpViewModel @Inject constructor(
             return@launch
         }
 
-        authRepo.signUp(state.email, state.username, state.password).collectLatest { result ->
-            when (result) {
-                is Result.Loading -> {
-                    _signUpState.value = SignUpState.Loading
-                }
+        authRepo.signUp(
+            state.email,
+            state.username,
+            state.password
+        )
+            .collectLatest { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        _signUpState.value = SignUpState.Loading
+                    }
 
-                is Result.Success -> {
-                    _signUpState.value = SignUpState.Success
-                }
+                    is Result.Success -> {
+                        _signUpState.value = SignUpState.Success
+                    }
 
-                is Result.Error -> {
-                    _signUpState.value = SignUpState.Input(
-                        email = state.email,
-                        username = state.username,
-                        password = state.password,
-                        confirmPassword = "",
-                        emailError = UiText.DynamicString(""),
-                        usernameError = UiText.DynamicString(""),
-                        passwordError = UiText.DynamicString(""),
-                        confirmPasswordError = UiText.DynamicString(""),
-                        authError = result.error.asUiText()
-                    )
+                    is Result.Error   -> {
+                        _signUpState.value = SignUpState.Input(
+                            email = state.email,
+                            username = state.username,
+                            password = state.password,
+                            confirmPassword = "",
+                            emailError = UiText.DynamicString(""),
+                            usernameError = UiText.DynamicString(""),
+                            passwordError = UiText.DynamicString(""),
+                            confirmPasswordError = UiText.DynamicString(""),
+                            authError = result.error.asUiText()
+                        )
+                    }
                 }
             }
-        }
     }
 
 
@@ -92,26 +108,32 @@ class SignUpViewModel @Inject constructor(
         return when (val result = validationUseCases.validateEmail(email)) {
             is Result.Error -> result.error.asUiText()
 
-            else -> null
+            else            -> null
         }
     }
 
     private fun validateUsername(username: String): UiText? {
         return when (val result = validationUseCases.validateUsername(username)) {
             is Result.Error -> result.error.asUiText()
-            else -> null
+            else            -> null
         }
     }
 
-    private fun validatePassword(password: String, confirmPassword: String? = null): UiText? {
-        return when (val result = validationUseCases.validatePassword(password, confirmPassword)) {
+    private fun validatePassword(
+        password: String,
+        confirmPassword: String? = null,
+    ): UiText? {
+        return when (val result = validationUseCases.validatePassword(
+            password,
+            confirmPassword
+        )) {
             is Result.Error -> result.error.asUiText()
-            else -> null
+            else            -> null
         }
     }
-    
 
-    
+
+
     fun onEmailChange(email: String) {
         _signUpState.update { state ->
             if (state is SignUpState.Input) {

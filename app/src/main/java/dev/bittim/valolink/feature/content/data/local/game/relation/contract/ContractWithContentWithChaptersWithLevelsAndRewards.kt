@@ -4,8 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContractEntity
-import dev.bittim.valolink.feature.content.domain.model.contract.ContentRelation
-import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.game.contract.ContentRelation
 
 data class ContractWithContentWithChaptersWithLevelsAndRewards(
     @Embedded val contract: ContractEntity,
@@ -13,12 +12,11 @@ data class ContractWithContentWithChaptersWithLevelsAndRewards(
         entity = ContentEntity::class,
         parentColumn = "uuid",
         entityColumn = "contractUuid"
-    )
-    val content: ContentWithChaptersWithLevelsAndRewards
+    ) val content: ContentWithChaptersWithLevelsAndRewards,
 ) {
     fun toType(
-        relation: ContentRelation?
-    ): Contract {
+        relation: ContentRelation?,
+    ): dev.bittim.valolink.feature.content.domain.model.game.contract.Contract {
         return contract.toType(
             content.toType(relation)
         )

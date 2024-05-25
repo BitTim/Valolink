@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
-import dev.bittim.valolink.feature.content.domain.model.buddy.BuddyLevel
+import dev.bittim.valolink.feature.content.domain.model.game.buddy.BuddyLevel
 
 @Entity(
     tableName = "BuddyLevels", indices = [Index(value = ["uuid"], unique = true)]

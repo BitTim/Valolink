@@ -5,32 +5,38 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.feature.content.data.local.game.entity.GameEntity
-import dev.bittim.valolink.feature.content.domain.model.agent.Ability
-import dev.bittim.valolink.feature.content.domain.model.agent.Agent
-import dev.bittim.valolink.feature.content.domain.model.agent.Role
+import dev.bittim.valolink.feature.content.domain.model.game.agent.Ability
+import dev.bittim.valolink.feature.content.domain.model.game.agent.Agent
+import dev.bittim.valolink.feature.content.domain.model.game.agent.Role
 
 @Entity(
     tableName = "Agents",
-    foreignKeys = [
-        ForeignKey(
-            entity = RoleEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["role"], onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        ), ForeignKey(
-            entity = RecruitmentEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["recruitment"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE
-        )], indices = [Index(
-        value = ["uuid"], unique = true
-    )
-    ]
+    foreignKeys = [ForeignKey(
+        entity = RoleEntity::class,
+        parentColumns = ["uuid"],
+        childColumns = ["role"],
+        onUpdate = ForeignKey.CASCADE,
+        onDelete = ForeignKey.CASCADE
+    ), ForeignKey(
+        entity = RecruitmentEntity::class,
+        parentColumns = ["uuid"],
+        childColumns = ["recruitment"],
+        onUpdate = ForeignKey.CASCADE,
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(
+        value = ["uuid"],
+        unique = true
+    ), Index(
+        value = ["role"],
+        unique = false
+    ), Index(
+        value = ["recruitment"],
+        unique = true
+    )]
 )
 data class AgentEntity(
-    @PrimaryKey
-    val uuid: String,
+    @PrimaryKey val uuid: String,
     override val version: String,
     val displayName: String,
     val description: String,
@@ -52,7 +58,10 @@ data class AgentEntity(
     val role: String,
     val recruitment: String?,
 ) : GameEntity() {
-    fun toType(role: Role, abilities: List<Ability>): Agent {
+    fun toType(
+        role: Role,
+        abilities: List<Ability>,
+    ): Agent {
         return Agent(
             uuid,
             displayName,

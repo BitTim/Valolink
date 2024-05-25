@@ -2,7 +2,7 @@ package dev.bittim.valolink.feature.content.data.repository.game
 
 import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
-import dev.bittim.valolink.feature.content.domain.model.buddy.BuddyLevel
+import dev.bittim.valolink.feature.content.domain.model.game.buddy.BuddyLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

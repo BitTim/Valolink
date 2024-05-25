@@ -10,9 +10,9 @@ import dev.bittim.valolink.feature.content.data.repository.game.PlayerCardReposi
 import dev.bittim.valolink.feature.content.data.repository.game.PlayerTitleRepository
 import dev.bittim.valolink.feature.content.data.repository.game.SprayRepository
 import dev.bittim.valolink.feature.content.data.repository.game.WeaponSkinLevelRepository
-import dev.bittim.valolink.feature.content.domain.model.Currency
-import dev.bittim.valolink.feature.content.domain.model.contract.ChapterLevel
-import dev.bittim.valolink.feature.content.domain.model.contract.RewardRelation
+import dev.bittim.valolink.feature.content.domain.model.game.Currency
+import dev.bittim.valolink.feature.content.domain.model.game.contract.ChapterLevel
+import dev.bittim.valolink.feature.content.domain.model.game.contract.RewardRelation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

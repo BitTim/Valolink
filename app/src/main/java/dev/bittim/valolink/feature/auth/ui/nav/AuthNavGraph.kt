@@ -12,20 +12,15 @@ object AuthNavGraph
 fun NavGraphBuilder.authNavGraph(
     navController: NavController,
     onNavToContentGraph: () -> Unit,
-    onNavToOnboardingGraph: () -> Unit
 ) {
     navigation<AuthNavGraph>(
         startDestination = SignInNav,
     ) {
-        signInScreen(
-            onNavToContent = onNavToContentGraph,
-            onNavToSignUp = { navController.navToSignUp() }
-        )
+        signInScreen(onNavToContent = onNavToContentGraph,
+                     onNavToSignUp = { navController.navToSignUp() })
 
-        signUpScreen(
-            onNavToOnboardingGraph = onNavToOnboardingGraph,
-            onNavToSignIn = { navController.popBackStack() }
-        )
+        signUpScreen(onNavToContent = onNavToContentGraph,
+                     onNavToSignIn = { navController.popBackStack() })
     }
 }
 

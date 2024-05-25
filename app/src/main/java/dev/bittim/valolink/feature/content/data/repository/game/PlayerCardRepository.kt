@@ -1,6 +1,6 @@
 package dev.bittim.valolink.feature.content.data.repository.game
 
-import dev.bittim.valolink.feature.content.domain.model.PlayerCard
+import dev.bittim.valolink.feature.content.domain.model.game.PlayerCard
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerCardRepository {

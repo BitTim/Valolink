@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,27 +27,40 @@ import dev.bittim.valolink.ui.theme.ValolinkTheme
 @Composable
 fun HomeScreen(
     state: HomeState,
-    onFetch: () -> Unit,
-    onSignOutClicked: () -> Unit
+    onSignOutClicked: () -> Unit,
+    navToOnboarding: () -> Unit,
 ) {
-    if (state.username == null) {
-        onFetch()
-    }
-
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
+
+    LaunchedEffect(key1 = state.userPrefs) {
+        if (state.userPrefs == null || !(state.userPrefs.data["hasOnboarded"] as Boolean)) {
+            navToOnboarding()
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopAppBar(title = { Text(text = "Valolink") }, actions = {
-            IconButton(onClick = { }) {
-                Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null)
-            }
-        }, scrollBehavior = scrollBehaviour, windowInsets = WindowInsets.statusBars
+        TopAppBar(
+            title = { Text(text = "Valolink") },
+            actions = {
+                IconButton(onClick = { }) {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = null
+                    )
+                }
+            },
+            scrollBehavior = scrollBehaviour,
+            windowInsets = WindowInsets.statusBars
         )
 
         Column(
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
+            modifier = Modifier.padding(
+                start = 16.dp,
+                top = 16.dp,
+                end = 16.dp
+            )
         ) {
             Text(
                 text = "Welcome back, ${state.username}",
@@ -66,9 +80,8 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     ValolinkTheme {
-        HomeScreen(
-            state = HomeState(username = "John Doe"),
-            {}, {}
-        )
+        HomeScreen(state = HomeState(username = "John Doe"),
+                   {},
+                   {})
     }
 }

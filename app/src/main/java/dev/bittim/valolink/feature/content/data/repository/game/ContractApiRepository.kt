@@ -3,8 +3,7 @@ package dev.bittim.valolink.feature.content.data.repository.game
 import dev.bittim.valolink.feature.content.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.content.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.feature.content.data.remote.game.GameApi
-import dev.bittim.valolink.feature.content.domain.model.contract.ContentRelation
-import dev.bittim.valolink.feature.content.domain.model.contract.Contract
+import dev.bittim.valolink.feature.content.domain.model.game.contract.ContentRelation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,129 +20,181 @@ class ContractApiRepository @Inject constructor(
     private val versionRepository: VersionRepository,
     private val seasonRepository: SeasonRepository,
     private val eventRepository: EventRepository,
-    private val agentRepository: AgentRepository
+    private val agentRepository: AgentRepository,
 ) : ContractRepository {
-    override suspend fun getContract(uuid: String, providedVersion: String?): Flow<Contract?> {
+    override suspend fun getContract(
+        uuid: String,
+        providedVersion: String?,
+    ): Flow<dev.bittim.valolink.feature.content.domain.model.game.contract.Contract?> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.contractsDao.getContract(uuid).distinctUntilChanged()
+        return gameDatabase.contractsDao.getContract(uuid)
+            .distinctUntilChanged()
             .transform { contract ->
                 if (contract == null || contract.contract.version != version) {
-                    fetchContract(uuid, version)
+                    fetchContract(
+                        uuid,
+                        version
+                    )
                 } else {
                     emit(contract)
                 }
-            }.map {
-                it.toType(getRelation(version, it.content.content).firstOrNull())
+            }
+            .map {
+                it.toType(
+                    getRelation(
+                        version,
+                        it.content.content
+                    ).firstOrNull()
+                )
             }
     }
 
     override suspend fun getRecruitmentAsContract(
-        uuid: String, providedVersion: String?
-    ): Flow<Contract?> {
+        uuid: String,
+        providedVersion: String?,
+    ): Flow<dev.bittim.valolink.feature.content.domain.model.game.contract.Contract?> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.contractsDao.getRecruitment(uuid).distinctUntilChanged()
+        return gameDatabase.contractsDao.getRecruitment(uuid)
+            .distinctUntilChanged()
             .transform { recruitment ->
                 if (recruitment == null || recruitment.recruitment.version != version) {
                     agentRepository.fetchAgents(version)
                 } else {
                     emit(recruitment)
                 }
-            }.map {
+            }
+            .map {
                 it.toContract()
             }
     }
 
 
 
-    override suspend fun getActiveContracts(providedVersion: String?): Flow<List<Contract>> {
+    override suspend fun getActiveContracts(providedVersion: String?): Flow<List<dev.bittim.valolink.feature.content.domain.model.game.contract.Contract>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
-        val currentIsoTime = Instant.now().toString()
+        val currentIsoTime = Instant.now()
+            .toString()
 
-        return gameDatabase.contractsDao.getActiveContracts(currentIsoTime).distinctUntilChanged()
+        return gameDatabase.contractsDao.getActiveContracts(currentIsoTime)
+            .distinctUntilChanged()
             .transform { contracts ->
                 if (contracts.isEmpty() || contracts.any { it.contract.version != version }) {
                     fetchContracts(version)
                 } else {
                     emit(contracts)
                 }
-            }.map { contracts ->
+            }
+            .map { contracts ->
                 contracts.map {
-                    it.toType(getRelation(version, it.content.content).firstOrNull())
+                    it.toType(
+                        getRelation(
+                            version,
+                            it.content.content
+                        ).firstOrNull()
+                    )
                 }
-            }.combine(gameDatabase.contractsDao.getActiveRecruitments(currentIsoTime)
-                .distinctUntilChanged().map { recruitments ->
-                    recruitments.map { it.toContract() }
-                }) { contracts, recruitments ->
+            }
+            .combine(gameDatabase.contractsDao.getActiveRecruitments(currentIsoTime)
+                         .distinctUntilChanged()
+                         .map { recruitments ->
+                             recruitments.map { it.toContract() }
+                         }) { contracts, recruitments ->
                 (contracts + recruitments).sortedBy { it.content.relation?.endTime }
             }
     }
 
-    override suspend fun getAgentGears(providedVersion: String?): Flow<List<Contract>> {
+    override suspend fun getAgentGears(providedVersion: String?): Flow<List<dev.bittim.valolink.feature.content.domain.model.game.contract.Contract>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.contractsDao.getAgentGears().distinctUntilChanged().transform { gears ->
-            if (gears.isEmpty() || gears.any { it.contract.version != version }) {
-                agentRepository.fetchAgents(version)
-            } else {
-                emit(gears)
+        return gameDatabase.contractsDao.getAgentGears()
+            .distinctUntilChanged()
+            .transform { gears ->
+                if (gears.isEmpty() || gears.any { it.contract.version != version }) {
+                    agentRepository.fetchAgents(version)
+                } else {
+                    emit(gears)
+                }
             }
-        }.map { gears ->
-            gears.map {
-                it.toType(getRelation(version, it.content.content).firstOrNull())
+            .map { gears ->
+                gears.map {
+                    it.toType(
+                        getRelation(
+                            version,
+                            it.content.content
+                        ).firstOrNull()
+                    )
+                }
             }
-        }
     }
 
     override suspend fun getInactiveContracts(
-        contentType: String, providedVersion: String?
-    ): Flow<List<Contract>> {
+        contentType: String,
+        providedVersion: String?,
+    ): Flow<List<dev.bittim.valolink.feature.content.domain.model.game.contract.Contract>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
-        val currentIsoTime = Instant.now().toString()
+        val currentIsoTime = Instant.now()
+            .toString()
 
         return when (contentType) {
             "Season"      -> {
                 gameDatabase.contractsDao.getInactiveSeasonContracts(currentIsoTime)
-                    .distinctUntilChanged().transform { seasons ->
+                    .distinctUntilChanged()
+                    .transform { seasons ->
                         if (seasons.isEmpty() || seasons.any { it.contract.version != version }) {
                             seasonRepository.fetchSeasons(version)
                             fetchContracts(version)
                         } else {
                             emit(seasons)
                         }
-                    }.map { entities ->
+                    }
+                    .map { entities ->
                         entities.map {
-                            it.toType(getRelation(version, it.content.content).firstOrNull())
+                            it.toType(
+                                getRelation(
+                                    version,
+                                    it.content.content
+                                ).firstOrNull()
+                            )
                         }
                     }
             }
 
             "Event"       -> {
                 gameDatabase.contractsDao.getInactiveEventContracts(currentIsoTime)
-                    .distinctUntilChanged().transform { events ->
+                    .distinctUntilChanged()
+                    .transform { events ->
                         if (events.isEmpty() || events.any { it.contract.version != version }) {
                             eventRepository.fetchEvents(version)
                             fetchContracts(version)
                         } else {
                             emit(events)
                         }
-                    }.map { entities ->
+                    }
+                    .map { entities ->
                         entities.map {
-                            it.toType(getRelation(version, it.content.content).firstOrNull())
+                            it.toType(
+                                getRelation(
+                                    version,
+                                    it.content.content
+                                ).firstOrNull()
+                            )
                         }
                     }
             }
 
             "Recruitment" -> {
                 gameDatabase.contractsDao.getInactiveRecruitments(currentIsoTime)
-                    .distinctUntilChanged().transform { recruitments ->
+                    .distinctUntilChanged()
+                    .transform { recruitments ->
                         if (recruitments.isEmpty() || recruitments.any { it.recruitment.version != version }) {
                             fetchContracts(version)
                         } else {
                             emit(recruitments)
                         }
-                    }.map { entities ->
+                    }
+                    .map { entities ->
                         entities.map { it.toContract() }
                     }
             }
@@ -158,51 +209,83 @@ class ContractApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchContract(uuid: String, version: String) {
+    override suspend fun fetchContract(
+        uuid: String,
+        version: String,
+    ) {
         val response = gameApi.getContract(uuid)
         if (response.isSuccessful) {
             val contractDto = response.body()!!.data!!
 
             val contract = contractDto.toEntity(version)
             val content = contractDto.content.toEntity(
-                contract.freeRewardScheduleUuid, version, contract.uuid
+                contract.freeRewardScheduleUuid,
+                version,
+                contract.uuid
             )
 
             if (content.relationUuid != null) {
                 when (content.relationType) {
-                    "Season" -> seasonRepository.fetchSeason(content.relationUuid, version)
-                    "Event"  -> eventRepository.fetchEvent(content.relationUuid, version)
+                    "Season" -> seasonRepository.fetchSeason(
+                        content.relationUuid,
+                        version
+                    )
+
+                    "Event"  -> eventRepository.fetchEvent(
+                        content.relationUuid,
+                        version
+                    )
                 }
             }
 
             val chapterDto = contractDto.content.chapters
             val chapters = contractDto.content.chapters.mapIndexed { index, chapter ->
-                chapter.toEntity(index, version, content.uuid)
+                chapter.toEntity(
+                    index,
+                    version,
+                    content.uuid
+                )
             }
 
-            val levelDto = chapterDto.map { it.levels }.flatten()
+            val levelDto = chapterDto.map { it.levels }
+                .flatten()
             val levels = chapterDto.zip(chapters) { data, chapter ->
                 data.levels.mapIndexed { index, level ->
-                    level.toEntity(index, version, chapter.uuid)
+                    level.toEntity(
+                        index,
+                        version,
+                        chapter.uuid
+                    )
                 }
-            }.flatten()
+            }
+                .flatten()
 
             val rewards = levelDto.zip(levels) { data, level ->
-                data.reward.toEntity(version, levelUuid = level.uuid)
-            }.plus(
-                chapterDto.zip(chapters) { data, chapter ->
+                data.reward.toEntity(
+                    version,
+                    levelUuid = level.uuid
+                )
+            }
+                .plus(chapterDto.zip(chapters) { data, chapter ->
                     data.freeRewards?.map {
-                        it.toEntity(version, chapterUuid = chapter.uuid)
-                    }.orEmpty()
-                }.flatten()
-            )
+                        it.toEntity(
+                            version,
+                            chapterUuid = chapter.uuid
+                        )
+                    }
+                        .orEmpty()
+                }
+                          .flatten())
 
             gameDatabase.contractsDao.upsertContract(
                 contract,
                 content,
-                chapters.distinct().toSet(),
-                levels.distinct().toSet(),
-                rewards.distinct().toSet()
+                chapters.distinct()
+                    .toSet(),
+                levels.distinct()
+                    .toSet(),
+                rewards.distinct()
+                    .toSet()
             )
         }
     }
@@ -217,40 +300,66 @@ class ContractApiRepository @Inject constructor(
 
             val contents = contractDto.zip(contracts) { data, contract ->
                 data.content.toEntity(
-                    contract.freeRewardScheduleUuid, version, contract.uuid
+                    contract.freeRewardScheduleUuid,
+                    version,
+                    contract.uuid
                 )
             }
 
-            val chapterDto = contractDto.map { it.content.chapters }.flatten()
+            val chapterDto = contractDto.map { it.content.chapters }
+                .flatten()
             val chapters = contractDto.zip(contents) { data, content ->
                 data.content.chapters.mapIndexed { index, chapter ->
-                    chapter.toEntity(index, version, content.uuid)
+                    chapter.toEntity(
+                        index,
+                        version,
+                        content.uuid
+                    )
                 }
-            }.flatten()
+            }
+                .flatten()
 
-            val levelDto = chapterDto.map { it.levels }.flatten()
+            val levelDto = chapterDto.map { it.levels }
+                .flatten()
             val levels = chapterDto.zip(chapters) { data, chapter ->
                 data.levels.mapIndexed { index, level ->
-                    level.toEntity(index, version, chapter.uuid)
+                    level.toEntity(
+                        index,
+                        version,
+                        chapter.uuid
+                    )
                 }
-            }.flatten()
+            }
+                .flatten()
 
             val rewards = levelDto.zip(levels) { data, level ->
-                data.reward.toEntity(version, levelUuid = level.uuid)
-            }.plus(
-                chapterDto.zip(chapters) { data, chapter ->
+                data.reward.toEntity(
+                    version,
+                    levelUuid = level.uuid
+                )
+            }
+                .plus(chapterDto.zip(chapters) { data, chapter ->
                     data.freeRewards?.map {
-                        it.toEntity(version, chapterUuid = chapter.uuid)
-                    }.orEmpty()
-                }.flatten()
-            )
+                        it.toEntity(
+                            version,
+                            chapterUuid = chapter.uuid
+                        )
+                    }
+                        .orEmpty()
+                }
+                          .flatten())
 
             gameDatabase.contractsDao.upsertMultipleContracts(
-                contracts.distinct().toSet(),
-                contents.distinct().toSet(),
-                chapters.distinct().toSet(),
-                levels.distinct().toSet(),
-                rewards.distinct().toSet()
+                contracts.distinct()
+                    .toSet(),
+                contents.distinct()
+                    .toSet(),
+                chapters.distinct()
+                    .toSet(),
+                levels.distinct()
+                    .toSet(),
+                rewards.distinct()
+                    .toSet()
             )
         }
     }
@@ -260,7 +369,8 @@ class ContractApiRepository @Inject constructor(
     // --------------------------------
 
     private suspend fun getRelation(
-        version: String, content: ContentEntity
+        version: String,
+        content: ContentEntity,
     ): Flow<ContentRelation?> {
         if (content.relationType.isNullOrEmpty() || content.relationUuid.isNullOrEmpty()) {
             return flow { emit(null) }
@@ -268,15 +378,24 @@ class ContractApiRepository @Inject constructor(
 
         return when (content.relationType) {
             "Agent"  -> {
-                agentRepository.getAgent(content.relationUuid, version)
+                agentRepository.getAgent(
+                    content.relationUuid,
+                    version
+                )
             }
 
             "Event"  -> {
-                eventRepository.getEvent(content.relationUuid, version)
+                eventRepository.getEvent(
+                    content.relationUuid,
+                    version
+                )
             }
 
             "Season" -> {
-                seasonRepository.getSeason(content.relationUuid, version)
+                seasonRepository.getSeason(
+                    content.relationUuid,
+                    version
+                )
             }
 
             else     -> flow { emit(null) }

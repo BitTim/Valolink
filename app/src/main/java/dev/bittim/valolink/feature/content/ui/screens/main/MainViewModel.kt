@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private var _mainState = MutableStateFlow(MainState())
     val mainState = _mainState.asStateFlow()
@@ -22,14 +22,28 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _mainState.update { it.copy(isLoading = true) }
 
-            userRepository.hasUser().collectLatest { isAuthenticated ->
-                _mainState.update { it.copy(isLoading = false, isAuthenticated = isAuthenticated) }
-            }
+            userRepository.hasUserAsFlow(CHECK_AUTH_INTERVAL)
+                .collectLatest { isAuthenticated ->
+                    _mainState.update {
+                        it.copy(
+                            isLoading = false,
+                            isAuthenticated = isAuthenticated
+                        )
+                    }
+                }
         }
     }
 
     fun onSignOutClicked() {
-        userRepository.signOut()
-        _mainState.update { it.copy(isAuthenticated = false) }
+        viewModelScope.launch {
+            userRepository.signOut()
+            _mainState.update { it.copy(isAuthenticated = false) }
+        }
+    }
+
+
+
+    companion object {
+        const val CHECK_AUTH_INTERVAL: Long = 10000
     }
 }

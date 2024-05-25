@@ -1,6 +1,6 @@
 package dev.bittim.valolink.feature.content.data.repository.game
 
-import dev.bittim.valolink.feature.content.domain.model.Currency
+import dev.bittim.valolink.feature.content.domain.model.game.Currency
 import kotlinx.coroutines.flow.Flow
 
 interface CurrencyRepository {
