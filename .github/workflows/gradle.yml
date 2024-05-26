@@ -210,4 +210,4 @@ jobs:
           packageName: ${{ env.package_name }}
           releaseFiles: ${{ needs.Build.outputs.aabName }}
           track: internal
-          whatsNewDirectory: /whatsnew
+          whatsNewDirectory: whatsnew
