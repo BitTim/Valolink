@@ -105,9 +105,7 @@ fun AgentBackdrop(
                 modifier = Modifier
                     .alpha(0.15f)
                     .fillMaxSize()
-                    .conditional(isDisabled) {
-                        blur(4.dp)
-                    },
+                    .blur(4.dp),
                 model = backgroundImage,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,

@@ -82,7 +82,8 @@ fun AgentListScreen(
                               contractUuid = it.uuid,
                               roleName = it.content.relation.role.displayName,
                               totalLevels = it.calcLevelCount(), // TODO: Fake data
-                              isLocked = false,
+                              isLocked = !(state.userData?.ownedAgents?.contains(it.content.relation.uuid)
+                                  ?: false),
                               unlockedLevels = 3,
                               percentage = 30,
                               onNavToAgentDetails = onNavToAgentDetails

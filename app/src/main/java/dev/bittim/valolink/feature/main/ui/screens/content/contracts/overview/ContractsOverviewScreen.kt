@@ -188,11 +188,7 @@ fun ContractsOverviewScreen(
 
                     // TODO: Random values for testing
                     val random = Random()
-                    var isLockedList by remember { mutableStateOf(listOf<Boolean>()) }
                     var unlockedLevelsList by remember { mutableStateOf(listOf<Int>()) }
-                    if (isLockedList.isEmpty()) {
-                        isLockedList = List(state.agentGears.count()) { _ -> random.nextBoolean() }
-                    }
                     if (unlockedLevelsList.isEmpty()) {
                         unlockedLevelsList =
                             List(state.agentGears.count()) { i -> random.nextInt(state.agentGears[i].calcLevelCount()) }
@@ -214,7 +210,8 @@ fun ContractsOverviewScreen(
                                     .calcLevelCount()
                                     .toFloat()) * 100f
                             ).toInt(),
-                            isLocked = isLockedList[index],
+                            isLocked = !(state.userData?.ownedAgents?.contains(gear.content.relation.uuid)
+                                ?: false),
                             maskedWidth = carouselItemInfo.maskRect.width,
                             onNavToAgentDetails = onNavToAgentDetails
                         )

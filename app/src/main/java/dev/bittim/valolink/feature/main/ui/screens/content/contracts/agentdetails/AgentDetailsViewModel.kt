@@ -3,6 +3,7 @@ package dev.bittim.valolink.feature.main.ui.screens.content.contracts.agentdetai
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bittim.valolink.feature.main.data.repository.UserRepository
 import dev.bittim.valolink.feature.main.data.repository.game.BuddyLevelRepository
 import dev.bittim.valolink.feature.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.feature.main.data.repository.game.CurrencyRepository
@@ -35,9 +36,23 @@ class AgentDetailsViewModel @Inject constructor(
     private val playerCardRepository: PlayerCardRepository,
     private val buddyLevelRepository: BuddyLevelRepository,
     private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AgentDetailsState())
     val state = _state.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            userRepository.getUserData().collectLatest { userData ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        userData = userData
+                    )
+                }
+            }
+        }
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun fetchDetails(uuid: String?) {
@@ -137,5 +152,9 @@ class AgentDetailsViewModel @Inject constructor(
 
     fun onAbilityChanged(index: Int) {
         _state.update { it.copy(selectedAbility = index) }
+    }
+
+    fun unlockAgent() {
+        TODO("Not yet implemented")
     }
 }

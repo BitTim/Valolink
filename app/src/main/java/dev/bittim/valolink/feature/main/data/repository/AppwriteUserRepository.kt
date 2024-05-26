@@ -98,10 +98,19 @@ class AppwriteUserRepository @Inject constructor(
     override suspend fun getUserData(): Flow<UserData?> {
         val uid = getUid() ?: return flow { }
         return callbackFlow {
-            val subscription =
-                realtime.subscribe("databases.main.collections.users.documents.$uid") {
-                    trySend(it.payload.jsonCast())
-                }
+            val data = databases.getDocument(
+                "main",
+                "users",
+                uid
+            ).data
+
+            trySend(UserData.from(data))
+
+            val subscription = realtime.subscribe(
+                "databases.main.collections.users.documents.$uid"
+            ) {
+                trySend(UserData.from(it.payload.jsonCast()))
+            }
 
             awaitClose { subscription.close() }
         }

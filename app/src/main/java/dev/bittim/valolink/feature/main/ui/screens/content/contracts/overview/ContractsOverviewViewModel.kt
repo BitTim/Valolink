@@ -5,6 +5,7 @@ import androidx.compose.material3.carousel.CarouselState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bittim.valolink.feature.main.data.repository.UserRepository
 import dev.bittim.valolink.feature.main.data.repository.game.ContractRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContractsOverviewViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _filterState = MutableStateFlow(ArchiveTypeFilter.SEASON)
 
@@ -29,6 +31,17 @@ class ContractsOverviewViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            userRepository.getUserData().collectLatest { userData ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        userData = userData
+                    )
+                }
+            }
+        }
+
         viewModelScope.launch {
             contractRepository.getActiveContracts().collectLatest { contracts ->
                 _state.update {

@@ -54,7 +54,7 @@ data object AgentCarouselCard {
     val minWidth: Dp = 180.dp
     val minCompressedWidth: Dp = 64.dp
     val preferredWidth: Dp = 272.dp
-    val height: Dp = 192.dp
+    val height: Dp = 256.dp
 }
 
 @Composable
