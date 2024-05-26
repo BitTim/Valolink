@@ -6,6 +6,7 @@ import io.appwrite.Role
 import io.appwrite.exceptions.AppwriteException
 import io.appwrite.extensions.jsonCast
 import io.appwrite.models.Preferences
+import io.appwrite.models.RealtimeSubscription
 import io.appwrite.models.User
 import io.appwrite.services.Account
 import io.appwrite.services.Databases
@@ -98,21 +99,43 @@ class AppwriteUserRepository @Inject constructor(
     override suspend fun getUserData(): Flow<UserData?> {
         val uid = getUid() ?: return flow { }
         return callbackFlow {
-            val data = databases.getDocument(
-                "main",
-                "users",
-                uid
-            ).data
+            var subscription: RealtimeSubscription? = null
 
-            trySend(UserData.from(data))
+            try {
+                val data = databases.getDocument(
+                    "main",
+                    "users",
+                    uid
+                ).data
 
-            val subscription = realtime.subscribe(
-                "databases.main.collections.users.documents.$uid"
-            ) {
-                trySend(UserData.from(it.payload.jsonCast()))
+                trySend(UserData.from(data))
+
+                subscription = realtime.subscribe(
+                    "databases.main.collections.users.documents.$uid"
+                ) {
+                    trySend(UserData.from(it.payload.jsonCast()))
+                }
+            } catch (e: AppwriteException) {
+                e.printStackTrace()
             }
 
-            awaitClose { subscription.close() }
+            awaitClose { subscription?.close() }
+        }
+    }
+
+    override suspend fun setUserData(userData: UserData): Boolean {
+        val uid = getUid() ?: return false
+        return try {
+            databases.updateDocument(
+                "main",
+                "users",
+                uid,
+                userData
+            )
+            true
+        } catch (e: AppwriteException) {
+            e.printStackTrace()
+            false
         }
     }
 }

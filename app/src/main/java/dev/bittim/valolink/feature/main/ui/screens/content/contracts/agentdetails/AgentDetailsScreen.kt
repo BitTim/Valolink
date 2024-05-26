@@ -28,9 +28,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,11 +46,15 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -92,6 +101,7 @@ data object AgentDetailsScreen {
 fun AgentDetailsScreen(
     state: AgentDetailsState,
     unlockAgent: () -> Unit,
+    resetAgent: () -> Unit,
     onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
@@ -100,7 +110,7 @@ fun AgentDetailsScreen(
 
     if (state.agentGear != null && state.agentGear.content.relation is Agent) {
         val agent = state.agentGear.content.relation
-        val isLocked = !(state.userData?.ownedAgents?.contains(agent.uuid) ?: false)
+        val isLocked = !(state.userData?.agents?.contains(agent.uuid) ?: false)
 
         val density = LocalDensity.current
         val configuration = LocalConfiguration.current
@@ -115,6 +125,9 @@ fun AgentDetailsScreen(
                 maxTitleCardHeight - scrollState.value.toDp()
             )
         }
+
+        var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
+        var isResetAlertShown: Boolean by remember { mutableStateOf(false) }
 
         val abilityPagerState = rememberPagerState {
             agent.abilities.count()
@@ -165,11 +178,24 @@ fun AgentDetailsScreen(
                             }
                         },
                         actions = {
-                            IconButton(onClick = { }) {
+                            IconButton(onClick = { isMenuExpanded = true }) {
                                 Icon(
                                     imageVector = Icons.Default.MoreVert,
                                     contentDescription = null
                                 )
+                            }
+
+                            DropdownMenu(
+                                expanded = isMenuExpanded,
+                                onDismissRequest = { isMenuExpanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    enabled = !isLocked,
+                                    text = { Text(text = "Reset") },
+                                    onClick = {
+                                        isResetAlertShown = true
+                                        isMenuExpanded = false
+                                    })
                             }
                         },
                         scrollBehavior = scrollBehavior,
@@ -477,6 +503,34 @@ fun AgentDetailsScreen(
 
             Spacer(modifier = Modifier.height(maxTitleCardHeight - headerSize + 16.dp))
         }
+
+        if (isResetAlertShown) {
+            AlertDialog(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Restore,
+                        contentDescription = null
+                    )
+                },
+                title = { Text(text = "Reset Agent") },
+                text = { Text(text = "Your reward progress for ${agent.displayName} will be reset, and ${agent.displayName} will be locked again. Additionally, the activity notification for unlocking ${agent.displayName} will be deleted. This does not effect your actual progress in game.") },
+                onDismissRequest = { isResetAlertShown = false },
+
+                confirmButton = {
+                    Button(onClick = {
+                        isResetAlertShown = false
+                        resetAgent()
+                    }) {
+                        Text(text = "Reset")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { isResetAlertShown = false }) {
+                        Text(text = "Cancel")
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -491,7 +545,7 @@ fun AgentDetailsScreenPreview() {
     ValolinkTheme {
         AgentDetailsScreen(state = AgentDetailsState(
             isLoading = false,
-            userData = UserData(ownedAgents = listOf(agentUuid)),
+            userData = UserData(agents = listOf(agentUuid)),
             agentGear = Contract(
                 UUID.randomUUID().toString(),
                 "Clove Gear",
@@ -595,6 +649,7 @@ fun AgentDetailsScreenPreview() {
                 )
             )
         ),
+                           resetAgent = {},
                            unlockAgent = {},
                            onAbilityTabChanged = {},
                            onNavBack = {},
@@ -716,6 +771,7 @@ fun AgentDetailsScreenLockedPreview() {
                 )
             )
         ),
+                           resetAgent = {},
                            unlockAgent = {},
                            onAbilityTabChanged = {},
                            onNavBack = {},

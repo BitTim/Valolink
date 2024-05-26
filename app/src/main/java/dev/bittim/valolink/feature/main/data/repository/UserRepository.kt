@@ -18,4 +18,5 @@ interface UserRepository {
     suspend fun setOnboardingComplete(ownedAgentUuids: List<String>): Boolean
 
     suspend fun getUserData(): Flow<UserData?>
+    suspend fun setUserData(userData: UserData): Boolean
 }

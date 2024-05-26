@@ -1,5 +1,6 @@
 package dev.bittim.valolink.feature.main.ui.screens.content.contracts.agentdetails
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +13,7 @@ import dev.bittim.valolink.feature.main.data.repository.game.PlayerTitleReposito
 import dev.bittim.valolink.feature.main.data.repository.game.SprayRepository
 import dev.bittim.valolink.feature.main.data.repository.game.WeaponSkinLevelRepository
 import dev.bittim.valolink.feature.main.domain.model.game.Currency
+import dev.bittim.valolink.feature.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.feature.main.domain.model.game.contract.ChapterLevel
 import dev.bittim.valolink.feature.main.domain.model.game.contract.RewardRelation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -155,6 +157,38 @@ class AgentDetailsViewModel @Inject constructor(
     }
 
     fun unlockAgent() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            val agent = state.value.agentGear?.content?.relation as Agent? ?: return@launch
+            val userData = state.value.userData ?: return@launch
+
+            val newAgents = userData.agents.plus(agent.uuid)
+            val newUserData = userData.copy(
+                agents = newAgents
+            )
+
+            val result = userRepository.setUserData(newUserData)
+            if (!result) Log.e(
+                "Valolink",
+                "Failed to update userData"
+            )
+        }
+    }
+
+    fun resetAgent() {
+        viewModelScope.launch {
+            val agent = state.value.agentGear?.content?.relation as Agent? ?: return@launch
+            val userData = state.value.userData ?: return@launch
+
+            if (!agent.isBaseContent) {
+                val newAgents = userData.agents.minus(agent.uuid)
+                val newUserData = userData.copy(
+                    agents = newAgents
+                )
+
+                if (newUserData != userData) {
+                    userRepository.setUserData(newUserData)
+                }
+            }
+        }
     }
 }

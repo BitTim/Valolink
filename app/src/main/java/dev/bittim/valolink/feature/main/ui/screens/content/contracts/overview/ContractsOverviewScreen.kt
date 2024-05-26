@@ -210,7 +210,7 @@ fun ContractsOverviewScreen(
                                     .calcLevelCount()
                                     .toFloat()) * 100f
                             ).toInt(),
-                            isLocked = !(state.userData?.ownedAgents?.contains(gear.content.relation.uuid)
+                            isLocked = !(state.userData?.agents?.contains(gear.content.relation.uuid)
                                 ?: false),
                             maskedWidth = carouselItemInfo.maskRect.width,
                             onNavToAgentDetails = onNavToAgentDetails

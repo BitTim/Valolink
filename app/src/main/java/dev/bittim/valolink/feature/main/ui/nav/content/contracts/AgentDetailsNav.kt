@@ -30,6 +30,7 @@ fun NavGraphBuilder.contractsAgentDetailsScreen(
 
         AgentDetailsScreen(state = state,
                            unlockAgent = viewModel::unlockAgent,
+                           resetAgent = viewModel::resetAgent,
                            onAbilityTabChanged = viewModel::onAbilityChanged,
                            onNavBack = onNavBack,
                            onNavGearRewardsList = {})
