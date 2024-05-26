@@ -1,19 +1,16 @@
 package dev.bittim.valolink.feature.auth.ui.screens.signin
 
-import dev.bittim.valolink.core.ui.UiText
+data class SignInState(
+    val email: String = "",
+    val password: String = "",
+    val emailError: String? = null,
+    val passwordError: String? = null,
+    val authError: String? = null,
 
-sealed interface SignInState {
-    data class Input(
-        val email: String,
-        val password: String,
-        val emailError: UiText?,
-        val passwordError: UiText?,
-        val authError: UiText?,
+    val showForgotDialog: Boolean = false,
+    val forgotEmail: String = "",
+    val forgotEmailError: String? = null,
 
-        val showForgotDialog: Boolean,
-        val forgotEmail: String,
-        val forgotEmailError: UiText?
-    ) : SignInState
-    data object Loading : SignInState
-    data object Success : SignInState
-}
+    val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
+)

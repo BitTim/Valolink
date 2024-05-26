@@ -4,14 +4,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.core.domain.Result
-import dev.bittim.valolink.core.ui.UiText
 import dev.bittim.valolink.feature.auth.data.repository.AuthRepository
 import dev.bittim.valolink.feature.auth.domain.ValidationUseCases
-import dev.bittim.valolink.feature.auth.ui.util.asUiText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,10 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val authRepo: AuthRepository,
-    private val validationUseCases: ValidationUseCases
+    private val validationUseCases: ValidationUseCases,
 ) : ViewModel() {
-    private var _signInState = MutableStateFlow<SignInState>(
-        SignInState.Input(
+    private var _state = MutableStateFlow(
+        SignInState(
             email = "",
             password = "",
             emailError = null,
@@ -33,185 +29,131 @@ class SignInViewModel @Inject constructor(
             forgotEmailError = null
         )
     )
-    val signInState = _signInState.asStateFlow()
+    val state = _state.asStateFlow()
     val snackbarHostState = SnackbarHostState()
-    
-    fun onSignInClicked() = viewModelScope.launch {
-        if (_signInState.value !is SignInState.Input) return@launch
-        val state = _signInState.value as SignInState.Input
 
-        val emailError: UiText? = validateEmail(state.email)
-        val passwordError: UiText? = validatePassword(state.password)
-        
+    fun onSignInClicked() = viewModelScope.launch {
+        val emailError: String? = validateEmail(state.value.email)
+        val passwordError: String? = validatePassword(state.value.password)
+
         if (emailError != null || passwordError != null) {
-            _signInState.update {
-                if (it is SignInState.Input) {
-                    it.copy(
-                        emailError = emailError,
-                        passwordError = passwordError
-                    )
-                } else {
-                    it
-                }
+            _state.update {
+                it.copy(
+                    emailError = emailError,
+                    passwordError = passwordError
+                )
             }
 
             return@launch
         }
 
-        authRepo.signIn(state.email, state.password).collectLatest { result ->
-            when (result) {
-                is Result.Loading -> {
-                    _signInState.value = SignInState.Loading
-                }
+        _state.update { it.copy(isLoading = true) }
 
-                is Result.Success -> {
-                    _signInState.value = SignInState.Success
-                }
+        val result = authRepo.signIn(
+            state.value.email,
+            state.value.password
+        )
 
-                is Result.Error -> {
-                    _signInState.value = SignInState.Input(
-                        email = state.email,
-                        password = state.password,
-                        emailError = UiText.DynamicString(""),
-                        passwordError = UiText.DynamicString(""),
-                        authError = result.error.asUiText(),
-                        showForgotDialog = state.showForgotDialog,
-                        forgotEmail = state.forgotEmail,
-                        forgotEmailError = state.forgotEmailError
-                    )
-                }
+        if (result == null) {
+            _state.update {
+                it.copy(
+                    email = state.value.email,
+                    password = state.value.password,
+                    emailError = "",
+                    passwordError = "",
+                    authError = "Something went wrong",
+                    showForgotDialog = state.value.showForgotDialog,
+                    forgotEmail = state.value.forgotEmail,
+                    forgotEmailError = state.value.forgotEmailError,
+                    isLoading = false
+                )
+            }
+        } else {
+            _state.update {
+                it.copy(
+                    isSuccess = true,
+                    isLoading = false
+                )
             }
         }
     }
 
     fun onForgotConfirmation() = viewModelScope.launch {
-        if (_signInState.value !is SignInState.Input) return@launch
-        val state = _signInState.value as SignInState.Input
-
-        val emailError = validateEmail(state.forgotEmail)
+        val emailError = validateEmail(state.value.forgotEmail)
 
         if (emailError != null) {
-            _signInState.update {
-                if (it is SignInState.Input) {
-                    it.copy(
-                        forgotEmailError = emailError
-                    )
-                } else {
-                    it
-                }
+            _state.update {
+                it.copy(forgotEmailError = emailError)
             }
 
             return@launch
         }
 
-        authRepo.forgotPassword(state.forgotEmail).collectLatest { result ->
-            when (result) {
-                is Result.Loading -> {}
-                is Result.Success -> {
-                    viewModelScope.launch {
-                        snackbarHostState.showSnackbar("Sent password reset request to ${state.forgotEmail}")
-                    }
-                    onForgotDismiss()
-                }
+        val result = authRepo.forgotPassword(state.value.forgotEmail)
 
-                is Result.Error -> {
-                    _signInState.value = SignInState.Input(
-                        email = state.email,
-                        password = state.password,
-                        emailError = state.emailError,
-                        passwordError = state.passwordError,
-                        authError = state.authError,
-                        showForgotDialog = true,
-                        forgotEmail = state.forgotEmail,
-                        forgotEmailError = result.error.asUiText() // Handle string conversion
-                    )
-                }
+        if (result) {
+            viewModelScope.launch {
+                snackbarHostState.showSnackbar("[Debug] Sent password reset request to ${state.value.forgotEmail}")
+            }
+            onForgotDismiss()
+        } else {
+            _state.update {
+                it.copy(
+                    email = state.value.email,
+                    password = state.value.password,
+                    emailError = state.value.emailError,
+                    passwordError = state.value.passwordError,
+                    authError = state.value.authError,
+                    showForgotDialog = true,
+                    forgotEmail = state.value.forgotEmail,
+                    forgotEmailError = "Something went wrong"
+                )
             }
         }
     }
 
 
-    private fun validateEmail(email: String): UiText? {
-        return when (val result = validationUseCases.validateEmail(email)) {
-            is Result.Error -> {
-                result.error.asUiText()
-            }
-
-            else -> null
-        }
+    private fun validateEmail(email: String): String? {
+        return validationUseCases.validateEmail(email)
     }
 
-    private fun validatePassword(password: String): UiText? {
-        return when (val result = validationUseCases.validatePassword(password)) {
-            is Result.Error -> {
-                result.error.asUiText()
-            }
-
-            else -> null
-        }
+    private fun validatePassword(password: String): String? {
+        return validationUseCases.validatePassword(password)
     }
-    
+
 
 
     fun onForgotClicked() {
-        _signInState.update { state ->
-            if (state is SignInState.Input) {
-                state.copy(
-                    showForgotDialog = true
-                )
-            } else {
-                state
-            }
+        _state.update {
+            it.copy(showForgotDialog = true)
         }
     }
 
     fun onForgotDismiss() {
-        _signInState.update { state ->
-            if (state is SignInState.Input) {
-                state.copy(
-                    showForgotDialog = false,
-                    forgotEmail = "",
-                    forgotEmailError = null
-                )
-            } else {
-                state
-            }
+        _state.update {
+            it.copy(
+                showForgotDialog = false,
+                forgotEmail = "",
+                forgotEmailError = null
+            )
         }
     }
 
     fun onEmailChange(email: String) {
-        _signInState.update { state ->
-            if (state is SignInState.Input) {
-                state.copy(
-                    email = email
-                )
-            } else {
-                state
-            }
+        _state.update {
+            it.copy(email = email)
         }
     }
 
     fun onPasswordChange(password: String) {
-        _signInState.update { state ->
-            if (state is SignInState.Input) {
-                state.copy(
-                    password = password
-                )
-            } else {
-                state
-            }
+        _state.update {
+            it.copy(password = password)
         }
     }
 
     fun onForgotEmailChange(email: String) {
-        _signInState.update { state ->
-            if (state is SignInState.Input) {
-                state.copy(
-                    forgotEmail = email
-                )
-            } else {
-                state
-            }
+        _state.update {
+            it.copy(forgotEmail = email)
         }
     }
 }

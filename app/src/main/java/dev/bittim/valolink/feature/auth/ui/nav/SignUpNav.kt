@@ -14,12 +14,12 @@ import kotlinx.serialization.Serializable
 object SignUpNav
 
 fun NavGraphBuilder.signUpScreen(
-    onNavToOnboardingGraph: () -> Unit,
-    onNavToSignIn: () -> Unit
+    onNavToContent: () -> Unit,
+    onNavToSignIn: () -> Unit,
 ) {
     composable<SignUpNav> {
         val viewModel: SignUpViewModel = hiltViewModel()
-        val signUpState by viewModel.signUpState.collectAsStateWithLifecycle()
+        val signUpState by viewModel.state.collectAsStateWithLifecycle()
 
         SignUpScreen(
             signUpState,
@@ -28,7 +28,7 @@ fun NavGraphBuilder.signUpScreen(
             onPasswordValueChange = viewModel::onPasswordChange,
             onConfirmPasswordValueChange = viewModel::onConfirmPasswordChange,
             onSignUpClicked = viewModel::onSignUpClicked,
-            onNavToOnboardingGraph = onNavToOnboardingGraph,
+            onNavToContent = onNavToContent,
             onNavToSignIn = onNavToSignIn,
         )
     }

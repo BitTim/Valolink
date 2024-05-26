@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlin.serialization)
-    id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
@@ -36,19 +35,29 @@ android {
         val versionProperties = Properties()
         versionProperties.load(FileInputStream(versionPropertiesFile))
 
-        majorVersion = versionProperties.getProperty("MAJOR").toInt()
-        minorVersion = versionProperties.getProperty("MINOR").toInt()
-        patchVersion = versionProperties.getProperty("PATCH").toInt()
-        buildVersion = versionProperties.getProperty("BUILD").toInt() + 1
+        majorVersion = versionProperties.getProperty("MAJOR")
+            .toInt()
+        minorVersion = versionProperties.getProperty("MINOR")
+            .toInt()
+        patchVersion = versionProperties.getProperty("PATCH")
+            .toInt()
+        buildVersion = versionProperties.getProperty("BUILD")
+            .toInt() + 1
 
-        versionProperties.setProperty("BUILD", buildVersion.toString())
-        versionProperties.store(versionPropertiesFile.writer(), null)
+        versionProperties.setProperty(
+            "BUILD",
+            buildVersion.toString()
+        )
+        versionProperties.store(
+            versionPropertiesFile.writer(),
+            null
+        )
     } else {
         throw GradleException("Could not read version.properties file")
     }
 
     val versionName = "v$majorVersion.$minorVersion.$patchVersion-$buildVersion"
-    
+
     defaultConfig {
         applicationId = "dev.bittim.valolink"
         minSdk = 33
@@ -62,7 +71,10 @@ android {
         }
 
         ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
+            arg(
+                "room.schemaLocation",
+                "$projectDir/schemas"
+            )
         }
     }
 
@@ -85,7 +97,7 @@ android {
         keyAlias = System.getenv("KEY_ALIAS") ?: ""
         keyPassword = System.getenv("KEY_PASSWORD") ?: ""
     }
-    
+
     signingConfigs {
         create("release") {
             storeFile = file("../keystore.jks")
@@ -94,7 +106,7 @@ android {
             this.keyPassword = keyPassword
         }
     }
-    
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -137,7 +149,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.material.icons.extended.android)
-    implementation(libs.firebase.auth)
     implementation(libs.material)
     implementation(libs.play.services.auth)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -145,6 +156,7 @@ dependencies {
     implementation(libs.androidx.adaptive)
     implementation(libs.androidx.adaptive.layout)
     implementation(libs.androidx.adaptive.navigation)
+    implementation(libs.appwrite.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

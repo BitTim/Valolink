@@ -1,21 +1,20 @@
 package dev.bittim.valolink.feature.auth.data.repository
 
-import com.google.firebase.auth.AuthResult
-import dev.bittim.valolink.core.domain.Error
-import dev.bittim.valolink.core.domain.Result
-import kotlinx.coroutines.flow.Flow
+import io.appwrite.models.User
 
 interface AuthRepository {
-    fun signIn(email: String, password: String): Flow<Result<AuthResult, AuthError>>
-    fun signUp(
+    suspend fun getUser(): User<Map<String, Any>>?
+
+    suspend fun signIn(
+        email: String,
+        password: String,
+    ): User<Map<String, Any>>?
+
+    suspend fun signUp(
         email: String,
         username: String,
-        password: String
-    ): Flow<Result<AuthResult, AuthError>>
+        password: String,
+    ): User<Map<String, Any>>?
 
-    fun forgotPassword(email: String): Flow<Result<Unit, AuthError>>
-
-    enum class AuthError : Error {
-        GENERIC
-    }
+    fun forgotPassword(email: String): Boolean
 }
