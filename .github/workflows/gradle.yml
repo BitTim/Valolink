@@ -211,4 +211,3 @@ jobs:
           releaseFiles: ${{ needs.Build.outputs.aabName }}
           track: internal
           whatsNewDirectory: /whatsnew
-          mappingFile: /app/build/outputs/mapping/release/mapping.txt
