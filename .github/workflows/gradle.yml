@@ -189,14 +189,20 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.CreateNewTag.outputs.tag }}
           writeToFile: false
-          includeInvalidCommits: true
+
+      - name: Truncate Changelog length (Max 500)
+        id: truncate-changelog
+        env:
+          CHANGES: ${{ steps.changelog.outputs.changes }}
+        run:
+          echo "length=$(echo $CHANGES | sed 's/\(.\{500\}\).*/\1/')"
 
       - name: Create whatsnew directory and file
         env:
-          CHANGES: ${{ steps.changelog.outputs.changes }}
+          TRUNC_CHANGES: ${{ steps.truncate-changelog.outputs.changes }}
         run: |
           mkdir whatsnew
-          echo "$CHANGES" > whatsnew/whatsnew-en-US
+          echo "$TRUNC_CHANGES" > whatsnew/whatsnew-en-US
 
       - name: Download artifact of release AAB
         uses: actions/download-artifact@master
