@@ -28,11 +28,11 @@ fun ContentContainerScreen(
         LaunchedEffect(Unit) {
             navToAuthGraph()
         }
-    }
-
-    if (state.hasOnboarded != null && !state.hasOnboarded) {
-        LaunchedEffect(Unit) {
-            navToOnboardingGraph()
+    } else {
+        if (state.hasOnboarded != null && !state.hasOnboarded) {
+            LaunchedEffect(Unit) {
+                navToOnboardingGraph()
+            }
         }
     }
 

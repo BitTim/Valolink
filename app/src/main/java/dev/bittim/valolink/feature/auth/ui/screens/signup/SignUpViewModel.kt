@@ -60,7 +60,7 @@ class SignUpViewModel @Inject constructor(
             state.value.password
         )
 
-        if (result == null) {
+        if (!result) {
             _state.update {
                 it.copy(
                     email = state.value.email,

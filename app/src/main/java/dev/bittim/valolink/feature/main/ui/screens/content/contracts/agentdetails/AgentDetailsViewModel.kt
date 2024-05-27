@@ -1,6 +1,5 @@
 package dev.bittim.valolink.feature.main.ui.screens.content.contracts.agentdetails
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,15 +43,14 @@ class AgentDetailsViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            userRepository.getUserData().collectLatest { userData ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userData = userData
-                    )
-                }
-            }
+        viewModelScope.launch { //            userRepository.getUserData().collectLatest { userData ->
+            //                _state.update {
+            //                    it.copy(
+            //                        isLoading = false,
+            //                        userData = userData
+            //                    )
+            //                }
+            //            }
         }
     }
 
@@ -166,11 +164,11 @@ class AgentDetailsViewModel @Inject constructor(
                 agents = newAgents
             )
 
-            val result = userRepository.setUserData(newUserData)
-            if (!result) Log.e(
-                "Valolink",
-                "Failed to update userData"
-            )
+            //val result = userRepository.setUserData(newUserData)
+            //            if (!result) Log.e(
+            //                "Valolink",
+            //                "Failed to update userData"
+            //            )
         }
     }
 
@@ -185,9 +183,9 @@ class AgentDetailsViewModel @Inject constructor(
                     agents = newAgents
                 )
 
-                if (newUserData != userData) {
-                    userRepository.setUserData(newUserData)
-                }
+                //                if (newUserData != userData) {
+                //                    userRepository.setUserData(newUserData)
+                //                }
             }
         }
     }

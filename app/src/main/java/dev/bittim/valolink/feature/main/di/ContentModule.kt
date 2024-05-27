@@ -12,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.bittim.valolink.feature.main.data.local.game.GameConverter
 import dev.bittim.valolink.feature.main.data.local.game.GameDatabase
 import dev.bittim.valolink.feature.main.data.remote.game.GameApi
-import dev.bittim.valolink.feature.main.data.repository.AppwriteUserRepository
+import dev.bittim.valolink.feature.main.data.repository.SupabaseUserRepository
 import dev.bittim.valolink.feature.main.data.repository.UserRepository
 import dev.bittim.valolink.feature.main.data.repository.game.AgentApiRepository
 import dev.bittim.valolink.feature.main.data.repository.game.AgentRepository
@@ -36,9 +36,9 @@ import dev.bittim.valolink.feature.main.data.repository.game.VersionApiRepositor
 import dev.bittim.valolink.feature.main.data.repository.game.VersionRepository
 import dev.bittim.valolink.feature.main.data.repository.game.WeaponSkinLevelApiRepository
 import dev.bittim.valolink.feature.main.data.repository.game.WeaponSkinLevelRepository
-import io.appwrite.services.Account
-import io.appwrite.services.Databases
-import io.appwrite.services.Realtime
+import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -54,9 +54,7 @@ object ContentModule {
     @Provides
     @Singleton
     fun providesMoshi(): Moshi {
-        return Moshi.Builder()
-            .addLast(KotlinJsonAdapterFactory())
-            .build()
+        return Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
     }
 
     @Provides
@@ -69,9 +67,7 @@ object ContentModule {
             context,
             GameDatabase::class.java,
             "game.db"
-        )
-            .addTypeConverter(GameConverter(moshi))
-            .build()
+        ).addTypeConverter(GameConverter(moshi)).build()
     }
 
     // --------------------------------
@@ -91,19 +87,15 @@ object ContentModule {
     @Provides
     @Singleton
     fun providesOkHttpClient(cache: Cache): OkHttpClient {
-        return OkHttpClient.Builder()
-            .cache(cache)
-            .addInterceptor { chain ->
-                val request = chain.request()
-                request.newBuilder()
-                    .header(
-                        "Cache-Control",
-                        "public, max-age=" + 5
-                    ) // API response cache valid for 5 seconds
-                    .build()
-                chain.proceed(request)
-            }
-            .build()
+        return OkHttpClient.Builder().cache(cache).addInterceptor { chain ->
+            val request = chain.request()
+            request.newBuilder().header(
+                "Cache-Control",
+                "public, max-age=" + 5
+            ) // API response cache valid for 5 seconds
+                .build()
+            chain.proceed(request)
+        }.build()
     }
 
     @Provides
@@ -112,7 +104,8 @@ object ContentModule {
         moshi: Moshi,
         okHttpClient: OkHttpClient,
     ): GameApi {
-        return Retrofit.Builder()
+        return Retrofit
+            .Builder()
             .baseUrl(GameApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
@@ -127,14 +120,14 @@ object ContentModule {
     @Provides
     @Singleton
     fun provideUserRepository(
+        auth: Auth,
+        database: Postgrest,
         realtime: Realtime,
-        account: Account,
-        databases: Databases,
     ): UserRepository {
-        return AppwriteUserRepository(
-            realtime,
-            account,
-            databases
+        return SupabaseUserRepository(
+            auth,
+            database,
+            realtime
         )
     }
 

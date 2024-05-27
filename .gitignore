@@ -27,8 +27,8 @@ render.experimental.xml
 *.keystore
 keystore.properties
 
-# Google Services (e.g. APIs or Firebase)
-google-services.json
+# Supabase credentials
+supabase.properties
 
 # Android Profiling
 *.hprof

@@ -1,6 +1,8 @@
 [versions]
 agp = "8.4.1"
 apng = "1.11.0"
+ktorClientOkhttp = "2.3.11"
+supabaseBom = "2.4.2"
 coilComposeVersion = "2.6.0"
 converterMoshi = "2.11.0"
 hiltAndroid = "2.51.1"
@@ -38,6 +40,8 @@ androidx-material-icons-extended-android = { module = "androidx.compose.material
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 apng = { module = "com.linecorp:apng", version.ref = "apng" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientOkhttp" }
+supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabaseBom" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilComposeVersion" }
 coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
@@ -59,6 +63,12 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
+supabase-gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt" }
+supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+supabase-realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
+supabase-functions-kt = { module = "io.github.jan-tennert.supabase:functions-kt" }
+supabase-compose-auth = { module = "io.github.jan-tennert.supabase:compose-auth" }
+supabase-compose-auth-ui = { module = "io.github.jan-tennert.supabase:compose-auth-ui" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }

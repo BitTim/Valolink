@@ -188,7 +188,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.CreateNewTag.outputs.tag }}
-          writeToFile: false
 
       - name: Truncate Changelog length (Max 500)
         id: truncate-changelog

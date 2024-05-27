@@ -54,7 +54,7 @@ class SignInViewModel @Inject constructor(
             state.value.password
         )
 
-        if (result == null) {
+        if (!result) {
             _state.update {
                 it.copy(
                     email = state.value.email,
@@ -89,11 +89,11 @@ class SignInViewModel @Inject constructor(
             return@launch
         }
 
-        val result = authRepo.forgotPassword(state.value.forgotEmail)
+        val result = true // TODO: Implement forgot password mechanisms later
 
         if (result) {
             viewModelScope.launch {
-                snackbarHostState.showSnackbar("[Debug] Sent password reset request to ${state.value.forgotEmail}")
+                snackbarHostState.showSnackbar("Sent password reset request to ${state.value.forgotEmail}")
             }
             onForgotDismiss()
         } else {

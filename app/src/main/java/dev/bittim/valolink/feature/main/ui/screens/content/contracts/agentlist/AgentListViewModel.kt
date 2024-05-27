@@ -21,15 +21,14 @@ class AgentListViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            userRepository.getUserData().collectLatest { userData ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userData = userData
-                    )
-                }
-            }
+        viewModelScope.launch { //            userRepository.getUserData().collectLatest { userData ->
+            //                _state.update {
+            //                    it.copy(
+            //                        isLoading = false,
+            //                        userData = userData
+            //                    )
+            //                }
+            //            }
         }
 
         viewModelScope.launch {

@@ -11,13 +11,21 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.bittim.valolink.core.ui.RootNavGraph
 import dev.bittim.valolink.ui.theme.ValolinkTheme
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.gotrue.handleDeeplinks
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var supabase: SupabaseClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supabase.handleDeeplinks(intent)
         enableEdgeToEdge()
-        
+
         setContent {
             ValolinkTheme {
                 Surface {

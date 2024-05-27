@@ -21,7 +21,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update {
                 it.copy(
-                    username = userRepository.getUsername()
+                    username = "NOT_IMPL"
                 )
             }
         }

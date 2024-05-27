@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.feature.main.data.repository.UserRepository
+import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,18 +21,27 @@ class ContentContainerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val hasUser = userRepository.hasUser()
-            _state.update {
-                it.copy(
-                    isAuthenticated = hasUser
-                )
+            userRepository.getSessionStatus().collectLatest { sessionStatus ->
+                when (sessionStatus) {
+                    is SessionStatus.Authenticated    -> {
+                        _state.update {
+                            it.copy(isAuthenticated = true)
+                        }
+                    }
+
+                    is SessionStatus.NotAuthenticated -> {
+                        _state.update {
+                            it.copy(isAuthenticated = false)
+                        }
+                    }
+
+                    else                              -> {}
+                }
             }
+        }
 
-            if (!hasUser) return@launch
-
-            val userPrefs = userRepository.getUserPrefs()
-            val hasOnboarded = userPrefs?.data?.get("hasOnboarded") as Boolean? ?: false
-
+        viewModelScope.launch {
+            val hasOnboarded = userRepository.getHasOnboarded()
             _state.update {
                 it.copy(
                     hasOnboarded = hasOnboarded,
