@@ -9,8 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.bittim.valolink.core.ui.RootNavGraph
-import dev.bittim.valolink.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.nav.RootNavGraph
+import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.handleDeeplinks
 import javax.inject.Inject

@@ -11,7 +11,7 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.util.DebugLogger
 import dagger.hilt.android.HiltAndroidApp
-import dev.bittim.valolink.ui.AnimatedPngDecoder
+import dev.bittim.valolink.core.ui.AnimatedPngDecoder
 import javax.inject.Inject
 
 @HiltAndroidApp
