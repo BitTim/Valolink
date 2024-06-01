@@ -17,7 +17,8 @@ android {
     // Determine version
     applicationVariants.all {
         val variant = this
-        variant.outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+        variant.outputs
+            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
             .forEach { output ->
                 val outputFileName = "Valolink-${variant.baseName}-${variant.versionName}.apk"
                 println("Output file name: $outputFileName")
@@ -35,14 +36,10 @@ android {
         val versionProperties = Properties()
         versionProperties.load(FileInputStream(versionPropertiesFile))
 
-        majorVersion = versionProperties.getProperty("MAJOR")
-            .toInt()
-        minorVersion = versionProperties.getProperty("MINOR")
-            .toInt()
-        patchVersion = versionProperties.getProperty("PATCH")
-            .toInt()
-        buildVersion = versionProperties.getProperty("BUILD")
-            .toInt() + 1
+        majorVersion = versionProperties.getProperty("MAJOR").toInt()
+        minorVersion = versionProperties.getProperty("MINOR").toInt()
+        patchVersion = versionProperties.getProperty("PATCH").toInt()
+        buildVersion = versionProperties.getProperty("BUILD").toInt() + 1
 
         versionProperties.setProperty(
             "BUILD",
@@ -58,12 +55,40 @@ android {
 
     val versionName = "v$majorVersion.$minorVersion.$patchVersion-$buildVersion"
 
+    // Retrieve supabase credentials
+    val supabaseUrl: String
+    val supabaseAnonKey: String
+
+    val supabasePropertiesFile = file("supabase.properties")
+    if (supabasePropertiesFile.canRead()) {
+        val supabaseProperties = Properties()
+        supabaseProperties.load(FileInputStream(supabasePropertiesFile))
+
+        supabaseUrl = supabaseProperties.getProperty("SUPABASE_URL")
+        supabaseAnonKey = supabaseProperties.getProperty("SUPABASE_ANON_KEY")
+    } else {
+        println("Could not read supabase.properties file, using environment variables instead")
+        supabaseUrl = System.getenv("SUPABASE_URL") ?: ""
+        supabaseAnonKey = System.getenv("SUPABASE_ANON_KEY") ?: ""
+    }
+
     defaultConfig {
         applicationId = "dev.bittim.valolink"
         minSdk = 33
         targetSdk = 34
         this.versionCode = buildVersion
         this.versionName = versionName
+
+        buildConfigField(
+            "String",
+            "SUPABASE_URL",
+            supabaseUrl
+        )
+        buildConfigField(
+            "String",
+            "SUPABASE_ANON_KEY",
+            supabaseAnonKey
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -126,6 +151,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -156,7 +182,9 @@ dependencies {
     implementation(libs.androidx.adaptive)
     implementation(libs.androidx.adaptive.layout)
     implementation(libs.androidx.adaptive.navigation)
-    implementation(libs.appwrite.android)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -186,4 +214,14 @@ dependencies {
     implementation(libs.coil.kt.coil.compose)
     implementation(libs.coil.gif)
     implementation(libs.apng)
+
+    // Supabase
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.gotrue.kt)
+    implementation(libs.supabase.postgrest.kt)
+    implementation(libs.supabase.realtime.kt)
+    implementation(libs.supabase.functions.kt)
+    implementation(libs.supabase.compose.auth)
+    implementation(libs.supabase.compose.auth.ui)
+    implementation(libs.ktor.client.okhttp)
 }

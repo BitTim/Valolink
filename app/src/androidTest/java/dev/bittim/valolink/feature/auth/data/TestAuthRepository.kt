@@ -1,4 +1,3 @@
-package dev.bittim.valolink.feature.auth.data
+package dev.bittim.valolink.auth.data
 
-class TestAuthRepository {
-}
+class TestAuthRepository {}

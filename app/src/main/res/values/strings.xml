@@ -1,12 +1,3 @@
 <resources>
     <string name="app_name">Valolink</string>
-    <string name="google_web_client_id">199448425056-cqho2rnhsvvptk54lsmrvhrilns2s3r3.apps.googleusercontent.com</string>
-    <string name="error_email_empty">Email cannot be empty</string>
-    <string name="error_email_invalid">Email invalid</string>
-    <string name="error_password_empty">Password cannot be empty</string>
-    <string name="error_password_too_short">Password must be at least 8 characters long</string>
-    <string name="error_username_empty">Username cannot be empty</string>
-    <string name="error_username_too_short">Username must be at least 4 characters long</string>
-    <string name="error_password_mismatch">Passwords do not match</string>
-    <string name="error_auth_generic">Something went wrong</string>
 </resources>
