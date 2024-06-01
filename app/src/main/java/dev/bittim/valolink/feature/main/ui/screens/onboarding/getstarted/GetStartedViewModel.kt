@@ -3,9 +3,9 @@ package dev.bittim.valolink.feature.main.ui.screens.onboarding.getstarted
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.main.data.repository.UserRepository
 import dev.bittim.valolink.feature.main.data.repository.game.AgentRepository
 import dev.bittim.valolink.feature.main.data.repository.game.ContractRepository
+import dev.bittim.valolink.feature.main.data.repository.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -24,8 +24,7 @@ class GetStartedViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            agentRepository.getAllBaseAgentUuids()
-                .collectLatest { uuids ->
+            agentRepository.getAllBaseAgentUuids().collectLatest { uuids ->
                     _state.update {
                         it.copy(
                             ownedAgentUuids = uuids,

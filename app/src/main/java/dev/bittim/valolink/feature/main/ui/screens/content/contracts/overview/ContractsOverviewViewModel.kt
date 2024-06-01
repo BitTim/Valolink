@@ -5,8 +5,8 @@ import androidx.compose.material3.carousel.CarouselState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.main.data.repository.UserRepository
 import dev.bittim.valolink.feature.main.data.repository.game.ContractRepository
+import dev.bittim.valolink.feature.main.data.repository.user.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,14 +31,15 @@ class ContractsOverviewViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch { //            userRepository.getUserData().collectLatest { userData ->
-            //                _state.update {
-            //                    it.copy(
-            //                        isLoading = false,
-            //                        userData = userData
-            //                    )
-            //                }
-            //            }
+        viewModelScope.launch {
+            userRepository.getCurrentUserData().collectLatest { userData ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        userData = userData
+                    )
+                }
+            }
         }
 
         viewModelScope.launch {

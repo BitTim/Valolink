@@ -3,7 +3,7 @@ package dev.bittim.valolink.feature.main.ui.screens.content.container
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.main.data.repository.UserRepository
+import dev.bittim.valolink.feature.main.data.repository.user.UserRepository
 import io.github.jan.supabase.gotrue.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

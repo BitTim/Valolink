@@ -3,9 +3,10 @@ package dev.bittim.valolink.feature.main.ui.screens.content.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.main.data.repository.UserRepository
+import dev.bittim.valolink.feature.main.data.repository.user.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,15 +15,17 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    private var _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    username = "NOT_IMPL"
-                )
+            userRepository.getCurrentUserData().collectLatest { data ->
+                _state.update {
+                    it.copy(
+                        username = data?.username
+                    )
+                }
             }
         }
     }

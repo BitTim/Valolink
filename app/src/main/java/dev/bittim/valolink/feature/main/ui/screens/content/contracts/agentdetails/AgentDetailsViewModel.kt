@@ -1,9 +1,9 @@
 package dev.bittim.valolink.feature.main.ui.screens.content.contracts.agentdetails
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.feature.main.data.repository.UserRepository
 import dev.bittim.valolink.feature.main.data.repository.game.BuddyLevelRepository
 import dev.bittim.valolink.feature.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.feature.main.data.repository.game.CurrencyRepository
@@ -11,6 +11,7 @@ import dev.bittim.valolink.feature.main.data.repository.game.PlayerCardRepositor
 import dev.bittim.valolink.feature.main.data.repository.game.PlayerTitleRepository
 import dev.bittim.valolink.feature.main.data.repository.game.SprayRepository
 import dev.bittim.valolink.feature.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.feature.main.data.repository.user.UserRepository
 import dev.bittim.valolink.feature.main.domain.model.game.Currency
 import dev.bittim.valolink.feature.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.feature.main.domain.model.game.contract.ChapterLevel
@@ -43,14 +44,15 @@ class AgentDetailsViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch { //            userRepository.getUserData().collectLatest { userData ->
-            //                _state.update {
-            //                    it.copy(
-            //                        isLoading = false,
-            //                        userData = userData
-            //                    )
-            //                }
-            //            }
+        viewModelScope.launch {
+            userRepository.getCurrentUserData().collectLatest { userData ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        userData = userData
+                    )
+                }
+            }
         }
     }
 
@@ -164,11 +166,11 @@ class AgentDetailsViewModel @Inject constructor(
                 agents = newAgents
             )
 
-            //val result = userRepository.setUserData(newUserData)
-            //            if (!result) Log.e(
-            //                "Valolink",
-            //                "Failed to update userData"
-            //            )
+            val result = userRepository.setCurrentUserData(newUserData)
+            if (!result) Log.e(
+                "Valolink",
+                "Failed to update userData"
+            )
         }
     }
 
@@ -183,9 +185,9 @@ class AgentDetailsViewModel @Inject constructor(
                     agents = newAgents
                 )
 
-                //                if (newUserData != userData) {
-                //                    userRepository.setUserData(newUserData)
-                //                }
+                if (newUserData != userData) {
+                    userRepository.setCurrentUserData(newUserData)
+                }
             }
         }
     }

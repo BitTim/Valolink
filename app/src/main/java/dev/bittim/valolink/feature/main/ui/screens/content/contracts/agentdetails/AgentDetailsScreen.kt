@@ -185,17 +185,14 @@ fun AgentDetailsScreen(
                                 )
                             }
 
-                            DropdownMenu(
-                                expanded = isMenuExpanded,
-                                onDismissRequest = { isMenuExpanded = false }
-                            ) {
-                                DropdownMenuItem(
-                                    enabled = !isLocked,
-                                    text = { Text(text = "Reset") },
-                                    onClick = {
-                                        isResetAlertShown = true
-                                        isMenuExpanded = false
-                                    })
+                            DropdownMenu(expanded = isMenuExpanded,
+                                         onDismissRequest = { isMenuExpanded = false }) {
+                                DropdownMenuItem(enabled = !isLocked,
+                                                 text = { Text(text = "Reset") },
+                                                 onClick = {
+                                                     isResetAlertShown = true
+                                                     isMenuExpanded = false
+                                                 })
                             }
                         },
                         scrollBehavior = scrollBehavior,
@@ -505,31 +502,29 @@ fun AgentDetailsScreen(
         }
 
         if (isResetAlertShown) {
-            AlertDialog(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Restore,
-                        contentDescription = null
-                    )
-                },
-                title = { Text(text = "Reset Agent") },
-                text = { Text(text = "Your reward progress for ${agent.displayName} will be reset, and ${agent.displayName} will be locked again. Additionally, the activity notification for unlocking ${agent.displayName} will be deleted. This does not effect your actual progress in game.") },
-                onDismissRequest = { isResetAlertShown = false },
+            AlertDialog(icon = {
+                Icon(
+                    imageVector = Icons.Default.Restore,
+                    contentDescription = null
+                )
+            },
+                        title = { Text(text = "Reset Agent") },
+                        text = { Text(text = "Your reward progress for ${agent.displayName} will be reset, and ${agent.displayName} will be locked again. Additionally, the activity notification for unlocking ${agent.displayName} will be deleted. This does not effect your actual progress in game.") },
+                        onDismissRequest = { isResetAlertShown = false },
 
-                confirmButton = {
-                    Button(onClick = {
-                        isResetAlertShown = false
-                        resetAgent()
-                    }) {
-                        Text(text = "Reset")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { isResetAlertShown = false }) {
-                        Text(text = "Cancel")
-                    }
-                }
-            )
+                        confirmButton = {
+                            Button(onClick = {
+                                isResetAlertShown = false
+                                resetAgent()
+                            }) {
+                                Text(text = "Reset")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { isResetAlertShown = false }) {
+                                Text(text = "Cancel")
+                            }
+                        })
         }
     }
 }
@@ -545,7 +540,11 @@ fun AgentDetailsScreenPreview() {
     ValolinkTheme {
         AgentDetailsScreen(state = AgentDetailsState(
             isLoading = false,
-            userData = UserData(agents = listOf(agentUuid)),
+            userData = UserData(
+                "",
+                "Name",
+                agents = listOf(agentUuid)
+            ),
             agentGear = Contract(
                 UUID.randomUUID().toString(),
                 "Clove Gear",

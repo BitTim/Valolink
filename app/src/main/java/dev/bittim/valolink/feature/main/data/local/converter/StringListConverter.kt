@@ -1,4 +1,4 @@
-package dev.bittim.valolink.feature.main.data.local.game
+package dev.bittim.valolink.feature.main.data.local.converter
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
@@ -6,8 +6,8 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 
 @ProvidedTypeConverter
-class GameConverter constructor(
-    private val moshi: Moshi
+class StringListConverter constructor(
+    private val moshi: Moshi,
 ) {
     @TypeConverter
     fun fromStringList(value: List<String>): String {
@@ -18,8 +18,6 @@ class GameConverter constructor(
             )
         ).toJson(value)
     }
-
-
 
     @TypeConverter
     fun toStringList(value: String): List<String> {

@@ -2,6 +2,7 @@ package dev.bittim.valolink.feature.main.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -9,11 +10,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.bittim.valolink.feature.main.data.local.game.GameConverter
+import dev.bittim.valolink.feature.main.data.local.converter.StringListConverter
 import dev.bittim.valolink.feature.main.data.local.game.GameDatabase
+import dev.bittim.valolink.feature.main.data.local.user.UserDatabase
 import dev.bittim.valolink.feature.main.data.remote.game.GameApi
-import dev.bittim.valolink.feature.main.data.repository.SupabaseUserRepository
-import dev.bittim.valolink.feature.main.data.repository.UserRepository
 import dev.bittim.valolink.feature.main.data.repository.game.AgentApiRepository
 import dev.bittim.valolink.feature.main.data.repository.game.AgentRepository
 import dev.bittim.valolink.feature.main.data.repository.game.BuddyLevelApiRepository
@@ -36,9 +36,9 @@ import dev.bittim.valolink.feature.main.data.repository.game.VersionApiRepositor
 import dev.bittim.valolink.feature.main.data.repository.game.VersionRepository
 import dev.bittim.valolink.feature.main.data.repository.game.WeaponSkinLevelApiRepository
 import dev.bittim.valolink.feature.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.feature.main.data.repository.user.SupabaseUserRepository
+import dev.bittim.valolink.feature.main.data.repository.user.UserRepository
 import io.github.jan.supabase.gotrue.Auth
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.realtime.Realtime
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -48,18 +48,24 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ContentModule {
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
+
     // --------------------------------
     //  Database
     // --------------------------------
     @Provides
     @Singleton
-    fun providesMoshi(): Moshi {
+    fun provideMoshi(): Moshi {
         return Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
     }
 
     @Provides
     @Singleton
-    fun providesGameDatabase(
+    fun provideGameDatabase(
         @ApplicationContext context: Context,
         moshi: Moshi,
     ): GameDatabase {
@@ -67,7 +73,20 @@ object ContentModule {
             context,
             GameDatabase::class.java,
             "game.db"
-        ).addTypeConverter(GameConverter(moshi)).build()
+        ).addTypeConverter(StringListConverter(moshi)).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDatabase(
+        @ApplicationContext context: Context,
+        moshi: Moshi,
+    ): UserDatabase {
+        return Room.databaseBuilder(
+            context,
+            UserDatabase::class.java,
+            "user.db"
+        ).addTypeConverter(StringListConverter(moshi)).build()
     }
 
     // --------------------------------
@@ -121,13 +140,13 @@ object ContentModule {
     @Singleton
     fun provideUserRepository(
         auth: Auth,
-        database: Postgrest,
-        realtime: Realtime,
+        userDatabase: UserDatabase,
+        workManager: WorkManager,
     ): UserRepository {
         return SupabaseUserRepository(
             auth,
-            database,
-            realtime
+            userDatabase,
+            workManager
         )
     }
 

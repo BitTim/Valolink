@@ -36,7 +36,7 @@ class SupabaseAuthRepository @Inject constructor(
                 this.password = password
                 this.data = buildJsonObject {
                     put(
-                        "username",
+                        "display_name",
                         username
                     )
                     put(

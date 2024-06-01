@@ -3,6 +3,7 @@ package dev.bittim.valolink.feature.main.data.local.game
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import dev.bittim.valolink.feature.main.data.local.converter.StringListConverter
 import dev.bittim.valolink.feature.main.data.local.game.dao.AgentDao
 import dev.bittim.valolink.feature.main.data.local.game.dao.BuddyLevelDao
 import dev.bittim.valolink.feature.main.data.local.game.dao.ContractsDao
@@ -41,7 +42,7 @@ import dev.bittim.valolink.feature.main.data.local.game.entity.weapon.WeaponSkin
         CurrencyEntity::class, SprayEntity::class, PlayerTitleEntity::class, PlayerCardEntity::class, BuddyLevelEntity::class, WeaponSkinLevelEntity::class],
     version = 1
 )
-@TypeConverters(GameConverter::class)
+@TypeConverters(StringListConverter::class)
 abstract class GameDatabase : RoomDatabase() {
     abstract val agentDao: AgentDao
     abstract val contractsDao: ContractsDao
