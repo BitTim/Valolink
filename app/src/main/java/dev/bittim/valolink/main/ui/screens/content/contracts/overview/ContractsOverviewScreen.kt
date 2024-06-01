@@ -193,9 +193,10 @@ fun ContractsOverviewScreen(
                         unlockedLevelsList =
                             List(state.agentGears.count()) { i -> random.nextInt(state.agentGears[i].calcLevelCount()) }
                     }
-
+                    
                     if (gear.content.relation is Agent) {
                         AgentCarouselCard(
+                            modifier = Modifier.maskClip(shape = MaterialTheme.shapes.large),
                             backgroundGradientColors = gear.content.relation.backgroundGradientColors,
                             backgroundImage = gear.content.relation.background,
                             fullPortrait = gear.content.relation.fullPortrait,
