@@ -85,6 +85,7 @@ class SupabaseUserRepository @Inject constructor(
         return setCurrentUserData(
             UserData(
                 uid,
+                isPrivate = false,
                 username,
                 ownedAgentUuids
             )

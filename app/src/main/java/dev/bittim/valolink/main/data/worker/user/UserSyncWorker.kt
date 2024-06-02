@@ -1,7 +1,6 @@
 package dev.bittim.valolink.main.data.worker.user
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -9,6 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dev.bittim.valolink.main.data.local.user.UserDatabase
 import dev.bittim.valolink.main.data.remote.user.dto.UserDataDto
+import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.take
@@ -30,19 +30,25 @@ class UserSyncWorker @AssistedInject constructor(
 
         // Get most recent local update timestamp
         val lastLocalUpdate = userDatabase.userDataDao.getUpdatedAtByUuid(uid).take(1).firstOrNull()
-        Log.d(
-            "UserSyncWorker",
-            "Last local update: $lastLocalUpdate"
-        )
 
         // Fetch most recent data from Supabase
-        val user = database.from("users").select {
-            filter {
-                UserDataDto::uuid eq uid
+        var user: UserDataDto? = null
+        try {
+            user = database.from("users").select {
+                filter {
+                    UserDataDto::uuid eq uid
+                }
+                limit(1)
+                single()
             }
-            limit(1)
-            single()
-        }.decodeAsOrNull<UserDataDto>()
+                .decodeAsOrNull<UserDataDto>()
+        } catch (e: Exception) {
+            if (e !is RestException) {
+                e.printStackTrace()
+                return Result.retry()
+            }
+        }
+
 
         // Upsert Supabase data only, if it is more recent
         if (user != null && (lastLocalUpdate.isNullOrEmpty() || OffsetDateTime

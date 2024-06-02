@@ -3,42 +3,42 @@ package dev.bittim.valolink.main.data.local.user.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dev.bittim.valolink.main.domain.model.UserData
+import dev.bittim.valolink.main.domain.model.Gear
 import java.time.OffsetDateTime
 
 @Entity(
-    tableName = "UserData",
+    tableName = "UserGear",
     indices = [Index(
         value = ["uuid"],
         unique = true
     )]
 )
-data class UserDataEntity(
+data class GearEntity(
     @PrimaryKey val uuid: String,
     override val isSynced: Boolean,
     override val updatedAt: String,
-    val isPrivate: Boolean,
-    val username: String,
-    val agents: List<String>,
+    val user: String,
+    val contract: String,
+    val progress: Int,
 ) : SyncedEntity() {
-    fun toType(): UserData {
-        return UserData(
+    fun toType(): Gear {
+        return Gear(
             uuid,
-            isPrivate,
-            username,
-            agents
+            user,
+            contract,
+            progress
         )
     }
 
     companion object {
-        fun fromType(userData: UserData): UserDataEntity {
-            return UserDataEntity(
-                userData.uuid,
+        fun fromType(gear: Gear): GearEntity {
+            return GearEntity(
+                gear.uuid,
                 false,
                 OffsetDateTime.now().toString(),
-                userData.isPrivate,
-                userData.username,
-                userData.agents
+                gear.user,
+                gear.contract,
+                gear.progress
             )
         }
     }

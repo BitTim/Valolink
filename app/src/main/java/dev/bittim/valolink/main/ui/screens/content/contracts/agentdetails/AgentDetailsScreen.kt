@@ -542,6 +542,7 @@ fun AgentDetailsScreenPreview() {
             isLoading = false,
             userData = UserData(
                 "",
+                false,
                 "Name",
                 agents = listOf(agentUuid)
             ),

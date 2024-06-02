@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "064d619817455bcfcf219c8d7f5727ec",
+    "identityHash": "1fbf9d768084430b8e4b7f6c55f7f36d",
     "entities": [
       {
         "tableName": "UserData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `username` TEXT NOT NULL, `agents` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `isPrivate` INTEGER NOT NULL, `username` TEXT NOT NULL, `agents` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -24,6 +24,12 @@
             "fieldPath": "updatedAt",
             "columnName": "updatedAt",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPrivate",
+            "columnName": "isPrivate",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -62,7 +68,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '064d619817455bcfcf219c8d7f5727ec')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1fbf9d768084430b8e4b7f6c55f7f36d')"
     ]
   }
 }
