@@ -32,10 +32,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.carousel.CarouselDefaults
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -44,7 +40,7 @@ import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.DefaultContractCard
-import java.util.Random
+import dev.bittim.valolink.main.ui.util.getProgressPercent
 import kotlin.math.floor
 
 @OptIn(
@@ -54,6 +50,7 @@ import kotlin.math.floor
 @Composable
 fun ContractsOverviewScreen(
     state: ContractsOverviewState,
+    addUserGear: (String) -> Unit,
     onArchiveTypeFilterChange: (ArchiveTypeFilter) -> Unit,
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
@@ -185,18 +182,17 @@ fun ContractsOverviewScreen(
                     flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = state.agentGearCarouselState)
                 ) { index ->
                     val gear = state.agentGears[index]
+                    val userGear = state.userGears.find { it.contract == gear.uuid }
+                    val levelCount = gear.calcLevelCount()
 
-                    // TODO: Random values for testing
-                    val random = Random()
-                    var unlockedLevelsList by remember { mutableStateOf(listOf<Int>()) }
-                    if (unlockedLevelsList.isEmpty()) {
-                        unlockedLevelsList =
-                            List(state.agentGears.count()) { i -> random.nextInt(state.agentGears[i].calcLevelCount()) }
+                    if (userGear == null) {
+                        addUserGear(gear.uuid)
+                        return@HorizontalMultiBrowseCarousel
                     }
-                    
+
                     if (gear.content.relation is Agent) {
                         AgentCarouselCard(
-                            modifier = Modifier.maskClip(shape = MaterialTheme.shapes.large),
+                            modifier = Modifier.maskClip(shape = MaterialTheme.shapes.extraLarge),
                             backgroundGradientColors = gear.content.relation.backgroundGradientColors,
                             backgroundImage = gear.content.relation.background,
                             fullPortrait = gear.content.relation.fullPortrait,
@@ -204,13 +200,12 @@ fun ContractsOverviewScreen(
                             agentName = gear.content.relation.displayName,
                             contractUuid = gear.uuid,
                             roleName = gear.content.relation.role.displayName,
-                            totalLevels = gear.calcLevelCount(), // TODO: Placeholder values as no userdata is present yet
-                            unlockedLevels = unlockedLevelsList[index],
-                            percentage = floor(
-                                (unlockedLevelsList[index].toFloat() / gear
-                                    .calcLevelCount()
-                                    .toFloat()) * 100f
-                            ).toInt(),
+                            totalLevels = levelCount,
+                            unlockedLevels = userGear.progress,
+                            percentage = getProgressPercent(
+                                userGear.progress,
+                                levelCount
+                            ),
                             isLocked = !(state.userData?.agents?.contains(gear.content.relation.uuid)
                                 ?: false),
                             maskedWidth = carouselItemInfo.maskRect.width,

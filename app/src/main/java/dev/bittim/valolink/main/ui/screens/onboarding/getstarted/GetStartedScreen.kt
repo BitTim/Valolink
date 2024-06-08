@@ -22,6 +22,8 @@ fun GetStartedScreen(
     state: GetStartedState,
     onGetStartedClicked: () -> Unit,
 ) {
+    val isLoading: Boolean = state.loadingFinished == 0b0011
+
     Surface {
         Column(
             modifier = Modifier
@@ -38,10 +40,10 @@ fun GetStartedScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                enabled = !state.isLoading,
+                enabled = !isLoading,
                 onClick = onGetStartedClicked
             ) {
-                Text(text = if (state.isLoading) "Loading..." else "Get started")
+                Text(text = if (isLoading) "Loading..." else "Get started")
             }
         }
     }
@@ -51,7 +53,7 @@ fun GetStartedScreen(
 @Composable
 fun GetStartedScreenLoadingPreview() {
     ValolinkTheme {
-        GetStartedScreen(state = GetStartedState(true),
+        GetStartedScreen(state = GetStartedState(0b0011),
                          onGetStartedClicked = {})
     }
 }
@@ -60,7 +62,7 @@ fun GetStartedScreenLoadingPreview() {
 @Composable
 fun GetStartedScreenPreview() {
     ValolinkTheme {
-        GetStartedScreen(state = GetStartedState(false),
+        GetStartedScreen(state = GetStartedState(0b0000),
                          onGetStartedClicked = {})
     }
 }

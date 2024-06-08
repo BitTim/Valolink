@@ -36,8 +36,15 @@ import dev.bittim.valolink.main.data.repository.game.VersionApiRepository
 import dev.bittim.valolink.main.data.repository.game.VersionRepository
 import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelApiRepository
 import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
-import dev.bittim.valolink.main.data.repository.user.SupabaseUserRepository
+import dev.bittim.valolink.main.data.repository.user.GearRepository
+import dev.bittim.valolink.main.data.repository.user.GearSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.OnboardingRepository
+import dev.bittim.valolink.main.data.repository.user.OnboardingSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.SessionRepository
+import dev.bittim.valolink.main.data.repository.user.SessionSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
+import dev.bittim.valolink.main.data.repository.user.UserSupabaseRepository
+import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import io.github.jan.supabase.gotrue.Auth
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -138,15 +145,53 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(
+    fun provideSessionRepository(
         auth: Auth,
+        userDatabase: UserDatabase,
+    ): SessionRepository {
+        return SessionSupabaseRepository(
+            auth,
+            userDatabase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        sessionRepository: SessionRepository,
         userDatabase: UserDatabase,
         workManager: WorkManager,
     ): UserRepository {
-        return SupabaseUserRepository(
-            auth,
+        return UserSupabaseRepository(
+            sessionRepository,
             userDatabase,
             workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideGearRepository(
+        sessionRepository: SessionRepository,
+        userDatabase: UserDatabase,
+        workManager: WorkManager,
+    ): GearRepository {
+        return GearSupabaseRepository(
+            sessionRepository,
+            userDatabase,
+            workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideOnboardingRepository(
+        sessionRepository: SessionRepository,
+        userRepository: UserRepository,
+    ): OnboardingRepository {
+        return OnboardingSupabaseRepository(
+            sessionRepository,
+            userRepository
         )
     }
 
@@ -300,5 +345,15 @@ object ContentModule {
             gameApi,
             versionRepository
         )
+    }
+
+    // --------------------------------
+    //  Use Cases
+    // --------------------------------
+
+    @Provides
+    @Singleton
+    fun provideAddUserGearUseCase(gearRepository: GearRepository): AddUserGearUseCase {
+        return AddUserGearUseCase(gearRepository)
     }
 }

@@ -26,12 +26,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCard
+import dev.bittim.valolink.main.ui.util.getProgressPercent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgentListScreen(
     state: AgentListState,
+    addUserGear: (String) -> Unit,
     onNavBack: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
 ) {
@@ -71,21 +73,32 @@ fun AgentListScreen(
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             items(items = state.agentGears,
-                  itemContent = {
-                      if (it.content.relation is Agent) {
+                  itemContent = { gear ->
+                      val userGear = state.userGears.find { it.contract == gear.uuid }
+                      val levelCount = gear.calcLevelCount()
+
+                      if (userGear == null) {
+                          addUserGear(gear.uuid)
+                          return@items
+                      }
+
+                      if (gear.content.relation is Agent) {
                           AgentCarouselCard(
-                              backgroundGradientColors = it.content.relation.backgroundGradientColors,
-                              backgroundImage = it.content.relation.background,
-                              fullPortrait = it.content.relation.fullPortrait,
-                              roleIcon = it.content.relation.role.displayIcon,
-                              agentName = it.content.relation.displayName,
-                              contractUuid = it.uuid,
-                              roleName = it.content.relation.role.displayName,
-                              totalLevels = it.calcLevelCount(), // TODO: Fake data
-                              isLocked = !(state.userData?.agents?.contains(it.content.relation.uuid)
+                              backgroundGradientColors = gear.content.relation.backgroundGradientColors,
+                              backgroundImage = gear.content.relation.background,
+                              fullPortrait = gear.content.relation.fullPortrait,
+                              roleIcon = gear.content.relation.role.displayIcon,
+                              agentName = gear.content.relation.displayName,
+                              contractUuid = gear.uuid,
+                              roleName = gear.content.relation.role.displayName,
+                              totalLevels = levelCount,
+                              isLocked = !(state.userData?.agents?.contains(gear.content.relation.uuid)
                                   ?: false),
-                              unlockedLevels = 3,
-                              percentage = 30,
+                              unlockedLevels = userGear.progress,
+                              percentage = getProgressPercent(
+                                  userGear.progress,
+                                  levelCount
+                              ),
                               onNavToAgentDetails = onNavToAgentDetails
                           )
                       }

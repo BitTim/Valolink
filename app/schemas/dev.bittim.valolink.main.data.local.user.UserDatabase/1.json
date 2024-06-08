@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1fbf9d768084430b8e4b7f6c55f7f36d",
+    "identityHash": "9dd7de37f3eb3ad8f2184e0901d10ce4",
     "entities": [
       {
-        "tableName": "UserData",
+        "tableName": "Users",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `isPrivate` INTEGER NOT NULL, `username` TEXT NOT NULL, `agents` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
@@ -53,13 +53,83 @@
         },
         "indices": [
           {
-            "name": "index_UserData_uuid",
+            "name": "index_Users_uuid",
             "unique": true,
             "columnNames": [
               "uuid"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_UserData_uuid` ON `${TABLE_NAME}` (`uuid`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Users_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Gears",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `user` TEXT NOT NULL, `contract` TEXT NOT NULL, `progress` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSynced",
+            "columnName": "isSynced",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "user",
+            "columnName": "user",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contract",
+            "columnName": "contract",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progress",
+            "columnName": "progress",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Gears_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Gears_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_Gears_user_contract",
+            "unique": true,
+            "columnNames": [
+              "user",
+              "contract"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Gears_user_contract` ON `${TABLE_NAME}` (`user`, `contract`)"
           }
         ],
         "foreignKeys": []
@@ -68,7 +138,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1fbf9d768084430b8e4b7f6c55f7f36d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9dd7de37f3eb3ad8f2184e0901d10ce4')"
     ]
   }
 }

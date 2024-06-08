@@ -7,9 +7,12 @@ import dev.bittim.valolink.main.domain.model.Gear
 import java.time.OffsetDateTime
 
 @Entity(
-    tableName = "UserGear",
+    tableName = "Gears",
     indices = [Index(
         value = ["uuid"],
+        unique = true
+    ), Index(
+        value = ["user", "contract"],
         unique = true
     )]
 )

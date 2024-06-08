@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.take
 import java.time.OffsetDateTime
 
 @HiltWorker
-class UserSyncWorker @AssistedInject constructor(
+class UserDataSyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
     private val database: Postgrest,
@@ -29,9 +29,10 @@ class UserSyncWorker @AssistedInject constructor(
         val uid = inputData.getString(KEY_UID) ?: return Result.failure()
 
         // Get most recent local update timestamp
-        val lastLocalUpdate = userDatabase.userDataDao.getUpdatedAtByUuid(uid).take(1).firstOrNull()
+        val lastLocalUpdate =
+            userDatabase.userDataDao.getByUuid(uid).take(1).firstOrNull()?.updatedAt
 
-        // Fetch most recent data from Supabase
+        // Fetch most recent user data from Supabase
         var user: UserDataDto? = null
         try {
             user = database.from("users").select {
@@ -40,15 +41,13 @@ class UserSyncWorker @AssistedInject constructor(
                 }
                 limit(1)
                 single()
-            }
-                .decodeAsOrNull<UserDataDto>()
+            }.decodeAsOrNull<UserDataDto>()
         } catch (e: Exception) {
             if (e !is RestException) {
                 e.printStackTrace()
                 return Result.retry()
             }
         }
-
 
         // Upsert Supabase data only, if it is more recent
         if (user != null && (lastLocalUpdate.isNullOrEmpty() || OffsetDateTime
@@ -61,6 +60,8 @@ class UserSyncWorker @AssistedInject constructor(
         // Push write queue to Supabase
         userDatabase.userDataDao.getSyncQueue().take(1).collect {
             it.forEach { userData ->
+                if (userData == null) return@forEach
+
                 database.from("users").upsert(UserDataDto.fromEntity(userData))
                 userDatabase.userDataDao.upsert(userData.copy(isSynced = true))
             }
@@ -68,6 +69,8 @@ class UserSyncWorker @AssistedInject constructor(
 
         return Result.success()
     }
+
+
 
     companion object {
         const val KEY_UID = "KEY_UID"

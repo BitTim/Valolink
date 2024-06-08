@@ -87,9 +87,8 @@ import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AbilityDetailsItem
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentBackdrop
-import java.util.Random
+import dev.bittim.valolink.main.ui.util.getProgressPercent
 import java.util.UUID
-import kotlin.math.floor
 
 data object AgentDetailsScreen {
     const val MAX_TITLE_CARD_HEIGHT_FRACTION: Float = 0.6f
@@ -102,6 +101,7 @@ fun AgentDetailsScreen(
     state: AgentDetailsState,
     unlockAgent: () -> Unit,
     resetAgent: () -> Unit,
+    addUserGear: (String) -> Unit,
     onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
@@ -261,11 +261,15 @@ fun AgentDetailsScreen(
                                 }
                             }
 
-                            val random = Random()
+                            val userGear = state.userGear
+                            if (userGear == null) addUserGear(state.agentGear.uuid)
+
                             val totalLevels = state.agentGear.calcLevelCount()
-                            val unlockedLevels = random.nextInt(totalLevels)
-                            val percentage =
-                                floor((unlockedLevels.toFloat() / totalLevels.toFloat()) * 100f)
+                            val unlockedLevels = state.userGear?.progress ?: 0
+                            val percentage = getProgressPercent(
+                                unlockedLevels,
+                                totalLevels
+                            )
 
                             val animatedProgress: Float by animateFloatAsState(
                                 targetValue = (percentage / 100f),
@@ -283,7 +287,7 @@ fun AgentDetailsScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(text = "$unlockedLevels / $totalLevels")
-                                Text(text = "${percentage.toInt()} %")
+                                Text(text = "$percentage %")
                             }
                         }
                     } else {
@@ -544,7 +548,8 @@ fun AgentDetailsScreenPreview() {
                 "",
                 false,
                 "Name",
-                agents = listOf(agentUuid)
+                agents = listOf(agentUuid),
+                listOf()
             ),
             agentGear = Contract(
                 UUID.randomUUID().toString(),
@@ -651,6 +656,7 @@ fun AgentDetailsScreenPreview() {
         ),
                            resetAgent = {},
                            unlockAgent = {},
+                           addUserGear = {},
                            onAbilityTabChanged = {},
                            onNavBack = {},
                            onNavGearRewardsList = {})
@@ -773,6 +779,7 @@ fun AgentDetailsScreenLockedPreview() {
         ),
                            resetAgent = {},
                            unlockAgent = {},
+                           addUserGear = {},
                            onAbilityTabChanged = {},
                            onNavBack = {},
                            onNavGearRewardsList = {})

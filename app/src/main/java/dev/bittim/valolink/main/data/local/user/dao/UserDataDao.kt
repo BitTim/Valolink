@@ -21,14 +21,15 @@ interface UserDataDao {
     //  Queries
     // --------------------------------
 
-    @Query("SELECT * FROM UserData WHERE uuid = :uuid LIMIT 1")
+    @Transaction
+    @Query("SELECT * FROM Users WHERE uuid = :uuid LIMIT 1")
     fun getByUuid(uuid: String): Flow<UserDataEntity?>
 
-    @Query("SELECT updatedAt FROM UserData WHERE uuid = :uuid LIMIT 1")
+    @Query("SELECT updatedAt FROM Users WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
-    @Query("SELECT * FROM UserData WHERE isSynced = false ORDER BY updatedAt ASC")
-    fun getSyncQueue(): Flow<List<UserDataEntity>>
+    @Query("SELECT * FROM Users WHERE isSynced = false ORDER BY updatedAt ASC")
+    fun getSyncQueue(): Flow<List<UserDataEntity?>>
 
     // --------------------------------
     //  Delete
@@ -37,10 +38,10 @@ interface UserDataDao {
     @Delete
     suspend fun delete(userData: UserDataEntity)
 
-    @Query("DELETE FROM UserData WHERE uuid = :uuid")
+    @Query("DELETE FROM Users WHERE uuid = :uuid")
     suspend fun deleteByUuid(uuid: String)
 
     @Transaction
-    @Query("DELETE FROM UserData")
+    @Query("DELETE FROM Users")
     suspend fun deleteAll()
 }

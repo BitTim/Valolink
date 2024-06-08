@@ -7,7 +7,7 @@ import dev.bittim.valolink.main.domain.model.UserData
 import java.time.OffsetDateTime
 
 @Entity(
-    tableName = "UserData",
+    tableName = "Users",
     indices = [Index(
         value = ["uuid"],
         unique = true
@@ -26,7 +26,8 @@ data class UserDataEntity(
             uuid,
             isPrivate,
             username,
-            agents
+            agents,
+            listOf()
         )
     }
 

@@ -29,7 +29,7 @@ data class UserDataDto(
                 userData.updatedAt,
                 userData.isPrivate,
                 userData.username,
-                userData.agents,
+                userData.agents
             )
         }
     }
