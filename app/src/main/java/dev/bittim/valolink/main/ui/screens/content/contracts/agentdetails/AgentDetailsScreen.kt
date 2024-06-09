@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -36,8 +36,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -65,30 +65,19 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
-import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.main.domain.model.UserData
-import dev.bittim.valolink.main.domain.model.game.agent.Ability
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
-import dev.bittim.valolink.main.domain.model.game.agent.Role
-import dev.bittim.valolink.main.domain.model.game.contract.Chapter
-import dev.bittim.valolink.main.domain.model.game.contract.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.Content
-import dev.bittim.valolink.main.domain.model.game.contract.Contract
-import dev.bittim.valolink.main.domain.model.game.contract.Reward
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AbilityDetailsItem
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentBackdrop
 import dev.bittim.valolink.main.ui.util.getProgressPercent
-import java.util.UUID
 
 data object AgentDetailsScreen {
     const val MAX_TITLE_CARD_HEIGHT_FRACTION: Float = 0.6f
@@ -142,6 +131,15 @@ fun AgentDetailsScreen(
             abilityPagerState.isScrollInProgress
         ) {
             if (!abilityPagerState.isScrollInProgress) onAbilityTabChanged(abilityPagerState.currentPage)
+        }
+
+        // Scroll to the currently active reward
+        LaunchedEffect(
+            state.userGear?.progress,
+            state.rewards
+        ) {
+            val targetIndex = state.userGear?.progress ?: 0
+            state.rewardListState.animateScrollToItem(targetIndex)
         }
 
         Column(
@@ -324,7 +322,7 @@ fun AgentDetailsScreen(
                                 }
                             }
 
-                            ElevatedButton(onClick = unlockAgent) {
+                            FilledTonalButton(onClick = unlockAgent) {
                                 AsyncImage(
                                     modifier = Modifier
                                         .width(16.dp)
@@ -385,20 +383,25 @@ fun AgentDetailsScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 LazyRow(
+                    state = state.rewardListState,
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(items = state.rewards,
-                          itemContent = {
-                              AgentRewardCard(
-                                  name = it.first.displayName,
-                                  type = it.first.type,
-                                  displayIcon = it.first.displayIcon,
-                                  price = it.second.doughCost,
-                                  amount = it.first.amount,
-                                  currencyIcon = state.dough?.displayIcon ?: ""
-                              )
-                          })
+                    itemsIndexed(items = state.rewards,
+                                 itemContent = { index, reward ->
+                                     val progress = state.userGear?.progress ?: 0
+
+                                     AgentRewardCard(name = reward.first.displayName,
+                                                     type = reward.first.type,
+                                                     displayIcon = reward.first.displayIcon,
+                                                     price = reward.second.doughCost,
+                                                     amount = reward.first.amount,
+                                                     currencyIcon = state.dough?.displayIcon ?: "",
+                                                     isLocked = isLocked,
+                                                     isOwned = progress > index,
+                                                     unlockReward = {},
+                                                     resetReward = {})
+                                 })
                 }
             }
 
@@ -530,258 +533,5 @@ fun AgentDetailsScreen(
                             }
                         })
         }
-    }
-}
-
-@Preview(
-    showBackground = true,
-    heightDp = 2000
-)
-@Composable
-fun AgentDetailsScreenPreview() {
-    val agentUuid = UUID.randomUUID().toString()
-
-    ValolinkTheme {
-        AgentDetailsScreen(state = AgentDetailsState(
-            isLoading = false,
-            userData = UserData(
-                "",
-                false,
-                "Name",
-                agents = listOf(agentUuid),
-                listOf()
-            ),
-            agentGear = Contract(
-                UUID.randomUUID().toString(),
-                "Clove Gear",
-                false,
-                -1,
-                Content(
-                    relation = Agent(
-                        agentUuid,
-                        "Clove",
-                        "Scottish troublemaker Clove makes mischief for enemies in both the heat of combat and the cold of death. The young immortal keeps foes guessing, even from beyond the grave, their return to the living only ever a moment away.",
-                        "Smonk",
-                        listOf(),
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayiconsmall.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/killfeedportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
-                        listOf(
-                            "f17cadff",
-                            "062261ff",
-                            "c347c7ff",
-                            "f1db6fff"
-                        ),
-                        false,
-                        isAvailableForTest = true,
-                        isBaseContent = false,
-                        role = Role(
-                            UUID.randomUUID().toString(),
-                            "Controller",
-                            "Controllers are experts in slicing up dangerous territory to set their team up for success.",
-                            "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png"
-                        ),
-                        abilities = listOf(
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Grenade",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            ),
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Aility2",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            ),
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Ultimate",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            ),
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Ability1",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            )
-                        )
-                    ),
-                    premiumVPCost = -1,
-                    chapters = listOf(
-                        Chapter(
-                            listOf(
-                                ChapterLevel(
-                                    20000,
-                                    0,
-                                    false,
-                                    2000,
-                                    true,
-                                    Reward(
-                                        "Spray",
-                                        "7221ab04-4a64-9a0f-ba1e-e7a423f5ed4b",
-                                        1,
-                                        false
-                                    )
-                                ),
-                                ChapterLevel(
-                                    30000,
-                                    0,
-                                    false,
-                                    2500,
-                                    true,
-                                    Reward(
-                                        "PlayerCard",
-                                        "faa3c3b5-4b0b-1f20-b383-01b7b83126ff",
-                                        1,
-                                        false
-                                    )
-                                )
-                            ),
-                            null,
-                            false
-                        )
-                    )
-                )
-            )
-        ),
-                           resetAgent = {},
-                           unlockAgent = {},
-                           addUserGear = {},
-                           onAbilityTabChanged = {},
-                           onNavBack = {},
-                           onNavGearRewardsList = {})
-    }
-}
-
-@Preview(
-    showBackground = true,
-    heightDp = 2000
-)
-@Composable
-fun AgentDetailsScreenLockedPreview() {
-    val agentUuid = UUID.randomUUID().toString()
-
-    ValolinkTheme {
-        AgentDetailsScreen(state = AgentDetailsState(
-            isLoading = false,
-            agentGear = Contract(
-                UUID.randomUUID().toString(),
-                "Clove Gear",
-                false,
-                -1,
-                Content(
-                    relation = Agent(
-                        agentUuid,
-                        "Clove",
-                        "Scottish troublemaker Clove makes mischief for enemies in both the heat of combat and the cold of death. The young immortal keeps foes guessing, even from beyond the grave, their return to the living only ever a moment away.",
-                        "Smonk",
-                        listOf(),
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayiconsmall.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/fullportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/killfeedportrait.png",
-                        "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
-                        listOf(
-                            "f17cadff",
-                            "062261ff",
-                            "c347c7ff",
-                            "f1db6fff"
-                        ),
-                        false,
-                        isAvailableForTest = true,
-                        isBaseContent = false,
-                        role = Role(
-                            UUID.randomUUID().toString(),
-                            "Controller",
-                            "Controllers are experts in slicing up dangerous territory to set their team up for success.",
-                            "https://media.valorant-api.com/agents/roles/4ee40330-ecdd-4f2f-98a8-eb1243428373/displayicon.png"
-                        ),
-                        abilities = listOf(
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Grenade",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            ),
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Aility2",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            ),
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Ultimate",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            ),
-                            Ability(
-                                UUID.randomUUID().toString(),
-                                "Ability1",
-                                "Pick-Me-Up",
-                                "ACTIVATE to absorb the life force of a fallen enemy that Clove damaged or killed, gaining haste and temporary health.",
-                                "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/abilities/grenade/displayicon.png"
-                            )
-                        )
-                    ),
-                    premiumVPCost = -1,
-                    chapters = listOf(
-                        Chapter(
-                            listOf(
-                                ChapterLevel(
-                                    20000,
-                                    0,
-                                    false,
-                                    2000,
-                                    true,
-                                    Reward(
-                                        "Spray",
-                                        "7221ab04-4a64-9a0f-ba1e-e7a423f5ed4b",
-                                        1,
-                                        false
-                                    )
-                                ),
-                                ChapterLevel(
-                                    30000,
-                                    0,
-                                    false,
-                                    2500,
-                                    true,
-                                    Reward(
-                                        "PlayerCard",
-                                        "faa3c3b5-4b0b-1f20-b383-01b7b83126ff",
-                                        1,
-                                        false
-                                    )
-                                )
-                            ),
-                            null,
-                            false
-                        )
-                    )
-                )
-            )
-        ),
-                           resetAgent = {},
-                           unlockAgent = {},
-                           addUserGear = {},
-                           onAbilityTabChanged = {},
-                           onNavBack = {},
-                           onNavGearRewardsList = {})
     }
 }
