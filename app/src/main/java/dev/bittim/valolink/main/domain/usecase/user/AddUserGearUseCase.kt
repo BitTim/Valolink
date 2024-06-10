@@ -19,6 +19,6 @@ class AddUserGearUseCase @Inject constructor(
             0
         )
 
-        gearRepository.upsertGear(gear)
+        gearRepository.setGear(gear)
     }
 }

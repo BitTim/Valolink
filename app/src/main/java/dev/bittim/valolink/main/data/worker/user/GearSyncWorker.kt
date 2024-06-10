@@ -29,8 +29,7 @@ class GearSyncWorker @AssistedInject constructor(
         val uid = inputData.getString(KEY_UID) ?: return Result.failure()
 
         // Get most recent local update timestamp
-        val lastLocalUpdates =
-            userDatabase.gearDao.getByUser(uid).take(1).firstOrNull()?.map { it.updatedAt }
+        val lastLocalUpdates = userDatabase.gearDao.getByUser(uid).take(1).firstOrNull()
 
         // Fetch most recent gear data from Supabase
         var gears: List<GearDto?> = listOf()
@@ -48,13 +47,17 @@ class GearSyncWorker @AssistedInject constructor(
         }
 
         // Upsert Supabase data only, if it is more recent
-        gears.forEachIndexed { index, gear ->
-            if (gear != null && (lastLocalUpdates.isNullOrEmpty() || OffsetDateTime
-                    .parse(lastLocalUpdates[index])
-                    .isBefore(OffsetDateTime.parse(gear.updatedAt)))
-            ) {
-                userDatabase.gearDao.upsert(gear.toEntity())
+        try {
+            gears.forEach { gear ->
+                if (gear != null && (lastLocalUpdates.isNullOrEmpty() || OffsetDateTime
+                        .parse(lastLocalUpdates.find { it.uuid == gear.uuid }?.updatedAt)
+                        .isBefore(OffsetDateTime.parse(gear.updatedAt)))
+                ) {
+                    userDatabase.gearDao.upsert(gear.toEntity())
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         // Push write queue to Supabase

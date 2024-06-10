@@ -193,6 +193,8 @@ class AgentDetailsViewModel @Inject constructor(
 
     fun resetAgent() {
         viewModelScope.launch {
+            updateProgress(0)
+
             val agent = state.value.agentGear?.content?.relation as Agent? ?: return@launch
             val userData = state.value.userData ?: return@launch
 
@@ -216,6 +218,13 @@ class AgentDetailsViewModel @Inject constructor(
                 uid,
                 contract
             )
+        }
+    }
+
+    fun updateProgress(progress: Int) {
+        viewModelScope.launch {
+            val newGear = state.value.userGear?.copy(progress = progress) ?: return@launch
+            geaRepository.setGear(newGear)
         }
     }
 }

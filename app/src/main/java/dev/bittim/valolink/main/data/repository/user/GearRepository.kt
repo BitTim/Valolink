@@ -12,7 +12,7 @@ interface GearRepository {
         contract: String,
     ): Flow<Gear?>
 
-    suspend fun upsertGear(
+    suspend fun setGear(
         gear: Gear,
-    )
+    ): Boolean
 }

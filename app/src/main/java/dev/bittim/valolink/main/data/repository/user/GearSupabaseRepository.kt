@@ -82,18 +82,22 @@ class GearSupabaseRepository @Inject constructor(
     // ================================
     //  Set Gears
     // ================================
-    
-    override suspend fun upsertGear(
+
+    override suspend fun setGear(
         gear: Gear,
-    ) {
-        try {
+    ): Boolean {
+        return try {
             // Add to local database
             userDatabase.gearDao.upsert(GearEntity.fromType(gear))
 
             // Queue worker to sync with Supabase
             queueWorker(gear.user)
+
+            // Return
+            true
         } catch (e: Exception) {
             e.printStackTrace()
+            false
         }
     }
 

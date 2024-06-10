@@ -28,9 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Restore
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,12 +43,12 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -76,6 +73,9 @@ import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AbilityDetailsItem
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.AgentResetAlertDialog
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardResetAlertDialog
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardUnlockAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentBackdrop
 import dev.bittim.valolink.main.ui.util.getProgressPercent
 
@@ -91,6 +91,7 @@ fun AgentDetailsScreen(
     unlockAgent: () -> Unit,
     resetAgent: () -> Unit,
     addUserGear: (String) -> Unit,
+    updateProgress: (Int) -> Unit,
     onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
@@ -116,7 +117,12 @@ fun AgentDetailsScreen(
         }
 
         var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
-        var isResetAlertShown: Boolean by remember { mutableStateOf(false) }
+        var isAgentResetAlertShown: Boolean by remember { mutableStateOf(false) }
+        var isRewardUnlockAlertShown: Boolean by remember { mutableStateOf(false) }
+        var isRewardResetAlertShown: Boolean by remember { mutableStateOf(false) }
+
+        val progress = state.userGear?.progress ?: 0
+        var targetRewardIndex: Int by remember { mutableIntStateOf(-1) }
 
         val abilityPagerState = rememberPagerState {
             agent.abilities.count()
@@ -188,7 +194,7 @@ fun AgentDetailsScreen(
                                 DropdownMenuItem(enabled = !isLocked,
                                                  text = { Text(text = "Reset") },
                                                  onClick = {
-                                                     isResetAlertShown = true
+                                                     isAgentResetAlertShown = true
                                                      isMenuExpanded = false
                                                  })
                             }
@@ -389,8 +395,6 @@ fun AgentDetailsScreen(
                 ) {
                     itemsIndexed(items = state.rewards,
                                  itemContent = { index, reward ->
-                                     val progress = state.userGear?.progress ?: 0
-
                                      AgentRewardCard(name = reward.first.displayName,
                                                      type = reward.first.type,
                                                      displayIcon = reward.first.displayIcon,
@@ -399,8 +403,20 @@ fun AgentDetailsScreen(
                                                      currencyIcon = state.dough?.displayIcon ?: "",
                                                      isLocked = isLocked,
                                                      isOwned = progress > index,
-                                                     unlockReward = {},
-                                                     resetReward = {})
+                                                     unlockReward = {
+                                                         targetRewardIndex = index
+                                                         val rewardCount = index - progress
+
+                                                         // Unlock multiple at the same time
+                                                         if (rewardCount > 0) isRewardUnlockAlertShown =
+                                                             true
+                                                         // Unlock just one
+                                                         if (rewardCount == 0) updateProgress(targetRewardIndex + 1)
+                                                     },
+                                                     resetReward = {
+                                                         targetRewardIndex = index
+                                                         isRewardResetAlertShown = true
+                                                     })
                                  })
                 }
             }
@@ -508,30 +524,36 @@ fun AgentDetailsScreen(
             Spacer(modifier = Modifier.height(maxTitleCardHeight - headerSize + 16.dp))
         }
 
-        if (isResetAlertShown) {
-            AlertDialog(icon = {
-                Icon(
-                    imageVector = Icons.Default.Restore,
-                    contentDescription = null
-                )
-            },
-                        title = { Text(text = "Reset Agent") },
-                        text = { Text(text = "Your reward progress for ${agent.displayName} will be reset, and ${agent.displayName} will be locked again. Additionally, the activity notification for unlocking ${agent.displayName} will be deleted. This does not effect your actual progress in game.") },
-                        onDismissRequest = { isResetAlertShown = false },
+        if (isAgentResetAlertShown) {
+            AgentResetAlertDialog(
+                agentName = agent.displayName,
+                onDismiss = { isAgentResetAlertShown = false },
+                onConfirm = resetAgent
+            )
+        }
 
-                        confirmButton = {
-                            Button(onClick = {
-                                isResetAlertShown = false
-                                resetAgent()
-                            }) {
-                                Text(text = "Reset")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { isResetAlertShown = false }) {
-                                Text(text = "Cancel")
-                            }
-                        })
+        if (isRewardUnlockAlertShown && progress < targetRewardIndex) {
+            val rewards = state.rewards.subList(
+                progress,
+                targetRewardIndex + 1
+            )
+
+            RewardUnlockAlertDialog(rewards = rewards,
+                                    currencyDisplayIcon = state.dough?.displayIcon,
+                                    onDismiss = { isRewardUnlockAlertShown = false },
+                                    onConfirm = { updateProgress(targetRewardIndex + 1) })
+        }
+
+        if (isRewardResetAlertShown && progress >= targetRewardIndex) {
+            val rewards = state.rewards.subList(
+                targetRewardIndex,
+                progress
+            )
+
+            RewardResetAlertDialog(rewards = rewards,
+                                   currencyDisplayIcon = state.dough?.displayIcon,
+                                   onDismiss = { isRewardResetAlertShown = false },
+                                   onConfirm = { updateProgress(targetRewardIndex) })
         }
     }
 }
