@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
+import dev.bittim.valolink.main.data.repository.user.GearRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
+import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +26,8 @@ import javax.inject.Inject
 class ContractsOverviewViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val userRepository: UserRepository,
+    private val gearRepository: GearRepository,
+    private val addUserGearUseCase: AddUserGearUseCase,
 ) : ViewModel() {
     private val _filterState = MutableStateFlow(ArchiveTypeFilter.SEASON)
 
@@ -37,6 +41,17 @@ class ContractsOverviewViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         userData = userData
+                    )
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            gearRepository.getCurrentGears().collectLatest { gears ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        userGears = gears
                     )
                 }
             }
@@ -82,5 +97,15 @@ class ContractsOverviewViewModel @Inject constructor(
     fun onArchiveTypeFilterChange(archiveTypeFilter: ArchiveTypeFilter) {
         _state.update { it.copy(archiveTypeFilter = archiveTypeFilter) }
         _filterState.update { archiveTypeFilter }
+    }
+
+    fun addUserGear(contract: String) {
+        val uid = state.value.userData?.uuid ?: return
+        viewModelScope.launch {
+            addUserGearUseCase(
+                uid,
+                contract
+            )
+        }
     }
 }

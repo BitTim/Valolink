@@ -7,7 +7,7 @@ import dev.bittim.valolink.main.domain.model.UserData
 import java.time.OffsetDateTime
 
 @Entity(
-    tableName = "UserData",
+    tableName = "Users",
     indices = [Index(
         value = ["uuid"],
         unique = true
@@ -17,14 +17,17 @@ data class UserDataEntity(
     @PrimaryKey val uuid: String,
     override val isSynced: Boolean,
     override val updatedAt: String,
+    val isPrivate: Boolean,
     val username: String,
     val agents: List<String>,
 ) : SyncedEntity() {
     fun toType(): UserData {
         return UserData(
             uuid,
+            isPrivate,
             username,
-            agents
+            agents,
+            listOf()
         )
     }
 
@@ -34,6 +37,7 @@ data class UserDataEntity(
                 userData.uuid,
                 false,
                 OffsetDateTime.now().toString(),
+                userData.isPrivate,
                 userData.username,
                 userData.agents
             )

@@ -11,11 +11,13 @@ import dev.bittim.valolink.main.data.repository.game.PlayerCardRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerTitleRepository
 import dev.bittim.valolink.main.data.repository.game.SprayRepository
 import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.main.data.repository.user.GearRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.domain.model.game.contract.ChapterLevel
 import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +41,8 @@ class AgentDetailsViewModel @Inject constructor(
     private val buddyLevelRepository: BuddyLevelRepository,
     private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
     private val userRepository: UserRepository,
+    private val geaRepository: GearRepository,
+    private val addUserGearUseCase: AddUserGearUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AgentDetailsState())
     val state = _state.asStateFlow()
@@ -150,6 +154,19 @@ class AgentDetailsViewModel @Inject constructor(
                 }
             }
         }
+
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+
+            geaRepository.getCurrentGear(uuid).collectLatest { gear ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        userGear = gear
+                    )
+                }
+            }
+        }
     }
 
     fun onAbilityChanged(index: Int) {
@@ -176,6 +193,8 @@ class AgentDetailsViewModel @Inject constructor(
 
     fun resetAgent() {
         viewModelScope.launch {
+            updateProgress(0)
+
             val agent = state.value.agentGear?.content?.relation as Agent? ?: return@launch
             val userData = state.value.userData ?: return@launch
 
@@ -189,6 +208,23 @@ class AgentDetailsViewModel @Inject constructor(
                     userRepository.setCurrentUserData(newUserData)
                 }
             }
+        }
+    }
+
+    fun addUserGear(contract: String) {
+        val uid = state.value.userData?.uuid ?: return
+        viewModelScope.launch {
+            addUserGearUseCase(
+                uid,
+                contract
+            )
+        }
+    }
+
+    fun updateProgress(progress: Int) {
+        viewModelScope.launch {
+            val newGear = state.value.userGear?.copy(progress = progress) ?: return@launch
+            geaRepository.setGear(newGear)
         }
     }
 }

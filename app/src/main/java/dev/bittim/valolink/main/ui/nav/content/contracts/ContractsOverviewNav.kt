@@ -13,22 +13,23 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.overview.ContractsO
 import kotlinx.serialization.Serializable
 
 @Serializable
-object ContractsMainNav
+object ContractsOverviewNav
 
-fun NavGraphBuilder.contractsMainScreen(
+fun NavGraphBuilder.contractsOverviewScreen(
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
     onNavToContractDetails: (String) -> Unit,
 ) {
-    composable<ContractsMainNav>(enterTransition = { Transition.topLevelEnter },
-                                 exitTransition = { Transition.topLevelExit },
-                                 popEnterTransition = { Transition.topLevelEnter },
-                                 popExitTransition = { Transition.topLevelExit }) {
+    composable<ContractsOverviewNav>(enterTransition = { Transition.topLevelEnter },
+                                     exitTransition = { Transition.topLevelExit },
+                                     popEnterTransition = { Transition.topLevelEnter },
+                                     popExitTransition = { Transition.topLevelExit }) {
         val viewModel: ContractsOverviewViewModel = hiltViewModel()
         val contractsMainState by viewModel.state.collectAsStateWithLifecycle()
 
         ContractsOverviewScreen(
             state = contractsMainState,
+            addUserGear = viewModel::addUserGear,
             onArchiveTypeFilterChange = viewModel::onArchiveTypeFilterChange,
             onNavToGearList = onNavToGearList,
             onNavToAgentDetails = onNavToAgentDetails,
@@ -37,8 +38,8 @@ fun NavGraphBuilder.contractsMainScreen(
     }
 }
 
-fun NavController.navToContractsMain() {
-    navigate(ContractsMainNav) {
+fun NavController.navToContractsOverview() {
+    navigate(ContractsOverviewNav) {
         popUpTo(graph.findStartDestination().id) {
             inclusive = true
             saveState = true

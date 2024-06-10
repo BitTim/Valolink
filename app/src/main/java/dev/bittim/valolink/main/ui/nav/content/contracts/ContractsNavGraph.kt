@@ -13,11 +13,11 @@ fun NavGraphBuilder.contractsNavGraph(
     navController: NavController,
 ) {
     navigation<ContractsNav>(
-        startDestination = ContractsMainNav
+        startDestination = ContractsOverviewNav
     ) {
-        contractsMainScreen(onNavToGearList = { navController.navToContractsGearList() },
-                            onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
-                            onNavToContractDetails = { uuid -> navController.navToContractsContractDetails(uuid) })
+        contractsOverviewScreen(onNavToGearList = { navController.navToContractsGearList() },
+                                onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
+                                onNavToContractDetails = { uuid -> navController.navToContractsContractDetails(uuid) })
         contractsGearListScreen(onNavBack = { navController.popBackStack() },
                                 onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) })
         contractsAgentDetailsScreen(onNavBack = { navController.popBackStack() })
