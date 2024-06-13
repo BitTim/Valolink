@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dev.bittim.valolink.main.data.local.converter.StringListConverter
 import dev.bittim.valolink.main.data.local.game.dao.AgentDao
-import dev.bittim.valolink.main.data.local.game.dao.BuddyLevelDao
+import dev.bittim.valolink.main.data.local.game.dao.BuddyDao
 import dev.bittim.valolink.main.data.local.game.dao.ContractsDao
 import dev.bittim.valolink.main.data.local.game.dao.CurrencyDao
 import dev.bittim.valolink.main.data.local.game.dao.EventDao
@@ -24,6 +24,7 @@ import dev.bittim.valolink.main.data.local.game.entity.agent.AbilityEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.AgentEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.RecruitmentEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.RoleEntity
+import dev.bittim.valolink.main.data.local.game.entity.buddy.BuddyEntity
 import dev.bittim.valolink.main.data.local.game.entity.buddy.BuddyLevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.ChapterEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
@@ -39,7 +40,7 @@ import dev.bittim.valolink.main.data.local.game.entity.weapon.WeaponSkinLevelEnt
 
         AgentEntity::class, RecruitmentEntity::class, RoleEntity::class, AbilityEntity::class,
 
-        CurrencyEntity::class, SprayEntity::class, PlayerTitleEntity::class, PlayerCardEntity::class, BuddyLevelEntity::class, WeaponSkinLevelEntity::class],
+        CurrencyEntity::class, SprayEntity::class, PlayerTitleEntity::class, PlayerCardEntity::class, BuddyEntity::class, BuddyLevelEntity::class, WeaponSkinLevelEntity::class],
     version = 1
 )
 @TypeConverters(StringListConverter::class)
@@ -53,6 +54,6 @@ abstract class GameDatabase : RoomDatabase() {
     abstract val sprayDao: SprayDao
     abstract val playerTitleDao: PlayerTitleDao
     abstract val playerCardDao: PlayerCardDao
-    abstract val buddyLevelDao: BuddyLevelDao
+    abstract val buddyDao: BuddyDao
     abstract val weaponSkinLevelDao: WeaponSkinLevelDao
 }

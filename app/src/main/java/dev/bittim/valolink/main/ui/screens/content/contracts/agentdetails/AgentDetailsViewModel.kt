@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.main.data.repository.game.BuddyLevelRepository
+import dev.bittim.valolink.main.data.repository.game.BuddyRepository
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerCardRepository
@@ -38,7 +38,7 @@ class AgentDetailsViewModel @Inject constructor(
     private val sprayRepository: SprayRepository,
     private val playerTitleRepository: PlayerTitleRepository,
     private val playerCardRepository: PlayerCardRepository,
-    private val buddyLevelRepository: BuddyLevelRepository,
+    private val buddyRepository: BuddyRepository,
     private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
     private val userRepository: UserRepository,
     private val geaRepository: GearRepository,
@@ -107,8 +107,8 @@ class AgentDetailsViewModel @Inject constructor(
                                     )
                                 }
 
-                            "EquippableCharmLevel" -> buddyLevelRepository
-                                .getBuddyLevel(level.reward.rewardUuid)
+                            "EquippableCharmLevel" -> buddyRepository
+                                .getByLevelUuid(level.reward.rewardUuid)
                                 .map {
                                     Pair(
                                         it.asRewardRelation(level.reward.amount),

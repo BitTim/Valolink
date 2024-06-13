@@ -3,7 +3,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.contractdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.main.data.repository.game.BuddyLevelRepository
+import dev.bittim.valolink.main.data.repository.game.BuddyRepository
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerCardRepository
@@ -33,7 +33,7 @@ class ContractDetailsViewModel @Inject constructor(
     private val sprayRepository: SprayRepository,
     private val playerTitleRepository: PlayerTitleRepository,
     private val playerCardRepository: PlayerCardRepository,
-    private val buddyLevelRepository: BuddyLevelRepository,
+    private val buddyRepository: BuddyRepository,
     private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ContractDetailsState())
@@ -140,7 +140,7 @@ class ContractDetailsViewModel @Inject constructor(
                 )
             }
 
-            "EquippableCharmLevel" -> buddyLevelRepository.getBuddyLevel(uuid).map {
+            "EquippableCharmLevel" -> buddyRepository.getByLevelUuid(uuid).map {
                 Pair(
                     it.asRewardRelation(level.reward.amount),
                     level

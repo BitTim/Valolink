@@ -1,7 +1,5 @@
 package dev.bittim.valolink.main.data.remote.game
 
-import dev.bittim.valolink.main.data.remote.game.dto.AgentDto
-import dev.bittim.valolink.main.data.remote.game.dto.ContractDto
 import dev.bittim.valolink.main.data.remote.game.dto.CurrencyDto
 import dev.bittim.valolink.main.data.remote.game.dto.EventDto
 import dev.bittim.valolink.main.data.remote.game.dto.PlayerCardDto
@@ -9,7 +7,9 @@ import dev.bittim.valolink.main.data.remote.game.dto.PlayerTitleDto
 import dev.bittim.valolink.main.data.remote.game.dto.SeasonDto
 import dev.bittim.valolink.main.data.remote.game.dto.SprayDto
 import dev.bittim.valolink.main.data.remote.game.dto.VersionDto
-import dev.bittim.valolink.main.data.remote.game.dto.buddy.BuddyLevelDto
+import dev.bittim.valolink.main.data.remote.game.dto.agents.AgentDto
+import dev.bittim.valolink.main.data.remote.game.dto.buddy.BuddyDto
+import dev.bittim.valolink.main.data.remote.game.dto.contract.ContractDto
 import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponSkinLevelDto
 import retrofit2.Response
 import retrofit2.http.GET
@@ -95,8 +95,11 @@ interface GameApi {
     //  Buddies
     // --------------------------------
 
-    @GET("buddies/levels/{uuid}")
-    suspend fun getBuddyLevel(@Path("uuid") uuid: String): Response<GameApiResponse<BuddyLevelDto>>
+    @GET("buddies")
+    suspend fun getAllBuddies(): Response<GameApiResponse<List<BuddyDto>>>
+
+    @GET("buddies/{uuid}")
+    suspend fun getBuddy(@Path("uuid") uuid: String): Response<GameApiResponse<BuddyDto>>
 
     // --------------------------------
     //  Player Titles

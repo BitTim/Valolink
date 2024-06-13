@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "93eb72db72aff259b1d4996451b35a9d",
+    "identityHash": "b688fd7c750f3e653943ef41f09e6f76",
     "entities": [
       {
         "tableName": "Seasons",
@@ -1257,8 +1257,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "BuddyLevels",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `hideIfNotOwned` INTEGER NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "tableName": "Buddies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `isHiddenIfNotOwned` INTEGER NOT NULL, `themeUuid` TEXT, `displayIcon` TEXT NOT NULL, `assetPath` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -1269,6 +1269,78 @@
           {
             "fieldPath": "version",
             "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isHiddenIfNotOwned",
+            "columnName": "isHiddenIfNotOwned",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "themeUuid",
+            "columnName": "themeUuid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assetPath",
+            "columnName": "assetPath",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Buddies_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Buddies_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BuddyLevels",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `buddy` TEXT NOT NULL, `hideIfNotOwned` INTEGER NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`buddy`) REFERENCES `Buddies`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buddy",
+            "columnName": "buddy",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -1306,9 +1378,30 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_BuddyLevels_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_BuddyLevels_buddy",
+            "unique": false,
+            "columnNames": [
+              "buddy"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_BuddyLevels_buddy` ON `${TABLE_NAME}` (`buddy`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "Buddies",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "buddy"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
       },
       {
         "tableName": "WeaponSkinLevels",
@@ -1374,7 +1467,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93eb72db72aff259b1d4996451b35a9d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b688fd7c750f3e653943ef41f09e6f76')"
     ]
   }
 }

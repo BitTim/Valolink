@@ -20,7 +20,7 @@ fun NavGraphBuilder.authNavGraph(
                      onNavToSignUp = { navController.navToSignUp() })
 
         signUpScreen(onNavToContent = { navController.navToMainGraph() },
-                     onNavToSignIn = { navController.popBackStack() })
+                     onNavToSignIn = { navController.navigateUp() })
     }
 }
 

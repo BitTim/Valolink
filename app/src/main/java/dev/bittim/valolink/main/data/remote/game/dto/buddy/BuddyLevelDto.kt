@@ -10,10 +10,14 @@ data class BuddyLevelDto(
     val displayIcon: String,
     val assetPath: String,
 ) {
-    fun toEntity(version: String): BuddyLevelEntity {
+    fun toEntity(
+        version: String,
+        buddy: String,
+    ): BuddyLevelEntity {
         return BuddyLevelEntity(
             uuid = uuid,
             version = version,
+            buddy = buddy,
             hideIfNotOwned = hideIfNotOwned,
             displayName = displayName,
             displayIcon = displayIcon
