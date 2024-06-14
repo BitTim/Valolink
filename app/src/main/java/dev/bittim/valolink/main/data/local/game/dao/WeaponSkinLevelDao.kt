@@ -3,7 +3,7 @@ package dev.bittim.valolink.main.data.local.game.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import dev.bittim.valolink.main.data.local.game.entity.weapon.WeaponSkinLevelEntity
+import dev.bittim.valolink.main.data.local.game.entity.weapon.skins.WeaponSkinLevelEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

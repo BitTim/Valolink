@@ -31,7 +31,7 @@ import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContractEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
-import dev.bittim.valolink.main.data.local.game.entity.weapon.WeaponSkinLevelEntity
+import dev.bittim.valolink.main.data.local.game.entity.weapon.skins.WeaponSkinLevelEntity
 
 @Database(
     entities = [SeasonEntity::class, EventEntity::class,

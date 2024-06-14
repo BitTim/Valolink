@@ -1,6 +1,6 @@
 package dev.bittim.valolink.main.data.remote.game.dto.weapon
 
-import dev.bittim.valolink.main.data.local.game.entity.weapon.WeaponSkinLevelEntity
+import dev.bittim.valolink.main.data.local.game.entity.weapon.skins.WeaponSkinLevelEntity
 
 data class WeaponSkinLevelDto(
     val uuid: String,
@@ -14,6 +14,7 @@ data class WeaponSkinLevelDto(
         return WeaponSkinLevelEntity(
             uuid = uuid,
             version = version,
+            weaponSkin = "", // TODO: Add actual value
             displayName = displayName,
             levelItem = levelItem,
             displayIcon = displayIcon,

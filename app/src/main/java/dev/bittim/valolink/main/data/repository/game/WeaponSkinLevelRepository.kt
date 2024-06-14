@@ -1,6 +1,6 @@
 package dev.bittim.valolink.main.data.repository.game
 
-import dev.bittim.valolink.main.domain.model.game.weapon.WeaponSkinLevel
+import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkinLevel
 import kotlinx.coroutines.flow.Flow
 
 interface WeaponSkinLevelRepository {

@@ -2,7 +2,7 @@ package dev.bittim.valolink.main.data.repository.game
 
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.domain.model.game.weapon.WeaponSkinLevel
+import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkinLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
