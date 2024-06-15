@@ -151,7 +151,10 @@ class ContractDetailsViewModel @Inject constructor(
                 uuid
             ).map {
                 Pair(
-                    it.asRewardRelation(level.reward.amount),
+                    it.asRewardRelation(
+                        level.reward.amount,
+                        level.reward.rewardUuid
+                    ),
                     level
                 )
             }
