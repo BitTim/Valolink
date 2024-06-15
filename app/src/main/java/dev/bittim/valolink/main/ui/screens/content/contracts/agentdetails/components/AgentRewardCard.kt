@@ -50,21 +50,19 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 
 data object AgentRewardCard {
     val width: Dp = 256.dp
-    const val PLAYERCARD_TYPE: String = "Card" //TODO: Move to centralized location
-    const val CURRENCY_TYPE: String = "Currency"
-    const val TITLE_TYPE: String = "Title"
 }
 
 @Composable
 fun AgentRewardCard(
     modifier: Modifier = Modifier,
     name: String,
-    type: String,
+    type: RewardType,
     price: Int,
     amount: Int,
     displayIcon: String,
@@ -81,9 +79,9 @@ fun AgentRewardCard(
             .fillMaxSize()
     ) {
         val imagePadding = when (type) {
-            AgentRewardCard.CURRENCY_TYPE, AgentRewardCard.TITLE_TYPE -> PaddingValues(32.dp)
-            AgentRewardCard.PLAYERCARD_TYPE                           -> PaddingValues(0.dp)
-            else                                                      -> PaddingValues(16.dp)
+            RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
+            RewardType.PLAYER_CARD                -> PaddingValues(0.dp)
+            else                                  -> PaddingValues(16.dp)
         }
 
         var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
@@ -106,11 +104,11 @@ fun AgentRewardCard(
                     },
                 model = displayIcon,
                 contentDescription = null,
-                colorFilter = if (type == AgentRewardCard.CURRENCY_TYPE || type == AgentRewardCard.TITLE_TYPE) ColorFilter.tint(
+                colorFilter = if (type == RewardType.CURRENCY || type == RewardType.TITLE) ColorFilter.tint(
                     MaterialTheme.colorScheme.onSurface
                 ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (isLocked) 0.3f else 1f) }),
-                contentScale = if (type == AgentRewardCard.PLAYERCARD_TYPE) ContentScale.FillWidth else ContentScale.Fit,
-                alignment = if (type == AgentRewardCard.PLAYERCARD_TYPE) Alignment.TopCenter else Alignment.Center,
+                contentScale = if (type == RewardType.PLAYER_CARD) ContentScale.FillWidth else ContentScale.Fit,
+                alignment = if (type == RewardType.PLAYER_CARD) Alignment.TopCenter else Alignment.Center,
                 placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_largeart)
             )
 
@@ -220,7 +218,7 @@ fun AgentRewardCard(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = type,
+                text = type.displayName,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -277,7 +275,7 @@ fun AgentRewardCardPreview() {
         ) {
             AgentRewardCard(
                 name = "Metamorphosis Card",
-                type = "Card",
+                type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
@@ -304,7 +302,7 @@ fun LockedAgentRewardCardPreview() {
         ) {
             AgentRewardCard(
                 name = "Metamorphosis Card",
-                type = "Card",
+                type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
@@ -332,7 +330,7 @@ fun OwnedAgentRewardCardPreview() {
         ) {
             AgentRewardCard(
                 name = "Metamorphosis Card",
-                type = "Card",
+                type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",

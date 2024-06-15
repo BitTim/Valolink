@@ -12,24 +12,19 @@ import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkinLevel
 
 @Entity(
     tableName = "WeaponSkins",
-    foreignKeys = [
-        ForeignKey(
-            entity = WeaponEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["weapon"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [
-        Index(
-            value = ["uuid"],
-            unique = true
-        ),
-        Index(
-            value = ["weapon"],
-            unique = false
-        )
-    ]
+    foreignKeys = [ForeignKey(
+        entity = WeaponEntity::class,
+        parentColumns = ["uuid"],
+        childColumns = ["weapon"],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(
+        value = ["uuid"],
+        unique = true
+    ), Index(
+        value = ["weapon"],
+        unique = false
+    )]
 )
 data class WeaponSkinEntity(
     @PrimaryKey val uuid: String,
@@ -37,13 +32,13 @@ data class WeaponSkinEntity(
     val weapon: String,
     val displayName: String,
     val themeUuid: String,
-    val contentTierUuid: String,
-    val displayIcon: String,
+    val contentTierUuid: String?,
+    val displayIcon: String?,
     val wallpaper: String?,
 ) : GameEntity() {
     fun toType(
         chromas: List<WeaponSkinChroma>,
-        levels: List<WeaponSkinLevel>
+        levels: List<WeaponSkinLevel>,
     ): WeaponSkin {
         return WeaponSkin(
             uuid = uuid,

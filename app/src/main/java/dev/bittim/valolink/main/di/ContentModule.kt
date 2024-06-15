@@ -34,8 +34,8 @@ import dev.bittim.valolink.main.data.repository.game.SprayApiRepository
 import dev.bittim.valolink.main.data.repository.game.SprayRepository
 import dev.bittim.valolink.main.data.repository.game.VersionApiRepository
 import dev.bittim.valolink.main.data.repository.game.VersionRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelApiRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponApiRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponRepository
 import dev.bittim.valolink.main.data.repository.user.GearRepository
 import dev.bittim.valolink.main.data.repository.user.GearSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.OnboardingRepository
@@ -339,8 +339,8 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
-    ): WeaponSkinLevelRepository {
-        return WeaponSkinLevelApiRepository(
+    ): WeaponRepository {
+        return WeaponApiRepository(
             gameDatabase,
             gameApi,
             versionRepository

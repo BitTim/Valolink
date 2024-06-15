@@ -13,12 +13,12 @@ interface PlayerCardDao {
     // --------------------------------
 
     @Upsert
-    suspend fun upsertPlayerCard(playerCard: PlayerCardEntity)
+    suspend fun upsert(playerCard: PlayerCardEntity)
 
     // --------------------------------
     //  Query
     // --------------------------------
 
     @Query("SELECT * FROM PlayerCards WHERE uuid = :uuid LIMIT 1")
-    fun getPlayerCard(uuid: String): Flow<PlayerCardEntity?>
+    fun getByUuid(uuid: String): Flow<PlayerCardEntity?>
 }

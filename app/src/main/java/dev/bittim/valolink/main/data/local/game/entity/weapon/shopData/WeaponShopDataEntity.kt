@@ -11,24 +11,19 @@ import dev.bittim.valolink.main.domain.model.game.weapon.shopData.WeaponShopData
 
 @Entity(
     tableName = "WeaponShopData",
-    foreignKeys = [
-        ForeignKey(
-            entity = WeaponEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["weapon"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [
-        Index(
-            value = ["uuid"],
-            unique = true
-        ),
-        Index(
-            value = ["weapon"],
-            unique = true
-        )
-    ]
+    foreignKeys = [ForeignKey(
+        entity = WeaponEntity::class,
+        parentColumns = ["uuid"],
+        childColumns = ["weapon"],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(
+        value = ["uuid"],
+        unique = true
+    ), Index(
+        value = ["weapon"],
+        unique = true
+    )]
 )
 data class WeaponShopDataEntity(
     @PrimaryKey val uuid: String,
@@ -38,13 +33,14 @@ data class WeaponShopDataEntity(
     val category: String,
     val shopOrderPriority: Int,
     val categoryText: String,
-    val gridPosition: WeaponGridPosition,
     val canBeTrashed: Boolean,
     val image: String?,
     val newImage: String,
     val newImage2: String?,
 ) : GameEntity() {
-    fun toType(): WeaponShopData {
+    fun toType(
+        gridPosition: WeaponGridPosition,
+    ): WeaponShopData {
         return WeaponShopData(
             cost = cost,
             category = category,

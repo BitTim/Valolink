@@ -26,7 +26,7 @@ class SprayApiRepository @Inject constructor(
     ): Flow<Spray> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.sprayDao.getSpray(uuid).distinctUntilChanged().transform { entity ->
+        return gameDatabase.sprayDao.getByUuid(uuid).distinctUntilChanged().transform { entity ->
             if (entity == null || entity.version != version) {
                 fetchSpray(
                     uuid,
@@ -50,7 +50,7 @@ class SprayApiRepository @Inject constructor(
     ) {
         val response = gameApi.getSpray(uuid)
         if (response.isSuccessful) {
-            gameDatabase.sprayDao.upsertSpray(response.body()!!.data!!.toEntity(version))
+            gameDatabase.sprayDao.upsert(response.body()!!.data!!.toEntity(version))
         }
     }
 }

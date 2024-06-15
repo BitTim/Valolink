@@ -1,4 +1,4 @@
-package dev.bittim.valolink.main.domain.model
+package dev.bittim.valolink.main.domain.model.user
 
 data class UserData(
     val uuid: String,

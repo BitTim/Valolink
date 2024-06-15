@@ -1,6 +1,6 @@
 package dev.bittim.valolink.main.data.repository.user
 
-import dev.bittim.valolink.main.domain.model.Gear
+import dev.bittim.valolink.main.domain.model.user.Gear
 import kotlinx.coroutines.flow.Flow
 
 interface GearRepository {

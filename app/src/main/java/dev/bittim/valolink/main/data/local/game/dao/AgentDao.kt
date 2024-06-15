@@ -19,7 +19,7 @@ interface AgentDao {
 
     @Transaction
     @Upsert
-    suspend fun upsertAgent(
+    suspend fun upsert(
         role: RoleEntity,
         agent: AgentEntity,
         abilities: Set<AbilityEntity>,
@@ -27,7 +27,7 @@ interface AgentDao {
 
     @Transaction
     @Upsert
-    suspend fun upsertAllAgents(
+    suspend fun upsert(
         roles: Set<RoleEntity>,
         agents: Set<AgentEntity>,
         abilities: Set<AbilityEntity>,
@@ -39,12 +39,12 @@ interface AgentDao {
 
     @Transaction
     @Query("SELECT * FROM Agents WHERE uuid = :uuid LIMIT 1")
-    fun getAgent(uuid: String): Flow<AgentWithRoleAndAbilities?>
+    fun getByUuid(uuid: String): Flow<AgentWithRoleAndAbilities?>
 
     @Transaction
     @Query("SELECT * FROM Agents")
-    fun getAllAgents(): Flow<List<AgentWithRoleAndAbilities>>
+    fun getAll(): Flow<List<AgentWithRoleAndAbilities>>
 
     @Query("SELECT uuid, version FROM Agents WHERE isBaseContent = TRUE")
-    fun getAllBaseAgentUuids(): Flow<Map<@MapColumn(columnName = "uuid") String, @MapColumn(columnName = "version") String>>
+    fun getBase(): Flow<Map<@MapColumn(columnName = "uuid") String, @MapColumn(columnName = "version") String>>
 }

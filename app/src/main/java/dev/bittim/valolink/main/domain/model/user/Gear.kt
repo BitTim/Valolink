@@ -1,4 +1,4 @@
-package dev.bittim.valolink.main.domain.model
+package dev.bittim.valolink.main.domain.model.user
 
 data class Gear(
     val uuid: String,

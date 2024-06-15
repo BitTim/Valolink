@@ -9,31 +9,26 @@ import dev.bittim.valolink.main.domain.model.game.weapon.stats.WeaponAltShotgunS
 
 @Entity(
     tableName = "WeaponAltShotgunStats",
-    foreignKeys = [
-        ForeignKey(
-            entity = WeaponStatsEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["weaponStats"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [
-        Index(
-            value = ["uuid"],
-            unique = true
-        ),
-        Index(
-            value = ["weaponStats"],
-            unique = true
-        )
-    ]
+    foreignKeys = [ForeignKey(
+        entity = WeaponStatsEntity::class,
+        parentColumns = ["uuid"],
+        childColumns = ["weaponStats"],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(
+        value = ["uuid"],
+        unique = true
+    ), Index(
+        value = ["weaponStats"],
+        unique = true
+    )]
 )
 data class WeaponAltShotgunStatsEntity(
     @PrimaryKey val uuid: String,
     override val version: String,
     val weaponStats: String,
     val shotgunPelletCount: Int,
-    val burstRate: Float,
+    val burstRate: Double,
 ) : GameEntity() {
     fun toType(): WeaponAltShotgunStats {
         return WeaponAltShotgunStats(

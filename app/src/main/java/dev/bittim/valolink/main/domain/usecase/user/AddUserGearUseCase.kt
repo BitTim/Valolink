@@ -1,7 +1,7 @@
 package dev.bittim.valolink.main.domain.usecase.user
 
 import dev.bittim.valolink.main.data.repository.user.GearRepository
-import dev.bittim.valolink.main.domain.model.Gear
+import dev.bittim.valolink.main.domain.model.user.Gear
 import java.util.UUID
 import javax.inject.Inject
 

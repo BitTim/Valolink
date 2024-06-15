@@ -27,7 +27,7 @@ class EventApiRepository @Inject constructor(
     ): Flow<Event> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.eventDao.getEvent(uuid).distinctUntilChanged().transform { event ->
+        return gameDatabase.eventDao.getByUuid(uuid).distinctUntilChanged().transform { event ->
             if (event == null || event.version != version) {
                 fetchEvent(
                     uuid,
@@ -44,7 +44,7 @@ class EventApiRepository @Inject constructor(
     override suspend fun getAllEvents(providedVersion: String?): Flow<List<Event>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.eventDao.getAllEvents().distinctUntilChanged().transform { events ->
+        return gameDatabase.eventDao.getAll().distinctUntilChanged().transform { events ->
             if (events.isEmpty() || events.any { it.version != version }) {
                 fetchEvents(version)
             } else {
@@ -68,7 +68,7 @@ class EventApiRepository @Inject constructor(
         val response = gameApi.getEvent(uuid)
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
-                gameDatabase.eventDao.upsertEvent(response.body()!!.data!!.toEntity(version))
+                gameDatabase.eventDao.upsert(response.body()!!.data!!.toEntity(version))
             }
         }
     }
@@ -79,7 +79,7 @@ class EventApiRepository @Inject constructor(
         val response = gameApi.getAllEvents()
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
-                gameDatabase.eventDao.upsertAllEvents(response.body()!!.data!!.map {
+                gameDatabase.eventDao.upsert(response.body()!!.data!!.map {
                     it.toEntity(version)
                 })
             }

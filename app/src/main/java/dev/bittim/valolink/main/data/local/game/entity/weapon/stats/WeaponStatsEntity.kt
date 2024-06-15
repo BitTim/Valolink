@@ -14,46 +14,41 @@ import dev.bittim.valolink.main.domain.model.game.weapon.stats.WeaponStats
 
 @Entity(
     tableName = "WeaponStats",
-    foreignKeys = [
-        ForeignKey(
-            entity = WeaponEntity::class,
-            parentColumns = ["uuid"],
-            childColumns = ["weapon"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [
-        Index(
-            value = ["uuid"],
-            unique = true
-        ),
-        Index(
-            value = ["weapon"],
-            unique = true
-        )
-    ]
+    foreignKeys = [ForeignKey(
+        entity = WeaponEntity::class,
+        parentColumns = ["uuid"],
+        childColumns = ["weapon"],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(
+        value = ["uuid"],
+        unique = true
+    ), Index(
+        value = ["weapon"],
+        unique = true
+    )]
 )
 data class WeaponStatsEntity(
     @PrimaryKey val uuid: String,
     override val version: String,
     val weapon: String,
-    val fireRate: Float,
+    val fireRate: Double,
     val magazineSize: Int,
-    val runSpeedMultiplier: Float,
-    val equipTimeSeconds: Float,
-    val reloadTimeSeconds: Float,
-    val firstBulletAccuracy: Float,
+    val runSpeedMultiplier: Double,
+    val equipTimeSeconds: Double,
+    val reloadTimeSeconds: Double,
+    val firstBulletAccuracy: Double,
     val shotgunPelletCount: Int,
     val wallPenetration: String,
     val feature: String?,
     val fireMode: String?,
-    val altFireMode: String,
+    val altFireType: String?,
 ) : GameEntity() {
     fun toType(
         adsStats: WeaponAdsStats,
         altShotgunStats: WeaponAltShotgunStats?,
         airBurstStats: WeaponAirBurstStats?,
-        damageRanges: List<WeaponDamageRange>
+        damageRanges: List<WeaponDamageRange>,
     ): WeaponStats {
         return WeaponStats(
             fireRate = fireRate,
@@ -66,7 +61,7 @@ data class WeaponStatsEntity(
             wallPenetration = wallPenetration,
             feature = feature,
             fireMode = fireMode,
-            altFireMode = altFireMode,
+            altFireType = altFireType,
             adsStats = adsStats,
             altShotgunStats = altShotgunStats,
             airBurstStats = airBurstStats,

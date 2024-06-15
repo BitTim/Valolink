@@ -10,13 +10,13 @@ import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerCardRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerTitleRepository
 import dev.bittim.valolink.main.data.repository.game.SprayRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponRepository
 import dev.bittim.valolink.main.data.repository.user.GearRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
-import dev.bittim.valolink.main.domain.model.game.contract.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +39,7 @@ class AgentDetailsViewModel @Inject constructor(
     private val playerTitleRepository: PlayerTitleRepository,
     private val playerCardRepository: PlayerCardRepository,
     private val buddyRepository: BuddyRepository,
-    private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
+    private val weaponRepository: WeaponRepository,
     private val userRepository: UserRepository,
     private val geaRepository: GearRepository,
     private val addUserGearUseCase: AddUserGearUseCase,
@@ -116,7 +116,7 @@ class AgentDetailsViewModel @Inject constructor(
                                     )
                                 }
 
-                            "EquippableSkinLevel"  -> weaponSkinLevelRepository.getWeaponSkinLevel(
+                            "EquippableSkinLevel"  -> weaponRepository.getSkinByLevelUuid(
                                 level.reward.rewardUuid
                             ).map {
                                 Pair(

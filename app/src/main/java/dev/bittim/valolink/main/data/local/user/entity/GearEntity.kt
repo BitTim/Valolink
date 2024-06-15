@@ -3,7 +3,7 @@ package dev.bittim.valolink.main.data.local.user.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dev.bittim.valolink.main.domain.model.Gear
+import dev.bittim.valolink.main.domain.model.user.Gear
 import java.time.OffsetDateTime
 
 @Entity(

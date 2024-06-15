@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.domain.model.game.buddy
 
-import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 
 data class Buddy(
     val uuid: String,
@@ -13,7 +14,7 @@ data class Buddy(
     fun asRewardRelation(amount: Int): RewardRelation {
         return RewardRelation(
             uuid = uuid,
-            type = "Buddy",
+            type = RewardType.BUDDY,
             displayName = displayName,
             displayIcon = if (levels.isNotEmpty()) levels[0].displayIcon else displayIcon,
             amount = amount

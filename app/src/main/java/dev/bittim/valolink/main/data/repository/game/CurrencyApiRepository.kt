@@ -26,20 +26,16 @@ class CurrencyApiRepository @Inject constructor(
     ): Flow<Currency> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.currencyDao
-            .getCurrency(uuid)
-            .distinctUntilChanged()
-            .transform { entity ->
-                if (entity == null || entity.version != version) {
-                    fetchCurrency(
-                        uuid,
-                        version
-                    )
-                } else {
-                    emit(entity)
-                }
+        return gameDatabase.currencyDao.getByUuid(uuid).distinctUntilChanged().transform { entity ->
+            if (entity == null || entity.version != version) {
+                fetchCurrency(
+                    uuid,
+                    version
+                )
+            } else {
+                emit(entity)
             }
-            .map { it.toType() }
+        }.map { it.toType() }
     }
 
     // --------------------------------
@@ -54,7 +50,7 @@ class CurrencyApiRepository @Inject constructor(
     ) {
         val response = gameApi.getCurrency(uuid)
         if (response.isSuccessful) {
-            gameDatabase.currencyDao.upsertCurrency(response.body()!!.data!!.toEntity(version))
+            gameDatabase.currencyDao.upsert(response.body()!!.data!!.toEntity(version))
         }
     }
 }

@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.main.data.local.game.entity.GameEntity
-import dev.bittim.valolink.main.domain.model.game.contract.Reward
+import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 
 @Entity(
     tableName = "ContractRewards",

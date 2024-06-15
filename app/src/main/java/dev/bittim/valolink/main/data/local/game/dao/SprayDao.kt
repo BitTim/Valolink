@@ -13,12 +13,12 @@ interface SprayDao {
     // --------------------------------
 
     @Upsert
-    suspend fun upsertSpray(spray: SprayEntity)
+    suspend fun upsert(spray: SprayEntity)
 
     // --------------------------------
     //  Query
     // --------------------------------
 
     @Query("SELECT * FROM Sprays WHERE uuid = :uuid LIMIT 1")
-    fun getSpray(uuid: String): Flow<SprayEntity?>
+    fun getByUuid(uuid: String): Flow<SprayEntity?>
 }

@@ -1,4 +1,4 @@
-package dev.bittim.valolink.main.domain.model.game.contract
+package dev.bittim.valolink.main.domain.model.game.contract.content
 
 import java.time.Instant
 

@@ -1,4 +1,4 @@
-package dev.bittim.valolink.main.domain.model.game.contract
+package dev.bittim.valolink.main.domain.model.game.contract.reward
 
 data class Reward(
     val rewardType: String,

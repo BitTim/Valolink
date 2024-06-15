@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.domain.model.game
 
-import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 
 data class Currency(
     val uuid: String,
@@ -22,7 +23,7 @@ data class Currency(
 
         return RewardRelation(
             uuid = uuid,
-            type = "Currency",
+            type = RewardType.CURRENCY,
             displayName = if (actualAmount == 1) displayNameSingular else displayName,
             displayIcon = displayIcon,
             amount = actualAmount

@@ -9,10 +9,10 @@ import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerCardRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerTitleRepository
 import dev.bittim.valolink.main.data.repository.game.SprayRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
-import dev.bittim.valolink.main.domain.model.game.contract.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +34,7 @@ class ContractDetailsViewModel @Inject constructor(
     private val playerTitleRepository: PlayerTitleRepository,
     private val playerCardRepository: PlayerCardRepository,
     private val buddyRepository: BuddyRepository,
-    private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
+    private val weaponRepository: WeaponRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ContractDetailsState())
     val state = _state.asStateFlow()
@@ -147,7 +147,7 @@ class ContractDetailsViewModel @Inject constructor(
                 )
             }
 
-            "EquippableSkinLevel"  -> weaponSkinLevelRepository.getWeaponSkinLevel(
+            "EquippableSkinLevel"  -> weaponRepository.getSkinByLevelUuid(
                 uuid
             ).map {
                 Pair(

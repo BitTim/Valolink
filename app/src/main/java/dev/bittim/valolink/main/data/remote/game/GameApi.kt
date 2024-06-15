@@ -10,7 +10,7 @@ import dev.bittim.valolink.main.data.remote.game.dto.VersionDto
 import dev.bittim.valolink.main.data.remote.game.dto.agents.AgentDto
 import dev.bittim.valolink.main.data.remote.game.dto.buddy.BuddyDto
 import dev.bittim.valolink.main.data.remote.game.dto.contract.ContractDto
-import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponSkinLevelDto
+import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -78,11 +78,14 @@ interface GameApi {
     suspend fun getSpray(@Path("uuid") uuid: String): Response<GameApiResponse<SprayDto>>
 
     // --------------------------------
-    //  Weapon Skin Levels
+    //  Weapons
     // --------------------------------
 
-    @GET("weapons/skinlevels/{uuid}")
-    suspend fun getWeaponSkinLevel(@Path("uuid") uuid: String): Response<GameApiResponse<WeaponSkinLevelDto>>
+    @GET("weapons")
+    suspend fun getAllWeapons(): Response<GameApiResponse<List<WeaponDto>>>
+
+    @GET("weapons/{uuid}")
+    suspend fun getWeapon(@Path("uuid") uuid: String): Response<GameApiResponse<WeaponDto>>
 
     // --------------------------------
     //  Player Cards

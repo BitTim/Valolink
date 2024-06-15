@@ -11,12 +11,10 @@ import dev.bittim.valolink.main.domain.model.game.weapon.stats.WeaponStats
 
 @Entity(
     tableName = "Weapons",
-    indices = [
-        Index(
-            value = ["uuid"],
-            unique = true
-        )
-    ]
+    indices = [Index(
+        value = ["uuid"],
+        unique = true
+    )]
 )
 data class WeaponEntity(
     @PrimaryKey val uuid: String,
@@ -26,10 +24,12 @@ data class WeaponEntity(
     val defaultSkinUuid: String,
     val displayIcon: String,
     val killStreamIcon: String,
-    val weaponStats: WeaponStats,
-    val shopData: WeaponShopData
 ) : GameEntity() {
-    fun toType(skins: List<WeaponSkin>): Weapon {
+    fun toType(
+        weaponStats: WeaponStats,
+        shopData: WeaponShopData,
+        skins: List<WeaponSkin>,
+    ): Weapon {
         return Weapon(
             uuid = uuid,
             displayName = displayName,

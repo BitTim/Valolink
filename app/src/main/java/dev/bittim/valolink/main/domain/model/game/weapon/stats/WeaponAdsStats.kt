@@ -1,9 +1,9 @@
 package dev.bittim.valolink.main.domain.model.game.weapon.stats
 
 data class WeaponAdsStats(
-    val zoomMultiplier: Float,
-    val fireRate: Float,
-    val runSpeedMultiplier: Float,
+    val zoomMultiplier: Double,
+    val fireRate: Double,
+    val runSpeedMultiplier: Double,
     val burstCount: Int,
-    val firstBulletAccuracy: Float,
+    val firstBulletAccuracy: Double,
 )

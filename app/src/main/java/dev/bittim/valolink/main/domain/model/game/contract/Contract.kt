@@ -1,5 +1,6 @@
 package dev.bittim.valolink.main.domain.model.game.contract
 
+import dev.bittim.valolink.main.domain.model.game.contract.content.Content
 import java.util.Random
 
 data class Contract(

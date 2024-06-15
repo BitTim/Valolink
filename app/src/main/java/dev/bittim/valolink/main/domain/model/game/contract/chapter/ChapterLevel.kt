@@ -1,4 +1,6 @@
-package dev.bittim.valolink.main.domain.model.game.contract
+package dev.bittim.valolink.main.domain.model.game.contract.chapter
+
+import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 
 data class ChapterLevel(
     val xp: Int,

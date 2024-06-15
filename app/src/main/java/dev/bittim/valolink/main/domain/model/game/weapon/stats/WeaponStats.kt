@@ -1,19 +1,19 @@
 package dev.bittim.valolink.main.domain.model.game.weapon.stats
 
 data class WeaponStats(
-    val fireRate: Float,
+    val fireRate: Double,
     val magazineSize: Int,
-    val runSpeedMultiplier: Float,
-    val equipTimeSeconds: Float,
-    val reloadTimeSeconds: Float,
-    val firstBulletAccuracy: Float,
+    val runSpeedMultiplier: Double,
+    val equipTimeSeconds: Double,
+    val reloadTimeSeconds: Double,
+    val firstBulletAccuracy: Double,
     val shotgunPelletCount: Int,
     val wallPenetration: String,
     val feature: String?,
     val fireMode: String?,
-    val altFireMode: String,
+    val altFireType: String?,
     val adsStats: WeaponAdsStats,
     val altShotgunStats: WeaponAltShotgunStats?,
     val airBurstStats: WeaponAirBurstStats?,
-    val damageRanges: List<WeaponDamageRange>
+    val damageRanges: List<WeaponDamageRange>,
 )

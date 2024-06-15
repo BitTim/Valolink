@@ -27,7 +27,7 @@ class SeasonApiRepository @Inject constructor(
     ): Flow<Season> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.seasonDao.getSeason(uuid).distinctUntilChanged().transform { season ->
+        return gameDatabase.seasonDao.getByUuid(uuid).distinctUntilChanged().transform { season ->
             if (season == null || season.version != version) {
                 fetchSeason(
                     uuid,
@@ -44,7 +44,7 @@ class SeasonApiRepository @Inject constructor(
     override suspend fun getAllSeasons(providedVersion: String?): Flow<List<Season>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.seasonDao.getAllSeasons().distinctUntilChanged().transform { seasons ->
+        return gameDatabase.seasonDao.getAll().distinctUntilChanged().transform { seasons ->
             if (seasons.isEmpty() || seasons.any { it.version != version }) {
                 fetchSeasons(version)
             } else {
@@ -68,7 +68,7 @@ class SeasonApiRepository @Inject constructor(
         val response = gameApi.getSeason(uuid)
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
-                gameDatabase.seasonDao.upsertSeason(response.body()!!.data!!.toEntity(version))
+                gameDatabase.seasonDao.upsert(response.body()!!.data!!.toEntity(version))
             }
         }
     }
@@ -79,7 +79,7 @@ class SeasonApiRepository @Inject constructor(
         val response = gameApi.getAllSeasons()
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
-                gameDatabase.seasonDao.upsertAllSeasons(response.body()!!.data!!.map {
+                gameDatabase.seasonDao.upsert(response.body()!!.data!!.map {
                     it.toEntity(version)
                 })
             }
