@@ -120,7 +120,10 @@ class AgentDetailsViewModel @Inject constructor(
                                 level.reward.rewardUuid
                             ).map {
                                 Pair(
-                                    it.asRewardRelation(level.reward.amount),
+                                    it.asRewardRelation(
+                                        level.reward.amount,
+                                        level.reward.rewardUuid
+                                    ),
                                     level
                                 )
                             }

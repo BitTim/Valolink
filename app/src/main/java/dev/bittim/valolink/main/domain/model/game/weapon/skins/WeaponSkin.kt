@@ -13,12 +13,15 @@ data class WeaponSkin(
     val chromas: List<WeaponSkinChroma>,
     val levels: List<WeaponSkinLevel>,
 ) {
-    fun asRewardRelation(amount: Int): RewardRelation {
+    fun asRewardRelation(
+        amount: Int,
+        levelUuid: String,
+    ): RewardRelation {
         return RewardRelation(
             uuid = uuid,
             type = RewardType.WEAPON_SKIN,
             displayName = displayName,
-            displayIcon = displayIcon ?: "",
+            displayIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
             amount = amount
         )
     }
