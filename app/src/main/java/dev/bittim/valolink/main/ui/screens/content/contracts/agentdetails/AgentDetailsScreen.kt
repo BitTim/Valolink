@@ -472,7 +472,7 @@ fun AgentDetailsScreen(
                         )
                     }
                     Text(
-                        text = agent.description,
+                        text = agent.role.description,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

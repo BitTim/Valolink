@@ -16,8 +16,8 @@ import dev.bittim.valolink.main.data.local.user.UserDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.repository.game.AgentApiRepository
 import dev.bittim.valolink.main.data.repository.game.AgentRepository
-import dev.bittim.valolink.main.data.repository.game.BuddyLevelApiRepository
-import dev.bittim.valolink.main.data.repository.game.BuddyLevelRepository
+import dev.bittim.valolink.main.data.repository.game.BuddyApiRepository
+import dev.bittim.valolink.main.data.repository.game.BuddyRepository
 import dev.bittim.valolink.main.data.repository.game.ContractApiRepository
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyApiRepository
@@ -34,8 +34,8 @@ import dev.bittim.valolink.main.data.repository.game.SprayApiRepository
 import dev.bittim.valolink.main.data.repository.game.SprayRepository
 import dev.bittim.valolink.main.data.repository.game.VersionApiRepository
 import dev.bittim.valolink.main.data.repository.game.VersionRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelApiRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponApiRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponRepository
 import dev.bittim.valolink.main.data.repository.user.GearRepository
 import dev.bittim.valolink.main.data.repository.user.GearSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.OnboardingRepository
@@ -325,8 +325,8 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
-    ): BuddyLevelRepository {
-        return BuddyLevelApiRepository(
+    ): BuddyRepository {
+        return BuddyApiRepository(
             gameDatabase,
             gameApi,
             versionRepository
@@ -339,8 +339,8 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
-    ): WeaponSkinLevelRepository {
-        return WeaponSkinLevelApiRepository(
+    ): WeaponRepository {
+        return WeaponApiRepository(
             gameDatabase,
             gameApi,
             versionRepository

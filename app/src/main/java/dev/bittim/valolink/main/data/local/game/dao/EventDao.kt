@@ -13,18 +13,18 @@ interface EventDao {
     // --------------------------------
 
     @Upsert
-    suspend fun upsertEvent(event: EventEntity)
+    suspend fun upsert(event: EventEntity)
 
     @Upsert
-    suspend fun upsertAllEvents(seasons: List<EventEntity>)
+    suspend fun upsert(seasons: List<EventEntity>)
 
     // --------------------------------
     //  Query
     // --------------------------------
 
     @Query("SELECT * FROM Events WHERE uuid = :uuid LIMIT 1")
-    fun getEvent(uuid: String): Flow<EventEntity?>
+    fun getByUuid(uuid: String): Flow<EventEntity?>
 
     @Query("SELECT * FROM Events ORDER BY startTime DESC")
-    fun getAllEvents(): Flow<List<EventEntity>>
+    fun getAll(): Flow<List<EventEntity>>
 }

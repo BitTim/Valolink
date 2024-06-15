@@ -9,7 +9,7 @@ import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.user.UserDatabase
 import dev.bittim.valolink.main.data.local.user.entity.GearEntity
 import dev.bittim.valolink.main.data.worker.user.GearSyncWorker
-import dev.bittim.valolink.main.domain.model.Gear
+import dev.bittim.valolink.main.domain.model.user.Gear
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow

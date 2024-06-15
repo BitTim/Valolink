@@ -27,7 +27,7 @@ class AgentApiRepository @Inject constructor(
     ): Flow<Agent> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.agentDao.getAgent(uuid).distinctUntilChanged().transform { agent ->
+        return gameDatabase.agentDao.getByUuid(uuid).distinctUntilChanged().transform { agent ->
             if (agent == null || agent.agent.version != version) {
                 fetchAgent(
                     uuid,
@@ -46,7 +46,7 @@ class AgentApiRepository @Inject constructor(
     override suspend fun getAllAgents(providedVersion: String?): Flow<List<Agent>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.agentDao.getAllAgents().distinctUntilChanged().transform { agents ->
+        return gameDatabase.agentDao.getAll().distinctUntilChanged().transform { agents ->
             if (agents.isEmpty() || agents.any { it.agent.version != version }) {
                 fetchAgents(version)
             } else {
@@ -60,10 +60,7 @@ class AgentApiRepository @Inject constructor(
     override suspend fun getAllBaseAgentUuids(providedVersion: String?): Flow<List<String>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.agentDao
-            .getAllBaseAgentUuids()
-            .distinctUntilChanged()
-            .transform { agentMaps ->
+        return gameDatabase.agentDao.getBase().distinctUntilChanged().transform { agentMaps ->
                 if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
                     fetchAgents(version)
                 } else {
@@ -97,12 +94,12 @@ class AgentApiRepository @Inject constructor(
 
             gameDatabase.withTransaction {
                 if (recruitment != null) {
-                    gameDatabase.contractsDao.upsertAgentRecruitment(
+                    gameDatabase.contractsDao.upsertRecruitment(
                         recruitment
                     )
                 }
 
-                gameDatabase.agentDao.upsertAgent(
+                gameDatabase.agentDao.upsert(
                     role,
                     agent,
                     abilities.distinct().toSet()
@@ -137,11 +134,11 @@ class AgentApiRepository @Inject constructor(
             }.flatten()
 
             gameDatabase.withTransaction {
-                gameDatabase.contractsDao.upsertMultipleAgentRecruitments(
+                gameDatabase.contractsDao.upsertRecruitment(
                     recruitments.distinct().toSet()
                 )
 
-                gameDatabase.agentDao.upsertAllAgents(
+                gameDatabase.agentDao.upsert(
                     roles.distinct().toSet(),
                     agents.distinct().toSet(),
                     abilities.distinct().toSet()

@@ -1,6 +1,6 @@
 package dev.bittim.valolink.main.domain.model.game.agent
 
-import dev.bittim.valolink.main.domain.model.game.contract.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

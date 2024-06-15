@@ -27,7 +27,7 @@ class PlayerCardApiRepository @Inject constructor(
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
         return gameDatabase.playerCardDao
-            .getPlayerCard(uuid)
+            .getByUuid(uuid)
             .distinctUntilChanged()
             .transform { entity ->
                 if (entity == null || entity.version != version) {
@@ -54,7 +54,7 @@ class PlayerCardApiRepository @Inject constructor(
     ) {
         val response = gameApi.getPlayerCard(uuid)
         if (response.isSuccessful) {
-            gameDatabase.playerCardDao.upsertPlayerCard(response.body()!!.data!!.toEntity(version))
+            gameDatabase.playerCardDao.upsert(response.body()!!.data!!.toEntity(version))
         }
     }
 }

@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.main.data.local.game.entity.GameEntity
-import dev.bittim.valolink.main.domain.model.game.contract.Content
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
+import dev.bittim.valolink.main.domain.model.game.contract.content.Content
 
 @Entity(
     tableName = "Contracts",

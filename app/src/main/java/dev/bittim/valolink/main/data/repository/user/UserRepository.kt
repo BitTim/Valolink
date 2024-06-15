@@ -1,6 +1,6 @@
 package dev.bittim.valolink.main.data.repository.user
 
-import dev.bittim.valolink.main.domain.model.UserData
+import dev.bittim.valolink.main.domain.model.user.UserData
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {

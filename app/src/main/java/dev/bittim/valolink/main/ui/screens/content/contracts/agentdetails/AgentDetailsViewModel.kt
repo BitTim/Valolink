@@ -4,19 +4,19 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.main.data.repository.game.BuddyLevelRepository
+import dev.bittim.valolink.main.data.repository.game.BuddyRepository
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerCardRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerTitleRepository
 import dev.bittim.valolink.main.data.repository.game.SprayRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponRepository
 import dev.bittim.valolink.main.data.repository.user.GearRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
-import dev.bittim.valolink.main.domain.model.game.contract.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -38,8 +38,8 @@ class AgentDetailsViewModel @Inject constructor(
     private val sprayRepository: SprayRepository,
     private val playerTitleRepository: PlayerTitleRepository,
     private val playerCardRepository: PlayerCardRepository,
-    private val buddyLevelRepository: BuddyLevelRepository,
-    private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
+    private val buddyRepository: BuddyRepository,
+    private val weaponRepository: WeaponRepository,
     private val userRepository: UserRepository,
     private val geaRepository: GearRepository,
     private val addUserGearUseCase: AddUserGearUseCase,
@@ -107,8 +107,8 @@ class AgentDetailsViewModel @Inject constructor(
                                     )
                                 }
 
-                            "EquippableCharmLevel" -> buddyLevelRepository
-                                .getBuddyLevel(level.reward.rewardUuid)
+                            "EquippableCharmLevel" -> buddyRepository
+                                .getByLevelUuid(level.reward.rewardUuid)
                                 .map {
                                     Pair(
                                         it.asRewardRelation(level.reward.amount),
@@ -116,7 +116,7 @@ class AgentDetailsViewModel @Inject constructor(
                                     )
                                 }
 
-                            "EquippableSkinLevel"  -> weaponSkinLevelRepository.getWeaponSkinLevel(
+                            "EquippableSkinLevel"  -> weaponRepository.getSkinByLevelUuid(
                                 level.reward.rewardUuid
                             ).map {
                                 Pair(

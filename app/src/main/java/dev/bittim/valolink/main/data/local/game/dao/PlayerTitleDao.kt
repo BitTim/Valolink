@@ -13,12 +13,12 @@ interface PlayerTitleDao {
     // --------------------------------
 
     @Upsert
-    suspend fun upsertPlayerTitle(playerTitle: PlayerTitleEntity)
+    suspend fun upsert(playerTitle: PlayerTitleEntity)
 
     // --------------------------------
     //  Query
     // --------------------------------
 
     @Query("SELECT * FROM PlayerTitles WHERE uuid = :uuid LIMIT 1")
-    fun getPlayerTitle(uuid: String): Flow<PlayerTitleEntity?>
+    fun getByUuid(uuid: String): Flow<PlayerTitleEntity?>
 }

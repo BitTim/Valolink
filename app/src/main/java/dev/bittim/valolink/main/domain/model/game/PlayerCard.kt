@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.domain.model.game
 
-import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 
 data class PlayerCard(
     val uuid: String,
@@ -15,7 +16,7 @@ data class PlayerCard(
     fun asRewardRelation(amount: Int): RewardRelation {
         return RewardRelation(
             uuid = uuid,
-            type = "Card",
+            type = RewardType.PLAYER_CARD,
             displayName = displayName,
             displayIcon = largeArt,
             amount = amount

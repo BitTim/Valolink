@@ -1,7 +1,5 @@
 package dev.bittim.valolink.main.data.remote.game
 
-import dev.bittim.valolink.main.data.remote.game.dto.AgentDto
-import dev.bittim.valolink.main.data.remote.game.dto.ContractDto
 import dev.bittim.valolink.main.data.remote.game.dto.CurrencyDto
 import dev.bittim.valolink.main.data.remote.game.dto.EventDto
 import dev.bittim.valolink.main.data.remote.game.dto.PlayerCardDto
@@ -9,8 +7,10 @@ import dev.bittim.valolink.main.data.remote.game.dto.PlayerTitleDto
 import dev.bittim.valolink.main.data.remote.game.dto.SeasonDto
 import dev.bittim.valolink.main.data.remote.game.dto.SprayDto
 import dev.bittim.valolink.main.data.remote.game.dto.VersionDto
-import dev.bittim.valolink.main.data.remote.game.dto.buddy.BuddyLevelDto
-import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponSkinLevelDto
+import dev.bittim.valolink.main.data.remote.game.dto.agents.AgentDto
+import dev.bittim.valolink.main.data.remote.game.dto.buddy.BuddyDto
+import dev.bittim.valolink.main.data.remote.game.dto.contract.ContractDto
+import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -78,11 +78,14 @@ interface GameApi {
     suspend fun getSpray(@Path("uuid") uuid: String): Response<GameApiResponse<SprayDto>>
 
     // --------------------------------
-    //  Weapon Skin Levels
+    //  Weapons
     // --------------------------------
 
-    @GET("weapons/skinlevels/{uuid}")
-    suspend fun getWeaponSkinLevel(@Path("uuid") uuid: String): Response<GameApiResponse<WeaponSkinLevelDto>>
+    @GET("weapons")
+    suspend fun getAllWeapons(): Response<GameApiResponse<List<WeaponDto>>>
+
+    @GET("weapons/{uuid}")
+    suspend fun getWeapon(@Path("uuid") uuid: String): Response<GameApiResponse<WeaponDto>>
 
     // --------------------------------
     //  Player Cards
@@ -95,8 +98,11 @@ interface GameApi {
     //  Buddies
     // --------------------------------
 
-    @GET("buddies/levels/{uuid}")
-    suspend fun getBuddyLevel(@Path("uuid") uuid: String): Response<GameApiResponse<BuddyLevelDto>>
+    @GET("buddies")
+    suspend fun getAllBuddies(): Response<GameApiResponse<List<BuddyDto>>>
+
+    @GET("buddies/{uuid}")
+    suspend fun getBuddy(@Path("uuid") uuid: String): Response<GameApiResponse<BuddyDto>>
 
     // --------------------------------
     //  Player Titles

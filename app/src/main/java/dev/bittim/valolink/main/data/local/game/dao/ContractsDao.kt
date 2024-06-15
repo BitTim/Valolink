@@ -22,7 +22,7 @@ interface ContractsDao {
 
     @Transaction
     @Upsert
-    suspend fun upsertContract(
+    suspend fun upsert(
         contract: ContractEntity,
         content: ContentEntity,
         chapters: Set<ChapterEntity>,
@@ -31,13 +31,13 @@ interface ContractsDao {
     )
 
     @Upsert
-    suspend fun upsertAgentRecruitment(
+    suspend fun upsertRecruitment(
         recruitment: RecruitmentEntity,
     )
 
     @Transaction
     @Upsert
-    suspend fun upsertMultipleContracts(
+    suspend fun upsert(
         contracts: Set<ContractEntity>,
         contents: Set<ContentEntity>,
         chapters: Set<ChapterEntity>,
@@ -47,7 +47,7 @@ interface ContractsDao {
 
     @Transaction
     @Upsert
-    suspend fun upsertMultipleAgentRecruitments(
+    suspend fun upsertRecruitment(
         recruitments: Set<RecruitmentEntity>,
     )
 
@@ -59,11 +59,11 @@ interface ContractsDao {
 
     @Transaction
     @Query("SELECT * FROM Contracts WHERE uuid = :uuid LIMIT 1")
-    fun getContract(uuid: String): Flow<ContractWithContentWithChaptersWithLevelsAndRewards?>
+    fun getByUuid(uuid: String): Flow<ContractWithContentWithChaptersWithLevelsAndRewards?>
 
     @Transaction
     @Query("SELECT * FROM AgentRecruitments WHERE uuid = :uuid LIMIT 1")
-    fun getRecruitment(uuid: String): Flow<RecruitmentWithAgentWithRoleAndAbilities?>
+    fun getRecruitmentByUuid(uuid: String): Flow<RecruitmentWithAgentWithRoleAndAbilities?>
 
     // -------- [ Active ] --------
 
@@ -82,7 +82,7 @@ interface ContractsDao {
         ORDER BY endTime ASC
     """
     )
-    fun getActiveContracts(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
+    fun getActiveByTime(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 
     @Transaction
     @Query(
@@ -93,7 +93,7 @@ interface ContractsDao {
         ORDER BY endDate ASC
     """
     )
-    fun getActiveRecruitments(currentIsoTime: String): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
+    fun getActiveRecruitmentsByTime(currentIsoTime: String): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
 
     // -------- [ Inactive ] --------
 
@@ -109,7 +109,7 @@ interface ContractsDao {
         ORDER BY endTime DESC
     """
     )
-    fun getInactiveSeasonContracts(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
+    fun getInactiveSeasonsByTime(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 
     @Transaction
     @Query(
@@ -123,7 +123,7 @@ interface ContractsDao {
         ORDER BY endTime DESC
     """
     )
-    fun getInactiveEventContracts(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
+    fun getInactiveEventsByTime(currentIsoTime: String): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 
     @Transaction
     @Query(
@@ -134,7 +134,7 @@ interface ContractsDao {
         ORDER BY endDate DESC
     """
     )
-    fun getInactiveRecruitments(currentIsoTime: String): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
+    fun getInactiveRecruitmentsByTime(currentIsoTime: String): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
 
     // -------- [ Agent Gears ] --------
 
@@ -148,5 +148,5 @@ interface ContractsDao {
         ORDER BY displayName ASC
     """
     )
-    fun getAgentGears(): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
+    fun getAllGears(): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 }

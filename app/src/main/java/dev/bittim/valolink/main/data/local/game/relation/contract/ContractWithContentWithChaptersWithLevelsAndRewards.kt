@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContractEntity
-import dev.bittim.valolink.main.domain.model.game.contract.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
 
 data class ContractWithContentWithChaptersWithLevelsAndRewards(
     @Embedded val contract: ContractEntity,

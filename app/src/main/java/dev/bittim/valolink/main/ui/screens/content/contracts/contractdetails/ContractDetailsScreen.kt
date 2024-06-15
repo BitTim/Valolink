@@ -33,11 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.main.domain.model.game.Season
-import dev.bittim.valolink.main.domain.model.game.contract.Chapter
-import dev.bittim.valolink.main.domain.model.game.contract.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.Content
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
-import dev.bittim.valolink.main.domain.model.game.contract.Reward
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Chapter
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.content.Content
+import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
 import java.time.Instant
 import java.time.temporal.ChronoUnit

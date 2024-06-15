@@ -3,16 +3,16 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.contractdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.main.data.repository.game.BuddyLevelRepository
+import dev.bittim.valolink.main.data.repository.game.BuddyRepository
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerCardRepository
 import dev.bittim.valolink.main.data.repository.game.PlayerTitleRepository
 import dev.bittim.valolink.main.data.repository.game.SprayRepository
-import dev.bittim.valolink.main.data.repository.game.WeaponSkinLevelRepository
+import dev.bittim.valolink.main.data.repository.game.WeaponRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
-import dev.bittim.valolink.main.domain.model.game.contract.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +33,8 @@ class ContractDetailsViewModel @Inject constructor(
     private val sprayRepository: SprayRepository,
     private val playerTitleRepository: PlayerTitleRepository,
     private val playerCardRepository: PlayerCardRepository,
-    private val buddyLevelRepository: BuddyLevelRepository,
-    private val weaponSkinLevelRepository: WeaponSkinLevelRepository,
+    private val buddyRepository: BuddyRepository,
+    private val weaponRepository: WeaponRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ContractDetailsState())
     val state = _state.asStateFlow()
@@ -140,14 +140,14 @@ class ContractDetailsViewModel @Inject constructor(
                 )
             }
 
-            "EquippableCharmLevel" -> buddyLevelRepository.getBuddyLevel(uuid).map {
+            "EquippableCharmLevel" -> buddyRepository.getByLevelUuid(uuid).map {
                 Pair(
                     it.asRewardRelation(level.reward.amount),
                     level
                 )
             }
 
-            "EquippableSkinLevel"  -> weaponSkinLevelRepository.getWeaponSkinLevel(
+            "EquippableSkinLevel"  -> weaponRepository.getSkinByLevelUuid(
                 uuid
             ).map {
                 Pair(

@@ -5,8 +5,9 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.main.data.local.game.entity.GameEntity
-import dev.bittim.valolink.main.domain.model.game.contract.Content
-import dev.bittim.valolink.main.domain.model.game.contract.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Chapter
+import dev.bittim.valolink.main.domain.model.game.contract.content.Content
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
 
 @Entity(
     tableName = "ContractContents",
@@ -36,7 +37,7 @@ data class ContentEntity(
 ) : GameEntity() {
     fun toType(
         relation: ContentRelation?,
-        chapters: List<dev.bittim.valolink.main.domain.model.game.contract.Chapter>,
+        chapters: List<Chapter>,
     ): Content {
         return Content(
             relation,

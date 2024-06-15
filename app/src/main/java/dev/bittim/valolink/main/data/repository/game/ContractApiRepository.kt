@@ -3,7 +3,7 @@ package dev.bittim.valolink.main.data.repository.game
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.domain.model.game.contract.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -29,7 +29,7 @@ class ContractApiRepository @Inject constructor(
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
         return gameDatabase.contractsDao
-            .getContract(uuid)
+            .getByUuid(uuid)
             .distinctUntilChanged()
             .transform { contract ->
                 if (contract == null || contract.contract.version != version) {
@@ -58,7 +58,7 @@ class ContractApiRepository @Inject constructor(
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
         return gameDatabase.contractsDao
-            .getRecruitment(uuid)
+            .getRecruitmentByUuid(uuid)
             .distinctUntilChanged()
             .transform { recruitment ->
                 if (recruitment == null || recruitment.recruitment.version != version) {
@@ -79,7 +79,7 @@ class ContractApiRepository @Inject constructor(
         val currentIsoTime = Instant.now().toString()
 
         return gameDatabase.contractsDao
-            .getActiveContracts(currentIsoTime)
+            .getActiveByTime(currentIsoTime)
             .distinctUntilChanged()
             .transform { contracts ->
                 if (contracts.isEmpty() || contracts.any { it.contract.version != version }) {
@@ -99,7 +99,7 @@ class ContractApiRepository @Inject constructor(
                 }
             }
             .combine(gameDatabase.contractsDao
-                         .getActiveRecruitments(currentIsoTime)
+                         .getActiveRecruitmentsByTime(currentIsoTime)
                          .distinctUntilChanged()
                          .map { recruitments ->
                              recruitments.map { it.toContract() }
@@ -111,7 +111,7 @@ class ContractApiRepository @Inject constructor(
     override suspend fun getAgentGears(providedVersion: String?): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
         val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.contractsDao.getAgentGears().distinctUntilChanged().transform { gears ->
+        return gameDatabase.contractsDao.getAllGears().distinctUntilChanged().transform { gears ->
             if (gears.isEmpty() || gears.any { it.contract.version != version }) {
                 agentRepository.fetchAgents(version)
             } else {
@@ -139,7 +139,7 @@ class ContractApiRepository @Inject constructor(
         return when (contentType) {
             "Season"      -> {
                 gameDatabase.contractsDao
-                    .getInactiveSeasonContracts(currentIsoTime)
+                    .getInactiveSeasonsByTime(currentIsoTime)
                     .distinctUntilChanged()
                     .transform { seasons ->
                         if (seasons.isEmpty() || seasons.any { it.contract.version != version }) {
@@ -163,7 +163,7 @@ class ContractApiRepository @Inject constructor(
 
             "Event"       -> {
                 gameDatabase.contractsDao
-                    .getInactiveEventContracts(currentIsoTime)
+                    .getInactiveEventsByTime(currentIsoTime)
                     .distinctUntilChanged()
                     .transform { events ->
                         if (events.isEmpty() || events.any { it.contract.version != version }) {
@@ -187,7 +187,7 @@ class ContractApiRepository @Inject constructor(
 
             "Recruitment" -> {
                 gameDatabase.contractsDao
-                    .getInactiveRecruitments(currentIsoTime)
+                    .getInactiveRecruitmentsByTime(currentIsoTime)
                     .distinctUntilChanged()
                     .transform { recruitments ->
                         if (recruitments.isEmpty() || recruitments.any { it.recruitment.version != version }) {
@@ -274,7 +274,7 @@ class ContractApiRepository @Inject constructor(
                 }.orEmpty()
             }.flatten())
 
-            gameDatabase.contractsDao.upsertContract(
+            gameDatabase.contractsDao.upsert(
                 contract,
                 content,
                 chapters.distinct().toSet(),
@@ -336,7 +336,7 @@ class ContractApiRepository @Inject constructor(
                 }.orEmpty()
             }.flatten())
 
-            gameDatabase.contractsDao.upsertMultipleContracts(
+            gameDatabase.contractsDao.upsert(
                 contracts.distinct().toSet(),
                 contents.distinct().toSet(),
                 chapters.distinct().toSet(),

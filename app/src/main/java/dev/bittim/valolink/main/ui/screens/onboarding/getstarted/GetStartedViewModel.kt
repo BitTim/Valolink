@@ -7,7 +7,7 @@ import dev.bittim.valolink.main.data.repository.game.AgentRepository
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.user.OnboardingRepository
 import dev.bittim.valolink.main.data.repository.user.SessionRepository
-import dev.bittim.valolink.main.domain.model.Gear
+import dev.bittim.valolink.main.domain.model.user.Gear
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest

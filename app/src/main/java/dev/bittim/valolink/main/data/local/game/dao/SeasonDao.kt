@@ -13,18 +13,18 @@ interface SeasonDao {
     // --------------------------------
 
     @Upsert
-    suspend fun upsertSeason(season: SeasonEntity)
+    suspend fun upsert(season: SeasonEntity)
 
     @Upsert
-    suspend fun upsertAllSeasons(seasons: List<SeasonEntity>)
+    suspend fun upsert(seasons: List<SeasonEntity>)
 
     // --------------------------------
     //  Query
     // --------------------------------
 
     @Query("SELECT * FROM Seasons WHERE uuid = :uuid LIMIT 1")
-    fun getSeason(uuid: String): Flow<SeasonEntity?>
+    fun getByUuid(uuid: String): Flow<SeasonEntity?>
 
     @Query("SELECT * FROM Seasons ORDER BY startTime DESC")
-    fun getAllSeasons(): Flow<List<SeasonEntity>>
+    fun getAll(): Flow<List<SeasonEntity>>
 }

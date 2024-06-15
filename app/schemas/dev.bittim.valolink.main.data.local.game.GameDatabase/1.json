@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "93eb72db72aff259b1d4996451b35a9d",
+    "identityHash": "c696288291df0f9e5d328469278aa2c1",
     "entities": [
       {
         "tableName": "Seasons",
@@ -1257,8 +1257,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "BuddyLevels",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `hideIfNotOwned` INTEGER NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "tableName": "Buddies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `isHiddenIfNotOwned` INTEGER NOT NULL, `themeUuid` TEXT, `displayIcon` TEXT NOT NULL, `assetPath` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -1269,6 +1269,78 @@
           {
             "fieldPath": "version",
             "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isHiddenIfNotOwned",
+            "columnName": "isHiddenIfNotOwned",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "themeUuid",
+            "columnName": "themeUuid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assetPath",
+            "columnName": "assetPath",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Buddies_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Buddies_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BuddyLevels",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `buddy` TEXT NOT NULL, `hideIfNotOwned` INTEGER NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`buddy`) REFERENCES `Buddies`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buddy",
+            "columnName": "buddy",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -1306,13 +1378,34 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_BuddyLevels_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_BuddyLevels_buddy",
+            "unique": false,
+            "columnNames": [
+              "buddy"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_BuddyLevels_buddy` ON `${TABLE_NAME}` (`buddy`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "Buddies",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "buddy"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
       },
       {
-        "tableName": "WeaponSkinLevels",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `levelItem` TEXT, `displayIcon` TEXT NOT NULL, `streamedVideo` TEXT, PRIMARY KEY(`uuid`))",
+        "tableName": "Weapons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `category` TEXT NOT NULL, `defaultSkinUuid` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `killStreamIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -1333,6 +1426,915 @@
             "notNull": true
           },
           {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defaultSkinUuid",
+            "columnName": "defaultSkinUuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "killStreamIcon",
+            "columnName": "killStreamIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Weapons_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Weapons_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "WeaponStats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weapon` TEXT NOT NULL, `fireRate` REAL NOT NULL, `magazineSize` INTEGER NOT NULL, `runSpeedMultiplier` REAL NOT NULL, `equipTimeSeconds` REAL NOT NULL, `reloadTimeSeconds` REAL NOT NULL, `firstBulletAccuracy` REAL NOT NULL, `shotgunPelletCount` INTEGER NOT NULL, `wallPenetration` TEXT NOT NULL, `feature` TEXT, `fireMode` TEXT, `altFireType` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weapon`) REFERENCES `Weapons`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weapon",
+            "columnName": "weapon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fireRate",
+            "columnName": "fireRate",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "magazineSize",
+            "columnName": "magazineSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "runSpeedMultiplier",
+            "columnName": "runSpeedMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "equipTimeSeconds",
+            "columnName": "equipTimeSeconds",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reloadTimeSeconds",
+            "columnName": "reloadTimeSeconds",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstBulletAccuracy",
+            "columnName": "firstBulletAccuracy",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shotgunPelletCount",
+            "columnName": "shotgunPelletCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wallPenetration",
+            "columnName": "wallPenetration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "feature",
+            "columnName": "feature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fireMode",
+            "columnName": "fireMode",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "altFireType",
+            "columnName": "altFireType",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponStats_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponStats_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponStats_weapon",
+            "unique": true,
+            "columnNames": [
+              "weapon"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponStats_weapon` ON `${TABLE_NAME}` (`weapon`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Weapons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weapon"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponAdsStats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponStats` TEXT NOT NULL, `zoomMultiplier` REAL NOT NULL, `fireRate` REAL NOT NULL, `runSpeedMultiplier` REAL NOT NULL, `burstCount` INTEGER NOT NULL, `firstBulletAccuracy` REAL NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponStats`) REFERENCES `WeaponStats`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weaponStats",
+            "columnName": "weaponStats",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zoomMultiplier",
+            "columnName": "zoomMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fireRate",
+            "columnName": "fireRate",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "runSpeedMultiplier",
+            "columnName": "runSpeedMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "burstCount",
+            "columnName": "burstCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstBulletAccuracy",
+            "columnName": "firstBulletAccuracy",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponAdsStats_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponAdsStats_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponAdsStats_weaponStats",
+            "unique": true,
+            "columnNames": [
+              "weaponStats"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponAdsStats_weaponStats` ON `${TABLE_NAME}` (`weaponStats`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "WeaponStats",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weaponStats"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponAltShotgunStats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponStats` TEXT NOT NULL, `shotgunPelletCount` INTEGER NOT NULL, `burstRate` REAL NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponStats`) REFERENCES `WeaponStats`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weaponStats",
+            "columnName": "weaponStats",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shotgunPelletCount",
+            "columnName": "shotgunPelletCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "burstRate",
+            "columnName": "burstRate",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponAltShotgunStats_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponAltShotgunStats_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponAltShotgunStats_weaponStats",
+            "unique": true,
+            "columnNames": [
+              "weaponStats"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponAltShotgunStats_weaponStats` ON `${TABLE_NAME}` (`weaponStats`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "WeaponStats",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weaponStats"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponAirBurstStats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponStats` TEXT NOT NULL, `shotgunPelletCount` INTEGER NOT NULL, `burstDistance` REAL NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponStats`) REFERENCES `WeaponStats`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weaponStats",
+            "columnName": "weaponStats",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shotgunPelletCount",
+            "columnName": "shotgunPelletCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "burstDistance",
+            "columnName": "burstDistance",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponAirBurstStats_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponAirBurstStats_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponAirBurstStats_weaponStats",
+            "unique": true,
+            "columnNames": [
+              "weaponStats"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponAirBurstStats_weaponStats` ON `${TABLE_NAME}` (`weaponStats`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "WeaponStats",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weaponStats"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponDamageRanges",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponStats` TEXT NOT NULL, `rangeStartMeters` REAL NOT NULL, `rangeEndMeters` REAL NOT NULL, `headDamage` REAL NOT NULL, `bodyDamage` REAL NOT NULL, `legDamage` REAL NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponStats`) REFERENCES `WeaponStats`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weaponStats",
+            "columnName": "weaponStats",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rangeStartMeters",
+            "columnName": "rangeStartMeters",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rangeEndMeters",
+            "columnName": "rangeEndMeters",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "headDamage",
+            "columnName": "headDamage",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bodyDamage",
+            "columnName": "bodyDamage",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "legDamage",
+            "columnName": "legDamage",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponDamageRanges_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponDamageRanges_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponDamageRanges_weaponStats",
+            "unique": true,
+            "columnNames": [
+              "weaponStats"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponDamageRanges_weaponStats` ON `${TABLE_NAME}` (`weaponStats`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "WeaponStats",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weaponStats"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponShopData",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weapon` TEXT NOT NULL, `cost` INTEGER NOT NULL, `category` TEXT NOT NULL, `shopOrderPriority` INTEGER NOT NULL, `categoryText` TEXT NOT NULL, `canBeTrashed` INTEGER NOT NULL, `image` TEXT, `newImage` TEXT NOT NULL, `newImage2` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weapon`) REFERENCES `Weapons`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weapon",
+            "columnName": "weapon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cost",
+            "columnName": "cost",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shopOrderPriority",
+            "columnName": "shopOrderPriority",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoryText",
+            "columnName": "categoryText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canBeTrashed",
+            "columnName": "canBeTrashed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "newImage",
+            "columnName": "newImage",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "newImage2",
+            "columnName": "newImage2",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponShopData_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponShopData_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponShopData_weapon",
+            "unique": true,
+            "columnNames": [
+              "weapon"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponShopData_weapon` ON `${TABLE_NAME}` (`weapon`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Weapons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weapon"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponGridPositions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponShopData` TEXT NOT NULL, `row` INTEGER NOT NULL, `column` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponShopData`) REFERENCES `WeaponShopData`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weaponShopData",
+            "columnName": "weaponShopData",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "row",
+            "columnName": "row",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "column",
+            "columnName": "column",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponGridPositions_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponGridPositions_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponGridPositions_weaponShopData",
+            "unique": true,
+            "columnNames": [
+              "weaponShopData"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponGridPositions_weaponShopData` ON `${TABLE_NAME}` (`weaponShopData`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "WeaponShopData",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weaponShopData"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponSkins",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weapon` TEXT NOT NULL, `displayName` TEXT NOT NULL, `themeUuid` TEXT NOT NULL, `contentTierUuid` TEXT, `displayIcon` TEXT, `wallpaper` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weapon`) REFERENCES `Weapons`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weapon",
+            "columnName": "weapon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "themeUuid",
+            "columnName": "themeUuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentTierUuid",
+            "columnName": "contentTierUuid",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wallpaper",
+            "columnName": "wallpaper",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponSkins_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponSkins_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponSkins_weapon",
+            "unique": false,
+            "columnNames": [
+              "weapon"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_WeaponSkins_weapon` ON `${TABLE_NAME}` (`weapon`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Weapons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weapon"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponSkinChromas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponSkin` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT, `fullRender` TEXT NOT NULL, `swatch` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponSkin`) REFERENCES `WeaponSkins`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weaponSkin",
+            "columnName": "weaponSkin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fullRender",
+            "columnName": "fullRender",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swatch",
+            "columnName": "swatch",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "streamedVideo",
+            "columnName": "streamedVideo",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_WeaponSkinChromas_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponSkinChromas_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponSkinChromas_weaponSkin",
+            "unique": false,
+            "columnNames": [
+              "weaponSkin"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_WeaponSkinChromas_weaponSkin` ON `${TABLE_NAME}` (`weaponSkin`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "WeaponSkins",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weaponSkin"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "WeaponSkinLevels",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponSkin` TEXT NOT NULL, `displayName` TEXT NOT NULL, `levelItem` TEXT, `displayIcon` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponSkin`) REFERENCES `WeaponSkins`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weaponSkin",
+            "columnName": "weaponSkin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "levelItem",
             "columnName": "levelItem",
             "affinity": "TEXT",
@@ -1342,7 +2344,7 @@
             "fieldPath": "displayIcon",
             "columnName": "displayIcon",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "streamedVideo",
@@ -1366,15 +2368,36 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_WeaponSkinLevels_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_WeaponSkinLevels_weaponSkin",
+            "unique": false,
+            "columnNames": [
+              "weaponSkin"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_WeaponSkinLevels_weaponSkin` ON `${TABLE_NAME}` (`weaponSkin`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "WeaponSkins",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "weaponSkin"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93eb72db72aff259b1d4996451b35a9d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c696288291df0f9e5d328469278aa2c1')"
     ]
   }
 }
