@@ -5,9 +5,9 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.domain.model.game.Season
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class SeasonApiRepository @Inject constructor(
@@ -25,9 +25,11 @@ class SeasonApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<Season> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.seasonDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { season, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.seasonDao.getByUuid(uuid).distinctUntilChanged().transform { season ->
             if (season == null || season.version != version) {
                 fetchSeason(
                     uuid,
@@ -42,9 +44,11 @@ class SeasonApiRepository @Inject constructor(
     // -------- [ Bulk queries ] --------
 
     override suspend fun getAllSeasons(providedVersion: String?): Flow<List<Season>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.seasonDao.getAll().distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { seasons, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.seasonDao.getAll().distinctUntilChanged().transform { seasons ->
             if (seasons.isEmpty() || seasons.any { it.version != version }) {
                 fetchSeasons(version)
             } else {

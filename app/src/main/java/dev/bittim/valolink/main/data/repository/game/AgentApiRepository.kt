@@ -5,9 +5,9 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class AgentApiRepository @Inject constructor(
@@ -25,9 +25,11 @@ class AgentApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<Agent> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.agentDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { agent, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.agentDao.getByUuid(uuid).distinctUntilChanged().transform { agent ->
             if (agent == null || agent.agent.version != version) {
                 fetchAgent(
                     uuid,
@@ -44,9 +46,11 @@ class AgentApiRepository @Inject constructor(
     // -------- [ Bulk queries ] --------
 
     override suspend fun getAllAgents(providedVersion: String?): Flow<List<Agent>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.agentDao.getAll().distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { agents, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.agentDao.getAll().distinctUntilChanged().transform { agents ->
             if (agents.isEmpty() || agents.any { it.agent.version != version }) {
                 fetchAgents(version)
             } else {
@@ -58,15 +62,17 @@ class AgentApiRepository @Inject constructor(
     }
 
     override suspend fun getAllBaseAgentUuids(providedVersion: String?): Flow<List<String>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.agentDao.getBase().distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { agentMaps, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.agentDao.getBase().distinctUntilChanged().transform { agentMaps ->
-                if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
-                    fetchAgents(version)
-                } else {
-                    emit(agentMaps.keys.toList())
-                }
+            if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
+                fetchAgents(version)
+            } else {
+                emit(agentMaps.keys.toList())
             }
+        }
     }
 
     // --------------------------------

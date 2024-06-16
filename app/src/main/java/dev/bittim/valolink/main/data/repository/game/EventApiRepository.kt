@@ -5,9 +5,9 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.domain.model.game.Event
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class EventApiRepository @Inject constructor(
@@ -25,9 +25,11 @@ class EventApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<Event> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.eventDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { event, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.eventDao.getByUuid(uuid).distinctUntilChanged().transform { event ->
             if (event == null || event.version != version) {
                 fetchEvent(
                     uuid,
@@ -42,9 +44,11 @@ class EventApiRepository @Inject constructor(
     // -------- [ Bulk queries ] --------
 
     override suspend fun getAllEvents(providedVersion: String?): Flow<List<Event>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.eventDao.getAll().distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { events, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.eventDao.getAll().distinctUntilChanged().transform { events ->
             if (events.isEmpty() || events.any { it.version != version }) {
                 fetchEvents(version)
             } else {

@@ -5,9 +5,9 @@ import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponDto
 import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkin
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class WeaponApiRepository @Inject constructor(
@@ -25,12 +25,15 @@ class WeaponApiRepository @Inject constructor(
         levelUuid: String,
         providedVersion: String?,
     ): Flow<WeaponSkin> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
         return gameDatabase.weaponDao
             .getSkinByLevelUuid(levelUuid)
             .distinctUntilChanged()
-            .transform { entity ->
+            .combineTransform(
+                versionRepository.get()
+            ) { entity, apiVersion ->
+                val version = providedVersion ?: apiVersion.version
+
                 if (entity == null || entity.weaponSkin.version != version) {
                     fetchAll(
                         version

@@ -54,7 +54,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ContentModule {
+object MainModule {
     @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
@@ -197,8 +197,14 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesVersionRepository(gameApi: GameApi): VersionRepository {
-        return VersionApiRepository(gameApi)
+    fun providesVersionRepository(
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+    ): VersionRepository {
+        return VersionApiRepository(
+            gameDatabase,
+            gameApi
+        )
     }
 
     @Provides
@@ -321,7 +327,7 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesBuddyLevelRepository(
+    fun providesBuddyRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
@@ -335,7 +341,7 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesWeaponSkinLevelRepository(
+    fun providesWeaponRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,

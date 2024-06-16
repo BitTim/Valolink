@@ -1,20 +1,32 @@
-package dev.bittim.valolink.main.data.remote.game.dto
+package dev.bittim.valolink.main.data.local.game.entity
 
-import dev.bittim.valolink.main.data.local.game.entity.VersionEntity
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import dev.bittim.valolink.main.domain.model.game.Version
 
-data class VersionDto(
+@Entity(
+    tableName = "Version",
+    indices = [
+        Index(
+            value = ["id"],
+            unique = true
+        )
+    ]
+)
+data class VersionEntity(
+    @PrimaryKey val id: Int,
     val manifestId: String,
     val branch: String,
-    val version: String,
+    override val version: String,
     val buildVersion: String,
     val engineVersion: String,
     val riotClientVersion: String,
     val riotClientBuild: String,
     val buildDate: String,
-) {
-    fun toEntity(): VersionEntity {
-        return VersionEntity(
-            id = 0,
+) : GameEntity() {
+    fun toType(): Version {
+        return Version(
             manifestId = manifestId,
             branch = branch,
             version = version,

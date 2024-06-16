@@ -4,9 +4,9 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.domain.model.game.PlayerTitle
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class PlayerTitleApiRepository @Inject constructor(
@@ -24,12 +24,14 @@ class PlayerTitleApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<PlayerTitle> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
-
         return gameDatabase.playerTitleDao
             .getByUuid(uuid)
             .distinctUntilChanged()
-            .transform { entity ->
+            .combineTransform(
+                versionRepository.get()
+            ) { entity, apiVersion ->
+                val version = providedVersion ?: apiVersion.version
+
                 if (entity == null || entity.version != version) {
                     fetchPlayerTitle(
                         uuid,

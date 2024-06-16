@@ -4,13 +4,14 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import java.time.Instant
 import javax.inject.Inject
 
@@ -26,26 +27,34 @@ class ContractApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<dev.bittim.valolink.main.domain.model.game.contract.Contract?> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
         return gameDatabase.contractsDao
             .getByUuid(uuid)
             .distinctUntilChanged()
-            .transform { contract ->
+            .combineTransform(
+                versionRepository.get()
+            ) { contract, apiVersion ->
+                val version = providedVersion ?: apiVersion.version
+
                 if (contract == null || contract.contract.version != version) {
                     fetchContract(
                         uuid,
                         version
                     )
                 } else {
-                    emit(contract)
+                    emit(
+                        Pair(
+                            contract,
+                            version
+                        )
+                    )
                 }
             }
             .map {
-                it.toType(
+                it.first.toType(
                     getRelation(
-                        version,
-                        it.content.content
+                        it.second, // Version
+                        it.first.content.content
                     ).firstOrNull()
                 )
             }
@@ -55,12 +64,15 @@ class ContractApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<dev.bittim.valolink.main.domain.model.game.contract.Contract?> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
         return gameDatabase.contractsDao
             .getRecruitmentByUuid(uuid)
             .distinctUntilChanged()
-            .transform { recruitment ->
+            .combineTransform(
+                versionRepository.get()
+            ) { recruitment, apiVersion ->
+                val version = providedVersion ?: apiVersion.version
+
                 if (recruitment == null || recruitment.recruitment.version != version) {
                     agentRepository.fetchAgents(version)
                 } else {
@@ -75,24 +87,33 @@ class ContractApiRepository @Inject constructor(
 
 
     override suspend fun getActiveContracts(providedVersion: String?): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+
         val currentIsoTime = Instant.now().toString()
 
         return gameDatabase.contractsDao
             .getActiveByTime(currentIsoTime)
             .distinctUntilChanged()
-            .transform { contracts ->
+            .combineTransform(
+                versionRepository.get()
+            ) { contracts, apiVersion ->
+                val version = providedVersion ?: apiVersion.version
+
                 if (contracts.isEmpty() || contracts.any { it.contract.version != version }) {
                     fetchContracts(version)
                 } else {
-                    emit(contracts)
+                    emit(
+                        Pair(
+                            contracts,
+                            version
+                        )
+                    )
                 }
             }
-            .map { contracts ->
-                contracts.map {
+            .map { contractsVersionPair ->
+                contractsVersionPair.first.map {
                     it.toType(
                         getRelation(
-                            version,
+                            contractsVersionPair.second,
                             it.content.content
                         ).firstOrNull()
                     )
@@ -109,19 +130,27 @@ class ContractApiRepository @Inject constructor(
     }
 
     override suspend fun getAgentGears(providedVersion: String?): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
 
-        return gameDatabase.contractsDao.getAllGears().distinctUntilChanged().transform { gears ->
+        return gameDatabase.contractsDao.getAllGears().distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { gears, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
+
             if (gears.isEmpty() || gears.any { it.contract.version != version }) {
                 agentRepository.fetchAgents(version)
             } else {
-                emit(gears)
+                emit(
+                    Pair(
+                        gears,
+                        version
+                    )
+                )
             }
-        }.map { gears ->
-            gears.map {
+        }.map { gearsVersionPair ->
+            gearsVersionPair.first.map {
                 it.toType(
                     getRelation(
-                        version,
+                        gearsVersionPair.second,
                         it.content.content
                     ).firstOrNull()
                 )
@@ -130,30 +159,38 @@ class ContractApiRepository @Inject constructor(
     }
 
     override suspend fun getInactiveContracts(
-        contentType: String,
+        contentType: ContentType,
         providedVersion: String?,
     ): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
         val currentIsoTime = Instant.now().toString()
 
         return when (contentType) {
-            "Season"      -> {
+            ContentType.SEASON  -> {
                 gameDatabase.contractsDao
                     .getInactiveSeasonsByTime(currentIsoTime)
                     .distinctUntilChanged()
-                    .transform { seasons ->
+                    .combineTransform(
+                        versionRepository.get()
+                    ) { seasons, apiVersion ->
+                        val version = providedVersion ?: apiVersion.version
+
                         if (seasons.isEmpty() || seasons.any { it.contract.version != version }) {
                             seasonRepository.fetchSeasons(version)
                             fetchContracts(version)
                         } else {
-                            emit(seasons)
+                            emit(
+                                Pair(
+                                    seasons,
+                                    version
+                                )
+                            )
                         }
                     }
-                    .map { entities ->
-                        entities.map {
+                    .map { entitiesVersionPair ->
+                        entitiesVersionPair.first.map {
                             it.toType(
                                 getRelation(
-                                    version,
+                                    entitiesVersionPair.second,
                                     it.content.content
                                 ).firstOrNull()
                             )
@@ -161,23 +198,32 @@ class ContractApiRepository @Inject constructor(
                     }
             }
 
-            "Event"       -> {
+            ContentType.EVENT   -> {
                 gameDatabase.contractsDao
                     .getInactiveEventsByTime(currentIsoTime)
                     .distinctUntilChanged()
-                    .transform { events ->
+                    .combineTransform(
+                        versionRepository.get()
+                    ) { events, apiVersion ->
+                        val version = providedVersion ?: apiVersion.version
+
                         if (events.isEmpty() || events.any { it.contract.version != version }) {
                             eventRepository.fetchEvents(version)
                             fetchContracts(version)
                         } else {
-                            emit(events)
+                            emit(
+                                Pair(
+                                    events,
+                                    version
+                                )
+                            )
                         }
                     }
-                    .map { entities ->
-                        entities.map {
+                    .map { entitiesVersionMap ->
+                        entitiesVersionMap.first.map {
                             it.toType(
                                 getRelation(
-                                    version,
+                                    entitiesVersionMap.second,
                                     it.content.content
                                 ).firstOrNull()
                             )
@@ -185,11 +231,15 @@ class ContractApiRepository @Inject constructor(
                     }
             }
 
-            "Recruitment" -> {
+            ContentType.RECRUIT -> {
                 gameDatabase.contractsDao
                     .getInactiveRecruitmentsByTime(currentIsoTime)
                     .distinctUntilChanged()
-                    .transform { recruitments ->
+                    .combineTransform(
+                        versionRepository.get()
+                    ) { recruitments, apiVersion ->
+                        val version = providedVersion ?: apiVersion.version
+
                         if (recruitments.isEmpty() || recruitments.any { it.recruitment.version != version }) {
                             fetchContracts(version)
                         } else {
@@ -200,8 +250,6 @@ class ContractApiRepository @Inject constructor(
                         entities.map { it.toContract() }
                     }
             }
-
-            else          -> flow { }
         }
     }
 

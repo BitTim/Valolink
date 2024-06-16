@@ -4,9 +4,9 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.domain.model.game.buddy.Buddy
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class BuddyApiRepository @Inject constructor(
@@ -24,9 +24,11 @@ class BuddyApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<Buddy> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.buddyDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { entity, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.buddyDao.getByUuid(uuid).distinctUntilChanged().transform { entity ->
             if (entity == null || entity.buddy.version != version) {
                 fetch(
                     uuid,
@@ -42,12 +44,14 @@ class BuddyApiRepository @Inject constructor(
         levelUuid: String,
         providedVersion: String?,
     ): Flow<Buddy> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
-
         return gameDatabase.buddyDao
             .getByLevelUuid(levelUuid)
             .distinctUntilChanged()
-            .transform { entity ->
+            .combineTransform(
+                versionRepository.get()
+            ) { entity, apiVersion ->
+                val version = providedVersion ?: apiVersion.version
+
                 if (entity == null || entity.buddy.version != version) {
                     fetchAll(version)
                 } else {

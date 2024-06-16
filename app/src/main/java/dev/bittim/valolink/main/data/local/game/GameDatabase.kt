@@ -13,6 +13,7 @@ import dev.bittim.valolink.main.data.local.game.dao.PlayerCardDao
 import dev.bittim.valolink.main.data.local.game.dao.PlayerTitleDao
 import dev.bittim.valolink.main.data.local.game.dao.SeasonDao
 import dev.bittim.valolink.main.data.local.game.dao.SprayDao
+import dev.bittim.valolink.main.data.local.game.dao.VersionDao
 import dev.bittim.valolink.main.data.local.game.dao.WeaponDao
 import dev.bittim.valolink.main.data.local.game.entity.CurrencyEntity
 import dev.bittim.valolink.main.data.local.game.entity.EventEntity
@@ -20,6 +21,7 @@ import dev.bittim.valolink.main.data.local.game.entity.PlayerCardEntity
 import dev.bittim.valolink.main.data.local.game.entity.PlayerTitleEntity
 import dev.bittim.valolink.main.data.local.game.entity.SeasonEntity
 import dev.bittim.valolink.main.data.local.game.entity.SprayEntity
+import dev.bittim.valolink.main.data.local.game.entity.VersionEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.AbilityEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.AgentEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.RecruitmentEntity
@@ -44,11 +46,33 @@ import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponDamage
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponStatsEntity
 
 @Database(
-    entities = [SeasonEntity::class, EventEntity::class, ContractEntity::class, ContentEntity::class, ChapterEntity::class, LevelEntity::class, RewardEntity::class, AgentEntity::class, RecruitmentEntity::class, RoleEntity::class, AbilityEntity::class, CurrencyEntity::class, SprayEntity::class, PlayerTitleEntity::class, PlayerCardEntity::class, BuddyEntity::class, BuddyLevelEntity::class, WeaponEntity::class, WeaponStatsEntity::class, WeaponAdsStatsEntity::class, WeaponAltShotgunStatsEntity::class, WeaponAirBurstStatsEntity::class, WeaponDamageRangeEntity::class, WeaponShopDataEntity::class, WeaponGridPositionEntity::class, WeaponSkinEntity::class, WeaponSkinChromaEntity::class, WeaponSkinLevelEntity::class],
+    entities = [
+        VersionEntity::class,
+
+        SeasonEntity::class, EventEntity::class,
+
+        ContractEntity::class, ContentEntity::class, ChapterEntity::class,
+        LevelEntity::class, RewardEntity::class,
+
+        AgentEntity::class, RecruitmentEntity::class, RoleEntity::class, AbilityEntity::class,
+
+        CurrencyEntity::class, SprayEntity::class, PlayerTitleEntity::class,
+        PlayerCardEntity::class,
+
+        BuddyEntity::class, BuddyLevelEntity::class,
+
+        WeaponEntity::class, WeaponStatsEntity::class, WeaponAdsStatsEntity::class,
+        WeaponAltShotgunStatsEntity::class, WeaponAirBurstStatsEntity::class,
+        WeaponDamageRangeEntity::class, WeaponShopDataEntity::class,
+        WeaponGridPositionEntity::class, WeaponSkinEntity::class,
+        WeaponSkinChromaEntity::class, WeaponSkinLevelEntity::class
+    ],
     version = 1
 )
 @TypeConverters(StringListConverter::class)
 abstract class GameDatabase : RoomDatabase() {
+    abstract val versionDao: VersionDao
+
     abstract val agentDao: AgentDao
     abstract val contractsDao: ContractsDao
     abstract val eventDao: EventDao

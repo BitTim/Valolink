@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.data.repository.game
 
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import kotlinx.coroutines.flow.Flow
 
 interface ContractRepository {
@@ -20,7 +21,7 @@ interface ContractRepository {
     suspend fun getActiveContracts(providedVersion: String? = null): Flow<List<Contract>>
     suspend fun getAgentGears(providedVersion: String? = null): Flow<List<Contract>>
     suspend fun getInactiveContracts(
-        contentType: String,
+        contentType: ContentType,
         providedVersion: String? = null,
     ): Flow<List<Contract>>
 

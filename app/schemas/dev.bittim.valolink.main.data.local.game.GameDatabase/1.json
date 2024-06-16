@@ -2,8 +2,86 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c696288291df0f9e5d328469278aa2c1",
+    "identityHash": "473ead3c78885e78b4d6d667ac3fcd61",
     "entities": [
+      {
+        "tableName": "Version",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `manifestId` TEXT NOT NULL, `branch` TEXT NOT NULL, `version` TEXT NOT NULL, `buildVersion` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `riotClientVersion` TEXT NOT NULL, `riotClientBuild` TEXT NOT NULL, `buildDate` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manifestId",
+            "columnName": "manifestId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "branch",
+            "columnName": "branch",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buildVersion",
+            "columnName": "buildVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "engineVersion",
+            "columnName": "engineVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "riotClientVersion",
+            "columnName": "riotClientVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "riotClientBuild",
+            "columnName": "riotClientBuild",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buildDate",
+            "columnName": "buildDate",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Version_id",
+            "unique": true,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Version_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
       {
         "tableName": "Seasons",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `type` TEXT, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, `parentUuid` TEXT, PRIMARY KEY(`uuid`))",
@@ -2397,7 +2475,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c696288291df0f9e5d328469278aa2c1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '473ead3c78885e78b4d6d667ac3fcd61')"
     ]
   }
 }

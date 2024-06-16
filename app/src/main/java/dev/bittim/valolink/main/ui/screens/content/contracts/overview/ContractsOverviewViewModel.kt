@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.user.GearRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +30,7 @@ class ContractsOverviewViewModel @Inject constructor(
     private val gearRepository: GearRepository,
     private val addUserGearUseCase: AddUserGearUseCase,
 ) : ViewModel() {
-    private val _filterState = MutableStateFlow(ArchiveTypeFilter.SEASON)
+    private val _filterState = MutableStateFlow(ContentType.SEASON)
 
     private val _state = MutableStateFlow(ContractsOverviewState())
     val state = _state.asStateFlow()
@@ -82,7 +83,7 @@ class ContractsOverviewViewModel @Inject constructor(
 
         viewModelScope.launch {
             _filterState.flatMapLatest {
-                contractRepository.getInactiveContracts(it.internalType)
+                contractRepository.getInactiveContracts(it)
             }.collectLatest { contracts ->
                 _state.update {
                     it.copy(
@@ -94,9 +95,9 @@ class ContractsOverviewViewModel @Inject constructor(
         }
     }
 
-    fun onArchiveTypeFilterChange(archiveTypeFilter: ArchiveTypeFilter) {
-        _state.update { it.copy(archiveTypeFilter = archiveTypeFilter) }
-        _filterState.update { archiveTypeFilter }
+    fun onArchiveTypeFilterChange(contentType: ContentType) {
+        _state.update { it.copy(archiveTypeFilter = contentType) }
+        _filterState.update { contentType }
     }
 
     fun addUserGear(contract: String) {

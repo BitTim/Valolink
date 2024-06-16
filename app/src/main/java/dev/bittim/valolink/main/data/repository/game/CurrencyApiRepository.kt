@@ -4,9 +4,9 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.domain.model.game.Currency
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class CurrencyApiRepository @Inject constructor(
@@ -24,9 +24,11 @@ class CurrencyApiRepository @Inject constructor(
         uuid: String,
         providedVersion: String?,
     ): Flow<Currency> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+        return gameDatabase.currencyDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { entity, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
 
-        return gameDatabase.currencyDao.getByUuid(uuid).distinctUntilChanged().transform { entity ->
             if (entity == null || entity.version != version) {
                 fetchCurrency(
                     uuid,
