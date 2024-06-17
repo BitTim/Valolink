@@ -16,7 +16,7 @@ interface EventDao {
     suspend fun upsert(event: EventEntity)
 
     @Upsert
-    suspend fun upsert(seasons: List<EventEntity>)
+    suspend fun upsert(events: Set<EventEntity>)
 
     // --------------------------------
     //  Query

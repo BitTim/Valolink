@@ -95,7 +95,7 @@ class ContractDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            currencyRepository.getCurrency(Currency.VP_UUID).collectLatest { currency ->
+            currencyRepository.getByUuid(Currency.VP_UUID).collectLatest { currency ->
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -112,28 +112,28 @@ class ContractDetailsViewModel @Inject constructor(
         level: ChapterLevel,
     ): Flow<Pair<RewardRelation, ChapterLevel>> {
         return when (type) {
-            "Currency"             -> currencyRepository.getCurrency(uuid).map {
+            "Currency" -> currencyRepository.getByUuid(uuid).map {
                 Pair(
                     it.asRewardRelation(level.reward.amount),
                     level
                 )
             }
 
-            "Spray"                -> sprayRepository.getSpray(uuid).map {
+            "Spray" -> sprayRepository.getByUuid(uuid).map {
                 Pair(
                     it.asRewardRelation(level.reward.amount),
                     level
                 )
             }
 
-            "PlayerCard"           -> playerCardRepository.getPlayerCard(uuid).map {
+            "PlayerCard" -> playerCardRepository.getByUuid(uuid).map {
                 Pair(
                     it.asRewardRelation(level.reward.amount),
                     level
                 )
             }
 
-            "Title"                -> playerTitleRepository.getPlayerTitle(uuid).map {
+            "Title" -> playerTitleRepository.getByUuid(uuid).map {
                 Pair(
                     it.asRewardRelation(level.reward.amount),
                     level

@@ -1,8 +1,15 @@
 package dev.bittim.valolink.main.data.repository.game
 
 import androidx.room.withTransaction
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.SeasonSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Season
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
@@ -14,6 +21,7 @@ class SeasonApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager
 ) : SeasonRepository {
     // --------------------------------
     //  Query from Database
@@ -21,7 +29,7 @@ class SeasonApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getSeason(
+    override suspend fun getByUuid(
         uuid: String,
         providedVersion: String?,
     ): Flow<Season> {
@@ -31,7 +39,7 @@ class SeasonApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (season == null || season.version != version) {
-                fetchSeason(
+                queueWorker(
                     uuid,
                     version
                 )
@@ -43,14 +51,14 @@ class SeasonApiRepository @Inject constructor(
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAllSeasons(providedVersion: String?): Flow<List<Season>> {
+    override suspend fun getAll(providedVersion: String?): Flow<List<Season>> {
         return gameDatabase.seasonDao.getAll().distinctUntilChanged().combineTransform(
             versionRepository.get()
         ) { seasons, apiVersion ->
             val version = providedVersion ?: apiVersion.version
 
             if (seasons.isEmpty() || seasons.any { it.version != version }) {
-                fetchSeasons(version)
+                queueWorker(version)
             } else {
                 emit(seasons)
             }
@@ -65,7 +73,7 @@ class SeasonApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchSeason(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -79,7 +87,7 @@ class SeasonApiRepository @Inject constructor(
 
     // -------- [ Bulk fetching ] --------
 
-    override suspend fun fetchSeasons(version: String) {
+    override suspend fun fetchAll(version: String) {
         val response = gameApi.getAllSeasons()
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
@@ -88,5 +96,26 @@ class SeasonApiRepository @Inject constructor(
                 })
             }
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(version: String, uuid: String?) {
+        val workRequest = OneTimeWorkRequestBuilder<SeasonSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    SeasonSyncWorker.KEY_SEASON_UUID to uuid,
+                    SeasonSyncWorker.KEY_VERSION to version
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            SeasonSyncWorker.WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            workRequest
+        )
     }
 }

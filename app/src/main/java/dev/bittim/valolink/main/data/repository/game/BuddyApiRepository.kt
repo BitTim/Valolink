@@ -1,7 +1,15 @@
 package dev.bittim.valolink.main.data.repository.game
 
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.AgentSyncWorker
+import dev.bittim.valolink.main.data.worker.game.BuddySyncWorker
 import dev.bittim.valolink.main.domain.model.game.buddy.Buddy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
@@ -13,6 +21,7 @@ class BuddyApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager
 ) : BuddyRepository {
     // --------------------------------
     //  Query from Database
@@ -30,10 +39,7 @@ class BuddyApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (entity == null || entity.buddy.version != version) {
-                fetch(
-                    uuid,
-                    version
-                )
+                queueWorker(version, uuid)
             } else {
                 emit(entity)
             }
@@ -53,7 +59,7 @@ class BuddyApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (entity == null || entity.buddy.version != version) {
-                    fetchAll(version)
+                    queueWorker(version)
                 } else {
                     emit(entity)
                 }
@@ -112,5 +118,26 @@ class BuddyApiRepository @Inject constructor(
                 levels.distinct().toSet()
             )
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(version: String, uuid: String?) {
+        val workRequest = OneTimeWorkRequestBuilder<BuddySyncWorker>()
+            .setInputData(
+                workDataOf(
+                    BuddySyncWorker.KEY_BUDDY_UUID to uuid,
+                    BuddySyncWorker.KEY_VERSION to version
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            BuddySyncWorker.WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            workRequest
+        )
     }
 }

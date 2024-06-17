@@ -1,8 +1,16 @@
 package dev.bittim.valolink.main.data.repository.game
 
 import androidx.room.withTransaction
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.AgentSyncWorker
+import dev.bittim.valolink.main.data.worker.game.BuddySyncWorker
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
@@ -14,6 +22,7 @@ class AgentApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager,
 ) : AgentRepository {
     // --------------------------------
     //  Query from Database
@@ -21,7 +30,7 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getAgent(
+    override suspend fun getByUuid(
         uuid: String,
         providedVersion: String?,
     ): Flow<Agent> {
@@ -31,10 +40,7 @@ class AgentApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (agent == null || agent.agent.version != version) {
-                fetchAgent(
-                    uuid,
-                    version
-                )
+                queueWorker(version, uuid)
             } else {
                 emit(agent)
             }
@@ -45,14 +51,14 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAllAgents(providedVersion: String?): Flow<List<Agent>> {
+    override suspend fun getAll(providedVersion: String?): Flow<List<Agent>> {
         return gameDatabase.agentDao.getAll().distinctUntilChanged().combineTransform(
             versionRepository.get()
         ) { agents, apiVersion ->
             val version = providedVersion ?: apiVersion.version
 
             if (agents.isEmpty() || agents.any { it.agent.version != version }) {
-                fetchAgents(version)
+                queueWorker(version)
             } else {
                 emit(agents)
             }
@@ -68,7 +74,7 @@ class AgentApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
-                fetchAgents(version)
+                queueWorker(version)
             } else {
                 emit(agentMaps.keys.toList())
             }
@@ -81,7 +87,7 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchAgent(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -116,7 +122,7 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Bulk fetching ] --------
 
-    override suspend fun fetchAgents(version: String) {
+    override suspend fun fetchAll(version: String) {
         val response = gameApi.getAllAgents()
         if (response.isSuccessful) {
             val agentDto = response.body()!!.data!!
@@ -151,5 +157,26 @@ class AgentApiRepository @Inject constructor(
                 )
             }
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(version: String, uuid: String?) {
+        val workRequest = OneTimeWorkRequestBuilder<AgentSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    AgentSyncWorker.KEY_AGENT_UUID to uuid,
+                    AgentSyncWorker.KEY_VERSION to version
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            AgentSyncWorker.WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            workRequest
+        )
     }
 }

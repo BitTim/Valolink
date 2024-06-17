@@ -1,8 +1,16 @@
 package dev.bittim.valolink.main.data.repository.game
 
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponDto
+import dev.bittim.valolink.main.data.worker.game.SeasonSyncWorker
+import dev.bittim.valolink.main.data.worker.game.WeaponSyncWorker
 import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
@@ -14,6 +22,7 @@ class WeaponApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager
 ) : WeaponRepository {
     // --------------------------------
     //  Query from Database
@@ -35,9 +44,7 @@ class WeaponApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (entity == null || entity.weaponSkin.version != version) {
-                    fetchAll(
-                        version
-                    )
+                    queueWorker(version)
                 } else {
                     emit(entity)
                 }
@@ -193,6 +200,27 @@ class WeaponApiRepository @Inject constructor(
             skins.distinct().toSet(),
             skinChromas.distinct().toSet(),
             skinLevels.distinct().toSet(),
+        )
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(version: String, uuid: String?) {
+        val workRequest = OneTimeWorkRequestBuilder<WeaponSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    WeaponSyncWorker.KEY_WEAPON_UUID to uuid,
+                    WeaponSyncWorker.KEY_VERSION to version
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            WeaponSyncWorker.WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            workRequest
         )
     }
 }

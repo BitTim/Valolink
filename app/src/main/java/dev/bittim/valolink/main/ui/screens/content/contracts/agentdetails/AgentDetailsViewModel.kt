@@ -72,7 +72,7 @@ class AgentDetailsViewModel @Inject constructor(
                     contract?.content?.chapters?.flatMap { it.levels }?.map { level ->
                         when (level.reward.rewardType) {
                             "Currency"             -> currencyRepository
-                                .getCurrency(level.reward.rewardUuid)
+                                .getByUuid(level.reward.rewardUuid)
                                 .map {
                                     Pair(
                                         it.asRewardRelation(level.reward.amount),
@@ -81,7 +81,7 @@ class AgentDetailsViewModel @Inject constructor(
                                 }
 
                             "Spray"                -> sprayRepository
-                                .getSpray(level.reward.rewardUuid)
+                                .getByUuid(level.reward.rewardUuid)
                                 .map {
                                     Pair(
                                         it.asRewardRelation(level.reward.amount),
@@ -90,7 +90,7 @@ class AgentDetailsViewModel @Inject constructor(
                                 }
 
                             "PlayerCard"           -> playerCardRepository
-                                .getPlayerCard(level.reward.rewardUuid)
+                                .getByUuid(level.reward.rewardUuid)
                                 .map {
                                     Pair(
                                         it.asRewardRelation(level.reward.amount),
@@ -99,7 +99,7 @@ class AgentDetailsViewModel @Inject constructor(
                                 }
 
                             "Title"                -> playerTitleRepository
-                                .getPlayerTitle(level.reward.rewardUuid)
+                                .getByUuid(level.reward.rewardUuid)
                                 .map {
                                     Pair(
                                         it.asRewardRelation(level.reward.amount),
@@ -148,7 +148,7 @@ class AgentDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            currencyRepository.getCurrency(Currency.DOUGH_UUID).collectLatest { currency ->
+            currencyRepository.getByUuid(Currency.DOUGH_UUID).collectLatest { currency ->
                 _state.update {
                     it.copy(
                         isLoading = false,

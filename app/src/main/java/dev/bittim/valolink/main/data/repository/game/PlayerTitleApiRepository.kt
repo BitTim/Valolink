@@ -1,7 +1,15 @@
 package dev.bittim.valolink.main.data.repository.game
 
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.EventSyncWorker
+import dev.bittim.valolink.main.data.worker.game.PlayerTitleSyncWorker
 import dev.bittim.valolink.main.domain.model.game.PlayerTitle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
@@ -13,6 +21,7 @@ class PlayerTitleApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager
 ) : PlayerTitleRepository {
     // --------------------------------
     //  Query from Database
@@ -20,7 +29,7 @@ class PlayerTitleApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getPlayerTitle(
+    override suspend fun getByUuid(
         uuid: String,
         providedVersion: String?,
     ): Flow<PlayerTitle> {
@@ -33,7 +42,7 @@ class PlayerTitleApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (entity == null || entity.version != version) {
-                    fetchPlayerTitle(
+                    queueWorker(
                         uuid,
                         version
                     )
@@ -44,13 +53,35 @@ class PlayerTitleApiRepository @Inject constructor(
             .map { it.toType() }
     }
 
+    // -------- [ Bulk queries ] --------
+
+    override suspend fun getAll(
+        providedVersion: String?,
+    ): Flow<List<PlayerTitle>> {
+        return gameDatabase.playerTitleDao
+            .getAll()
+            .distinctUntilChanged()
+            .combineTransform(
+                versionRepository.get()
+            ) { playerTitles, apiVersion ->
+                val version = providedVersion ?: apiVersion.version
+
+                if (playerTitles.isEmpty() || playerTitles.any { it.version != version }) {
+                    queueWorker(version)
+                } else {
+                    emit(playerTitles)
+                }
+            }
+            .map { playerTitles -> playerTitles.map { it.toType() } }
+    }
+
     // --------------------------------
     //  Fetching from API
     // --------------------------------
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchPlayerTitle(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -58,5 +89,41 @@ class PlayerTitleApiRepository @Inject constructor(
         if (response.isSuccessful) {
             gameDatabase.playerTitleDao.upsert(response.body()!!.data!!.toEntity(version))
         }
+    }
+
+    // -------- [ Bulk fetching ] --------
+
+    override suspend fun fetchAll(
+        version: String,
+    ) {
+        val response = gameApi.getAllPlayerTitles()
+        if (response.isSuccessful) {
+            gameDatabase.playerTitleDao.upsert(
+                response.body()!!.data!!.map {
+                    it.toEntity(version)
+                }.distinct().toSet()
+            )
+        }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(version: String, uuid: String?) {
+        val workRequest = OneTimeWorkRequestBuilder<PlayerTitleSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    PlayerTitleSyncWorker.KEY_PLAYERTITLE_UUID to uuid,
+                    PlayerTitleSyncWorker.KEY_VERSION to version
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            PlayerTitleSyncWorker.WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            workRequest
+        )
     }
 }

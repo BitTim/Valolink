@@ -213,11 +213,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): SeasonRepository {
         return SeasonApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -227,11 +229,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): EventRepository {
         return EventApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -241,11 +245,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): AgentRepository {
         return AgentApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -258,6 +264,7 @@ object MainModule {
         seasonRepository: SeasonRepository,
         eventRepository: EventRepository,
         agentRepository: AgentRepository,
+        workManager: WorkManager,
     ): ContractRepository {
         return ContractApiRepository(
             gameDatabase,
@@ -265,7 +272,8 @@ object MainModule {
             versionRepository,
             seasonRepository,
             eventRepository,
-            agentRepository
+            agentRepository,
+            workManager
         )
     }
 
@@ -275,11 +283,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): CurrencyRepository {
         return CurrencyApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -289,11 +299,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): SprayRepository {
         return SprayApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -303,11 +315,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): PlayerTitleRepository {
         return PlayerTitleApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -317,11 +331,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): PlayerCardRepository {
         return PlayerCardApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -331,11 +347,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): BuddyRepository {
         return BuddyApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -345,11 +363,13 @@ object MainModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): WeaponRepository {
         return WeaponApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 

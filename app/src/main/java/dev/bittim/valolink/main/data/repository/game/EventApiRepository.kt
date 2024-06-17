@@ -1,8 +1,16 @@
 package dev.bittim.valolink.main.data.repository.game
 
 import androidx.room.withTransaction
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.BuddySyncWorker
+import dev.bittim.valolink.main.data.worker.game.EventSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Event
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
@@ -14,6 +22,7 @@ class EventApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager
 ) : EventRepository {
     // --------------------------------
     //  Query from Database
@@ -21,7 +30,7 @@ class EventApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getEvent(
+    override suspend fun getByUuid(
         uuid: String,
         providedVersion: String?,
     ): Flow<Event> {
@@ -31,7 +40,7 @@ class EventApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (event == null || event.version != version) {
-                fetchEvent(
+                fetch(
                     uuid,
                     version
                 )
@@ -43,14 +52,14 @@ class EventApiRepository @Inject constructor(
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAllEvents(providedVersion: String?): Flow<List<Event>> {
+    override suspend fun getAll(providedVersion: String?): Flow<List<Event>> {
         return gameDatabase.eventDao.getAll().distinctUntilChanged().combineTransform(
             versionRepository.get()
         ) { events, apiVersion ->
             val version = providedVersion ?: apiVersion.version
 
             if (events.isEmpty() || events.any { it.version != version }) {
-                fetchEvents(version)
+                queueWorker(version)
             } else {
                 emit(events)
             }
@@ -65,7 +74,7 @@ class EventApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchEvent(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -79,14 +88,35 @@ class EventApiRepository @Inject constructor(
 
     // -------- [ Bulk fetching ] --------
 
-    override suspend fun fetchEvents(version: String) {
+    override suspend fun fetchAll(version: String) {
         val response = gameApi.getAllEvents()
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
                 gameDatabase.eventDao.upsert(response.body()!!.data!!.map {
                     it.toEntity(version)
-                })
+                }.distinct().toSet())
             }
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(version: String, uuid: String?) {
+        val workRequest = OneTimeWorkRequestBuilder<EventSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    EventSyncWorker.KEY_EVENT_UUID to uuid,
+                    EventSyncWorker.KEY_VERSION to version
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            EventSyncWorker.WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            workRequest
+        )
     }
 }

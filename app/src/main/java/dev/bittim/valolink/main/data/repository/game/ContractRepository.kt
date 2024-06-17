@@ -15,9 +15,6 @@ interface ContractRepository {
         providedVersion: String? = null,
     ): Flow<Contract?>
 
-    //suspend fun getContractWithRewards(uuid: String, providedVersion: String? = null): Flow<Contract?>
-    //suspend fun getRecruitmentAsContractWithRewards(uuid: String, providedVersion: String? = null): Flow<Contract?>
-
     suspend fun getActiveContracts(providedVersion: String? = null): Flow<List<Contract>>
     suspend fun getAgentGears(providedVersion: String? = null): Flow<List<Contract>>
     suspend fun getInactiveContracts(
@@ -29,6 +26,7 @@ interface ContractRepository {
         uuid: String,
         version: String,
     )
+    suspend fun fetchAllContracts(version: String)
 
-    suspend fun fetchContracts(version: String)
+    fun queueWorker(version: String, uuid: String? = null)
 }

@@ -4,13 +4,17 @@ import dev.bittim.valolink.main.domain.model.game.PlayerTitle
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerTitleRepository {
-    suspend fun getPlayerTitle(
+    suspend fun getByUuid(
         uuid: String,
         providedVersion: String? = null,
     ): Flow<PlayerTitle>
 
-    suspend fun fetchPlayerTitle(
+    suspend fun fetch(
         uuid: String,
         version: String,
     )
+
+    fun queueWorker(version: String, uuid: String? = null)
+    suspend fun getAll(providedVersion: String?): Flow<List<PlayerTitle>>
+    suspend fun fetchAll(version: String)
 }
