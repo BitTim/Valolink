@@ -39,8 +39,8 @@ class SprayApiRepository @Inject constructor(
 
             if (entity == null || entity.version != version) {
                 queueWorker(
-                    uuid,
-                    version
+                    version,
+                    uuid
                 )
             } else {
                 emit(entity)
@@ -112,8 +112,8 @@ class SprayApiRepository @Inject constructor(
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            SpraySyncWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            SpraySyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

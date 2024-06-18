@@ -9,7 +9,6 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.BuddySyncWorker
 import dev.bittim.valolink.main.data.worker.game.EventSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Event
 import kotlinx.coroutines.flow.Flow
@@ -40,9 +39,9 @@ class EventApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (event == null || event.version != version) {
-                fetch(
-                    uuid,
-                    version
+                queueWorker(
+                    version,
+                    uuid
                 )
             } else {
                 emit(event)
@@ -114,8 +113,8 @@ class EventApiRepository @Inject constructor(
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            EventSyncWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            EventSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

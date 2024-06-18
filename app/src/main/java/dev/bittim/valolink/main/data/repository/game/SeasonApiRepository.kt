@@ -40,8 +40,8 @@ class SeasonApiRepository @Inject constructor(
 
             if (season == null || season.version != version) {
                 queueWorker(
-                    uuid,
-                    version
+                    version,
+                    uuid
                 )
             } else {
                 emit(season)
@@ -113,8 +113,8 @@ class SeasonApiRepository @Inject constructor(
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            SeasonSyncWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            SeasonSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

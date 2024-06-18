@@ -8,7 +8,6 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.AgentSyncWorker
 import dev.bittim.valolink.main.data.worker.game.BuddySyncWorker
 import dev.bittim.valolink.main.domain.model.game.buddy.Buddy
 import kotlinx.coroutines.flow.Flow
@@ -135,8 +134,8 @@ class BuddyApiRepository @Inject constructor(
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            BuddySyncWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            BuddySyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

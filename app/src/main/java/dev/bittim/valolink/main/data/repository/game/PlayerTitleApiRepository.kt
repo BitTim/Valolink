@@ -8,7 +8,6 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.EventSyncWorker
 import dev.bittim.valolink.main.data.worker.game.PlayerTitleSyncWorker
 import dev.bittim.valolink.main.domain.model.game.PlayerTitle
 import kotlinx.coroutines.flow.Flow
@@ -43,8 +42,8 @@ class PlayerTitleApiRepository @Inject constructor(
 
                 if (entity == null || entity.version != version) {
                     queueWorker(
-                        uuid,
-                        version
+                        version,
+                        uuid
                     )
                 } else {
                     emit(entity)
@@ -121,8 +120,8 @@ class PlayerTitleApiRepository @Inject constructor(
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            PlayerTitleSyncWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            PlayerTitleSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

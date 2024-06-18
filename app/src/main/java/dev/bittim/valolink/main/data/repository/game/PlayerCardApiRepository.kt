@@ -8,7 +8,6 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.EventSyncWorker
 import dev.bittim.valolink.main.data.worker.game.PlayerCardSyncWorker
 import dev.bittim.valolink.main.domain.model.game.PlayerCard
 import kotlinx.coroutines.flow.Flow
@@ -121,8 +120,8 @@ class PlayerCardApiRepository @Inject constructor(
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            PlayerCardSyncWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            PlayerCardSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

@@ -9,7 +9,6 @@ import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.BuddySyncWorker
 import dev.bittim.valolink.main.data.worker.game.ContractSyncWorker
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
@@ -284,14 +283,14 @@ class ContractApiRepository @Inject constructor(
 
             if (content.relationUuid != null) {
                 when (content.relationType) {
-                    "Season" -> seasonRepository.fetch(
+                    "Season" -> seasonRepository.queueWorker(
+                        version,
                         content.relationUuid,
-                        version
                     )
 
-                    "Event" -> eventRepository.fetch(
+                    "Event" -> eventRepository.queueWorker(
+                        version,
                         content.relationUuid,
-                        version
                     )
                 }
             }
@@ -455,8 +454,8 @@ class ContractApiRepository @Inject constructor(
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            ContractSyncWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            ContractSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }
