@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.data.worker.game
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -18,7 +19,8 @@ class SpraySyncWorker @AssistedInject constructor(
         // Get input data from params
         val sprayUuid = params.inputData.getString(KEY_SPRAY_UUID)
         val version = params.inputData.getString(KEY_VERSION)
-        if (version.isNullOrEmpty()) return Result.failure()
+        Log.d("SPRAY_WORKER", "Version: $version")
+        if (version.isNullOrEmpty()) return Result.retry()
 
         // Fetch from API
         if (sprayUuid.isNullOrEmpty()) sprayRepository.fetchAll(version)

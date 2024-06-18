@@ -22,6 +22,8 @@ interface ContractRepository {
         providedVersion: String? = null,
     ): Flow<List<Contract>>
 
+    suspend fun getAllContracts(providedVersion: String? = null): Flow<List<Contract>>
+
     suspend fun fetchContract(
         uuid: String,
         version: String,

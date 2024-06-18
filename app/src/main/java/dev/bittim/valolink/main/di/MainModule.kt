@@ -44,6 +44,7 @@ import dev.bittim.valolink.main.data.repository.user.SessionRepository
 import dev.bittim.valolink.main.data.repository.user.SessionSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
 import dev.bittim.valolink.main.data.repository.user.UserSupabaseRepository
+import dev.bittim.valolink.main.domain.usecase.game.QueueFullSyncUseCase
 import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import io.github.jan.supabase.gotrue.Auth
 import okhttp3.Cache
@@ -381,5 +382,35 @@ object MainModule {
     @Singleton
     fun provideAddUserGearUseCase(gearRepository: GearRepository): AddUserGearUseCase {
         return AddUserGearUseCase(gearRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideQueueFullSyncUseCase(
+        agentRepository: AgentRepository,
+        buddyRepository: BuddyRepository,
+        contractRepository: ContractRepository,
+        currencyRepository: CurrencyRepository,
+        eventRepository: EventRepository,
+        playerCardRepository: PlayerCardRepository,
+        playerTitleRepository: PlayerTitleRepository,
+        seasonRepository: SeasonRepository,
+        sprayRepository: SprayRepository,
+        versionRepository: VersionRepository,
+        weaponRepository: WeaponRepository,
+    ): QueueFullSyncUseCase {
+        return QueueFullSyncUseCase(
+            agentRepository,
+            buddyRepository,
+            contractRepository,
+            currencyRepository,
+            eventRepository,
+            playerCardRepository,
+            playerTitleRepository,
+            seasonRepository,
+            sprayRepository,
+            versionRepository,
+            weaponRepository
+        )
     }
 }

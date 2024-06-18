@@ -14,6 +14,10 @@ interface BuddyRepository {
         providedVersion: String? = null,
     ): Flow<Buddy>
 
+    suspend fun getAll(
+        providedVersion: String? = null
+    ): Flow<List<Buddy>>
+
     suspend fun fetch(
         uuid: String,
         version: String,

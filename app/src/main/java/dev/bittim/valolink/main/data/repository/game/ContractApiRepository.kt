@@ -10,6 +10,7 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.worker.game.ContractSyncWorker
+import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import kotlinx.coroutines.flow.Flow
@@ -256,6 +257,34 @@ class ContractApiRepository @Inject constructor(
                     .map { entities ->
                         entities.map { it.toContract() }
                     }
+            }
+        }
+    }
+
+    override suspend fun getAllContracts(providedVersion: String?): Flow<List<Contract>> {
+        return gameDatabase.contractsDao.getAll().distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { contracts, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
+
+            if (contracts.isEmpty() || contracts.any { it.contract.version != version }) {
+                queueWorker(version)
+            } else {
+                emit(
+                    Pair(
+                        contracts,
+                        version
+                    )
+                )
+            }
+        }.map { contractsVersionPair ->
+            contractsVersionPair.first.map {
+                it.toType(
+                    getRelation(
+                        contractsVersionPair.second,
+                        it.content.content
+                    ).firstOrNull()
+                )
             }
         }
     }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "473ead3c78885e78b4d6d667ac3fcd61",
+    "identityHash": "256c579cd2a863c18ef0af8b46827f57",
     "entities": [
       {
         "tableName": "Version",
@@ -1204,7 +1204,7 @@
       },
       {
         "tableName": "PlayerTitles",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `titleText` TEXT NOT NULL, `isHiddenIfNotOwned` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT, `titleText` TEXT, `isHiddenIfNotOwned` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -1222,13 +1222,13 @@
             "fieldPath": "displayName",
             "columnName": "displayName",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "titleText",
             "columnName": "titleText",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "isHiddenIfNotOwned",
@@ -2475,7 +2475,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '473ead3c78885e78b4d6d667ac3fcd61')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '256c579cd2a863c18ef0af8b46827f57')"
     ]
   }
 }

@@ -10,6 +10,7 @@ import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponDto
 import dev.bittim.valolink.main.data.worker.game.WeaponSyncWorker
+import dev.bittim.valolink.main.domain.model.game.weapon.Weapon
 import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
@@ -49,6 +50,22 @@ class WeaponApiRepository @Inject constructor(
                 }
             }
             .map { it.toType() }
+    }
+
+    // -------- [ Bulk queries ] --------
+
+    override suspend fun getAll(providedVersion: String?): Flow<List<Weapon>> {
+        return gameDatabase.weaponDao.getAll().combineTransform(
+            versionRepository.get()
+        ) { entities, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
+
+            if (entities.isEmpty() || entities.any { it.weapon.version != version }) {
+                queueWorker(version)
+            } else {
+                emit(entities.map { it.toType() })
+            }
+        }
     }
 
     // --------------------------------

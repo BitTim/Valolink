@@ -66,6 +66,22 @@ class BuddyApiRepository @Inject constructor(
             .map { it.toType() }
     }
 
+    // -------- [ Bulk queries ] --------
+
+    override suspend fun getAll(providedVersion: String?): Flow<List<Buddy>> {
+        return gameDatabase.buddyDao.getAll().distinctUntilChanged().combineTransform(
+            versionRepository.get()
+        ) { entities, apiVersion ->
+            val version = providedVersion ?: apiVersion.version
+
+            if (entities.isEmpty() || entities.any { it.buddy.version != version }) {
+                queueWorker(version)
+            } else {
+                emit(entities.map { it.toType() })
+            }
+        }
+    }
+
     // --------------------------------
     //  Fetching from API
     // --------------------------------

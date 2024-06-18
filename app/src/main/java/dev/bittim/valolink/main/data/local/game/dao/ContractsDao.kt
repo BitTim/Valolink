@@ -136,6 +136,10 @@ interface ContractsDao {
     )
     fun getInactiveRecruitmentsByTime(currentIsoTime: String): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
 
+    @Transaction
+    @Query("SELECT * FROM Contracts")
+    fun getAll(): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
+
     // -------- [ Agent Gears ] --------
 
     @Transaction
