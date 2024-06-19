@@ -20,7 +20,7 @@ class BuddyApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : BuddyRepository {
     // --------------------------------
     //  Query from Database
@@ -38,7 +38,7 @@ class BuddyApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (entity == null || entity.buddy.version != version) {
-                queueWorker(version, uuid)
+                queueWorker(uuid)
             } else {
                 emit(entity)
             }
@@ -58,7 +58,7 @@ class BuddyApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (entity == null || entity.buddy.version != version) {
-                    queueWorker(version)
+                    queueWorker()
                 } else {
                     emit(entity)
                 }
@@ -75,7 +75,7 @@ class BuddyApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (entities.isEmpty() || entities.any { it.buddy.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(entities.map { it.toType() })
             }
@@ -139,12 +139,13 @@ class BuddyApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<BuddySyncWorker>()
             .setInputData(
                 workDataOf(
-                    BuddySyncWorker.KEY_BUDDY_UUID to uuid,
-                    BuddySyncWorker.KEY_VERSION to version
+                    BuddySyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

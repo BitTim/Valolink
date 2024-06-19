@@ -9,12 +9,14 @@ interface PlayerTitleRepository {
         providedVersion: String? = null,
     ): Flow<PlayerTitle>
 
+    suspend fun getAll(providedVersion: String?): Flow<List<PlayerTitle>>
+
     suspend fun fetch(
         uuid: String,
         version: String,
     )
 
-    fun queueWorker(version: String, uuid: String? = null)
-    suspend fun getAll(providedVersion: String?): Flow<List<PlayerTitle>>
     suspend fun fetchAll(version: String)
+
+    fun queueWorker(uuid: String? = null)
 }

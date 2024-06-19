@@ -20,7 +20,7 @@ class PlayerTitleApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : PlayerTitleRepository {
     // --------------------------------
     //  Query from Database
@@ -41,10 +41,7 @@ class PlayerTitleApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (entity == null || entity.version != version) {
-                    queueWorker(
-                        version,
-                        uuid
-                    )
+                    queueWorker(uuid)
                 } else {
                     emit(entity)
                 }
@@ -66,7 +63,7 @@ class PlayerTitleApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (playerTitles.isEmpty() || playerTitles.any { it.version != version }) {
-                    queueWorker(version)
+                    queueWorker()
                 } else {
                     emit(playerTitles)
                 }
@@ -109,12 +106,13 @@ class PlayerTitleApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<PlayerTitleSyncWorker>()
             .setInputData(
                 workDataOf(
-                    PlayerTitleSyncWorker.KEY_PLAYERTITLE_UUID to uuid,
-                    PlayerTitleSyncWorker.KEY_VERSION to version
+                    PlayerTitleSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

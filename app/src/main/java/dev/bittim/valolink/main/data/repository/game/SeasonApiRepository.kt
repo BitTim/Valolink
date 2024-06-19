@@ -21,7 +21,7 @@ class SeasonApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : SeasonRepository {
     // --------------------------------
     //  Query from Database
@@ -39,10 +39,7 @@ class SeasonApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (season == null || season.version != version) {
-                queueWorker(
-                    version,
-                    uuid
-                )
+                queueWorker(uuid)
             } else {
                 emit(season)
             }
@@ -58,7 +55,7 @@ class SeasonApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (seasons.isEmpty() || seasons.any { it.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(seasons)
             }
@@ -102,12 +99,13 @@ class SeasonApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<SeasonSyncWorker>()
             .setInputData(
                 workDataOf(
-                    SeasonSyncWorker.KEY_SEASON_UUID to uuid,
-                    SeasonSyncWorker.KEY_VERSION to version
+                    SeasonSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

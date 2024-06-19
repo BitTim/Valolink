@@ -28,7 +28,8 @@ interface ContractRepository {
         uuid: String,
         version: String,
     )
+
     suspend fun fetchAllContracts(version: String)
 
-    fun queueWorker(version: String, uuid: String? = null)
+    fun queueWorker(uuid: String? = null)
 }

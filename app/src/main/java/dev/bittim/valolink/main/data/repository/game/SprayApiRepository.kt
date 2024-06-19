@@ -20,7 +20,7 @@ class SprayApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : SprayRepository {
     // --------------------------------
     //  Query from Database
@@ -38,10 +38,7 @@ class SprayApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (entity == null || entity.version != version) {
-                queueWorker(
-                    version,
-                    uuid
-                )
+                queueWorker(uuid)
             } else {
                 emit(entity)
             }
@@ -59,7 +56,7 @@ class SprayApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (sprays.isEmpty() || sprays.any { it.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(sprays)
             }
@@ -101,12 +98,13 @@ class SprayApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<SpraySyncWorker>()
             .setInputData(
                 workDataOf(
-                    SpraySyncWorker.KEY_SPRAY_UUID to uuid,
-                    SpraySyncWorker.KEY_VERSION to version
+                    SpraySyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

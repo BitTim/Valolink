@@ -396,7 +396,6 @@ object MainModule {
         playerTitleRepository: PlayerTitleRepository,
         seasonRepository: SeasonRepository,
         sprayRepository: SprayRepository,
-        versionRepository: VersionRepository,
         weaponRepository: WeaponRepository,
     ): QueueFullSyncUseCase {
         return QueueFullSyncUseCase(
@@ -409,7 +408,6 @@ object MainModule {
             playerTitleRepository,
             seasonRepository,
             sprayRepository,
-            versionRepository,
             weaponRepository
         )
     }

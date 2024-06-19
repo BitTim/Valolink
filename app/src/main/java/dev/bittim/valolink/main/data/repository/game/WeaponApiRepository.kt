@@ -22,7 +22,7 @@ class WeaponApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : WeaponRepository {
     // --------------------------------
     //  Query from Database
@@ -44,7 +44,7 @@ class WeaponApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (entity == null || entity.weaponSkin.version != version) {
-                    queueWorker(version)
+                    queueWorker()
                 } else {
                     emit(entity)
                 }
@@ -61,7 +61,7 @@ class WeaponApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (entities.isEmpty() || entities.any { it.weapon.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(entities.map { it.toType() })
             }
@@ -223,12 +223,13 @@ class WeaponApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<WeaponSyncWorker>()
             .setInputData(
                 workDataOf(
-                    WeaponSyncWorker.KEY_WEAPON_UUID to uuid,
-                    WeaponSyncWorker.KEY_VERSION to version
+                    WeaponSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

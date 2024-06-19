@@ -39,7 +39,7 @@ class AgentApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (agent == null || agent.agent.version != version) {
-                queueWorker(version, uuid)
+                queueWorker(uuid)
             } else {
                 emit(agent)
             }
@@ -57,7 +57,7 @@ class AgentApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (agents.isEmpty() || agents.any { it.agent.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(agents)
             }
@@ -73,7 +73,7 @@ class AgentApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(agentMaps.keys.toList())
             }
@@ -162,12 +162,13 @@ class AgentApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<AgentSyncWorker>()
             .setInputData(
                 workDataOf(
-                    AgentSyncWorker.KEY_AGENT_UUID to uuid,
-                    AgentSyncWorker.KEY_VERSION to version
+                    AgentSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

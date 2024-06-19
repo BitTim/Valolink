@@ -17,5 +17,5 @@ interface EventRepository {
     )
 
     suspend fun fetchAll(version: String)
-    fun queueWorker(version: String, uuid: String? = null)
+    fun queueWorker(uuid: String? = null)
 }

@@ -9,12 +9,14 @@ interface SprayRepository {
         providedVersion: String? = null,
     ): Flow<Spray>
 
+    suspend fun getAll(providedVersion: String?): Flow<List<Spray>>
+
     suspend fun fetch(
         uuid: String,
         version: String,
     )
 
-    fun queueWorker(version: String, uuid: String? = null)
-    suspend fun getAll(providedVersion: String?): Flow<List<Spray>>
     suspend fun fetchAll(version: String)
+
+    fun queueWorker(uuid: String? = null)
 }

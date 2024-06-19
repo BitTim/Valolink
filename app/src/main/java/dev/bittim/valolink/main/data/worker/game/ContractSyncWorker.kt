@@ -6,31 +6,49 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
+import dev.bittim.valolink.main.data.repository.game.VersionRepository
+import kotlinx.coroutines.flow.firstOrNull
 
 @HiltWorker
 class ContractSyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
-    private val contractRepository: ContractRepository
-) : CoroutineWorker(context, params) {
+    private val gameDatabase: GameDatabase,
+    private val versionRepository: VersionRepository,
+    private val contractRepository: ContractRepository,
+) : CoroutineWorker(
+    context,
+    params
+) {
     override suspend fun doWork(): Result {
         // Get input data from params
-        val contractUuid = params.inputData.getString(KEY_CONTRACT_UUID)
-        val version = params.inputData.getString(KEY_VERSION)
-        if (version.isNullOrEmpty()) return Result.failure()
+        val uuid = params.inputData.getString(KEY_UUID)
 
-        // Fetch from API
-        if (contractUuid.isNullOrEmpty()) contractRepository.fetchAllContracts(version)
-        else contractRepository.fetchContract(contractUuid, version)
+        // Get versions of local cache
+        val localVersions =
+            gameDatabase.contractsDao.getAll().firstOrNull()?.map { it.contract.version }
+
+        // Get remote version
+        val remoteVersion = versionRepository.get().firstOrNull()?.version
+        if (remoteVersion.isNullOrEmpty()) return Result.retry()
+
+        // Fetch from API if remote version is different
+        if (localVersions == null || localVersions.any { it != remoteVersion }) {
+            if (uuid.isNullOrEmpty()) contractRepository.fetchAllContracts(remoteVersion)
+            else contractRepository.fetchContract(
+                uuid,
+                remoteVersion
+            )
+        }
 
         return Result.success()
     }
 
 
     companion object {
-        const val KEY_VERSION = "KEY_VERSION"
-        const val KEY_CONTRACT_UUID = "KEY_CONTRACT_UUID"
+        const val KEY_UUID = "KEY_UUID"
         const val WORK_NAME = "ContractSyncWorker"
     }
 }

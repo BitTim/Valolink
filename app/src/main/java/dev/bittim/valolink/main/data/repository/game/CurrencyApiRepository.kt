@@ -38,10 +38,7 @@ class CurrencyApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (entity == null || entity.version != version) {
-                queueWorker(
-                    version,
-                    uuid
-                )
+                queueWorker(uuid)
             } else {
                 emit(entity)
             }
@@ -59,7 +56,7 @@ class CurrencyApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (currencies.isEmpty() || currencies.any { it.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(currencies)
             }
@@ -101,12 +98,13 @@ class CurrencyApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<CurrencySyncWorker>()
             .setInputData(
                 workDataOf(
-                    CurrencySyncWorker.KEY_CURRENCY_UUID to uuid,
-                    CurrencySyncWorker.KEY_VERSION to version
+                    CurrencySyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

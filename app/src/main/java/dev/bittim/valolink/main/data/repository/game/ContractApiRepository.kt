@@ -30,12 +30,12 @@ class ContractApiRepository @Inject constructor(
     private val seasonRepository: SeasonRepository,
     private val eventRepository: EventRepository,
     private val agentRepository: AgentRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : ContractRepository {
     override suspend fun getContract(
         uuid: String,
         providedVersion: String?,
-    ): Flow<dev.bittim.valolink.main.domain.model.game.contract.Contract?> {
+    ): Flow<Contract?> {
 
         return gameDatabase.contractsDao
             .getByUuid(uuid)
@@ -46,10 +46,7 @@ class ContractApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (contract == null || contract.contract.version != version) {
-                    queueWorker(
-                        version,
-                        uuid
-                    )
+                    queueWorker(uuid)
                 } else {
                     emit(
                         Pair(
@@ -72,7 +69,7 @@ class ContractApiRepository @Inject constructor(
     override suspend fun getRecruitmentAsContract(
         uuid: String,
         providedVersion: String?,
-    ): Flow<dev.bittim.valolink.main.domain.model.game.contract.Contract?> {
+    ): Flow<Contract?> {
 
         return gameDatabase.contractsDao
             .getRecruitmentByUuid(uuid)
@@ -83,7 +80,7 @@ class ContractApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (recruitment == null || recruitment.recruitment.version != version) {
-                    agentRepository.queueWorker(version)
+                    agentRepository.queueWorker()
                 } else {
                     emit(recruitment)
                 }
@@ -95,7 +92,7 @@ class ContractApiRepository @Inject constructor(
 
 
 
-    override suspend fun getActiveContracts(providedVersion: String?): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
+    override suspend fun getActiveContracts(providedVersion: String?): Flow<List<Contract>> {
 
         val currentIsoTime = Instant.now().toString()
 
@@ -108,7 +105,7 @@ class ContractApiRepository @Inject constructor(
                 val version = providedVersion ?: apiVersion.version
 
                 if (contracts.isEmpty() || contracts.any { it.contract.version != version }) {
-                    queueWorker(version)
+                    queueWorker()
                 } else {
                     emit(
                         Pair(
@@ -138,14 +135,14 @@ class ContractApiRepository @Inject constructor(
             }
     }
 
-    override suspend fun getAgentGears(providedVersion: String?): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
+    override suspend fun getAgentGears(providedVersion: String?): Flow<List<Contract>> {
         return gameDatabase.contractsDao.getAllGears().distinctUntilChanged().combineTransform(
             versionRepository.get()
         ) { gears, apiVersion ->
             val version = providedVersion ?: apiVersion.version
 
             if (gears.isEmpty() || gears.any { it.contract.version != version }) {
-                agentRepository.queueWorker(version)
+                agentRepository.queueWorker()
             } else {
                 emit(
                     Pair(
@@ -169,7 +166,7 @@ class ContractApiRepository @Inject constructor(
     override suspend fun getInactiveContracts(
         contentType: ContentType,
         providedVersion: String?,
-    ): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
+    ): Flow<List<Contract>> {
         val currentIsoTime = Instant.now().toString()
 
         return when (contentType) {
@@ -183,8 +180,8 @@ class ContractApiRepository @Inject constructor(
                         val version = providedVersion ?: apiVersion.version
 
                         if (seasons.isEmpty() || seasons.any { it.contract.version != version }) {
-                            seasonRepository.queueWorker(version)
-                            queueWorker(version)
+                            seasonRepository.queueWorker()
+                            queueWorker()
                         } else {
                             emit(
                                 Pair(
@@ -216,8 +213,8 @@ class ContractApiRepository @Inject constructor(
                         val version = providedVersion ?: apiVersion.version
 
                         if (events.isEmpty() || events.any { it.contract.version != version }) {
-                            eventRepository.queueWorker(version)
-                            queueWorker(version)
+                            eventRepository.queueWorker()
+                            queueWorker()
                         } else {
                             emit(
                                 Pair(
@@ -249,7 +246,7 @@ class ContractApiRepository @Inject constructor(
                         val version = providedVersion ?: apiVersion.version
 
                         if (recruitments.isEmpty() || recruitments.any { it.recruitment.version != version }) {
-                            queueWorker(version)
+                            queueWorker()
                         } else {
                             emit(recruitments)
                         }
@@ -268,7 +265,7 @@ class ContractApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (contracts.isEmpty() || contracts.any { it.contract.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(
                     Pair(
@@ -312,15 +309,8 @@ class ContractApiRepository @Inject constructor(
 
             if (content.relationUuid != null) {
                 when (content.relationType) {
-                    "Season" -> seasonRepository.queueWorker(
-                        version,
-                        content.relationUuid,
-                    )
-
-                    "Event" -> eventRepository.queueWorker(
-                        version,
-                        content.relationUuid,
-                    )
+                    "Season" -> seasonRepository.queueWorker(content.relationUuid)
+                    "Event"  -> eventRepository.queueWorker(content.relationUuid)
                 }
             }
 
@@ -472,12 +462,13 @@ class ContractApiRepository @Inject constructor(
     //  Queue worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<ContractSyncWorker>()
             .setInputData(
                 workDataOf(
-                    ContractSyncWorker.KEY_CONTRACT_UUID to uuid,
-                    ContractSyncWorker.KEY_VERSION to version
+                    ContractSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))

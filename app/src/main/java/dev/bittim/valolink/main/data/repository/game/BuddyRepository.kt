@@ -15,7 +15,7 @@ interface BuddyRepository {
     ): Flow<Buddy>
 
     suspend fun getAll(
-        providedVersion: String? = null
+        providedVersion: String? = null,
     ): Flow<List<Buddy>>
 
     suspend fun fetch(
@@ -27,5 +27,5 @@ interface BuddyRepository {
         version: String,
     )
 
-    fun queueWorker(version: String, uuid: String? = null)
+    fun queueWorker(uuid: String? = null)
 }

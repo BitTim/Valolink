@@ -21,7 +21,7 @@ class EventApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
 ) : EventRepository {
     // --------------------------------
     //  Query from Database
@@ -39,10 +39,7 @@ class EventApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (event == null || event.version != version) {
-                queueWorker(
-                    version,
-                    uuid
-                )
+                queueWorker(uuid)
             } else {
                 emit(event)
             }
@@ -58,7 +55,7 @@ class EventApiRepository @Inject constructor(
             val version = providedVersion ?: apiVersion.version
 
             if (events.isEmpty() || events.any { it.version != version }) {
-                queueWorker(version)
+                queueWorker()
             } else {
                 emit(events)
             }
@@ -102,12 +99,13 @@ class EventApiRepository @Inject constructor(
     //  Queue Worker
     // ================================
 
-    override fun queueWorker(version: String, uuid: String?) {
+    override fun queueWorker(
+        uuid: String?,
+    ) {
         val workRequest = OneTimeWorkRequestBuilder<EventSyncWorker>()
             .setInputData(
                 workDataOf(
-                    EventSyncWorker.KEY_EVENT_UUID to uuid,
-                    EventSyncWorker.KEY_VERSION to version
+                    EventSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
