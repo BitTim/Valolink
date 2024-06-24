@@ -1,19 +1,27 @@
 package dev.bittim.valolink.main.data.repository.game
 
 import androidx.room.withTransaction
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class AgentApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager,
 ) : AgentRepository {
     // --------------------------------
     //  Query from Database
@@ -21,52 +29,68 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getAgent(
+    override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Agent> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    ): Flow<Agent?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.agentDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-        return gameDatabase.agentDao.getByUuid(uuid).distinctUntilChanged().transform { agent ->
-            if (agent == null || agent.agent.version != version) {
-                fetchAgent(
-                    uuid,
-                    version
-                )
-            } else {
-                emit(agent)
-            }
-        }.map {
-            it.toType()
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAllAgents(providedVersion: String?): Flow<List<Agent>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    override suspend fun getAll(): Flow<List<Agent>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.agentDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities -> entities.map { it.toType() } }
 
-        return gameDatabase.agentDao.getAll().distinctUntilChanged().transform { agents ->
-            if (agents.isEmpty() || agents.any { it.agent.version != version }) {
-                fetchAgents(version)
-            } else {
-                emit(agents)
-            }
-        }.map { agents ->
-            agents.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
-    override suspend fun getAllBaseAgentUuids(providedVersion: String?): Flow<List<String>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    override suspend fun getAllBaseAgentUuids(): Flow<Set<String>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.agentDao
+                .getBase()
+                .distinctUntilChanged()
+                .map { it.keys.toSet() }
 
-        return gameDatabase.agentDao.getBase().distinctUntilChanged().transform { agentMaps ->
-                if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
-                    fetchAgents(version)
-                } else {
-                    emit(agentMaps.keys.toList())
-                }
-            }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // --------------------------------
@@ -75,7 +99,7 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchAgent(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -110,7 +134,7 @@ class AgentApiRepository @Inject constructor(
 
     // -------- [ Bulk fetching ] --------
 
-    override suspend fun fetchAgents(version: String) {
+    override suspend fun fetchAll(version: String) {
         val response = gameApi.getAllAgents()
         if (response.isSuccessful) {
             val agentDto = response.body()!!.data!!
@@ -145,5 +169,28 @@ class AgentApiRepository @Inject constructor(
                 )
             }
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(
+        uuid: String?,
+    ) {
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    GameSyncWorker.KEY_TYPE to Agent::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            Agent::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.data.local.game.relation.agent
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.AgentEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.RecruitmentEntity
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
@@ -13,7 +14,11 @@ data class RecruitmentWithAgentWithRoleAndAbilities(
         parentColumn = "uuid",
         entityColumn = "recruitment"
     ) val agentEntity: AgentWithRoleAndAbilities,
-) {
+) : VersionedEntity {
+    override fun getApiVersion(): String {
+        return recruitment.version
+    }
+
     fun toContract(): Contract {
         return recruitment.toContract(agentEntity.toType())
     }

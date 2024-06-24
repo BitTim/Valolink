@@ -80,4 +80,8 @@ interface WeaponDao {
     """
     )
     fun getSkinByLevelUuid(skinUuid: String): Flow<WeaponSkinWithChromasAndLevels?>
+
+    @Transaction
+    @Query("SELECT * FROM Weapons")
+    fun getAll(): Flow<List<WeaponWithAllRelations>>
 }

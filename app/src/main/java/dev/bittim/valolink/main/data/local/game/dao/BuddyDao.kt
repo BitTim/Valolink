@@ -34,6 +34,10 @@ interface BuddyDao {
     // --------------------------------
 
     @Transaction
+    @Query("SELECT * FROM Buddies")
+    fun getAll(): Flow<List<BuddyWithLevels>>
+
+    @Transaction
     @Query("SELECT * FROM Buddies WHERE uuid = :uuid LIMIT 1")
     fun getByUuid(uuid: String): Flow<BuddyWithLevels?>
 

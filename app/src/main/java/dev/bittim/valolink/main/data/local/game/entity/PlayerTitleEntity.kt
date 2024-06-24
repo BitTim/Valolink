@@ -15,8 +15,8 @@ import dev.bittim.valolink.main.domain.model.game.PlayerTitle
 data class PlayerTitleEntity(
     @PrimaryKey val uuid: String,
     override val version: String,
-    val displayName: String,
-    val titleText: String,
+    val displayName: String?,
+    val titleText: String?,
     val isHiddenIfNotOwned: Boolean,
 ) : GameEntity() {
     fun toType(): PlayerTitle {

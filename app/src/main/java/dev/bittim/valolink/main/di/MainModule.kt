@@ -44,6 +44,7 @@ import dev.bittim.valolink.main.data.repository.user.SessionRepository
 import dev.bittim.valolink.main.data.repository.user.SessionSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
 import dev.bittim.valolink.main.data.repository.user.UserSupabaseRepository
+import dev.bittim.valolink.main.domain.usecase.game.QueueFullSyncUseCase
 import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import io.github.jan.supabase.gotrue.Auth
 import okhttp3.Cache
@@ -54,7 +55,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ContentModule {
+object MainModule {
     @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
@@ -197,8 +198,14 @@ object ContentModule {
 
     @Provides
     @Singleton
-    fun providesVersionRepository(gameApi: GameApi): VersionRepository {
-        return VersionApiRepository(gameApi)
+    fun providesVersionRepository(
+        gameDatabase: GameDatabase,
+        gameApi: GameApi,
+    ): VersionRepository {
+        return VersionApiRepository(
+            gameDatabase,
+            gameApi
+        )
     }
 
     @Provides
@@ -207,11 +214,13 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): SeasonRepository {
         return SeasonApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -221,11 +230,13 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): EventRepository {
         return EventApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -235,11 +246,13 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): AgentRepository {
         return AgentApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -252,6 +265,7 @@ object ContentModule {
         seasonRepository: SeasonRepository,
         eventRepository: EventRepository,
         agentRepository: AgentRepository,
+        workManager: WorkManager,
     ): ContractRepository {
         return ContractApiRepository(
             gameDatabase,
@@ -259,7 +273,8 @@ object ContentModule {
             versionRepository,
             seasonRepository,
             eventRepository,
-            agentRepository
+            agentRepository,
+            workManager
         )
     }
 
@@ -269,11 +284,13 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): CurrencyRepository {
         return CurrencyApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -283,11 +300,13 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): SprayRepository {
         return SprayApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -297,11 +316,13 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): PlayerTitleRepository {
         return PlayerTitleApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -311,39 +332,45 @@ object ContentModule {
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): PlayerCardRepository {
         return PlayerCardApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
     @Provides
     @Singleton
-    fun providesBuddyLevelRepository(
+    fun providesBuddyRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): BuddyRepository {
         return BuddyApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
     @Provides
     @Singleton
-    fun providesWeaponSkinLevelRepository(
+    fun providesWeaponRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
         versionRepository: VersionRepository,
+        workManager: WorkManager,
     ): WeaponRepository {
         return WeaponApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository
+            versionRepository,
+            workManager
         )
     }
 
@@ -355,5 +382,33 @@ object ContentModule {
     @Singleton
     fun provideAddUserGearUseCase(gearRepository: GearRepository): AddUserGearUseCase {
         return AddUserGearUseCase(gearRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideQueueFullSyncUseCase(
+        agentRepository: AgentRepository,
+        buddyRepository: BuddyRepository,
+        contractRepository: ContractRepository,
+        currencyRepository: CurrencyRepository,
+        eventRepository: EventRepository,
+        playerCardRepository: PlayerCardRepository,
+        playerTitleRepository: PlayerTitleRepository,
+        seasonRepository: SeasonRepository,
+        sprayRepository: SprayRepository,
+        weaponRepository: WeaponRepository,
+    ): QueueFullSyncUseCase {
+        return QueueFullSyncUseCase(
+            agentRepository,
+            buddyRepository,
+            contractRepository,
+            currencyRepository,
+            eventRepository,
+            playerCardRepository,
+            playerTitleRepository,
+            seasonRepository,
+            sprayRepository,
+            weaponRepository
+        )
     }
 }

@@ -1,24 +1,34 @@
 package dev.bittim.valolink.main.data.repository.game
 
+import androidx.room.withTransaction
+import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.remote.game.dto.VersionDto
+import dev.bittim.valolink.main.domain.model.game.Version
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class VersionApiRepository @Inject constructor(
+    private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
 ) : VersionRepository {
-    override suspend fun getApiVersion(): VersionDto? {
-        val versionResponse = try {
-            gameApi.getVersion()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
-        }
+    override suspend fun get(): Flow<Version> {
+        val response = gameApi.getVersion()
 
-        return if (versionResponse.isSuccessful && versionResponse.body() != null && versionResponse.body()!!.data != null) {
-            versionResponse.body()!!.data!!
+        return if (response.isSuccessful) {
+            val version = response.body()!!.data!!.toEntity()
+            gameDatabase.withTransaction {
+                gameDatabase.versionDao.upsert(version)
+            }
+
+            flowOf(version.toType())
         } else {
-            null
+            gameDatabase.versionDao
+                .get()
+                .distinctUntilChanged()
+                .map { it?.toType() ?: Version.EMPTY }
         }
     }
 }

@@ -4,8 +4,8 @@ import dev.bittim.valolink.main.data.local.game.entity.PlayerTitleEntity
 
 data class PlayerTitleDto(
     val uuid: String,
-    val displayName: String,
-    val titleText: String,
+    val displayName: String?,
+    val titleText: String?,
     val isHiddenIfNotOwned: Boolean,
     val assetPath: String,
 ) {

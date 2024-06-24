@@ -1,19 +1,27 @@
 package dev.bittim.valolink.main.data.repository.game
 
 import androidx.room.withTransaction
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Event
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class EventApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager,
 ) : EventRepository {
     // --------------------------------
     //  Query from Database
@@ -21,37 +29,49 @@ class EventApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getEvent(
+    override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Event> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    ): Flow<Event?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.eventDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-        return gameDatabase.eventDao.getByUuid(uuid).distinctUntilChanged().transform { event ->
-            if (event == null || event.version != version) {
-                fetchEvent(
-                    uuid,
-                    version
-                )
-            } else {
-                emit(event)
-            }
-        }.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAllEvents(providedVersion: String?): Flow<List<Event>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    override suspend fun getAll(): Flow<List<Event>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.eventDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
+                }
 
-        return gameDatabase.eventDao.getAll().distinctUntilChanged().transform { events ->
-            if (events.isEmpty() || events.any { it.version != version }) {
-                fetchEvents(version)
-            } else {
-                emit(events)
-            }
-        }.map { seasons ->
-            seasons.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
@@ -61,7 +81,7 @@ class EventApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchEvent(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -75,14 +95,37 @@ class EventApiRepository @Inject constructor(
 
     // -------- [ Bulk fetching ] --------
 
-    override suspend fun fetchEvents(version: String) {
+    override suspend fun fetchAll(version: String) {
         val response = gameApi.getAllEvents()
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
                 gameDatabase.eventDao.upsert(response.body()!!.data!!.map {
                     it.toEntity(version)
-                })
+                }.distinct().toSet())
             }
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(
+        uuid: String?,
+    ) {
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    GameSyncWorker.KEY_TYPE to Event::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            Event::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

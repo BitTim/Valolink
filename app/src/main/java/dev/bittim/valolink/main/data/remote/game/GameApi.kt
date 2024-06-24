@@ -70,12 +70,18 @@ interface GameApi {
     @GET("currencies/{uuid}")
     suspend fun getCurrency(@Path("uuid") uuid: String): Response<GameApiResponse<CurrencyDto>>
 
+    @GET("currencies")
+    suspend fun getAllCurrencies(): Response<GameApiResponse<List<CurrencyDto>>>
+
     // --------------------------------
     //  Sprays
     // --------------------------------
 
     @GET("sprays/{uuid}")
     suspend fun getSpray(@Path("uuid") uuid: String): Response<GameApiResponse<SprayDto>>
+
+    @GET("sprays")
+    suspend fun getAllSprays(): Response<GameApiResponse<List<SprayDto>>>
 
     // --------------------------------
     //  Weapons
@@ -94,6 +100,9 @@ interface GameApi {
     @GET("playercards/{uuid}")
     suspend fun getPlayerCard(@Path("uuid") uuid: String): Response<GameApiResponse<PlayerCardDto>>
 
+    @GET("playercards")
+    suspend fun getAllPlayerCards(): Response<GameApiResponse<List<PlayerCardDto>>>
+
     // --------------------------------
     //  Buddies
     // --------------------------------
@@ -110,6 +119,9 @@ interface GameApi {
 
     @GET("playertitles/{uuid}")
     suspend fun getPlayerTitle(@Path("uuid") uuid: String): Response<GameApiResponse<PlayerTitleDto>>
+
+    @GET("playertitles")
+    suspend fun getAllPlayerTitles(): Response<GameApiResponse<List<PlayerTitleDto>>>
 
 
 

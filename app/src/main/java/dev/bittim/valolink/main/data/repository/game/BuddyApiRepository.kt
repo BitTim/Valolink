@@ -1,18 +1,26 @@
 package dev.bittim.valolink.main.data.repository.game
 
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.buddy.Buddy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class BuddyApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager,
 ) : BuddyRepository {
     // --------------------------------
     //  Query from Database
@@ -22,39 +30,68 @@ class BuddyApiRepository @Inject constructor(
 
     override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Buddy> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    ): Flow<Buddy?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.buddyDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-        return gameDatabase.buddyDao.getByUuid(uuid).distinctUntilChanged().transform { entity ->
-            if (entity == null || entity.buddy.version != version) {
-                fetch(
-                    uuid,
-                    version
-                )
-            } else {
-                emit(entity)
-            }
-        }.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     override suspend fun getByLevelUuid(
         levelUuid: String,
-        providedVersion: String?,
-    ): Flow<Buddy> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    ): Flow<Buddy?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.buddyDao
+                .getByLevelUuid(levelUuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-        return gameDatabase.buddyDao
-            .getByLevelUuid(levelUuid)
-            .distinctUntilChanged()
-            .transform { entity ->
-                if (entity == null || entity.buddy.version != version) {
-                    fetchAll(version)
-                } else {
-                    emit(entity)
-                }
-            }
-            .map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
+    }
+
+    // -------- [ Bulk queries ] --------
+
+    override suspend fun getAll(): Flow<List<Buddy>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.buddyDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities -> entities.map { it.toType() } }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // --------------------------------
@@ -108,5 +145,28 @@ class BuddyApiRepository @Inject constructor(
                 levels.distinct().toSet()
             )
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(
+        uuid: String?,
+    ) {
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    GameSyncWorker.KEY_TYPE to Buddy::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            Buddy::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

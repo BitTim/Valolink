@@ -11,7 +11,6 @@ import dev.bittim.valolink.main.data.remote.user.dto.UserDataDto
 import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.take
 import java.time.OffsetDateTime
 
 @HiltWorker
@@ -30,7 +29,7 @@ class UserDataSyncWorker @AssistedInject constructor(
 
         // Get most recent local update timestamp
         val lastLocalUpdate =
-            userDatabase.userDataDao.getByUuid(uid).take(1).firstOrNull()?.updatedAt
+            userDatabase.userDataDao.getByUuid(uid).firstOrNull()?.updatedAt
 
         // Fetch most recent user data from Supabase
         var user: UserDataDto? = null
@@ -58,7 +57,7 @@ class UserDataSyncWorker @AssistedInject constructor(
         }
 
         // Push write queue to Supabase
-        userDatabase.userDataDao.getSyncQueue().take(1).collect {
+        userDatabase.userDataDao.getSyncQueue().collect {
             it.forEach { userData ->
                 if (userData == null) return@forEach
 

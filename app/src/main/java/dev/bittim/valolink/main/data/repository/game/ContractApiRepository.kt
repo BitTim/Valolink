@@ -1,16 +1,24 @@
 package dev.bittim.valolink.main.data.repository.game
 
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
+import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import java.time.Instant
 import javax.inject.Inject
 
@@ -21,187 +29,188 @@ class ContractApiRepository @Inject constructor(
     private val seasonRepository: SeasonRepository,
     private val eventRepository: EventRepository,
     private val agentRepository: AgentRepository,
+    private val workManager: WorkManager,
 ) : ContractRepository {
-    override suspend fun getContract(
+    override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<dev.bittim.valolink.main.domain.model.game.contract.Contract?> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
-
-        return gameDatabase.contractsDao
-            .getByUuid(uuid)
-            .distinctUntilChanged()
-            .transform { contract ->
-                if (contract == null || contract.contract.version != version) {
-                    fetchContract(
-                        uuid,
-                        version
-                    )
-                } else {
-                    emit(contract)
+    ): Flow<Contract?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.contractsDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map {
+                    it?.toType(getRelation(it.content.content).firstOrNull())
                 }
-            }
-            .map {
-                it.toType(
-                    getRelation(
-                        version,
-                        it.content.content
-                    ).firstOrNull()
-                )
-            }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     override suspend fun getRecruitmentAsContract(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<dev.bittim.valolink.main.domain.model.game.contract.Contract?> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    ): Flow<Contract?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.contractsDao
+                .getRecruitmentByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toContract() }
 
-        return gameDatabase.contractsDao
-            .getRecruitmentByUuid(uuid)
-            .distinctUntilChanged()
-            .transform { recruitment ->
-                if (recruitment == null || recruitment.recruitment.version != version) {
-                    agentRepository.fetchAgents(version)
-                } else {
-                    emit(recruitment)
-                }
-            }
-            .map {
-                it.toContract()
-            }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            agentRepository.queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
 
 
-    override suspend fun getActiveContracts(providedVersion: String?): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
-        val currentIsoTime = Instant.now().toString()
+    override suspend fun getActiveContracts(): Flow<List<Contract>> {
+        return try {
+            // Get current time
+            val currentIsoTime = Instant.now().toString()
 
-        return gameDatabase.contractsDao
-            .getActiveByTime(currentIsoTime)
-            .distinctUntilChanged()
-            .transform { contracts ->
-                if (contracts.isEmpty() || contracts.any { it.contract.version != version }) {
-                    fetchContracts(version)
-                } else {
-                    emit(contracts)
+            // Get contracts from local database
+            val localContracts = gameDatabase.contractsDao
+                .getActiveByTime(currentIsoTime)
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map {
+                        it.toType(getRelation(it.content.content).firstOrNull())
+                    }
                 }
-            }
-            .map { contracts ->
-                contracts.map {
-                    it.toType(
-                        getRelation(
-                            version,
-                            it.content.content
-                        ).firstOrNull()
-                    )
+
+            // Get recruitments from local database
+            val localRecruitments = gameDatabase.contractsDao
+                .getActiveRecruitmentsByTime(currentIsoTime)
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toContract() }
                 }
-            }
-            .combine(gameDatabase.contractsDao
-                         .getActiveRecruitmentsByTime(currentIsoTime)
-                         .distinctUntilChanged()
-                         .map { recruitments ->
-                             recruitments.map { it.toContract() }
-                         }) { contracts, recruitments ->
+
+            // Combine contracts and recruitments
+            val local = localContracts.combine(localRecruitments) { contracts, recruitments ->
                 (contracts + recruitments).sortedBy { it.content.relation?.endTime }
             }
+
+            // Queue workers to fetch newest data from API
+            //  -> Workers will check if fetch is needed itself
+            queueWorker()
+            agentRepository.queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
-    override suspend fun getAgentGears(providedVersion: String?): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    override suspend fun getAgentGears(): Flow<List<Contract>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.contractsDao
+                .getAllGears()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map {
+                        it.toType(getRelation(it.content.content).firstOrNull())
+                    }
+                }
 
-        return gameDatabase.contractsDao.getAllGears().distinctUntilChanged().transform { gears ->
-            if (gears.isEmpty() || gears.any { it.contract.version != version }) {
-                agentRepository.fetchAgents(version)
-            } else {
-                emit(gears)
-            }
-        }.map { gears ->
-            gears.map {
-                it.toType(
-                    getRelation(
-                        version,
-                        it.content.content
-                    ).firstOrNull()
-                )
-            }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
     override suspend fun getInactiveContracts(
-        contentType: String,
-        providedVersion: String?,
-    ): Flow<List<dev.bittim.valolink.main.domain.model.game.contract.Contract>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
-        val currentIsoTime = Instant.now().toString()
+        contentType: ContentType,
+    ): Flow<List<Contract>> {
+        return try {
+            // Get current time
+            val currentIsoTime = Instant.now().toString()
 
-        return when (contentType) {
-            "Season"      -> {
-                gameDatabase.contractsDao
-                    .getInactiveSeasonsByTime(currentIsoTime)
-                    .distinctUntilChanged()
-                    .transform { seasons ->
-                        if (seasons.isEmpty() || seasons.any { it.contract.version != version }) {
-                            seasonRepository.fetchSeasons(version)
-                            fetchContracts(version)
-                        } else {
-                            emit(seasons)
-                        }
-                    }
-                    .map { entities ->
-                        entities.map {
-                            it.toType(
-                                getRelation(
-                                    version,
-                                    it.content.content
-                                ).firstOrNull()
-                            )
-                        }
-                    }
+            // Get from local database
+            val local = when (contentType) {
+                ContentType.SEASON  -> {
+                    gameDatabase.contractsDao
+                        .getInactiveSeasonsByTime(currentIsoTime)
+                        .distinctUntilChanged()
+                        .map { entities -> entities.map { it.toType(getRelation(it.content.content).firstOrNull()) } }
+                }
+
+                ContentType.EVENT   -> {
+                    gameDatabase.contractsDao
+                        .getInactiveEventsByTime(currentIsoTime)
+                        .distinctUntilChanged()
+                        .map { entities -> entities.map { it.toType(getRelation(it.content.content).firstOrNull()) } }
+                }
+
+                ContentType.RECRUIT -> {
+                    gameDatabase.contractsDao
+                        .getInactiveRecruitmentsByTime(currentIsoTime)
+                        .distinctUntilChanged()
+                        .map { entities -> entities.map { it.toContract() } }
+                }
             }
 
-            "Event"       -> {
-                gameDatabase.contractsDao
-                    .getInactiveEventsByTime(currentIsoTime)
-                    .distinctUntilChanged()
-                    .transform { events ->
-                        if (events.isEmpty() || events.any { it.contract.version != version }) {
-                            eventRepository.fetchEvents(version)
-                            fetchContracts(version)
-                        } else {
-                            emit(events)
-                        }
-                    }
-                    .map { entities ->
-                        entities.map {
-                            it.toType(
-                                getRelation(
-                                    version,
-                                    it.content.content
-                                ).firstOrNull()
-                            )
-                        }
-                    }
-            }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+            seasonRepository.queueWorker()
+            eventRepository.queueWorker()
+            agentRepository.queueWorker()
 
-            "Recruitment" -> {
-                gameDatabase.contractsDao
-                    .getInactiveRecruitmentsByTime(currentIsoTime)
-                    .distinctUntilChanged()
-                    .transform { recruitments ->
-                        if (recruitments.isEmpty() || recruitments.any { it.recruitment.version != version }) {
-                            fetchContracts(version)
-                        } else {
-                            emit(recruitments)
-                        }
-                    }
-                    .map { entities ->
-                        entities.map { it.toContract() }
-                    }
-            }
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
+    }
 
-            else          -> flow { }
+    override suspend fun getAll(): Flow<List<Contract>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.contractsDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map {
+                        it.toType(getRelation(it.content.content).firstOrNull())
+                    }
+                }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
@@ -211,7 +220,7 @@ class ContractApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchContract(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -228,15 +237,8 @@ class ContractApiRepository @Inject constructor(
 
             if (content.relationUuid != null) {
                 when (content.relationType) {
-                    "Season" -> seasonRepository.fetchSeason(
-                        content.relationUuid,
-                        version
-                    )
-
-                    "Event"  -> eventRepository.fetchEvent(
-                        content.relationUuid,
-                        version
-                    )
+                    "Season" -> seasonRepository.queueWorker(content.relationUuid)
+                    "Event"  -> eventRepository.queueWorker(content.relationUuid)
                 }
             }
 
@@ -286,7 +288,7 @@ class ContractApiRepository @Inject constructor(
 
     // -------- [ Bulk fetching ] --------
 
-    override suspend fun fetchContracts(version: String) {
+    override suspend fun fetchAll(version: String) {
         val response = gameApi.getAllContracts()
         if (response.isSuccessful) {
             val contractDto = response.body()!!.data!!
@@ -351,7 +353,6 @@ class ContractApiRepository @Inject constructor(
     // --------------------------------
 
     private suspend fun getRelation(
-        version: String,
         content: ContentEntity,
     ): Flow<ContentRelation?> {
         if (content.relationType.isNullOrEmpty() || content.relationUuid.isNullOrEmpty()) {
@@ -359,28 +360,33 @@ class ContractApiRepository @Inject constructor(
         }
 
         return when (content.relationType) {
-            "Agent"  -> {
-                agentRepository.getAgent(
-                    content.relationUuid,
-                    version
-                )
-            }
-
-            "Event"  -> {
-                eventRepository.getEvent(
-                    content.relationUuid,
-                    version
-                )
-            }
-
-            "Season" -> {
-                seasonRepository.getSeason(
-                    content.relationUuid,
-                    version
-                )
-            }
-
+            "Agent"  -> agentRepository.getByUuid(content.relationUuid)
+            "Event"  -> eventRepository.getByUuid(content.relationUuid)
+            "Season" -> seasonRepository.getByUuid(content.relationUuid)
             else     -> flow { emit(null) }
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(
+        uuid: String?,
+    ) {
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    GameSyncWorker.KEY_TYPE to Contract::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            Contract::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

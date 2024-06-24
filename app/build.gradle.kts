@@ -224,4 +224,8 @@ dependencies {
     implementation(libs.supabase.compose.auth)
     implementation(libs.supabase.compose.auth.ui)
     implementation(libs.ktor.client.okhttp)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences.core)
 }

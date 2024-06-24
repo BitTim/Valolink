@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.data.local.game.relation.weapon
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponAdsStatsEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponAirBurstStatsEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponAltShotgunStatsEntity
@@ -27,7 +28,11 @@ data class WeaponStatsWithAllRelations(
         parentColumn = "uuid",
         entityColumn = "weaponStats"
     ) val weaponDamageRanges: Set<WeaponDamageRangeEntity>,
-) {
+) : VersionedEntity {
+    override fun getApiVersion(): String {
+        return weaponStats.version
+    }
+
     fun toType(): WeaponStats {
         return weaponStats.toType(adsStats = weaponAdsStats.toType(),
                                   altShotgunStats = weaponAltShotgunStats.toType(),

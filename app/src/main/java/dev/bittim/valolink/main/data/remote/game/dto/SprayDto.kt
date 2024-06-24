@@ -21,7 +21,7 @@ data class SprayDto(
         val uuid: String,
         val sprayLevel: Int,
         val displayName: String,
-        val displayIcon: String,
+        val displayIcon: String?,
         val assetPath: String,
     )
 

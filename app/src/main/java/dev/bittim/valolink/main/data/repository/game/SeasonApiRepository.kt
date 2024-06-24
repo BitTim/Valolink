@@ -1,19 +1,27 @@
 package dev.bittim.valolink.main.data.repository.game
 
 import androidx.room.withTransaction
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Season
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class SeasonApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
     private val versionRepository: VersionRepository,
+    private val workManager: WorkManager,
 ) : SeasonRepository {
     // --------------------------------
     //  Query from Database
@@ -21,37 +29,49 @@ class SeasonApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
-    override suspend fun getSeason(
+    override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Season> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    ): Flow<Season?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.seasonDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-        return gameDatabase.seasonDao.getByUuid(uuid).distinctUntilChanged().transform { season ->
-            if (season == null || season.version != version) {
-                fetchSeason(
-                    uuid,
-                    version
-                )
-            } else {
-                emit(season)
-            }
-        }.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAllSeasons(providedVersion: String?): Flow<List<Season>> {
-        val version = providedVersion ?: versionRepository.getApiVersion()?.version ?: ""
+    override suspend fun getAll(): Flow<List<Season>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.seasonDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
+                }
 
-        return gameDatabase.seasonDao.getAll().distinctUntilChanged().transform { seasons ->
-            if (seasons.isEmpty() || seasons.any { it.version != version }) {
-                fetchSeasons(version)
-            } else {
-                emit(seasons)
-            }
-        }.map { seasons ->
-            seasons.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
@@ -61,7 +81,7 @@ class SeasonApiRepository @Inject constructor(
 
     // -------- [ Single fetching ] --------
 
-    override suspend fun fetchSeason(
+    override suspend fun fetch(
         uuid: String,
         version: String,
     ) {
@@ -75,7 +95,7 @@ class SeasonApiRepository @Inject constructor(
 
     // -------- [ Bulk fetching ] --------
 
-    override suspend fun fetchSeasons(version: String) {
+    override suspend fun fetchAll(version: String) {
         val response = gameApi.getAllSeasons()
         if (response.isSuccessful) {
             gameDatabase.withTransaction {
@@ -84,5 +104,28 @@ class SeasonApiRepository @Inject constructor(
                 })
             }
         }
+    }
+
+    // ================================
+    //  Queue Worker
+    // ================================
+
+    override fun queueWorker(
+        uuid: String?,
+    ) {
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
+            .setInputData(
+                workDataOf(
+                    GameSyncWorker.KEY_TYPE to Season::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
+                )
+            )
+            .setConstraints(Constraints(NetworkType.CONNECTED))
+            .build()
+        workManager.enqueueUniqueWork(
+            Season::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

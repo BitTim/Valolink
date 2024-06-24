@@ -1,7 +1,8 @@
 package dev.bittim.valolink.main.data.repository.game
 
-import dev.bittim.valolink.main.data.remote.game.dto.VersionDto
+import dev.bittim.valolink.main.domain.model.game.Version
+import kotlinx.coroutines.flow.Flow
 
 interface VersionRepository {
-    suspend fun getApiVersion(): VersionDto?
+    suspend fun get(): Flow<Version>
 }

@@ -11,7 +11,6 @@ import dev.bittim.valolink.main.data.remote.user.dto.GearDto
 import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.take
 import java.time.OffsetDateTime
 
 @HiltWorker
@@ -29,7 +28,7 @@ class GearSyncWorker @AssistedInject constructor(
         val uid = inputData.getString(KEY_UID) ?: return Result.failure()
 
         // Get most recent local update timestamp
-        val lastLocalUpdates = userDatabase.gearDao.getByUser(uid).take(1).firstOrNull()
+        val lastLocalUpdates = userDatabase.gearDao.getByUser(uid).firstOrNull()
 
         // Fetch most recent gear data from Supabase
         var gears: List<GearDto?> = listOf()
@@ -61,7 +60,7 @@ class GearSyncWorker @AssistedInject constructor(
         }
 
         // Push write queue to Supabase
-        userDatabase.gearDao.getSyncQueue().take(1).collect {
+        userDatabase.gearDao.getSyncQueue().collect {
             it.forEach { gear ->
                 if (gear == null) return@forEach
 

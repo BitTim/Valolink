@@ -38,6 +38,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
+import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.DefaultContractCard
 import dev.bittim.valolink.main.ui.util.getProgressPercent
@@ -51,7 +52,7 @@ import kotlin.math.floor
 fun ContractsOverviewScreen(
     state: ContractsOverviewState,
     addUserGear: (String) -> Unit,
-    onArchiveTypeFilterChange: (ArchiveTypeFilter) -> Unit,
+    onArchiveTypeFilterChange: (ContentType) -> Unit,
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
     onNavToContractDetails: (String) -> Unit,
@@ -239,13 +240,13 @@ fun ContractsOverviewScreen(
                         SingleChoiceSegmentedButtonRow(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            ArchiveTypeFilter.entries.forEachIndexed { index, entry ->
+                            ContentType.entries.forEachIndexed { index, entry ->
                                 SegmentedButton(
                                     selected = entry == state.archiveTypeFilter,
                                     onClick = { onArchiveTypeFilterChange(entry) },
                                     shape = SegmentedButtonDefaults.itemShape(
                                         index = index,
-                                        count = ArchiveTypeFilter.entries.count()
+                                        count = ContentType.entries.count()
                                     )
                                 ) {
                                     Text(text = entry.displayName)

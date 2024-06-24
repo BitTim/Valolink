@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ContractsDao {
     // --------------------------------
-    //  Upserts
+    //  Upsert
     // --------------------------------
 
     @Transaction
@@ -135,6 +135,10 @@ interface ContractsDao {
     """
     )
     fun getInactiveRecruitmentsByTime(currentIsoTime: String): Flow<List<RecruitmentWithAgentWithRoleAndAbilities>>
+
+    @Transaction
+    @Query("SELECT * FROM Contracts")
+    fun getAll(): Flow<List<ContractWithContentWithChaptersWithLevelsAndRewards>>
 
     // -------- [ Agent Gears ] --------
 
