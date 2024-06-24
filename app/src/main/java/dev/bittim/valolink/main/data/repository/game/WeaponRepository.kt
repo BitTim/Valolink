@@ -4,21 +4,8 @@ import dev.bittim.valolink.main.domain.model.game.weapon.Weapon
 import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkin
 import kotlinx.coroutines.flow.Flow
 
-interface WeaponRepository {
+interface WeaponRepository : GameRepository<Weapon?> {
     suspend fun getSkinByLevelUuid(
         levelUuid: String,
-        providedVersion: String? = null,
-    ): Flow<WeaponSkin>
-
-    suspend fun getAll(
-        providedVersion: String? = null,
-    ): Flow<List<Weapon>>
-
-    suspend fun fetch(
-        uuid: String,
-        version: String,
-    )
-
-    suspend fun fetchAll(version: String)
-    fun queueWorker(uuid: String? = null)
+    ): Flow<WeaponSkin?>
 }

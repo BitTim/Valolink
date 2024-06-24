@@ -9,11 +9,11 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.AgentSyncWorker
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -31,52 +31,65 @@ class AgentApiRepository @Inject constructor(
 
     override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Agent> {
-        return gameDatabase.agentDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { agent, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    ): Flow<Agent?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.agentDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-            if (agent == null || agent.agent.version != version) {
-                queueWorker(uuid)
-            } else {
-                emit(agent)
-            }
-        }.map {
-            it.toType()
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAll(providedVersion: String?): Flow<List<Agent>> {
-        return gameDatabase.agentDao.getAll().distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { agents, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    override suspend fun getAll(): Flow<List<Agent>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.agentDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities -> entities.map { it.toType() } }
 
-            if (agents.isEmpty() || agents.any { it.agent.version != version }) {
-                queueWorker()
-            } else {
-                emit(agents)
-            }
-        }.map { agents ->
-            agents.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
-    override suspend fun getAllBaseAgentUuids(providedVersion: String?): Flow<List<String>> {
-        return gameDatabase.agentDao.getBase().distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { agentMaps, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    override suspend fun getAllBaseAgentUuids(): Flow<Set<String>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.agentDao
+                .getBase()
+                .distinctUntilChanged()
+                .map { it.keys.toSet() }
 
-            if (agentMaps.isEmpty() || agentMaps.any { it.value != version }) {
-                queueWorker()
-            } else {
-                emit(agentMaps.keys.toList())
-            }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
@@ -165,16 +178,17 @@ class AgentApiRepository @Inject constructor(
     override fun queueWorker(
         uuid: String?,
     ) {
-        val workRequest = OneTimeWorkRequestBuilder<AgentSyncWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
             .setInputData(
                 workDataOf(
-                    AgentSyncWorker.KEY_UUID to uuid,
+                    GameSyncWorker.KEY_TYPE to Agent::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            AgentSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            Agent::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

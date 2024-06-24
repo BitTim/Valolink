@@ -8,11 +8,11 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.PlayerCardSyncWorker
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.PlayerCard
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,45 +30,49 @@ class PlayerCardApiRepository @Inject constructor(
 
     override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<PlayerCard> {
-        return gameDatabase.playerCardDao
-            .getByUuid(uuid)
-            .distinctUntilChanged()
-            .combineTransform(
-                versionRepository.get()
-            ) { entity, apiVersion ->
-                val version = providedVersion ?: apiVersion.version
+    ): Flow<PlayerCard?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.playerCardDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-                if (entity == null || entity.version != version) {
-                    queueWorker(uuid)
-                } else {
-                    emit(entity)
-                }
-            }
-            .map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
     override suspend fun getAll(
-        providedVersion: String?,
     ): Flow<List<PlayerCard>> {
-        return gameDatabase.playerCardDao
-            .getAll()
-            .distinctUntilChanged()
-            .combineTransform(
-                versionRepository.get()
-            ) { playerCards, apiVersion ->
-                val version = providedVersion ?: apiVersion.version
-
-                if (playerCards.isEmpty() || playerCards.any { it.version != version }) {
-                    queueWorker()
-                } else {
-                    emit(playerCards)
+        return try {
+            // Get from local database
+            val local = gameDatabase.playerCardDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
                 }
-            }
-            .map { playerCards -> playerCards.map { it.toType() } }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // --------------------------------
@@ -109,16 +113,17 @@ class PlayerCardApiRepository @Inject constructor(
     override fun queueWorker(
         uuid: String?,
     ) {
-        val workRequest = OneTimeWorkRequestBuilder<PlayerCardSyncWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
             .setInputData(
                 workDataOf(
-                    PlayerCardSyncWorker.KEY_UUID to uuid,
+                    GameSyncWorker.KEY_TYPE to PlayerCard::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            PlayerCardSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            PlayerCard::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

@@ -9,12 +9,12 @@ import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.remote.game.dto.weapon.WeaponDto
-import dev.bittim.valolink.main.data.worker.game.WeaponSyncWorker
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.weapon.Weapon
 import dev.bittim.valolink.main.domain.model.game.weapon.skins.WeaponSkin
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,41 +30,69 @@ class WeaponApiRepository @Inject constructor(
 
     // -------- [ Single queries ] --------
 
+    override suspend fun getByUuid(uuid: String): Flow<Weapon?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.weaponDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
+    }
+
     override suspend fun getSkinByLevelUuid(
         levelUuid: String,
-        providedVersion: String?,
-    ): Flow<WeaponSkin> {
+    ): Flow<WeaponSkin?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.weaponDao
+                .getSkinByLevelUuid(levelUuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-        return gameDatabase.weaponDao
-            .getSkinByLevelUuid(levelUuid)
-            .distinctUntilChanged()
-            .combineTransform(
-                versionRepository.get()
-            ) { entity, apiVersion ->
-                val version = providedVersion ?: apiVersion.version
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
 
-                if (entity == null || entity.weaponSkin.version != version) {
-                    queueWorker()
-                } else {
-                    emit(entity)
-                }
-            }
-            .map { it.toType() }
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAll(providedVersion: String?): Flow<List<Weapon>> {
-        return gameDatabase.weaponDao.getAll().combineTransform(
-            versionRepository.get()
-        ) { entities, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    override suspend fun getAll(): Flow<List<Weapon>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.weaponDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
+                }
 
-            if (entities.isEmpty() || entities.any { it.weapon.version != version }) {
-                queueWorker()
-            } else {
-                emit(entities.map { it.toType() })
-            }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
@@ -226,16 +254,17 @@ class WeaponApiRepository @Inject constructor(
     override fun queueWorker(
         uuid: String?,
     ) {
-        val workRequest = OneTimeWorkRequestBuilder<WeaponSyncWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
             .setInputData(
                 workDataOf(
-                    WeaponSyncWorker.KEY_UUID to uuid,
+                    GameSyncWorker.KEY_TYPE to Weapon::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            WeaponSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            Weapon::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

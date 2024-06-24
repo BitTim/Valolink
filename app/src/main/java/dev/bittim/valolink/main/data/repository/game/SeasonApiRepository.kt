@@ -9,11 +9,11 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.SeasonSyncWorker
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Season
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -31,36 +31,47 @@ class SeasonApiRepository @Inject constructor(
 
     override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Season> {
-        return gameDatabase.seasonDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { season, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    ): Flow<Season?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.seasonDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-            if (season == null || season.version != version) {
-                queueWorker(uuid)
-            } else {
-                emit(season)
-            }
-        }.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
-    override suspend fun getAll(providedVersion: String?): Flow<List<Season>> {
-        return gameDatabase.seasonDao.getAll().distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { seasons, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    override suspend fun getAll(): Flow<List<Season>> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.seasonDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
+                }
 
-            if (seasons.isEmpty() || seasons.any { it.version != version }) {
-                queueWorker()
-            } else {
-                emit(seasons)
-            }
-        }.map { seasons ->
-            seasons.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
         }
     }
 
@@ -102,16 +113,17 @@ class SeasonApiRepository @Inject constructor(
     override fun queueWorker(
         uuid: String?,
     ) {
-        val workRequest = OneTimeWorkRequestBuilder<SeasonSyncWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
             .setInputData(
                 workDataOf(
-                    SeasonSyncWorker.KEY_UUID to uuid,
+                    GameSyncWorker.KEY_TYPE to Season::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            SeasonSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            Season::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

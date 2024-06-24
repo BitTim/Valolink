@@ -22,6 +22,7 @@ import dev.bittim.valolink.main.data.local.game.entity.PlayerTitleEntity
 import dev.bittim.valolink.main.data.local.game.entity.SeasonEntity
 import dev.bittim.valolink.main.data.local.game.entity.SprayEntity
 import dev.bittim.valolink.main.data.local.game.entity.VersionEntity
+import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.AbilityEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.AgentEntity
 import dev.bittim.valolink.main.data.local.game.entity.agent.RecruitmentEntity
@@ -44,6 +45,7 @@ import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponAirBur
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponAltShotgunStatsEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponDamageRangeEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponStatsEntity
+import kotlinx.coroutines.flow.Flow
 
 @Database(
     entities = [
@@ -84,4 +86,22 @@ abstract class GameDatabase : RoomDatabase() {
     abstract val playerCardDao: PlayerCardDao
     abstract val buddyDao: BuddyDao
     abstract val weaponDao: WeaponDao
+
+    fun getAllOfType(type: String?): Flow<List<VersionedEntity?>> {
+        return when (type) {
+            "Agent"       -> agentDao.getAll()
+            "Contract"    -> contractsDao.getAll()
+            "Event"       -> eventDao.getAll()
+            "Season"      -> seasonDao.getAll()
+
+            "Currency"    -> currencyDao.getAll()
+            "Spray"       -> sprayDao.getAll()
+            "PlayerTitle" -> playerTitleDao.getAll()
+            "PlayerCard"  -> playerCardDao.getAll()
+            "Buddy"       -> buddyDao.getAll()
+            "Weapon"      -> weaponDao.getAll()
+
+            else          -> throw IllegalArgumentException("Unknown type: $type")
+        }
+    }
 }

@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -65,7 +65,7 @@ class AgentDetailsViewModel @Inject constructor(
         if (uuid == null) return
 
         viewModelScope.launch {
-            contractRepository.getContract(uuid).flatMapLatest { contract ->
+            contractRepository.getByUuid(uuid).flatMapLatest { contract ->
                 _state.update { it.copy(agentGear = contract) }
 
                 val rewardFlows: List<Flow<Pair<RewardRelation, ChapterLevel>>> =
@@ -73,8 +73,9 @@ class AgentDetailsViewModel @Inject constructor(
                         when (level.reward.rewardType) {
                             "Currency"             -> currencyRepository
                                 .getByUuid(level.reward.rewardUuid)
-                                .map {
-                                    Pair(
+                                .mapNotNull {
+                                    if (it == null) null
+                                    else Pair(
                                         it.asRewardRelation(level.reward.amount),
                                         level
                                     )
@@ -82,8 +83,9 @@ class AgentDetailsViewModel @Inject constructor(
 
                             "Spray"                -> sprayRepository
                                 .getByUuid(level.reward.rewardUuid)
-                                .map {
-                                    Pair(
+                                .mapNotNull {
+                                    if (it == null) null
+                                    else Pair(
                                         it.asRewardRelation(level.reward.amount),
                                         level
                                     )
@@ -91,8 +93,9 @@ class AgentDetailsViewModel @Inject constructor(
 
                             "PlayerCard"           -> playerCardRepository
                                 .getByUuid(level.reward.rewardUuid)
-                                .map {
-                                    Pair(
+                                .mapNotNull {
+                                    if (it == null) null
+                                    else Pair(
                                         it.asRewardRelation(level.reward.amount),
                                         level
                                     )
@@ -100,8 +103,9 @@ class AgentDetailsViewModel @Inject constructor(
 
                             "Title"                -> playerTitleRepository
                                 .getByUuid(level.reward.rewardUuid)
-                                .map {
-                                    Pair(
+                                .mapNotNull {
+                                    if (it == null) null
+                                    else Pair(
                                         it.asRewardRelation(level.reward.amount),
                                         level
                                     )
@@ -109,24 +113,26 @@ class AgentDetailsViewModel @Inject constructor(
 
                             "EquippableCharmLevel" -> buddyRepository
                                 .getByLevelUuid(level.reward.rewardUuid)
-                                .map {
-                                    Pair(
+                                .mapNotNull {
+                                    if (it == null) null
+                                    else Pair(
                                         it.asRewardRelation(level.reward.amount),
                                         level
                                     )
                                 }
 
-                            "EquippableSkinLevel"  -> weaponRepository.getSkinByLevelUuid(
-                                level.reward.rewardUuid
-                            ).map {
-                                Pair(
-                                    it.asRewardRelation(
-                                        level.reward.amount,
-                                        level.reward.rewardUuid
-                                    ),
-                                    level
-                                )
-                            }
+                            "EquippableSkinLevel"  -> weaponRepository
+                                .getSkinByLevelUuid(level.reward.rewardUuid)
+                                .mapNotNull {
+                                    if (it == null) null
+                                    else Pair(
+                                        it.asRewardRelation(
+                                            level.reward.amount,
+                                            level.reward.rewardUuid
+                                        ),
+                                        level
+                                    )
+                                }
 
                             else                   -> flow { }
                         }

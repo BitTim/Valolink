@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ContractsDao {
     // --------------------------------
-    //  Upserts
+    //  Upsert
     // --------------------------------
 
     @Transaction

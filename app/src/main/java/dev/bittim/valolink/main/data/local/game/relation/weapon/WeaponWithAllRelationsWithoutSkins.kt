@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.data.local.game.relation.weapon
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.WeaponEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.shopData.WeaponShopDataEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.stats.WeaponStatsEntity
@@ -20,7 +21,11 @@ data class WeaponWithAllRelationsWithoutSkins(
         parentColumn = "uuid",
         entityColumn = "weapon"
     ) val shopData: WeaponShopDataWithAllRelations,
-) {
+) : VersionedEntity {
+    override fun getApiVersion(): String {
+        return weapon.version
+    }
+
     fun toType(): Weapon {
         return weapon.toType(
             weaponStats = weaponStats.toType(),

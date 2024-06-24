@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.data.local.game.relation.contract
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.ChapterEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
@@ -18,7 +19,11 @@ data class ChapterWithLevelsAndRewards(
         parentColumn = "uuid",
         entityColumn = "chapterUuid"
     ) val freeRewards: List<RewardEntity>,
-) {
+) : VersionedEntity {
+    override fun getApiVersion(): String {
+        return chapter.version
+    }
+
     fun toType(): Chapter {
         return chapter.toType(levels.map { it.toType() },
                               freeRewards.map { it.toType() })

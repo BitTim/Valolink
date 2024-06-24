@@ -8,11 +8,11 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.SpraySyncWorker
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Spray
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,37 +30,49 @@ class SprayApiRepository @Inject constructor(
 
     override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Spray> {
-        return gameDatabase.sprayDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { entity, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    ): Flow<Spray?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.sprayDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-            if (entity == null || entity.version != version) {
-                queueWorker(uuid)
-            } else {
-                emit(entity)
-            }
-        }.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
     override suspend fun getAll(
-        providedVersion: String?,
     ): Flow<List<Spray>> {
-        return gameDatabase.sprayDao.getAll().distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { sprays, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+        return try {
+            // Get from local database
+            val local = gameDatabase.sprayDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
+                }
 
-            if (sprays.isEmpty() || sprays.any { it.version != version }) {
-                queueWorker()
-            } else {
-                emit(sprays)
-            }
-        }.map { sprays -> sprays.map { it.toType() } }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // --------------------------------
@@ -101,16 +113,17 @@ class SprayApiRepository @Inject constructor(
     override fun queueWorker(
         uuid: String?,
     ) {
-        val workRequest = OneTimeWorkRequestBuilder<SpraySyncWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
             .setInputData(
                 workDataOf(
-                    SpraySyncWorker.KEY_UUID to uuid,
+                    GameSyncWorker.KEY_TYPE to Spray::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            SpraySyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            Spray::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

@@ -8,11 +8,11 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.PlayerTitleSyncWorker
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.PlayerTitle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,45 +30,49 @@ class PlayerTitleApiRepository @Inject constructor(
 
     override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<PlayerTitle> {
-        return gameDatabase.playerTitleDao
-            .getByUuid(uuid)
-            .distinctUntilChanged()
-            .combineTransform(
-                versionRepository.get()
-            ) { entity, apiVersion ->
-                val version = providedVersion ?: apiVersion.version
+    ): Flow<PlayerTitle?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.playerTitleDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-                if (entity == null || entity.version != version) {
-                    queueWorker(uuid)
-                } else {
-                    emit(entity)
-                }
-            }
-            .map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
     override suspend fun getAll(
-        providedVersion: String?,
     ): Flow<List<PlayerTitle>> {
-        return gameDatabase.playerTitleDao
-            .getAll()
-            .distinctUntilChanged()
-            .combineTransform(
-                versionRepository.get()
-            ) { playerTitles, apiVersion ->
-                val version = providedVersion ?: apiVersion.version
-
-                if (playerTitles.isEmpty() || playerTitles.any { it.version != version }) {
-                    queueWorker()
-                } else {
-                    emit(playerTitles)
+        return try {
+            // Get from local database
+            val local = gameDatabase.playerTitleDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
                 }
-            }
-            .map { playerTitles -> playerTitles.map { it.toType() } }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // --------------------------------
@@ -109,16 +113,17 @@ class PlayerTitleApiRepository @Inject constructor(
     override fun queueWorker(
         uuid: String?,
     ) {
-        val workRequest = OneTimeWorkRequestBuilder<PlayerTitleSyncWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
             .setInputData(
                 workDataOf(
-                    PlayerTitleSyncWorker.KEY_UUID to uuid,
+                    GameSyncWorker.KEY_TYPE to PlayerTitle::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            PlayerTitleSyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            PlayerTitle::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

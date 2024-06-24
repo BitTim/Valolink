@@ -31,7 +31,7 @@ class GetStartedViewModel @Inject constructor(
             agentRepository.getAllBaseAgentUuids().collectLatest { uuids ->
                 _state.update {
                     it.copy(
-                        ownedAgentUuids = uuids,
+                        ownedAgentUuids = uuids.toList(),
                         loadingFinished = state.value.loadingFinished or 0b0001
                     )
                 }

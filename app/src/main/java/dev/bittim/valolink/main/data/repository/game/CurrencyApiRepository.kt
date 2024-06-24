@@ -8,11 +8,11 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
 import dev.bittim.valolink.main.data.remote.game.GameApi
-import dev.bittim.valolink.main.data.worker.game.CurrencySyncWorker
+import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.Currency
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,37 +30,49 @@ class CurrencyApiRepository @Inject constructor(
 
     override suspend fun getByUuid(
         uuid: String,
-        providedVersion: String?,
-    ): Flow<Currency> {
-        return gameDatabase.currencyDao.getByUuid(uuid).distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { entity, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+    ): Flow<Currency?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.currencyDao
+                .getByUuid(uuid)
+                .distinctUntilChanged()
+                .map { it?.toType() }
 
-            if (entity == null || entity.version != version) {
-                queueWorker(uuid)
-            } else {
-                emit(entity)
-            }
-        }.map { it.toType() }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // -------- [ Bulk queries ] --------
 
     override suspend fun getAll(
-        providedVersion: String?,
     ): Flow<List<Currency>> {
-        return gameDatabase.currencyDao.getAll().distinctUntilChanged().combineTransform(
-            versionRepository.get()
-        ) { currencies, apiVersion ->
-            val version = providedVersion ?: apiVersion.version
+        return try {
+            // Get from local database
+            val local = gameDatabase.currencyDao
+                .getAll()
+                .distinctUntilChanged()
+                .map { entities ->
+                    entities.map { it.toType() }
+                }
 
-            if (currencies.isEmpty() || currencies.any { it.version != version }) {
-                queueWorker()
-            } else {
-                emit(currencies)
-            }
-        }.map { currencies -> currencies.map { it.toType() } }
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
     }
 
     // --------------------------------
@@ -101,16 +113,17 @@ class CurrencyApiRepository @Inject constructor(
     override fun queueWorker(
         uuid: String?,
     ) {
-        val workRequest = OneTimeWorkRequestBuilder<CurrencySyncWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<GameSyncWorker>()
             .setInputData(
                 workDataOf(
-                    CurrencySyncWorker.KEY_UUID to uuid,
+                    GameSyncWorker.KEY_TYPE to Currency::class.simpleName,
+                    GameSyncWorker.KEY_UUID to uuid,
                 )
             )
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(
-            CurrencySyncWorker.WORK_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            Currency::class.simpleName + GameSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.data.local.game.relation.weapon
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.skins.WeaponSkinChromaEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.skins.WeaponSkinEntity
 import dev.bittim.valolink.main.data.local.game.entity.weapon.skins.WeaponSkinLevelEntity
@@ -17,7 +18,11 @@ data class WeaponSkinWithChromasAndLevels(
         parentColumn = "uuid",
         entityColumn = "weaponSkin"
     ) val levels: Set<WeaponSkinLevelEntity>,
-) {
+) : VersionedEntity {
+    override fun getApiVersion(): String {
+        return weaponSkin.version
+    }
+
     fun toType(): WeaponSkin {
         return weaponSkin.toType(chromas = chromas.map { it.toType() },
                                  levels = levels.map { it.toType() })
