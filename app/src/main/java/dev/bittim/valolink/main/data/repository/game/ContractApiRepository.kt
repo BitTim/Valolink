@@ -7,40 +7,53 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
-import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
+import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
+import dev.bittim.valolink.main.data.local.game.relation.contract.ContractWithContentWithChaptersWithLevelsAndRewards
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
-import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ContractApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
-    private val versionRepository: VersionRepository,
+    private val workManager: WorkManager,
+
     private val seasonRepository: SeasonRepository,
     private val eventRepository: EventRepository,
     private val agentRepository: AgentRepository,
-    private val workManager: WorkManager,
+
+    private val currencyRepository: CurrencyRepository,
+    private val sprayRepository: SprayRepository,
+    private val playerTitleRepository: PlayerTitleRepository,
+    private val playerCardRepository: PlayerCardRepository,
+    private val buddyRepository: BuddyRepository,
+    private val weaponRepository: WeaponRepository,
 ) : ContractRepository {
     override suspend fun getByUuid(
         uuid: String,
+        withRewards: Boolean,
     ): Flow<Contract?> {
         return try {
             // Get from local database
             val local = gameDatabase.contractsDao
                 .getByUuid(uuid)
                 .distinctUntilChanged()
-                .map {
-                    it?.toType(getRelation(it.content.content).firstOrNull())
+                .flatMapLatest {
+                    withRelation(it, withRewards)
                 }
 
             // Queue worker to fetch newest data from API
@@ -53,6 +66,10 @@ class ContractApiRepository @Inject constructor(
             e.printStackTrace()
             return flow { }
         }
+    }
+
+    override suspend fun getByUuid(uuid: String): Flow<Contract?> {
+        return getByUuid(uuid, false)
     }
 
     override suspend fun getRecruitmentAsContract(
@@ -88,10 +105,8 @@ class ContractApiRepository @Inject constructor(
             val localContracts = gameDatabase.contractsDao
                 .getActiveByTime(currentIsoTime)
                 .distinctUntilChanged()
-                .map { entities ->
-                    entities.map {
-                        it.toType(getRelation(it.content.content).firstOrNull())
-                    }
+                .flatMapLatest {
+                    withRelation(it, false)
                 }
 
             // Get recruitments from local database
@@ -126,10 +141,8 @@ class ContractApiRepository @Inject constructor(
             val local = gameDatabase.contractsDao
                 .getAllGears()
                 .distinctUntilChanged()
-                .map { entities ->
-                    entities.map {
-                        it.toType(getRelation(it.content.content).firstOrNull())
-                    }
+                .flatMapLatest {
+                    withRelation(it, false)
                 }
 
             // Queue worker to fetch newest data from API
@@ -153,21 +166,25 @@ class ContractApiRepository @Inject constructor(
 
             // Get from local database
             val local = when (contentType) {
-                ContentType.SEASON  -> {
+                ContentType.SEASON -> {
                     gameDatabase.contractsDao
                         .getInactiveSeasonsByTime(currentIsoTime)
                         .distinctUntilChanged()
-                        .map { entities -> entities.map { it.toType(getRelation(it.content.content).firstOrNull()) } }
+                        .flatMapLatest {
+                            withRelation(it, false)
+                        }
                 }
 
-                ContentType.EVENT   -> {
+                ContentType.EVENT  -> {
                     gameDatabase.contractsDao
                         .getInactiveEventsByTime(currentIsoTime)
                         .distinctUntilChanged()
-                        .map { entities -> entities.map { it.toType(getRelation(it.content.content).firstOrNull()) } }
+                        .flatMapLatest {
+                            withRelation(it, false)
+                        }
                 }
 
-                ContentType.RECRUIT -> {
+                ContentType.AGENT  -> {
                     gameDatabase.contractsDao
                         .getInactiveRecruitmentsByTime(currentIsoTime)
                         .distinctUntilChanged()
@@ -190,16 +207,14 @@ class ContractApiRepository @Inject constructor(
         }
     }
 
-    override suspend fun getAll(): Flow<List<Contract>> {
+    override suspend fun getAll(withRewards: Boolean): Flow<List<Contract>> {
         return try {
             // Get from local database
             val local = gameDatabase.contractsDao
                 .getAll()
                 .distinctUntilChanged()
-                .map { entities ->
-                    entities.map {
-                        it.toType(getRelation(it.content.content).firstOrNull())
-                    }
+                .flatMapLatest {
+                    withRelation(it, withRewards)
                 }
 
             // Queue worker to fetch newest data from API
@@ -212,6 +227,10 @@ class ContractApiRepository @Inject constructor(
             e.printStackTrace()
             return flow { }
         }
+    }
+
+    override suspend fun getAll(): Flow<List<Contract>> {
+        return getAll(false)
     }
 
     // --------------------------------
@@ -352,18 +371,101 @@ class ContractApiRepository @Inject constructor(
     //  Query relation
     // --------------------------------
 
-    private suspend fun getRelation(
-        content: ContentEntity,
-    ): Flow<ContentRelation?> {
-        if (content.relationType.isNullOrEmpty() || content.relationUuid.isNullOrEmpty()) {
+    private suspend fun withRelation(
+        contractEntity: ContractWithContentWithChaptersWithLevelsAndRewards?,
+        withRewards: Boolean,
+    ): Flow<Contract?> {
+        val content = contractEntity?.content?.content
+
+        if (content == null || content.relationType.isNullOrEmpty() || content.relationUuid.isNullOrEmpty()) {
             return flow { emit(null) }
         }
 
-        return when (content.relationType) {
-            "Agent"  -> agentRepository.getByUuid(content.relationUuid)
-            "Event"  -> eventRepository.getByUuid(content.relationUuid)
-            "Season" -> seasonRepository.getByUuid(content.relationUuid)
-            else     -> flow { emit(null) }
+        val relationFlow = when (content.relationType) {
+            ContentType.AGENT.internalName  -> agentRepository.getByUuid(content.relationUuid)
+            ContentType.EVENT.internalName  -> eventRepository.getByUuid(content.relationUuid)
+            ContentType.SEASON.internalName -> seasonRepository.getByUuid(content.relationUuid)
+            else                            -> null
+        }
+
+        if (relationFlow == null) return flow { emit(null) }
+
+        val rewardsFlow = if (withRewards) {
+            combine(contractEntity.content.chapters.map { chapter ->
+                val levelRewardsFlow = if (chapter.levels.isNotEmpty())
+                    combine(chapter.levels.map { level -> getReward(level.reward) }) { it.toList() }
+                else flow { emit(emptyList()) }
+
+                val freeRewardsFlow = if (chapter.freeRewards.isNotEmpty())
+                    combine(chapter.freeRewards.map { reward -> getReward(reward) }) { it.toList() }
+                else flow { emit(emptyList()) }
+
+                levelRewardsFlow.combine(freeRewardsFlow) { levelRewards, freeRewards ->
+                    Pair(
+                        levelRewards,
+                        freeRewards
+                    )
+                }
+            }) { it.toList() }
+        } else {
+            flow { emit(emptyList()) }
+        }
+
+        return combine(
+            flowOf(contractEntity),
+            relationFlow,
+            rewardsFlow,
+        ) { contract, relation, rewards ->
+            contract.toType(relation, rewards)
+        }
+    }
+
+    private suspend fun withRelation(
+        contractEntities: List<ContractWithContentWithChaptersWithLevelsAndRewards>,
+        withRewards: Boolean,
+    ): Flow<List<Contract>> {
+        return combine(contractEntities.map { withRelation(it, withRewards) }) {
+            it
+                .filterNotNull()
+                .toList()
+        }
+    }
+
+
+
+    private suspend fun getReward(
+        reward: RewardEntity,
+    ): Flow<RewardRelation?> {
+        if (reward.rewardType.isEmpty() || reward.rewardUuid.isEmpty()) {
+            return flow { emit(null) }
+        }
+
+        return when (reward.rewardType) {
+            RewardType.TITLE.internalName       -> playerTitleRepository
+                .getByUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount) }
+
+            RewardType.PLAYER_CARD.internalName -> playerCardRepository
+                .getByUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount) }
+
+            RewardType.BUDDY.internalName       -> buddyRepository
+                .getByLevelUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount) }
+
+            RewardType.CURRENCY.internalName    -> currencyRepository
+                .getByUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount) }
+
+            RewardType.SPRAY.internalName       -> sprayRepository
+                .getByUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount) }
+
+            RewardType.WEAPON_SKIN.internalName -> weaponRepository
+                .getSkinByLevelUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount, reward.rewardUuid) }
+
+            else                                -> flow { emit(null) }
         }
     }
 

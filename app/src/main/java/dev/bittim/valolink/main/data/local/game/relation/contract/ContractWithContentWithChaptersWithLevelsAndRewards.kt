@@ -6,6 +6,7 @@ import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContentEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.ContractEntity
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 
 data class ContractWithContentWithChaptersWithLevelsAndRewards(
     @Embedded val contract: ContractEntity,
@@ -21,9 +22,10 @@ data class ContractWithContentWithChaptersWithLevelsAndRewards(
 
     fun toType(
         relation: ContentRelation?,
+        rewards: List<Pair<List<RewardRelation?>, List<RewardRelation?>>>,
     ): dev.bittim.valolink.main.domain.model.game.contract.Contract {
         return contract.toType(
-            content.toType(relation)
+            content.toType(relation, rewards)
         )
     }
 }

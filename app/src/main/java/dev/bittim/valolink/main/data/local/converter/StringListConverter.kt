@@ -26,6 +26,6 @@ class StringListConverter constructor(
                 List::class.java,
                 String::class.java
             )
-        ).fromJson(value) ?: listOf()
+        ).fromJson(value) ?: emptyList()
     }
 }

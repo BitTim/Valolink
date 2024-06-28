@@ -21,7 +21,6 @@ import javax.inject.Inject
 class WeaponApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
     private val gameApi: GameApi,
-    private val versionRepository: VersionRepository,
     private val workManager: WorkManager,
 ) : WeaponRepository {
     // --------------------------------
@@ -172,7 +171,7 @@ class WeaponApiRepository @Inject constructor(
             )
         }.filterNotNull()
 
-        val damageRangeDto = statsDto.flatMap { it?.damageRanges ?: listOf() }
+        val damageRangeDto = statsDto.flatMap { it?.damageRanges ?: emptyList() }
         val damageRanges = damageRangeDto.zip(stats) { damageRange, stat ->
             damageRange.toEntity(
                 version,

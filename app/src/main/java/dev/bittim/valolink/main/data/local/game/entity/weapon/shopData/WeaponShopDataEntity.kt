@@ -39,7 +39,7 @@ data class WeaponShopDataEntity(
     val newImage2: String?,
 ) : GameEntity() {
     fun toType(
-        gridPosition: WeaponGridPosition,
+        gridPosition: WeaponGridPosition?,
     ): WeaponShopData {
         return WeaponShopData(
             cost = cost,

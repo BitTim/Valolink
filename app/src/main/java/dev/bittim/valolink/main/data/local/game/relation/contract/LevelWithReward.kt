@@ -6,6 +6,7 @@ import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 
 data class LevelWithReward(
     @Embedded val level: LevelEntity,
@@ -18,9 +19,9 @@ data class LevelWithReward(
         return level.version
     }
 
-    fun toType(): ChapterLevel {
+    fun toType(relation: RewardRelation?): ChapterLevel {
         return level.toType(
-            reward.toType()
+            reward.toType(relation)
         )
     }
 }

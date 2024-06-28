@@ -10,7 +10,7 @@ data class PlayerCardDto(
     val displayIcon: String,
     val smallArt: String,
     val wideArt: String,
-    val largeArt: String,
+    val largeArt: String?,
     val assetPath: String,
 ) {
     fun toEntity(version: String): PlayerCardEntity {

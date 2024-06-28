@@ -112,17 +112,22 @@ fun ContractDetailsScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(items = state.rewards,
-                              itemContent = {
-                                  AgentRewardCard(
-                                      name = it.first.displayName,
-                                      type = it.first.type,
-                                      displayIcon = it.first.displayIcon,
-                                      price = it.second.vpCost,
-                                      amount = it.first.amount,
-                                      currencyIcon = state.vp?.displayIcon ?: ""
-                                  )
-                              })
+                        items(items = state.contract.content.chapters.flatMap { it.levels },
+                              itemContent = { level ->
+                                  val reward = level.reward.relation
+
+                                  if (reward != null) {
+                                      AgentRewardCard(
+                                          name = reward.displayName,
+                                          type = reward.type,
+                                          displayIcon = reward.displayIcon,
+                                          price = level.vpCost,
+                                          amount = reward.amount,
+                                          currencyIcon = state.vp?.displayIcon ?: ""
+                                      )
+                                  }
+                              }
+                        )
                     }
                 }
 
@@ -152,17 +157,31 @@ fun ContractDetailsScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(items = state.freeRewards,
-                              itemContent = {
-                                  AgentRewardCard(
-                                      name = it.first.displayName,
-                                      type = it.first.type,
-                                      displayIcon = it.first.displayIcon,
-                                      price = it.second.vpCost,
-                                      amount = it.first.amount,
-                                      currencyIcon = state.vp?.displayIcon ?: ""
-                                  )
-                              })
+                        items(
+                            items = state.contract.content.chapters.flatMap { chapter ->
+                                chapter.freeRewards?.map {
+                                    Pair(
+                                        it,
+                                        chapter.levels.lastOrNull()
+                                    )
+                                } ?: emptyList()
+                            },
+                            itemContent = {
+                                val reward = it.first.relation
+                                val level = it.second
+
+                                if (reward != null && level != null) {
+                                    AgentRewardCard(
+                                        name = reward.displayName,
+                                        type = reward.type,
+                                        displayIcon = reward.displayIcon,
+                                        price = level.vpCost,
+                                        amount = reward.amount,
+                                        currencyIcon = state.vp?.displayIcon ?: ""
+                                    )
+                                }
+                            }
+                        )
                     }
                 }
             }
@@ -208,11 +227,12 @@ fun ContractDetailsScreenPreview() {
                                         "Spray",
                                         UUID.randomUUID().toString(),
                                         1,
-                                        false
+                                        false,
+                                        null
                                     )
                                 )
                             ),
-                            listOf(),
+                            emptyList(),
                             false
                         )
                     )

@@ -45,7 +45,7 @@ data class WeaponStatsEntity(
     val altFireType: String?,
 ) : GameEntity() {
     fun toType(
-        adsStats: WeaponAdsStats,
+        adsStats: WeaponAdsStats?,
         altShotgunStats: WeaponAltShotgunStats?,
         airBurstStats: WeaponAirBurstStats?,
         damageRanges: List<WeaponDamageRange>,

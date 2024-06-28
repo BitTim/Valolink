@@ -5,7 +5,7 @@ data class WeaponShopData(
     val category: String,
     val shopOrderPriority: Int,
     val categoryText: String,
-    val gridPosition: WeaponGridPosition,
+    val gridPosition: WeaponGridPosition?,
     val canBeTrashed: Boolean,
     val image: String?,
     val newImage: String,

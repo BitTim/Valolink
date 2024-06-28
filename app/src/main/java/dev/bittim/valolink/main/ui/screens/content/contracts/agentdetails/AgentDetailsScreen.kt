@@ -142,7 +142,7 @@ fun AgentDetailsScreen(
         // Scroll to the currently active reward
         LaunchedEffect(
             state.userGear?.progress,
-            state.rewards
+            state.agentGear
         ) {
             val targetIndex = state.userGear?.progress ?: 0
             state.rewardListState.animateScrollToItem(targetIndex)
@@ -223,7 +223,11 @@ fun AgentDetailsScreen(
                         model = agent.fullPortrait,
                         contentDescription = null,
                         contentScale = ContentScale.FillHeight,
-                        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (isLocked) 0.3f else 1f) }),
+                        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply {
+                            setToSaturation(
+                                if (isLocked) 0.3f else 1f
+                            )
+                        }),
                         placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_full_portrait)
                     )
 
@@ -393,31 +397,38 @@ fun AgentDetailsScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    itemsIndexed(items = state.rewards,
-                                 itemContent = { index, reward ->
-                                     AgentRewardCard(name = reward.first.displayName,
-                                                     type = reward.first.type,
-                                                     displayIcon = reward.first.displayIcon,
-                                                     price = reward.second.doughCost,
-                                                     amount = reward.first.amount,
-                                                     currencyIcon = state.dough?.displayIcon ?: "",
-                                                     isLocked = isLocked,
-                                                     isOwned = progress > index,
-                                                     unlockReward = {
-                                                         targetRewardIndex = index
-                                                         val rewardCount = index - progress
+                    itemsIndexed(
+                        items = state.agentGear.content.chapters.flatMap { chapter -> chapter.levels },
+                        itemContent = { index, level ->
+                            val reward = level.reward.relation
 
-                                                         // Unlock multiple at the same time
-                                                         if (rewardCount > 0) isRewardUnlockAlertShown =
-                                                             true
-                                                         // Unlock just one
-                                                         if (rewardCount == 0) updateProgress(targetRewardIndex + 1)
-                                                     },
-                                                     resetReward = {
-                                                         targetRewardIndex = index
-                                                         isRewardResetAlertShown = true
-                                                     })
-                                 })
+                            if (reward != null) {
+                                AgentRewardCard(
+                                    name = reward.displayName,
+                                    type = reward.type,
+                                    displayIcon = reward.displayIcon,
+                                    price = level.doughCost,
+                                    amount = reward.amount,
+                                    currencyIcon = state.dough?.displayIcon ?: "",
+                                    isLocked = isLocked,
+                                    isOwned = progress > index,
+                                    unlockReward = {
+                                        targetRewardIndex = index
+                                        val rewardCount = index - progress
+
+                                        // Unlock multiple at the same time
+                                        if (rewardCount > 0) isRewardUnlockAlertShown = true
+                                        // Unlock just one
+                                        if (rewardCount == 0) updateProgress(targetRewardIndex + 1)
+                                    },
+                                    resetReward = {
+                                        targetRewardIndex = index
+                                        isRewardResetAlertShown = true
+                                    }
+                                )
+                            }
+                        }
+                    )
                 }
             }
 
@@ -533,27 +544,31 @@ fun AgentDetailsScreen(
         }
 
         if (isRewardUnlockAlertShown && progress < targetRewardIndex) {
-            val rewards = state.rewards.subList(
-                progress,
-                targetRewardIndex + 1
-            )
+            val levels =
+                state.agentGear.content.chapters.flatMap { chapter -> chapter.levels }.subList(
+                    progress,
+                    targetRewardIndex + 1
+                )
 
-            RewardUnlockAlertDialog(rewards = rewards,
-                                    currencyDisplayIcon = state.dough?.displayIcon,
-                                    onDismiss = { isRewardUnlockAlertShown = false },
-                                    onConfirm = { updateProgress(targetRewardIndex + 1) })
+            RewardUnlockAlertDialog(
+                levels = levels,
+                currencyDisplayIcon = state.dough?.displayIcon,
+                onDismiss = { isRewardUnlockAlertShown = false },
+                onConfirm = { updateProgress(targetRewardIndex + 1) })
         }
 
         if (isRewardResetAlertShown && progress >= targetRewardIndex) {
-            val rewards = state.rewards.subList(
-                targetRewardIndex,
-                progress
-            )
+            val levels =
+                state.agentGear.content.chapters.flatMap { chapter -> chapter.levels }.subList(
+                    targetRewardIndex,
+                    progress
+                )
 
-            RewardResetAlertDialog(rewards = rewards,
-                                   currencyDisplayIcon = state.dough?.displayIcon,
-                                   onDismiss = { isRewardResetAlertShown = false },
-                                   onConfirm = { updateProgress(targetRewardIndex) })
+            RewardResetAlertDialog(
+                levels = levels,
+                currencyDisplayIcon = state.dough?.displayIcon,
+                onDismiss = { isRewardResetAlertShown = false },
+                onConfirm = { updateProgress(targetRewardIndex) })
         }
     }
 }

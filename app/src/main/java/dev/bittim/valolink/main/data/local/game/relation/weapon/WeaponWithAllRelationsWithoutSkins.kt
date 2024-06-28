@@ -30,7 +30,7 @@ data class WeaponWithAllRelationsWithoutSkins(
         return weapon.toType(
             weaponStats = weaponStats.toType(),
             shopData = shopData.toType(),
-            skins = listOf()
+            skins = emptyList()
         )
     }
 }

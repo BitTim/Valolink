@@ -15,12 +15,12 @@ data class WeaponWithAllRelations(
         entity = WeaponStatsEntity::class,
         parentColumn = "uuid",
         entityColumn = "weapon"
-    ) val weaponStats: WeaponStatsWithAllRelations,
+    ) val weaponStats: WeaponStatsWithAllRelations?,
     @Relation(
         entity = WeaponShopDataEntity::class,
         parentColumn = "uuid",
         entityColumn = "weapon"
-    ) val shopData: WeaponShopDataWithAllRelations,
+    ) val shopData: WeaponShopDataWithAllRelations?,
     @Relation(
         entity = WeaponSkinEntity::class,
         parentColumn = "uuid",
@@ -32,8 +32,9 @@ data class WeaponWithAllRelations(
     }
 
     fun toType(): Weapon {
-        return weapon.toType(weaponStats = weaponStats.toType(),
-                             shopData = shopData.toType(),
-                             skins = skins.map { it.toType() })
+        return weapon.toType(
+            weaponStats = weaponStats?.toType(),
+            shopData = shopData?.toType(),
+            skins = skins.map { it.toType() })
     }
 }

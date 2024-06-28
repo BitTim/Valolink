@@ -19,70 +19,76 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.PricedListItem
 
 @Composable
 fun RewardUnlockAlertDialog(
-    rewards: List<Pair<RewardRelation, ChapterLevel>>,
+    levels: List<ChapterLevel>,
     currencyDisplayIcon: String?,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
-    AlertDialog(icon = {
-        Icon(
-            imageVector = Icons.Default.LockOpen,
-            contentDescription = null
-        )
-    },
-                title = { Text(text = "Unlock Rewards") },
-                text = {
-                    LazyColumn {
-                        item { Text(text = "You will unlock the following rewards:") }
+    AlertDialog(
+        icon = {
+            Icon(
+                imageVector = Icons.Default.LockOpen,
+                contentDescription = null
+            )
+        },
+        title = { Text(text = "Unlock Rewards") },
+        text = {
+            LazyColumn {
+                item { Text(text = "You will unlock the following rewards:") }
 
-                        item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                        items(items = rewards,
-                              itemContent = {
-                                  PricedListItem(
-                                      it.first.displayName,
-                                      currencyDisplayIcon,
-                                      it.second.doughCost,
-                                      MaterialTheme.colorScheme.onSurface
-                                  )
-                              })
+                items(items = levels,
+                      itemContent = { level ->
+                          val reward = level.reward.relation
 
-                        item {
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                            )
-                        }
+                          if (reward != null) {
+                              PricedListItem(
+                                  reward.displayName,
+                                  currencyDisplayIcon,
+                                  level.doughCost,
+                                  MaterialTheme.colorScheme.onSurface
+                              )
+                          }
+                      }
+                )
 
-                        item {
-                            PricedListItem(
-                                "Total cost",
-                                currencyDisplayIcon,
-                                rewards.sumOf { it.second.doughCost },
-                                MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                },
-                onDismissRequest = onDismiss,
+                item {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    )
+                }
 
-                confirmButton = {
-                    Button(onClick = {
-                        onDismiss()
-                        onConfirm()
-                    }) {
-                        Text(text = "Unlock")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = onDismiss) {
-                        Text(text = "Cancel")
-                    }
-                })
+                item {
+                    PricedListItem(
+                        "Total cost",
+                        currencyDisplayIcon,
+                        levels.sumOf { it.doughCost },
+                        MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        },
+        onDismissRequest = onDismiss,
+
+        confirmButton = {
+            Button(onClick = {
+                onDismiss()
+                onConfirm()
+            }) {
+                Text(text = "Unlock")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "Cancel")
+            }
+        }
+    )
 }

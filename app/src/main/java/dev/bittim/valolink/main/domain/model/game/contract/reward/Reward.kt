@@ -5,4 +5,5 @@ data class Reward(
     val rewardUuid: String,
     val amount: Int,
     val isHighlighted: Boolean,
+    val relation: RewardRelation?,
 )

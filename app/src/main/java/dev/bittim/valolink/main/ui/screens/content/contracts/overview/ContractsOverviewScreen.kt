@@ -117,7 +117,7 @@ fun ContractsOverviewScreen(
                   itemContent = {
                       var displayIcon: String? = null
                       var backgroundImage: String? = null
-                      var backgroundGradientColors: List<String> = listOf()
+                      var backgroundGradientColors: List<String> = emptyList()
 
                       if (it.content.relation is Agent) {
                           displayIcon = it.content.relation.displayIcon
@@ -263,7 +263,7 @@ fun ContractsOverviewScreen(
                   itemContent = {
                       var displayIcon: String? = null
                       var backgroundImage: String? = null
-                      var backgroundGradientColors: List<String> = listOf()
+                      var backgroundGradientColors: List<String> = emptyList()
 
                       if (it.content.relation is Agent) {
                           displayIcon = it.content.relation.displayIcon
