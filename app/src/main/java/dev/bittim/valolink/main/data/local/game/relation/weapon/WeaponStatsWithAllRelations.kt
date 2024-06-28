@@ -15,15 +15,15 @@ data class WeaponStatsWithAllRelations(
     @Relation(
         parentColumn = "uuid",
         entityColumn = "weaponStats"
-    ) val weaponAdsStats: WeaponAdsStatsEntity,
+    ) val weaponAdsStats: WeaponAdsStatsEntity?,
     @Relation(
         parentColumn = "uuid",
         entityColumn = "weaponStats"
-    ) val weaponAltShotgunStats: WeaponAltShotgunStatsEntity,
+    ) val weaponAltShotgunStats: WeaponAltShotgunStatsEntity?,
     @Relation(
         parentColumn = "uuid",
         entityColumn = "weaponStats"
-    ) val weaponAirBurstStats: WeaponAirBurstStatsEntity,
+    ) val weaponAirBurstStats: WeaponAirBurstStatsEntity?,
     @Relation(
         parentColumn = "uuid",
         entityColumn = "weaponStats"
@@ -34,9 +34,10 @@ data class WeaponStatsWithAllRelations(
     }
 
     fun toType(): WeaponStats {
-        return weaponStats.toType(adsStats = weaponAdsStats.toType(),
-                                  altShotgunStats = weaponAltShotgunStats.toType(),
-                                  airBurstStats = weaponAirBurstStats.toType(),
-                                  damageRanges = weaponDamageRanges.map { it.toType() })
+        return weaponStats.toType(
+            adsStats = weaponAdsStats?.toType(),
+            altShotgunStats = weaponAltShotgunStats?.toType(),
+            airBurstStats = weaponAirBurstStats?.toType(),
+            damageRanges = weaponDamageRanges.map { it.toType() })
     }
 }

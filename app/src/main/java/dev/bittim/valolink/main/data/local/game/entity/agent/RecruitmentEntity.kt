@@ -68,11 +68,12 @@ data class RecruitmentEntity(
                                     "Agent",
                                     agent.uuid,
                                     1,
-                                    false
+                                    false,
+                                    null
                                 )
                             )
                         ),
-                        listOf(),
+                        emptyList(),
                         false
                     )
                 )

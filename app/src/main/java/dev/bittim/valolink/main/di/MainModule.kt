@@ -261,20 +261,30 @@ object MainModule {
     fun providesContractRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
+        workManager: WorkManager,
         seasonRepository: SeasonRepository,
         eventRepository: EventRepository,
         agentRepository: AgentRepository,
-        workManager: WorkManager,
+        currencyRepository: CurrencyRepository,
+        sprayRepository: SprayRepository,
+        playerTitleRepository: PlayerTitleRepository,
+        playerCardRepository: PlayerCardRepository,
+        buddyRepository: BuddyRepository,
+        weaponRepository: WeaponRepository,
     ): ContractRepository {
         return ContractApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
+            workManager,
             seasonRepository,
             eventRepository,
             agentRepository,
-            workManager
+            currencyRepository,
+            sprayRepository,
+            playerTitleRepository,
+            playerCardRepository,
+            buddyRepository,
+            weaponRepository,
         )
     }
 
@@ -363,13 +373,11 @@ object MainModule {
     fun providesWeaponRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): WeaponRepository {
         return WeaponApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }

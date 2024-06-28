@@ -26,8 +26,8 @@ data class WeaponEntity(
     val killStreamIcon: String,
 ) : GameEntity() {
     fun toType(
-        weaponStats: WeaponStats,
-        shopData: WeaponShopData,
+        weaponStats: WeaponStats?,
+        shopData: WeaponShopData?,
         skins: List<WeaponSkin>,
     ): Weapon {
         return Weapon(

@@ -10,12 +10,12 @@ import dev.bittim.valolink.main.domain.model.user.UserData
 data class ContractsOverviewState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val isLoading: Boolean = true,
     val userData: UserData? = null,
-    val userGears: List<Gear> = listOf(),
+    val userGears: List<Gear> = emptyList(),
 
     val archiveTypeFilter: ContentType = ContentType.SEASON,
-    val activeContracts: List<Contract> = listOf(),
-    val agentGears: List<Contract> = listOf(),
-    val inactiveContracts: List<Contract> = listOf(),
+    val activeContracts: List<Contract> = emptyList(),
+    val agentGears: List<Contract> = emptyList(),
+    val inactiveContracts: List<Contract> = emptyList(),
 
     val agentGearCarouselState: CarouselState = CarouselState(itemCount = agentGears::count),
 )

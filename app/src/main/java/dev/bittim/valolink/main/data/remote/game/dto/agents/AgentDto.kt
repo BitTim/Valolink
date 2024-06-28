@@ -33,7 +33,7 @@ data class AgentDto(
             displayName,
             description,
             developerName,
-            characterTags ?: listOf(),
+            characterTags ?: emptyList(),
             displayIcon,
             displayIconSmall,
             bustPortrait,

@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.main.data.local.game.entity.GameEntity
 import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 
 @Entity(
     tableName = "ContractRewards",
@@ -43,12 +44,13 @@ data class RewardEntity(
     val amount: Int,
     val isHighlighted: Boolean,
 ) : GameEntity() {
-    fun toType(): Reward {
+    fun toType(relation: RewardRelation?): Reward {
         return Reward(
             rewardType,
             rewardUuid,
             amount,
-            isHighlighted
+            isHighlighted,
+            relation
         )
     }
 }

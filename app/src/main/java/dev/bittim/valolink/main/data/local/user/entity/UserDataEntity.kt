@@ -27,7 +27,7 @@ data class UserDataEntity(
             isPrivate,
             username,
             agents,
-            listOf()
+            emptyList()
         )
     }
 

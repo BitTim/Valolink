@@ -21,7 +21,7 @@ data class PlayerCardEntity(
     val displayIcon: String,
     val smallArt: String,
     val wideArt: String,
-    val largeArt: String,
+    val largeArt: String?,
 ) : GameEntity() {
     fun toType(): PlayerCard {
         return PlayerCard(

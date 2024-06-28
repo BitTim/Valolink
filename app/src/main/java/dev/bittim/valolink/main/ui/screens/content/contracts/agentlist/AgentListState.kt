@@ -6,7 +6,7 @@ import dev.bittim.valolink.main.domain.model.user.UserData
 
 data class AgentListState(
     val isLoading: Boolean = true,
-    val agentGears: List<Contract> = listOf(),
-    val userGears: List<Gear> = listOf(),
+    val agentGears: List<Contract> = emptyList(),
+    val userGears: List<Gear> = emptyList(),
     val userData: UserData? = null,
 )

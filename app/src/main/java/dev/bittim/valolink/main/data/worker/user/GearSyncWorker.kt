@@ -31,7 +31,7 @@ class GearSyncWorker @AssistedInject constructor(
         val lastLocalUpdates = userDatabase.gearDao.getByUser(uid).firstOrNull()
 
         // Fetch most recent gear data from Supabase
-        var gears: List<GearDto?> = listOf()
+        var gears: List<GearDto?> = emptyList()
         try {
             gears = database.from("gears").select {
                 filter {

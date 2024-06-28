@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "256c579cd2a863c18ef0af8b46827f57",
+    "identityHash": "dd752901f4b9b1cfd30083383df0e6c3",
     "entities": [
       {
         "tableName": "Version",
@@ -1258,7 +1258,7 @@
       },
       {
         "tableName": "PlayerCards",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `isHiddenIfNotOwned` INTEGER NOT NULL, `themeUuid` TEXT, `displayIcon` TEXT NOT NULL, `smallArt` TEXT NOT NULL, `wideArt` TEXT NOT NULL, `largeArt` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `isHiddenIfNotOwned` INTEGER NOT NULL, `themeUuid` TEXT, `displayIcon` TEXT NOT NULL, `smallArt` TEXT NOT NULL, `wideArt` TEXT NOT NULL, `largeArt` TEXT, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -1312,7 +1312,7 @@
             "fieldPath": "largeArt",
             "columnName": "largeArt",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -2475,7 +2475,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '256c579cd2a863c18ef0af8b46827f57')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd752901f4b9b1cfd30083383df0e6c3')"
     ]
   }
 }

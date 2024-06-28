@@ -16,53 +16,60 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.PricedListItem
 
 @Composable
 fun RewardResetAlertDialog(
-    rewards: List<Pair<RewardRelation, ChapterLevel>>,
+    levels: List<ChapterLevel>,
     currencyDisplayIcon: String?,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
-    AlertDialog(icon = {
-        Icon(
-            imageVector = Icons.Default.Restore,
-            contentDescription = null
-        )
-    },
-                title = { Text(text = "Reset Rewards") },
-                text = {
-                    LazyColumn {
-                        item { Text(text = "The following rewards will be reset:") }
+    AlertDialog(
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Restore,
+                contentDescription = null
+            )
+        },
+        title = { Text(text = "Reset Rewards") },
+        text = {
+            LazyColumn {
+                item { Text(text = "The following rewards will be reset:") }
 
-                        item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                        items(items = rewards,
-                              itemContent = {
-                                  PricedListItem(
-                                      it.first.displayName,
-                                      currencyDisplayIcon,
-                                      it.second.doughCost,
-                                      MaterialTheme.colorScheme.onSurface
-                                  )
-                              })
-                    }
-                },
-                onDismissRequest = onDismiss,
+                items(
+                    items = levels,
+                    itemContent = { level ->
+                        val reward = level.reward.relation
 
-                confirmButton = {
-                    Button(onClick = {
-                        onDismiss()
-                        onConfirm()
-                    }) {
-                        Text(text = "Reset")
+                        if (reward != null) {
+                            PricedListItem(
+                                reward.displayName,
+                                currencyDisplayIcon,
+                                level.doughCost,
+                                MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
-                },
-                dismissButton = {
-                    TextButton(onClick = onDismiss) {
-                        Text(text = "Cancel")
-                    }
-                })
+                )
+            }
+        },
+        onDismissRequest = onDismiss,
+
+        confirmButton = {
+            Button(onClick = {
+                onDismiss()
+                onConfirm()
+            }) {
+                Text(text = "Reset")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "Cancel")
+            }
+        }
+    )
 }

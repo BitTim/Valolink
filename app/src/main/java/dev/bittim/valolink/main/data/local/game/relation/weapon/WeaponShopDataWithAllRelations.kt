@@ -12,7 +12,7 @@ data class WeaponShopDataWithAllRelations(
     @Relation(
         parentColumn = "uuid",
         entityColumn = "weaponShopData"
-    ) val gridPosition: WeaponGridPositionEntity,
+    ) val gridPosition: WeaponGridPositionEntity?,
 ) : VersionedEntity {
     override fun getApiVersion(): String {
         return weaponShopData.version
@@ -20,7 +20,7 @@ data class WeaponShopDataWithAllRelations(
 
     fun toType(): WeaponShopData {
         return weaponShopData.toType(
-            gridPosition.toType()
+            gridPosition?.toType()
         )
     }
 }

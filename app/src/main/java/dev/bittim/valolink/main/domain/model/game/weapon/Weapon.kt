@@ -11,7 +11,7 @@ data class Weapon(
     val defaultSkinUuid: String,
     val displayIcon: String,
     val killStreamIcon: String,
-    val weaponStats: WeaponStats,
-    val shopData: WeaponShopData,
-    val skins: List<WeaponSkin>
+    val weaponStats: WeaponStats?,
+    val shopData: WeaponShopData?,
+    val skins: List<WeaponSkin>,
 )

@@ -7,6 +7,7 @@ import dev.bittim.valolink.main.data.local.game.entity.contract.ChapterEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Chapter
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 
 data class ChapterWithLevelsAndRewards(
     @Embedded val chapter: ChapterEntity,
@@ -24,8 +25,13 @@ data class ChapterWithLevelsAndRewards(
         return chapter.version
     }
 
-    fun toType(): Chapter {
-        return chapter.toType(levels.map { it.toType() },
-                              freeRewards.map { it.toType() })
+    fun toType(
+        rewards: Pair<List<RewardRelation?>, List<RewardRelation?>>?,
+    ): Chapter {
+        return chapter.toType(
+            levels.mapIndexed { index, level -> level.toType(rewards?.first?.getOrNull(index)) },
+            freeRewards.mapIndexed { index, freeReward ->
+                freeReward.toType(rewards?.second?.getOrNull(index))
+            })
     }
 }

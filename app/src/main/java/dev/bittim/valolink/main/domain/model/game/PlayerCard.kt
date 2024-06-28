@@ -11,14 +11,14 @@ data class PlayerCard(
     val displayIcon: String,
     val smallArt: String,
     val wideArt: String,
-    val largeArt: String,
+    val largeArt: String?,
 ) {
     fun asRewardRelation(amount: Int): RewardRelation {
         return RewardRelation(
             uuid = uuid,
             type = RewardType.PLAYER_CARD,
             displayName = displayName,
-            displayIcon = largeArt,
+            displayIcon = largeArt ?: wideArt,
             amount = amount
         )
     }
