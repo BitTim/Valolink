@@ -14,7 +14,7 @@ data class PlayerTitle(
             uuid = uuid,
             type = RewardType.TITLE,
             displayName = displayName ?: "No title",
-            displayIcon = "https://static.wikia.nocookie.net/valorant/images/5/5d/Player_Title_image.png/revision/latest?cb=20210104061536", // TODO: Replace with local resource
+            previewIcon = "https://static.wikia.nocookie.net/valorant/images/5/5d/Player_Title_image.png/revision/latest?cb=20210104061536", // TODO: Replace with local resource
             amount = amount
         )
     }

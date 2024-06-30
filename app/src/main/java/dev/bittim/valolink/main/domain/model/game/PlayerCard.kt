@@ -18,7 +18,7 @@ data class PlayerCard(
             uuid = uuid,
             type = RewardType.PLAYER_CARD,
             displayName = displayName,
-            displayIcon = largeArt ?: wideArt,
+            previewIcon = largeArt ?: wideArt,
             amount = amount
         )
     }

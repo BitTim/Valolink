@@ -65,8 +65,9 @@ fun AgentRewardCard(
     type: RewardType,
     price: Int,
     amount: Int,
-    displayIcon: String,
+    previewIcon: String,
     currencyIcon: String,
+    displayIcon: String? = null,
     isLocked: Boolean = false,
     isOwned: Boolean = false,
     unlockReward: () -> Unit = {},
@@ -93,6 +94,21 @@ fun AgentRewardCard(
                 .clip(MaterialTheme.shapes.medium),
             tonalElevation = 3.dp
         ) {
+            if (displayIcon != null && type != RewardType.PLAYER_CARD) {
+                AsyncImage(
+                    modifier = Modifier
+                        .blur(
+                            32.dp,
+                            BlurredEdgeTreatment.Rectangle
+                        ),
+                    model = displayIcon,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (isLocked) 0.3f else 0.5f) }),
+                    contentScale = ContentScale.FillWidth,
+                    alignment = Alignment.Center,
+                )
+            }
+
             AsyncImage(
                 modifier = Modifier
                     .padding(imagePadding)
@@ -102,7 +118,7 @@ fun AgentRewardCard(
                             BlurredEdgeTreatment.Rectangle
                         )
                     },
-                model = displayIcon,
+                model = previewIcon,
                 contentDescription = null,
                 colorFilter = if (type == RewardType.CURRENCY || type == RewardType.TITLE) ColorFilter.tint(
                     MaterialTheme.colorScheme.onSurface
@@ -278,7 +294,7 @@ fun AgentRewardCardPreview() {
                 type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
-                displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png"
             )
         }
@@ -305,7 +321,7 @@ fun LockedAgentRewardCardPreview() {
                 type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
-                displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
                 isLocked = true,
             )
@@ -333,7 +349,7 @@ fun OwnedAgentRewardCardPreview() {
                 type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
-                displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
                 isOwned = true,
             )

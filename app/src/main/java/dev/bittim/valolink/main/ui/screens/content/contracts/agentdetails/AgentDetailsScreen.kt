@@ -406,6 +406,7 @@ fun AgentDetailsScreen(
                                 AgentRewardCard(
                                     name = reward.displayName,
                                     type = reward.type,
+                                    previewIcon = reward.previewIcon,
                                     displayIcon = reward.displayIcon,
                                     price = level.doughCost,
                                     amount = reward.amount,

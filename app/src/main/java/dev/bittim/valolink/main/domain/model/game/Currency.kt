@@ -25,7 +25,7 @@ data class Currency(
             uuid = uuid,
             type = RewardType.CURRENCY,
             displayName = if (actualAmount == 1) displayNameSingular else displayName,
-            displayIcon = displayIcon,
+            previewIcon = displayIcon,
             amount = actualAmount
         )
     }

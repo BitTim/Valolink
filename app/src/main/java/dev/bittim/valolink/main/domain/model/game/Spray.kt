@@ -19,7 +19,8 @@ data class Spray(
             uuid = uuid,
             type = RewardType.SPRAY,
             displayName = displayName,
-            displayIcon = animationPng ?: animationGif ?: fullTransparentIcon ?: displayIcon,
+            previewIcon = animationPng ?: animationGif ?: fullTransparentIcon ?: displayIcon,
+            displayIcon = displayIcon,
             amount = amount
         )
     }

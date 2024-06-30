@@ -16,7 +16,7 @@ data class Buddy(
             uuid = uuid,
             type = RewardType.BUDDY,
             displayName = displayName,
-            displayIcon = if (levels.isNotEmpty()) levels[0].displayIcon else displayIcon,
+            previewIcon = if (levels.isNotEmpty()) levels[0].displayIcon else displayIcon,
             amount = amount
         )
     }

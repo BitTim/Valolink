@@ -21,7 +21,7 @@ data class WeaponSkin(
             uuid = uuid,
             type = RewardType.WEAPON_SKIN,
             displayName = displayName,
-            displayIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
+            previewIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
             amount = amount
         )
     }

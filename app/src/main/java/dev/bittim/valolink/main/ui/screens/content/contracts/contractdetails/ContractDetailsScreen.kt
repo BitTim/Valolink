@@ -120,6 +120,7 @@ fun ContractDetailsScreen(
                                       AgentRewardCard(
                                           name = reward.displayName,
                                           type = reward.type,
+                                          previewIcon = reward.previewIcon,
                                           displayIcon = reward.displayIcon,
                                           price = level.vpCost,
                                           amount = reward.amount,
@@ -174,6 +175,7 @@ fun ContractDetailsScreen(
                                     AgentRewardCard(
                                         name = reward.displayName,
                                         type = reward.type,
+                                        previewIcon = reward.previewIcon,
                                         displayIcon = reward.displayIcon,
                                         price = level.vpCost,
                                         amount = reward.amount,
