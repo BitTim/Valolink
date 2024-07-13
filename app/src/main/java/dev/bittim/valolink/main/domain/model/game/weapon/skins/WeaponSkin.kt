@@ -20,9 +20,10 @@ data class WeaponSkin(
         return RewardRelation(
             uuid = uuid,
             type = RewardType.WEAPON_SKIN,
+            amount = amount,
             displayName = displayName,
             previewIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
-            amount = amount
+            displayIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
         )
     }
 }

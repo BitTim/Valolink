@@ -121,7 +121,7 @@ fun ContractDetailsScreen(
                                           name = reward.displayName,
                                           type = reward.type,
                                           previewIcon = reward.previewIcon,
-                                          displayIcon = reward.displayIcon,
+                                          displayIcon = reward.background,
                                           price = level.vpCost,
                                           amount = reward.amount,
                                           currencyIcon = state.vp?.displayIcon ?: ""
@@ -176,7 +176,7 @@ fun ContractDetailsScreen(
                                         name = reward.displayName,
                                         type = reward.type,
                                         previewIcon = reward.previewIcon,
-                                        displayIcon = reward.displayIcon,
+                                        displayIcon = reward.background,
                                         price = level.vpCost,
                                         amount = reward.amount,
                                         currencyIcon = state.vp?.displayIcon ?: ""

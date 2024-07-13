@@ -17,9 +17,11 @@ data class PlayerCard(
         return RewardRelation(
             uuid = uuid,
             type = RewardType.PLAYER_CARD,
+            amount = amount,
             displayName = displayName,
             previewIcon = largeArt ?: wideArt,
-            amount = amount
+            displayIcon = displayIcon,
+            background = displayIcon
         )
     }
 }

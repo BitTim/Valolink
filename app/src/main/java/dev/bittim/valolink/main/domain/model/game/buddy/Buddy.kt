@@ -15,9 +15,10 @@ data class Buddy(
         return RewardRelation(
             uuid = uuid,
             type = RewardType.BUDDY,
+            amount = amount,
             displayName = displayName,
             previewIcon = if (levels.isNotEmpty()) levels[0].displayIcon else displayIcon,
-            amount = amount
+            displayIcon = if (levels.isNotEmpty()) levels[0].displayIcon else displayIcon,
         )
     }
 }

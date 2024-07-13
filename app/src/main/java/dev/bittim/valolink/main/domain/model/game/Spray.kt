@@ -18,10 +18,11 @@ data class Spray(
         return RewardRelation(
             uuid = uuid,
             type = RewardType.SPRAY,
+            amount = amount,
             displayName = displayName,
             previewIcon = animationPng ?: animationGif ?: fullTransparentIcon ?: displayIcon,
             displayIcon = displayIcon,
-            amount = amount
+            background = displayIcon,
         )
     }
 }
