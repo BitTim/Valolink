@@ -15,13 +15,30 @@ fun NavGraphBuilder.contractsNavGraph(
     navigation<ContractsNav>(
         startDestination = ContractsOverviewNav
     ) {
-        contractsOverviewScreen(onNavToGearList = { navController.navToContractsGearList() },
-                                onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
-                                onNavToContractDetails = { uuid -> navController.navToContractsContractDetails(uuid) })
-        contractsGearListScreen(onNavBack = { navController.navigateUp() },
-                                onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) })
-        contractsAgentDetailsScreen(onNavBack = { navController.navigateUp() })
-        contractsContractDetailsScreen(onNavBack = { navController.navigateUp() })
+        contractsOverviewScreen(
+            onNavToGearList = { navController.navToContractsGearList() },
+            onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
+            onNavToContractDetails = { uuid -> navController.navToContractsContractDetails(uuid) }
+        )
+
+        contractsGearListScreen(
+            onNavBack = { navController.navigateUp() },
+            onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) }
+        )
+
+        contractsAgentDetailsScreen(
+            onNavBack = { navController.navigateUp() },
+            onNavToLevelDetails = { uuid -> navController.navToContractsLevelDetails(uuid) }
+        )
+
+        contractsContractDetailsScreen(
+            onNavBack = { navController.navigateUp() },
+            onNavToLevelDetails = { uuid -> navController.navToContractsLevelDetails(uuid) }
+        )
+
+        contractsLevelDetailsScreen(
+            onNavBack = { navController.navigateUp() }
+        )
     }
 }
 

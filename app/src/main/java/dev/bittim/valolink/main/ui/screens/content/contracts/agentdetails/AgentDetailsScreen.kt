@@ -73,6 +73,7 @@ fun AgentDetailsScreen(
     onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
+    onNavToLevelDetails: (String) -> Unit,
 ) {
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
@@ -316,8 +317,9 @@ fun AgentDetailsScreen(
                                 if (reward != null) {
                                     AgentRewardCard(
                                         name = reward.displayName,
+                                        levelUuid = level.uuid,
                                         type = reward.type,
-                                        previewIcon = reward.previewIcon,
+                                        previewIcon = reward.previewImage,
                                         displayIcon = reward.background,
                                         price = level.doughCost,
                                         amount = reward.amount,
@@ -336,7 +338,8 @@ fun AgentDetailsScreen(
                                         resetReward = {
                                             targetRewardIndex = index
                                             isRewardResetAlertShown = true
-                                        }
+                                        },
+                                        onNavToLevelDetails = onNavToLevelDetails
                                     )
                                 }
                             }

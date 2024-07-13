@@ -12,6 +12,7 @@ import dev.bittim.valolink.main.data.local.game.relation.contract.ContractWithCo
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
@@ -85,6 +86,35 @@ class ContractApiRepository @Inject constructor(
             // Queue worker to fetch newest data from API
             //  -> Worker will check if fetch is needed itself
             agentRepository.queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
+    }
+
+    override suspend fun getLevelByUuid(uuid: String): Flow<ChapterLevel?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.contractsDao
+                .getLevelByUuid(uuid)
+                .distinctUntilChanged()
+                .flatMapLatest {
+                    if (it == null) return@flatMapLatest flowOf(null)
+
+                    combine(
+                        flowOf(it),
+                        getReward(it.reward),
+                    ) { level, reward ->
+                        level.toType(reward)
+                    }
+                }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
 
             // Return
             local

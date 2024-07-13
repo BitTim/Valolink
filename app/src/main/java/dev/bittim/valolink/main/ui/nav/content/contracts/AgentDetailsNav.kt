@@ -19,6 +19,7 @@ data class AgentDetailsNav(
 
 fun NavGraphBuilder.contractsAgentDetailsScreen(
     onNavBack: () -> Unit,
+    onNavToLevelDetails: (String) -> Unit,
 ) {
     composable<AgentDetailsNav>(enterTransition = { Transition.forward },
                                 popExitTransition = { Transition.backward }) {
@@ -28,14 +29,17 @@ fun NavGraphBuilder.contractsAgentDetailsScreen(
         val args = it.toRoute<AgentDetailsNav>()
         viewModel.fetchDetails(args.uuid)
 
-        AgentDetailsScreen(state = state,
-                           unlockAgent = viewModel::unlockAgent,
-                           resetAgent = viewModel::resetAgent,
-                           addUserGear = viewModel::addUserGear,
-                           updateProgress = viewModel::updateProgress,
-                           onAbilityTabChanged = viewModel::onAbilityChanged,
-                           onNavBack = onNavBack,
-                           onNavGearRewardsList = {})
+        AgentDetailsScreen(
+            state = state,
+            unlockAgent = viewModel::unlockAgent,
+            resetAgent = viewModel::resetAgent,
+            addUserGear = viewModel::addUserGear,
+            updateProgress = viewModel::updateProgress,
+            onAbilityTabChanged = viewModel::onAbilityChanged,
+            onNavBack = onNavBack,
+            onNavGearRewardsList = {},
+            onNavToLevelDetails = onNavToLevelDetails
+        )
     }
 }
 

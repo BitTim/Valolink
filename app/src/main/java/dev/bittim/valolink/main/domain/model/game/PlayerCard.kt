@@ -19,7 +19,7 @@ data class PlayerCard(
             type = RewardType.PLAYER_CARD,
             amount = amount,
             displayName = displayName,
-            previewIcon = largeArt ?: wideArt,
+            previewImage = largeArt ?: wideArt,
             displayIcon = displayIcon,
             background = displayIcon
         )

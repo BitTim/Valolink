@@ -49,6 +49,7 @@ fun ContractDetailsScreen(
     state: ContractDetailsState,
     onNavBack: () -> Unit,
     onNavContractRewardsList: () -> Unit,
+    onNavToLevelDetails: (String) -> Unit,
 ) {
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
@@ -119,12 +120,14 @@ fun ContractDetailsScreen(
                                   if (reward != null) {
                                       AgentRewardCard(
                                           name = reward.displayName,
+                                          levelUuid = level.uuid,
                                           type = reward.type,
-                                          previewIcon = reward.previewIcon,
+                                          previewIcon = reward.previewImage,
                                           displayIcon = reward.background,
                                           price = level.vpCost,
                                           amount = reward.amount,
-                                          currencyIcon = state.vp?.displayIcon ?: ""
+                                          currencyIcon = state.vp?.displayIcon ?: "",
+                                          onNavToLevelDetails = onNavToLevelDetails,
                                       )
                                   }
                               }
@@ -174,12 +177,14 @@ fun ContractDetailsScreen(
                                 if (reward != null && level != null) {
                                     AgentRewardCard(
                                         name = reward.displayName,
+                                        levelUuid = "",
                                         type = reward.type,
-                                        previewIcon = reward.previewIcon,
+                                        previewIcon = reward.previewImage,
                                         displayIcon = reward.background,
                                         price = level.vpCost,
                                         amount = reward.amount,
-                                        currencyIcon = state.vp?.displayIcon ?: ""
+                                        currencyIcon = state.vp?.displayIcon ?: "",
+                                        onNavToLevelDetails = {}
                                     )
                                 }
                             }
@@ -220,6 +225,7 @@ fun ContractDetailsScreenPreview() {
                         Chapter(
                             listOf(
                                 ChapterLevel(
+                                    "",
                                     2500,
                                     200,
                                     true,
@@ -242,6 +248,7 @@ fun ContractDetailsScreenPreview() {
             )
         ),
                               onNavBack = {},
-                              onNavContractRewardsList = {})
+                              onNavContractRewardsList = {},
+                              onNavToLevelDetails = {})
     }
 }

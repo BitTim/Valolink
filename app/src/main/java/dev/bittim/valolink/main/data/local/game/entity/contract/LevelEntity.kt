@@ -37,6 +37,7 @@ data class LevelEntity(
 ) : GameEntity() {
     fun toType(reward: Reward): ChapterLevel {
         return ChapterLevel(
+            uuid,
             xp,
             vpCost,
             isPurchasableWithVP,

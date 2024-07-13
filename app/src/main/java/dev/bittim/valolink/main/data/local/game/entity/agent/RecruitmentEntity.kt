@@ -59,6 +59,7 @@ data class RecruitmentEntity(
                     Chapter(
                         listOf(
                             ChapterLevel(
+                                agent.uuid,
                                 xp,
                                 1000,
                                 false,

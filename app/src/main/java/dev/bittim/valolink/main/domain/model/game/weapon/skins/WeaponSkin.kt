@@ -22,7 +22,7 @@ data class WeaponSkin(
             type = RewardType.WEAPON_SKIN,
             amount = amount,
             displayName = displayName,
-            previewIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
+            previewImage = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
             displayIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
         )
     }

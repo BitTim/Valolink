@@ -5,7 +5,7 @@ data class RewardRelation(
     val type: RewardType,
     val amount: Int,
     val displayName: String,
-    val previewIcon: String,
+    val previewImage: String,
     val displayIcon: String,
     val background: String? = null,
 )
