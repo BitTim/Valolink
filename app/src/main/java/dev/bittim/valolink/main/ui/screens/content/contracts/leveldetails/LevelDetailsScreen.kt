@@ -71,7 +71,11 @@ fun LevelDetailsScreen(
                     type = reward.type,
                     displayIcon = reward.displayIcon,
                     levelName = state.level.name,
-                    contractName = state.level.contractName
+                    contractName = state.level.contractName,
+                    currencyIcon = state.unlockCurrency?.displayIcon ?: "",
+                    price = state.price,
+                    xpTotal = if (state.isGear) -1 else state.level.xp,
+                    xpProgress = 25, // TODO: Replace with actual user values
                 )
             },
             dropdown = {},

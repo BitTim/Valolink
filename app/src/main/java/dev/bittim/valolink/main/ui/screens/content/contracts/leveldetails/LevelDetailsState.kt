@@ -7,4 +7,6 @@ data class LevelDetailsState(
     val isLoading: Boolean = true,
     val level: Level? = null,
     val unlockCurrency: Currency? = null,
+    val price: Int = 0,
+    val isGear: Boolean = false
 )
