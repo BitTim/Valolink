@@ -4,7 +4,7 @@ import dev.bittim.valolink.main.data.local.game.entity.contract.ChapterEntity
 
 data class ChapterDto(
     val isEpilogue: Boolean,
-    val levels: List<ChapterLevelDto>,
+    val levels: List<LevelDto>,
     val freeRewards: List<RewardDto>?,
 ) {
     fun toEntity(

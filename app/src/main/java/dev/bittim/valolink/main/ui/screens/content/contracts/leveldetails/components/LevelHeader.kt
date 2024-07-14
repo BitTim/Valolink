@@ -3,6 +3,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.compo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -29,6 +30,8 @@ fun LevelHeader(
     displayName: String,
     type: RewardType,
     displayIcon: String,
+    levelName: String,
+    contractName: String,
 ) {
     Row(
         modifier = modifier,
@@ -55,14 +58,20 @@ fun LevelHeader(
             )
         }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+        Column {
+            Text(
+                text = "$levelName • $contractName",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             Text(
                 text = displayName,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

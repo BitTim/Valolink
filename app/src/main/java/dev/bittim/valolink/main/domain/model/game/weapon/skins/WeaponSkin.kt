@@ -24,6 +24,7 @@ data class WeaponSkin(
             displayName = displayName,
             previewImage = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
             displayIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
+            background = wallpaper,
         )
     }
 }

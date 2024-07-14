@@ -5,7 +5,7 @@ import androidx.room.Relation
 import dev.bittim.valolink.main.data.local.game.entity.VersionedEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 
 data class LevelWithReward(
@@ -19,9 +19,15 @@ data class LevelWithReward(
         return level.version
     }
 
-    fun toType(relation: RewardRelation?): ChapterLevel {
+    fun toType(
+        relation: RewardRelation?,
+        levelName: String,
+        contractName: String,
+    ): Level {
         return level.toType(
-            reward.toType(relation)
+            reward.toType(relation),
+            levelName,
+            contractName
         )
     }
 }

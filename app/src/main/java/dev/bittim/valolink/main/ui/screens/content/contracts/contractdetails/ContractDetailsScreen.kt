@@ -29,19 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.main.domain.model.game.Season
-import dev.bittim.valolink.main.domain.model.game.contract.Contract
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.Chapter
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
-import dev.bittim.valolink.main.domain.model.game.contract.content.Content
-import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -193,62 +182,5 @@ fun ContractDetailsScreen(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun ContractDetailsScreenPreview() {
-    ValolinkTheme {
-        ContractDetailsScreen(state = ContractDetailsState(
-            isLoading = false,
-            contract = Contract(
-                UUID.randomUUID().toString(),
-                "Imagination: Act III",
-                false,
-                -1,
-                Content(
-                    Season(
-                        UUID.randomUUID().toString(),
-                        "ACT III",
-                        Instant.now().minus(
-                            10,
-                            ChronoUnit.DAYS
-                        ),
-                        Instant.now().plus(
-                            10,
-                            ChronoUnit.DAYS
-                        )
-                    ),
-                    -1,
-                    listOf(
-                        Chapter(
-                            listOf(
-                                ChapterLevel(
-                                    "",
-                                    2500,
-                                    200,
-                                    true,
-                                    0,
-                                    false,
-                                    Reward(
-                                        "Spray",
-                                        UUID.randomUUID().toString(),
-                                        1,
-                                        false,
-                                        null
-                                    )
-                                )
-                            ),
-                            emptyList(),
-                            false
-                        )
-                    )
-                )
-            )
-        ),
-                              onNavBack = {},
-                              onNavContractRewardsList = {},
-                              onNavToLevelDetails = {})
     }
 }

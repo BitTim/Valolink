@@ -23,9 +23,10 @@ data class ContractWithContentWithChaptersWithLevelsAndRewards(
     fun toType(
         relation: ContentRelation?,
         rewards: List<Pair<List<RewardRelation?>, List<RewardRelation?>>>,
+        levelNames: List<List<String>>,
     ): dev.bittim.valolink.main.domain.model.game.contract.Contract {
         return contract.toType(
-            content.toType(relation, rewards)
+            content.toType(relation, rewards, levelNames, contract.displayName)
         )
     }
 }

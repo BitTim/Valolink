@@ -11,6 +11,8 @@ import dev.bittim.valolink.main.data.local.game.entity.contract.ContractEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
 import dev.bittim.valolink.main.data.local.game.relation.agent.RecruitmentWithAgentWithRoleAndAbilities
+import dev.bittim.valolink.main.data.local.game.relation.contract.ChapterWithLevelsAndRewards
+import dev.bittim.valolink.main.data.local.game.relation.contract.ContentWithChaptersWithLevelsAndRewards
 import dev.bittim.valolink.main.data.local.game.relation.contract.ContractWithContentWithChaptersWithLevelsAndRewards
 import dev.bittim.valolink.main.data.local.game.relation.contract.LevelWithReward
 import kotlinx.coroutines.flow.Flow
@@ -61,6 +63,14 @@ interface ContractsDao {
     @Transaction
     @Query("SELECT * FROM Contracts WHERE uuid = :uuid LIMIT 1")
     fun getByUuid(uuid: String): Flow<ContractWithContentWithChaptersWithLevelsAndRewards?>
+
+    @Transaction
+    @Query("SELECT * FROM ContractContents WHERE uuid = :uuid LIMIT 1")
+    fun getContentByUuid(uuid: String): Flow<ContentWithChaptersWithLevelsAndRewards?>
+
+    @Transaction
+    @Query("SELECT * FROM ContractChapters WHERE uuid = :uuid LIMIT 1")
+    fun getChapterByUuid(uuid: String): Flow<ChapterWithLevelsAndRewards?>
 
     @Transaction
     @Query("SELECT * FROM ContractChapterLevels WHERE uuid = :uuid LIMIT 1")

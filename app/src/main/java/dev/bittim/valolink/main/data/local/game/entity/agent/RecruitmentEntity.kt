@@ -8,7 +8,7 @@ import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.domain.model.game.agent.Recruitment
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Chapter
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.game.contract.content.Content
 import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 import java.time.Instant
@@ -58,8 +58,10 @@ data class RecruitmentEntity(
                 listOf(
                     Chapter(
                         listOf(
-                            ChapterLevel(
+                            Level(
                                 agent.uuid,
+                                "Level 1",
+                                "${agent.displayName} Recruitment",
                                 xp,
                                 1000,
                                 false,

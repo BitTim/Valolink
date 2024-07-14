@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.main.data.local.game.entity.GameEntity
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Chapter
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 
 @Entity(
@@ -36,7 +36,7 @@ data class ChapterEntity(
     val isEpilogue: Boolean,
 ) : GameEntity() {
     fun toType(
-        levels: List<ChapterLevel>,
+        levels: List<Level>,
         freeRewards: List<Reward>?,
     ): Chapter {
         return Chapter(

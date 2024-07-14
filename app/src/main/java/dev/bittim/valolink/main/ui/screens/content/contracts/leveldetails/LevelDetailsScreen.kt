@@ -69,7 +69,9 @@ fun LevelDetailsScreen(
                         .padding(16.dp),
                     displayName = reward.displayName,
                     type = reward.type,
-                    displayIcon = reward.displayIcon
+                    displayIcon = reward.displayIcon,
+                    levelName = state.level.name,
+                    contractName = state.level.contractName
                 )
             },
             dropdown = {},
