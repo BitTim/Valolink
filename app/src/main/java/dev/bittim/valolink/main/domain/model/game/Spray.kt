@@ -20,7 +20,9 @@ data class Spray(
             type = RewardType.SPRAY,
             amount = amount,
             displayName = displayName,
-            previewImage = animationPng ?: animationGif ?: fullTransparentIcon ?: displayIcon,
+            previewImages = listOf(
+                (animationPng ?: animationGif ?: fullTransparentIcon ?: displayIcon) to null
+            ),
             displayIcon = displayIcon,
             background = displayIcon,
         )

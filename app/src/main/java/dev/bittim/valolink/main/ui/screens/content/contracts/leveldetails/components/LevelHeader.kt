@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +46,7 @@ fun LevelHeader(
     currencyIcon: String,
     xpTotal: Int,
     xpProgress: Int = 0,
+    isUnlocked: Boolean = false,
 ) {
     Column(
         modifier = modifier,
@@ -70,6 +71,9 @@ fun LevelHeader(
                         },
                     model = displayIcon,
                     contentScale = ContentScale.Fit,
+                    colorFilter = if (type == RewardType.CURRENCY || type == RewardType.TITLE) ColorFilter.tint(
+                        MaterialTheme.colorScheme.onSurface
+                    ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(1f) }),
                     contentDescription = displayName,
                     placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_displayicon)
                 )
@@ -114,7 +118,7 @@ fun LevelHeader(
         ) {
             if (xpTotal >= 0) {
                 ProgressCluster(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(2f),
                     progress = xpProgress,
                     total = xpTotal,
                     unit = "XP",
@@ -123,30 +127,22 @@ fun LevelHeader(
 
                 Spacer(modifier = Modifier.width(24.dp))
 
-                FilledTonalButton(
-                    onClick = {},
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .height(24.dp)
-                            .aspectRatio(1f),
-                        model = currencyIcon,
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSecondaryContainer),
-                        placeholder = coilDebugPlaceholder(
-                            debugPreview = R.drawable.debug_kingdom_kreds
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "$price")
-                }
+                UnlockButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1.25f),
+                    currencyIcon = currencyIcon,
+                    price = price,
+                    isPrimary = false,
+                    isUnlocked = isUnlocked
+                )
             } else {
                 UnlockButton(
                     modifier = Modifier.fillMaxWidth(),
                     currencyIcon = currencyIcon,
                     price = price,
-                    isPrimary = true
+                    isPrimary = true,
+                    isUnlocked = isUnlocked
                 )
             }
         }
@@ -196,10 +192,11 @@ fun ProgressLevelHeaderPreview() {
                     displayIcon = "",
                     levelName = "Level 9",
                     contractName = "Clove Contract",
-                    price = 7500,
+                    price = 99999,
                     currencyIcon = "",
                     xpProgress = 65,
-                    xpTotal = 100
+                    xpTotal = 100,
+                    isUnlocked = true
                 )
             }
         }

@@ -71,7 +71,7 @@ fun AgentRewardCard(
     amount: Int,
     previewIcon: String,
     currencyIcon: String,
-    displayIcon: String? = null,
+    background: String? = null,
     isLocked: Boolean = false,
     isOwned: Boolean = false,
     unlockReward: () -> Unit = {},
@@ -101,7 +101,7 @@ fun AgentRewardCard(
             tonalElevation = 3.dp
         ) {
             if (type != RewardType.PLAYER_CARD) {
-                LevelBackdrop(isDisabled = isLocked, backgroundImage = displayIcon) {
+                LevelBackdrop(isDisabled = isLocked, backgroundImage = background) {
 
                 }
             }

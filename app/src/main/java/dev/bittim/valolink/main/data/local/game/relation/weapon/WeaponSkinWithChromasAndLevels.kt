@@ -24,7 +24,7 @@ data class WeaponSkinWithChromasAndLevels(
     }
 
     fun toType(): WeaponSkin {
-        return weaponSkin.toType(chromas = chromas.map { it.toType() },
-                                 levels = levels.map { it.toType() })
+        return weaponSkin.toType(chromas = chromas.map { it.toType() }.sortedBy { it.chromaIndex },
+                                 levels = levels.map { it.toType() }.sortedBy { it.levelIndex })
     }
 }

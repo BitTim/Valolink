@@ -32,6 +32,7 @@ data class WeaponSkinChromaEntity(
     @PrimaryKey val uuid: String,
     override val version: String,
     val weaponSkin: String,
+    val chromaIndex: Int,
     val displayName: String,
     val displayIcon: String?,
     val fullRender: String,
@@ -41,6 +42,7 @@ data class WeaponSkinChromaEntity(
     fun toType(): WeaponSkinChroma {
         return WeaponSkinChroma(
             uuid = uuid,
+            chromaIndex = chromaIndex,
             displayName = displayName,
             displayIcon = displayIcon,
             fullRender = fullRender,

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dd752901f4b9b1cfd30083383df0e6c3",
+    "identityHash": "7c092a6f68f23c36f7e00dab9f94c93d",
     "entities": [
       {
         "tableName": "Version",
@@ -2293,7 +2293,7 @@
       },
       {
         "tableName": "WeaponSkinChromas",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponSkin` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT, `fullRender` TEXT NOT NULL, `swatch` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponSkin`) REFERENCES `WeaponSkins`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponSkin` TEXT NOT NULL, `chromaIndex` INTEGER NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT, `fullRender` TEXT NOT NULL, `swatch` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponSkin`) REFERENCES `WeaponSkins`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -2311,6 +2311,12 @@
             "fieldPath": "weaponSkin",
             "columnName": "weaponSkin",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chromaIndex",
+            "columnName": "chromaIndex",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -2386,7 +2392,7 @@
       },
       {
         "tableName": "WeaponSkinLevels",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponSkin` TEXT NOT NULL, `displayName` TEXT NOT NULL, `levelItem` TEXT, `displayIcon` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponSkin`) REFERENCES `WeaponSkins`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `weaponSkin` TEXT NOT NULL, `levelIndex` INTEGER NOT NULL, `displayName` TEXT NOT NULL, `levelItem` TEXT, `displayIcon` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weaponSkin`) REFERENCES `WeaponSkins`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -2404,6 +2410,12 @@
             "fieldPath": "weaponSkin",
             "columnName": "weaponSkin",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "levelIndex",
+            "columnName": "levelIndex",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -2475,7 +2487,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd752901f4b9b1cfd30083383df0e6c3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c092a6f68f23c36f7e00dab9f94c93d')"
     ]
   }
 }

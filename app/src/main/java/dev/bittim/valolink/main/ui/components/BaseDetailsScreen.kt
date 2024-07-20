@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -94,7 +95,7 @@ fun BaseDetailsScreen(
             shape = MaterialTheme.shapes.extraLarge.copy(
                 topStart = CornerSize(0.dp),
                 topEnd = CornerSize(0.dp)
-            )
+            ),
         ) {
             Box {
                 cardBackground()
@@ -150,41 +151,43 @@ fun BaseDetailsScreen(
 @Composable
 fun BaseDetailsScreenPreview() {
     ValolinkTheme {
-        BaseDetailsScreen(
-            cardBackground = {},
-            cardImage = {},
-            cardContent = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Button(
-                        onClick = { }
+        Surface {
+            BaseDetailsScreen(
+                cardBackground = {},
+                cardImage = {},
+                cardContent = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.End
                     ) {
-                        Text("Sample Button")
+                        Button(
+                            onClick = { }
+                        ) {
+                            Text("Sample Button")
+                        }
                     }
-                }
-            },
-            content = {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = "Base Details Screen",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
+                },
+                content = {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            text = "Base Details Screen",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(text = "This is a sample details screen")
-                }
-            },
-            dropdown = {},
-            onOpenDropdown = {},
-            onNavBack = {}
-        )
+                        Text(text = "This is a sample details screen")
+                    }
+                },
+                dropdown = {},
+                onOpenDropdown = {},
+                onNavBack = {}
+            )
+        }
     }
 }

@@ -14,11 +14,13 @@ data class WeaponSkinChromaDto(
     fun toEntity(
         version: String,
         skinUuid: String,
+        chromaIndex: Int,
     ): WeaponSkinChromaEntity {
         return WeaponSkinChromaEntity(
             uuid = uuid,
             version = version,
             weaponSkin = skinUuid,
+            chromaIndex = chromaIndex,
             displayName = displayName,
             displayIcon = displayIcon,
             fullRender = fullRender,

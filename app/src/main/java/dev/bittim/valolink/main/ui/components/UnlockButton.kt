@@ -22,29 +22,35 @@ fun UnlockButton(
     currencyIcon: String,
     price: Int,
     isPrimary: Boolean,
-    onClick: () -> Unit = {}
+    isUnlocked: Boolean,
+    onClick: () -> Unit = {},
 ) {
     @Composable
     fun ButtonContent(iconColor: Color) {
-        AsyncImage(
-            modifier = Modifier
-                .height(24.dp)
-                .aspectRatio(1f),
-            model = currencyIcon,
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(iconColor),
-            placeholder = coilDebugPlaceholder(
-                debugPreview = R.drawable.debug_kingdom_kreds
+        if (!isUnlocked) {
+            AsyncImage(
+                modifier = Modifier
+                    .height(24.dp)
+                    .aspectRatio(1f),
+                model = currencyIcon,
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(iconColor),
+                placeholder = coilDebugPlaceholder(
+                    debugPreview = R.drawable.debug_kingdom_kreds
+                )
             )
-        )
 
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = "$price")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "$price")
+        } else {
+            Text(text = "Owned")
+        }
     }
 
     if (!isPrimary) {
         FilledTonalButton(
             modifier = modifier,
+            enabled = !isUnlocked,
             onClick = onClick
         ) {
             ButtonContent(MaterialTheme.colorScheme.onSecondaryContainer)
@@ -52,6 +58,7 @@ fun UnlockButton(
     } else {
         Button(
             modifier = modifier,
+            enabled = !isUnlocked,
             onClick = onClick
         ) {
             ButtonContent(MaterialTheme.colorScheme.onPrimary)
