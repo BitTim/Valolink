@@ -69,7 +69,7 @@ fun AgentDetailsScreen(
     unlockAgent: () -> Unit,
     resetAgent: () -> Unit,
     addUserGear: (String) -> Unit,
-    updateProgress: (Int) -> Unit,
+    updateLevels: (List<String>?) -> Unit,
     onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
@@ -90,7 +90,7 @@ fun AgentDetailsScreen(
         var isRewardUnlockAlertShown: Boolean by remember { mutableStateOf(false) }
         var isRewardResetAlertShown: Boolean by remember { mutableStateOf(false) }
 
-        val progress = state.userGear?.progress ?: 0
+        val unlockedLevels = state.userProgression?.unlockedLevels ?: emptyList()
         var targetRewardIndex: Int by remember { mutableIntStateOf(-1) }
 
         val abilityPagerState = rememberPagerState {
@@ -110,10 +110,10 @@ fun AgentDetailsScreen(
 
         // Scroll to the currently active reward
         LaunchedEffect(
-            state.userGear?.progress,
+            state.userProgression?.unlockedLevels,
             state.agentGear
         ) {
-            val targetIndex = state.userGear?.progress ?: 0
+            val targetIndex = state.userProgression?.unlockedLevels?.count() ?: 0
             state.rewardListState.animateScrollToItem(targetIndex)
         }
 
@@ -193,13 +193,12 @@ fun AgentDetailsScreen(
                             }
                         }
 
-                        val userGear = state.userGear
+                        val userGear = state.userProgression
                         if (userGear == null) addUserGear(state.agentGear.uuid)
 
                         val totalLevels = state.agentGear.calcLevelCount()
-                        val unlockedLevels = state.userGear?.progress ?: 0
                         val percentage = getProgressPercent(
-                            unlockedLevels,
+                            unlockedLevels.count(),
                             totalLevels
                         )
 
@@ -325,15 +324,19 @@ fun AgentDetailsScreen(
                                         amount = reward.amount,
                                         currencyIcon = state.dough?.displayIcon ?: "",
                                         isLocked = isLocked,
-                                        isOwned = progress > index,
+                                        isOwned = unlockedLevels.contains(level.uuid),
                                         unlockReward = {
                                             targetRewardIndex = index
-                                            val rewardCount = index - progress
+                                            val rewardCount = index - unlockedLevels.count()
 
                                             // Unlock multiple at the same time
                                             if (rewardCount > 0) isRewardUnlockAlertShown = true
                                             // Unlock just one
-                                            if (rewardCount == 0) updateProgress(targetRewardIndex + 1)
+                                            if (rewardCount == 0) updateLevels(
+                                                state.userProgression?.levels?.plus(
+                                                    level.uuid
+                                                )
+                                            )
                                         },
                                         resetReward = {
                                             targetRewardIndex = index
@@ -479,10 +482,10 @@ fun AgentDetailsScreen(
             )
         }
 
-        if (isRewardUnlockAlertShown && progress < targetRewardIndex) {
+        if (isRewardUnlockAlertShown && unlockedLevels.count() < targetRewardIndex) {
             val levels =
                 state.agentGear.content.chapters.flatMap { chapter -> chapter.levels }.subList(
-                    progress,
+                    unlockedLevels.count(),
                     targetRewardIndex + 1
                 )
 
@@ -490,21 +493,21 @@ fun AgentDetailsScreen(
                 levels = levels,
                 currencyDisplayIcon = state.dough?.displayIcon,
                 onDismiss = { isRewardUnlockAlertShown = false },
-                onConfirm = { updateProgress(targetRewardIndex + 1) })
+                onConfirm = { updateLevels(levels.map { it.uuid }) })
         }
 
-        if (isRewardResetAlertShown && progress >= targetRewardIndex) {
+        if (isRewardResetAlertShown && unlockedLevels.count() >= targetRewardIndex) {
             val levels =
                 state.agentGear.content.chapters.flatMap { chapter -> chapter.levels }.subList(
                     targetRewardIndex,
-                    progress
+                    unlockedLevels.count()
                 )
 
             RewardResetAlertDialog(
                 levels = levels,
                 currencyDisplayIcon = state.dough?.displayIcon,
                 onDismiss = { isRewardResetAlertShown = false },
-                onConfirm = { updateProgress(targetRewardIndex) })
+                onConfirm = { updateLevels(levels.map { it.uuid }) })
         }
     }
 }

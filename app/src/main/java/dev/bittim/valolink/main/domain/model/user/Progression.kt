@@ -1,8 +1,8 @@
 package dev.bittim.valolink.main.domain.model.user
 
-data class Gear(
+data class Progression(
     val uuid: String,
     val user: String,
     val contract: String,
-    val progress: Int,
+    val levels: List<ProgressionLevel>,
 )

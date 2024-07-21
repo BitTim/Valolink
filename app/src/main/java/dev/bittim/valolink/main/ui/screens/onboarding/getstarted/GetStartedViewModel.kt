@@ -7,7 +7,7 @@ import dev.bittim.valolink.main.data.repository.game.AgentRepository
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.user.OnboardingRepository
 import dev.bittim.valolink.main.data.repository.user.SessionRepository
-import dev.bittim.valolink.main.domain.model.user.Gear
+import dev.bittim.valolink.main.domain.model.user.Progression
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -44,8 +44,8 @@ class GetStartedViewModel @Inject constructor(
 
                 _state.update {
                     it.copy(
-                        gears = gears.map { gear ->
-                            Gear(
+                        progressions = gears.map { gear ->
+                            Progression(
                                 UUID.randomUUID().toString(),
                                 uid,
                                 gear.uuid,
@@ -63,7 +63,7 @@ class GetStartedViewModel @Inject constructor(
         viewModelScope.launch {
             if (state.value.loadingFinished != 0b0011) return@launch
             val ownedAgentUuids = state.value.ownedAgentUuids
-            val gears = state.value.gears
+            val gears = state.value.progressions
 
             val isSuccessful = onboardingRepository.setOnboardingComplete(
                 ownedAgentUuids,

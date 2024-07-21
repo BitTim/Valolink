@@ -1,6 +1,6 @@
 package dev.bittim.valolink.main.data.repository.user
 
-import dev.bittim.valolink.main.domain.model.user.Gear
+import dev.bittim.valolink.main.domain.model.user.Progression
 import dev.bittim.valolink.main.domain.model.user.UserData
 import kotlinx.serialization.json.put
 import javax.inject.Inject
@@ -11,7 +11,7 @@ class OnboardingSupabaseRepository @Inject constructor(
 ) : OnboardingRepository {
     override suspend fun setOnboardingComplete(
         ownedAgentUuids: List<String>,
-        gears: List<Gear>,
+        progressions: List<Progression>,
     ): Boolean {
         sessionRepository.updateUserInfo {
             data {
@@ -31,7 +31,7 @@ class OnboardingSupabaseRepository @Inject constructor(
                 isPrivate = false,
                 username,
                 ownedAgentUuids,
-                gears
+                progressions
             )
         )
     }

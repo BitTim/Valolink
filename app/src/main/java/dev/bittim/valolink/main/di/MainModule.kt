@@ -36,10 +36,10 @@ import dev.bittim.valolink.main.data.repository.game.VersionApiRepository
 import dev.bittim.valolink.main.data.repository.game.VersionRepository
 import dev.bittim.valolink.main.data.repository.game.WeaponApiRepository
 import dev.bittim.valolink.main.data.repository.game.WeaponRepository
-import dev.bittim.valolink.main.data.repository.user.GearRepository
-import dev.bittim.valolink.main.data.repository.user.GearSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.OnboardingRepository
 import dev.bittim.valolink.main.data.repository.user.OnboardingSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.ProgressionRepository
+import dev.bittim.valolink.main.data.repository.user.ProgressionSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.SessionRepository
 import dev.bittim.valolink.main.data.repository.user.SessionSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
@@ -176,8 +176,8 @@ object MainModule {
         sessionRepository: SessionRepository,
         userDatabase: UserDatabase,
         workManager: WorkManager,
-    ): GearRepository {
-        return GearSupabaseRepository(
+    ): ProgressionRepository {
+        return ProgressionSupabaseRepository(
             sessionRepository,
             userDatabase,
             workManager
@@ -388,8 +388,8 @@ object MainModule {
 
     @Provides
     @Singleton
-    fun provideAddUserGearUseCase(gearRepository: GearRepository): AddUserGearUseCase {
-        return AddUserGearUseCase(gearRepository)
+    fun provideAddUserGearUseCase(progressionRepository: ProgressionRepository): AddUserGearUseCase {
+        return AddUserGearUseCase(progressionRepository)
     }
 
     @Provides

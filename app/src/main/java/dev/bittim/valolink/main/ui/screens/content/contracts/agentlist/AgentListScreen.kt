@@ -74,7 +74,7 @@ fun AgentListScreen(
         ) {
             items(items = state.agentGears,
                   itemContent = { gear ->
-                      val userGear = state.userGears.find { it.contract == gear.uuid }
+                      val userGear = state.userProgressions.find { it.contract == gear.uuid }
                       val levelCount = gear.calcLevelCount()
 
                       if (userGear == null) {
@@ -94,9 +94,9 @@ fun AgentListScreen(
                               totalLevels = levelCount,
                               isLocked = !(state.userData?.agents?.contains(gear.content.relation.uuid)
                                   ?: false),
-                              unlockedLevels = userGear.progress,
+                              unlockedLevels = userGear.unlockedLevels,
                               percentage = getProgressPercent(
-                                  userGear.progress,
+                                  userGear.unlockedLevels,
                                   levelCount
                               ),
                               onNavToAgentDetails = onNavToAgentDetails

@@ -6,11 +6,11 @@ import androidx.room.TypeConverters
 import dev.bittim.valolink.main.data.local.converter.StringListConverter
 import dev.bittim.valolink.main.data.local.user.dao.GearDao
 import dev.bittim.valolink.main.data.local.user.dao.UserDataDao
-import dev.bittim.valolink.main.data.local.user.entity.GearEntity
+import dev.bittim.valolink.main.data.local.user.entity.ProgressionEntity
 import dev.bittim.valolink.main.data.local.user.entity.UserDataEntity
 
 @Database(
-    entities = [UserDataEntity::class, GearEntity::class],
+    entities = [UserDataEntity::class, ProgressionEntity::class],
     version = 1
 )
 @TypeConverters(StringListConverter::class)

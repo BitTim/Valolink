@@ -7,30 +7,30 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.user.UserDatabase
-import dev.bittim.valolink.main.data.local.user.entity.GearEntity
-import dev.bittim.valolink.main.data.worker.user.GearSyncWorker
-import dev.bittim.valolink.main.domain.model.user.Gear
+import dev.bittim.valolink.main.data.local.user.entity.ProgressionEntity
+import dev.bittim.valolink.main.data.worker.user.ProgressionSyncWorker
+import dev.bittim.valolink.main.domain.model.user.Progression
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GearSupabaseRepository @Inject constructor(
+class ProgressionSupabaseRepository @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val userDatabase: UserDatabase,
     private val workManager: WorkManager,
-) : GearRepository {
+) : ProgressionRepository {
     // ================================
     //  Get Gears
     // ================================
 
-    override suspend fun getCurrentGears(): Flow<List<Gear>> {
+    override suspend fun getCurrentProgressions(): Flow<List<Progression>> {
         val uid = sessionRepository.getUid() ?: return flow { }
-        return getGears(uid)
+        return getProgressionsByUser(uid)
     }
 
-    override suspend fun getGears(uid: String): Flow<List<Gear>> {
+    override suspend fun getProgressionsByUser(uid: String): Flow<List<Progression>> {
         return try {
             // Get from local database
             val localGears = userDatabase.gearDao
@@ -49,18 +49,18 @@ class GearSupabaseRepository @Inject constructor(
         }
     }
 
-    override suspend fun getCurrentGear(contract: String): Flow<Gear?> {
+    override suspend fun getCurrentProgression(contract: String): Flow<Progression?> {
         val uid = sessionRepository.getUid() ?: return flow { }
-        return getGear(
+        return getProgression(
             uid,
             contract
         )
     }
 
-    override suspend fun getGear(
+    override suspend fun getProgression(
         uid: String,
         contract: String,
-    ): Flow<Gear?> {
+    ): Flow<Progression?> {
         return try {
             // Get from local database
             val localGear = userDatabase.gearDao.getByUserAndContract(
@@ -83,15 +83,15 @@ class GearSupabaseRepository @Inject constructor(
     //  Set Gears
     // ================================
 
-    override suspend fun setGear(
-        gear: Gear,
+    override suspend fun setProgression(
+        progression: Progression,
     ): Boolean {
         return try {
             // Add to local database
-            userDatabase.gearDao.upsert(GearEntity.fromType(gear))
+            userDatabase.gearDao.upsert(ProgressionEntity.fromType(progression))
 
             // Queue worker to sync with Supabase
-            queueWorker(gear.user)
+            queueWorker(progression.user)
 
             // Return
             true
@@ -106,8 +106,8 @@ class GearSupabaseRepository @Inject constructor(
     // ================================
 
     private fun queueWorker(uid: String) {
-        val workRequest = OneTimeWorkRequestBuilder<GearSyncWorker>()
-            .setInputData(workDataOf(GearSyncWorker.KEY_UID to uid))
+        val workRequest = OneTimeWorkRequestBuilder<ProgressionSyncWorker>()
+            .setInputData(workDataOf(ProgressionSyncWorker.KEY_UID to uid))
             .setConstraints(Constraints(NetworkType.CONNECTED))
             .build()
         workManager.enqueueUniqueWork(

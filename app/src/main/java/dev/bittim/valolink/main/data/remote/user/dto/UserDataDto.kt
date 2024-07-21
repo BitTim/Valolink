@@ -9,7 +9,6 @@ data class UserDataDto(
     override val updatedAt: String,
     val isPrivate: Boolean,
     val username: String,
-    val agents: List<String>,
 ) : SyncedDto() {
     fun toEntity(): UserDataEntity {
         return UserDataEntity(
@@ -17,8 +16,7 @@ data class UserDataDto(
             true,
             updatedAt,
             isPrivate,
-            username,
-            agents
+            username
         )
     }
 
@@ -28,8 +26,7 @@ data class UserDataDto(
                 userData.uuid,
                 userData.updatedAt,
                 userData.isPrivate,
-                userData.username,
-                userData.agents
+                userData.username
             )
         }
     }

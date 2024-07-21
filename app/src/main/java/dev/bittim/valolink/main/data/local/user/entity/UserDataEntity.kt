@@ -19,14 +19,13 @@ data class UserDataEntity(
     override val updatedAt: String,
     val isPrivate: Boolean,
     val username: String,
-    val agents: List<String>,
 ) : SyncedEntity() {
     fun toType(): UserData {
         return UserData(
             uuid,
             isPrivate,
             username,
-            agents,
+            emptyList(),
             emptyList()
         )
     }
@@ -38,8 +37,7 @@ data class UserDataEntity(
                 false,
                 OffsetDateTime.now().toString(),
                 userData.isPrivate,
-                userData.username,
-                userData.agents
+                userData.username
             )
         }
     }

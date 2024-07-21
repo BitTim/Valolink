@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
-import dev.bittim.valolink.main.data.repository.user.GearRepository
+import dev.bittim.valolink.main.data.repository.user.ProgressionRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class ContractsOverviewViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val userRepository: UserRepository,
-    private val gearRepository: GearRepository,
+    private val progressionRepository: ProgressionRepository,
     private val addUserGearUseCase: AddUserGearUseCase,
 ) : ViewModel() {
     private val _filterState = MutableStateFlow(ContentType.SEASON)
@@ -48,11 +48,11 @@ class ContractsOverviewViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            gearRepository.getCurrentGears().collectLatest { gears ->
+            progressionRepository.getCurrentProgressions().collectLatest { gears ->
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        userGears = gears
+                        userProgressions = gears
                     )
                 }
             }

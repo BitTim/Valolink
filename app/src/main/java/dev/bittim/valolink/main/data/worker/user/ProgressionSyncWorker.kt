@@ -7,14 +7,14 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dev.bittim.valolink.main.data.local.user.UserDatabase
-import dev.bittim.valolink.main.data.remote.user.dto.GearDto
+import dev.bittim.valolink.main.data.remote.user.dto.ProgressionDto
 import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.OffsetDateTime
 
 @HiltWorker
-class GearSyncWorker @AssistedInject constructor(
+class ProgressionSyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
     private val database: Postgrest,
@@ -31,13 +31,13 @@ class GearSyncWorker @AssistedInject constructor(
         val latestLocalData = userDatabase.gearDao.getByUser(uid).firstOrNull()
 
         // Fetch most recent gear data from Supabase
-        var gears: List<GearDto?> = emptyList()
+        var gears: List<ProgressionDto?> = emptyList()
         try {
             gears = database.from("gears").select {
                 filter {
-                    GearDto::user eq uid
+                    ProgressionDto::user eq uid
                 }
-            }.decodeList<GearDto>()
+            }.decodeList<ProgressionDto>()
         } catch (e: Exception) {
             if (e !is RestException) {
                 e.printStackTrace()
@@ -75,7 +75,7 @@ class GearSyncWorker @AssistedInject constructor(
             it.forEach { gear ->
                 if (gear == null) return@forEach
 
-                database.from("gears").upsert(GearDto.fromEntity(gear))
+                database.from("gears").upsert(ProgressionDto.fromEntity(gear))
                 userDatabase.gearDao.upsert(gear.copy(isSynced = true))
             }
         }

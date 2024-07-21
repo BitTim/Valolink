@@ -183,7 +183,7 @@ fun ContractsOverviewScreen(
                     flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = state.agentGearCarouselState)
                 ) { index ->
                     val gear = state.agentGears[index]
-                    val userGear = state.userGears.find { it.contract == gear.uuid }
+                    val userGear = state.userProgressions.find { it.contract == gear.uuid }
                     val levelCount = gear.calcLevelCount()
 
                     if (userGear == null) {
@@ -202,9 +202,9 @@ fun ContractsOverviewScreen(
                             contractUuid = gear.uuid,
                             roleName = gear.content.relation.role.displayName,
                             totalLevels = levelCount,
-                            unlockedLevels = userGear.progress,
+                            unlockedLevels = userGear.unlockedLevels,
                             percentage = getProgressPercent(
-                                userGear.progress,
+                                userGear.unlockedLevels,
                                 levelCount
                             ),
                             isLocked = !(state.userData?.agents?.contains(gear.content.relation.uuid)

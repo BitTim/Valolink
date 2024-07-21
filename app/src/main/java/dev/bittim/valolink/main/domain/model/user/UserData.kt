@@ -5,5 +5,5 @@ data class UserData(
     val isPrivate: Boolean,
     val username: String,
     val agents: List<String>,
-    val gears: List<Gear>,
+    val progressions: List<Progression>,
 )

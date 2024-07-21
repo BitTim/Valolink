@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
-import dev.bittim.valolink.main.data.repository.user.GearRepository
+import dev.bittim.valolink.main.data.repository.user.ProgressionRepository
 import dev.bittim.valolink.main.data.repository.user.UserRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
@@ -23,7 +23,7 @@ class AgentDetailsViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
     private val userRepository: UserRepository,
-    private val gearRepository: GearRepository,
+    private val progressionRepository: ProgressionRepository,
     private val addUserGearUseCase: AddUserGearUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AgentDetailsState())
@@ -67,11 +67,11 @@ class AgentDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            gearRepository.getCurrentGear(uuid).collectLatest { gear ->
+            progressionRepository.getCurrentProgression(uuid).collectLatest { progression ->
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        userGear = gear
+                        userProgression = progression
                     )
                 }
             }
@@ -102,7 +102,7 @@ class AgentDetailsViewModel @Inject constructor(
 
     fun resetAgent() {
         viewModelScope.launch {
-            updateProgress(0)
+            updateLevels(emptyList())
 
             val agent = state.value.agentGear?.content?.relation as Agent? ?: return@launch
             val userData = state.value.userData ?: return@launch
@@ -130,10 +130,16 @@ class AgentDetailsViewModel @Inject constructor(
         }
     }
 
-    fun updateProgress(progress: Int) {
+    fun updateLevels(levels: List<String>?) {
+        if (levels == null) return
+
         viewModelScope.launch {
-            val newGear = state.value.userGear?.copy(progress = progress) ?: return@launch
-            gearRepository.setGear(newGear)
+            val newProgress =
+                state.value.userProgression?.copy(
+                    levels = levels,
+                    unlockedLevels = levels
+                ) ?: return@launch
+            progressionRepository.setProgression(newProgress)
         }
     }
 }
