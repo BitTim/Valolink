@@ -7,11 +7,13 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.main.data.local.game.GameDatabase
+import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
 import dev.bittim.valolink.main.data.local.game.relation.contract.ContractWithContentWithChaptersWithLevelsAndRewards
 import dev.bittim.valolink.main.data.remote.game.GameApi
 import dev.bittim.valolink.main.data.worker.game.GameSyncWorker
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
@@ -85,6 +87,36 @@ class ContractApiRepository @Inject constructor(
             // Queue worker to fetch newest data from API
             //  -> Worker will check if fetch is needed itself
             agentRepository.queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return flow { }
+        }
+    }
+
+    override suspend fun getLevelByUuid(uuid: String): Flow<Level?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.contractsDao
+                .getLevelByUuid(uuid)
+                .distinctUntilChanged()
+                .flatMapLatest {
+                    if (it == null) return@flatMapLatest flowOf(null)
+
+                    combine(
+                        flowOf(it),
+                        getReward(it.reward),
+                        getLevelMetadata(it.level)
+                    ) { level, reward, meta ->
+                        level.toType(reward, meta.name)
+                    }
+                }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
 
             // Return
             local
@@ -270,14 +302,19 @@ class ContractApiRepository @Inject constructor(
                 )
             }
 
+            var previousLevel: String? = null
             val levelDto = chapterDto.map { it.levels }.flatten()
             val levels = chapterDto.zip(chapters) { data, chapter ->
                 data.levels.mapIndexed { index, level ->
-                    level.toEntity(
+                    val levelEntity = level.toEntity(
                         index,
+                        previousLevel,
                         version,
                         chapter.uuid
                     )
+
+                    previousLevel = levelEntity.uuid
+                    levelEntity
                 }
             }.flatten()
 
@@ -332,15 +369,26 @@ class ContractApiRepository @Inject constructor(
                 }
             }.flatten()
 
+            var previousLevel: String? = null
+            var previousContent: String? = null
             val levelDto = chapterDto.map { it.levels }.flatten()
             val levels = chapterDto.zip(chapters) { data, chapter ->
-                data.levels.mapIndexed { index, level ->
-                    level.toEntity(
+                if (chapter.contentUuid != previousContent) previousLevel = null
+
+                val levelEntities = data.levels.mapIndexed { index, level ->
+                    val levelEntity = level.toEntity(
                         index,
+                        previousLevel,
                         version,
-                        chapter.uuid
+                        chapter.uuid,
                     )
+
+                    previousLevel = levelEntity.uuid
+                    levelEntity
                 }
+
+                previousContent = chapter.contentUuid
+                levelEntities
             }.flatten()
 
             val rewards = levelDto.zip(levels) { data, level ->
@@ -411,12 +459,27 @@ class ContractApiRepository @Inject constructor(
             flow { emit(emptyList()) }
         }
 
+        val levelNamesFlow = flowOf(
+            contractEntity.content.chapters.mapIndexed { chapterIndex, chapter ->
+                if (chapter.levels.isNotEmpty())
+                    List(chapter.levels.size) { levelIndex ->
+                        getLevelMetadata(
+                            contractEntity,
+                            chapterIndex,
+                            levelIndex
+                        ).name
+                    }
+                else emptyList()
+            }
+        )
+
         return combine(
             flowOf(contractEntity),
             relationFlow,
             rewardsFlow,
-        ) { contract, relation, rewards ->
-            contract.toType(relation, rewards)
+            levelNamesFlow
+        ) { contract, relation, rewards, levelNames ->
+            contract.toType(relation, rewards, levelNames)
         }
     }
 
@@ -469,6 +532,53 @@ class ContractApiRepository @Inject constructor(
         }
     }
 
+    private fun getLevelMetadata(
+        level: LevelEntity,
+    ): Flow<LevelMeta> {
+        val chapterFlow = gameDatabase.contractsDao.getChapterByUuid(level.chapterUuid)
+        val contentFlow = chapterFlow.flatMapLatest { chapter ->
+            if (chapter == null) return@flatMapLatest flow { LevelMeta.error("Chapter not found") }
+            gameDatabase.contractsDao.getContentByUuid(chapter.chapter.contentUuid)
+        }
+
+        val contractFlow = contentFlow.flatMapLatest { content ->
+            if (content == null) return@flatMapLatest flow { LevelMeta.error("Content not found") }
+            gameDatabase.contractsDao.getByUuid(content.content.contractUuid)
+        }
+
+        return combine(contractFlow, contentFlow, chapterFlow) { contract, content, chapter ->
+            if (contract == null || content == null || chapter == null) return@combine LevelMeta.error(
+                "Data not found"
+            )
+
+            val chapterIndex =
+                content.chapters.indexOfFirst { it.chapter.uuid == chapter.chapter.uuid }
+            val levelIndex = chapter.levels.indexOfFirst { it.level.uuid == level.uuid }
+
+            getLevelMetadata(contract, chapterIndex, levelIndex)
+        }
+    }
+
+    private fun getLevelMetadata(
+        contract: ContractWithContentWithChaptersWithLevelsAndRewards,
+        chapterIndex: Int,
+        levelIndex: Int,
+    ): LevelMeta {
+        val contractName = contract.contract.displayName
+        val firstEpilogueChapter = contract.content.chapters.indexOfFirst { it.chapter.isEpilogue }
+        val isEpilogue = contract.content.chapters[chapterIndex].chapter.isEpilogue
+
+        val firstChapter = if (!isEpilogue) 0 else firstEpilogueChapter
+        val chapterSubset = contract.content.chapters.subList(firstChapter, chapterIndex)
+
+        val globalLevelIndex = chapterSubset.flatMap { it.levels }.count() + levelIndex
+
+        return LevelMeta(
+            "Level ${if (isEpilogue) "E" else ""}${globalLevelIndex + 1}",
+            contractName
+        )
+    }
+
     // ================================
     //  Queue Worker
     // ================================
@@ -490,5 +600,18 @@ class ContractApiRepository @Inject constructor(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+    }
+
+    // ================================
+    //  Helper classes
+    // ================================
+
+    private data class LevelMeta(
+        val name: String,
+        val contractName: String,
+    ) {
+        companion object {
+            fun error(errorDesc: String) = LevelMeta("Error", errorDesc)
+        }
     }
 }

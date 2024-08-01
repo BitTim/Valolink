@@ -29,7 +29,7 @@ fun NavGraphBuilder.contractsOverviewScreen(
 
         ContractsOverviewScreen(
             state = contractsMainState,
-            addUserGear = viewModel::addUserGear,
+            initUserContract = viewModel::initUserContract,
             onArchiveTypeFilterChange = viewModel::onArchiveTypeFilterChange,
             onNavToGearList = onNavToGearList,
             onNavToAgentDetails = onNavToAgentDetails,

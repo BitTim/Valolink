@@ -19,6 +19,7 @@ data class ContractDetailsNav(
 
 fun NavGraphBuilder.contractsContractDetailsScreen(
     onNavBack: () -> Unit,
+    onNavToLevelDetails: (String, String) -> Unit,
 ) {
     composable<ContractDetailsNav>(enterTransition = { Transition.forward },
                                    popExitTransition = { Transition.backward }) {
@@ -28,9 +29,12 @@ fun NavGraphBuilder.contractsContractDetailsScreen(
         val args = it.toRoute<ContractDetailsNav>()
         viewModel.fetchDetails(args.uuid)
 
-        ContractDetailsScreen(state = state,
-                              onNavBack = onNavBack,
-                              onNavContractRewardsList = {})
+        ContractDetailsScreen(
+            state = state,
+            onNavBack = onNavBack,
+            onNavContractRewardsList = {},
+            onNavToLevelDetails = onNavToLevelDetails
+        )
     }
 }
 

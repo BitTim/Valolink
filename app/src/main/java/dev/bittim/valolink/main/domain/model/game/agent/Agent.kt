@@ -1,8 +1,10 @@
 package dev.bittim.valolink.main.domain.model.game.agent
 
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
+import dev.bittim.valolink.main.domain.model.user.UserAgent
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 data class Agent(
     val uuid: String,
@@ -36,5 +38,13 @@ data class Agent(
             ChronoUnit.DAYS
         ).toInt()
         return if (days < 0) null else days
+    }
+
+    fun toUserObj(uid: String): UserAgent {
+        return UserAgent(
+            UUID.randomUUID().toString(),
+            uid,
+            uuid
+        )
     }
 }

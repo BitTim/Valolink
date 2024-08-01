@@ -33,7 +33,7 @@ import dev.bittim.valolink.main.ui.util.getProgressPercent
 @Composable
 fun AgentListScreen(
     state: AgentListState,
-    addUserGear: (String) -> Unit,
+    initUserContract: (String) -> Unit,
     onNavBack: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
 ) {
@@ -74,11 +74,12 @@ fun AgentListScreen(
         ) {
             items(items = state.agentGears,
                   itemContent = { gear ->
-                      val userGear = state.userGears.find { it.contract == gear.uuid }
+                      val userContract =
+                          state.userData?.contracts?.find { it.contract == gear.uuid }
                       val levelCount = gear.calcLevelCount()
 
-                      if (userGear == null) {
-                          addUserGear(gear.uuid)
+                      if (userContract == null) {
+                          initUserContract(gear.uuid)
                           return@items
                       }
 
@@ -92,11 +93,10 @@ fun AgentListScreen(
                               contractUuid = gear.uuid,
                               roleName = gear.content.relation.role.displayName,
                               totalLevels = levelCount,
-                              isLocked = !(state.userData?.agents?.contains(gear.content.relation.uuid)
-                                  ?: false),
-                              unlockedLevels = userGear.progress,
+                              isLocked = !(state.userData.agents.any { it.agent == gear.content.relation.uuid }),
+                              unlockedLevels = userContract.levels.count(),
                               percentage = getProgressPercent(
-                                  userGear.progress,
+                                  userContract.levels.count(),
                                   levelCount
                               ),
                               onNavToAgentDetails = onNavToAgentDetails

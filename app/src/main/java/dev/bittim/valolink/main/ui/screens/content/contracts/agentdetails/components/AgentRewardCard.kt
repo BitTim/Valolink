@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.compo
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,30 +54,36 @@ import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
+import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
 
 data object AgentRewardCard {
     val width: Dp = 256.dp
 }
 
+// TODO: Rework these a bit
 @Composable
 fun AgentRewardCard(
     modifier: Modifier = Modifier,
     name: String,
+    levelUuid: String,
     type: RewardType,
     price: Int,
     amount: Int,
-    displayIcon: String,
+    previewIcon: String,
     currencyIcon: String,
+    background: String? = null,
     isLocked: Boolean = false,
     isOwned: Boolean = false,
     unlockReward: () -> Unit = {},
     resetReward: () -> Unit = {},
+    onNavToLevelDetails: (String) -> Unit,
 ) {
     Card(
         modifier = modifier
             .width(AgentRewardCard.width)
             .aspectRatio(0.8f)
             .fillMaxSize()
+            .clickable { onNavToLevelDetails(levelUuid) }
     ) {
         val imagePadding = when (type) {
             RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
@@ -93,6 +100,12 @@ fun AgentRewardCard(
                 .clip(MaterialTheme.shapes.medium),
             tonalElevation = 3.dp
         ) {
+            if (type != RewardType.PLAYER_CARD) {
+                LevelBackdrop(isDisabled = isLocked, backgroundImage = background) {
+
+                }
+            }
+
             AsyncImage(
                 modifier = Modifier
                     .padding(imagePadding)
@@ -102,7 +115,7 @@ fun AgentRewardCard(
                             BlurredEdgeTreatment.Rectangle
                         )
                     },
-                model = displayIcon,
+                model = previewIcon,
                 contentDescription = null,
                 colorFilter = if (type == RewardType.CURRENCY || type == RewardType.TITLE) ColorFilter.tint(
                     MaterialTheme.colorScheme.onSurface
@@ -275,11 +288,13 @@ fun AgentRewardCardPreview() {
         ) {
             AgentRewardCard(
                 name = "Metamorphosis Card",
+                levelUuid = "",
                 type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
-                displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png"
+                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
+                onNavToLevelDetails = {}
             )
         }
     }
@@ -302,12 +317,14 @@ fun LockedAgentRewardCardPreview() {
         ) {
             AgentRewardCard(
                 name = "Metamorphosis Card",
+                levelUuid = "",
                 type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
-                displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
                 isLocked = true,
+                onNavToLevelDetails = {}
             )
         }
     }
@@ -330,12 +347,14 @@ fun OwnedAgentRewardCardPreview() {
         ) {
             AgentRewardCard(
                 name = "Metamorphosis Card",
+                levelUuid = "",
                 type = RewardType.PLAYER_CARD,
                 price = 2000,
                 amount = 1,
-                displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
                 isOwned = true,
+                onNavToLevelDetails = {}
             )
         }
     }

@@ -1,8 +1,7 @@
 package dev.bittim.valolink.main.domain.model.user
 
-data class Gear(
+data class UserAgent(
     val uuid: String,
     val user: String,
-    val contract: String,
-    val progress: Int,
+    val agent: String,
 )

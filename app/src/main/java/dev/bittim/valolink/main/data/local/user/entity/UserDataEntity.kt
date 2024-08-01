@@ -3,6 +3,8 @@ package dev.bittim.valolink.main.data.local.user.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import dev.bittim.valolink.main.domain.model.user.UserAgent
+import dev.bittim.valolink.main.domain.model.user.UserContract
 import dev.bittim.valolink.main.domain.model.user.UserData
 import java.time.OffsetDateTime
 
@@ -14,32 +16,43 @@ import java.time.OffsetDateTime
     )]
 )
 data class UserDataEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val isSynced: Boolean,
+    override val toDelete: Boolean,
     override val updatedAt: String,
     val isPrivate: Boolean,
     val username: String,
-    val agents: List<String>,
-) : SyncedEntity() {
-    fun toType(): UserData {
+) : SyncedEntity {
+    override fun getIdentifier(): String {
+        return uuid
+    }
+
+    override fun withIsSynced(isSynced: Boolean): SyncedEntity {
+        return this.copy(isSynced = true)
+    }
+
+    fun toType(
+        agents: List<UserAgent>,
+        contracts: List<UserContract>,
+    ): UserData {
         return UserData(
             uuid,
             isPrivate,
             username,
             agents,
-            emptyList()
+            contracts
         )
     }
 
     companion object {
-        fun fromType(userData: UserData): UserDataEntity {
+        fun fromType(userData: UserData, isSynced: Boolean, toDelete: Boolean): UserDataEntity {
             return UserDataEntity(
                 userData.uuid,
-                false,
+                isSynced,
+                toDelete,
                 OffsetDateTime.now().toString(),
                 userData.isPrivate,
-                userData.username,
-                userData.agents
+                userData.username
             )
         }
     }

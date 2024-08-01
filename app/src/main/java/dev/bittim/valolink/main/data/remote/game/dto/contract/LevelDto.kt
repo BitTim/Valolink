@@ -2,7 +2,7 @@ package dev.bittim.valolink.main.data.remote.game.dto.contract
 
 import dev.bittim.valolink.main.data.local.game.entity.contract.LevelEntity
 
-data class ChapterLevelDto(
+data class LevelDto(
     val reward: RewardDto,
     val xp: Int,
     val vpCost: Int,
@@ -12,6 +12,7 @@ data class ChapterLevelDto(
 ) {
     fun toEntity(
         index: Int,
+        dependency: String?,
         version: String,
         chapterUuid: String,
     ): LevelEntity {
@@ -19,6 +20,7 @@ data class ChapterLevelDto(
             chapterUuid + "_" + index,
             chapterUuid,
             version,
+            dependency,
             xp,
             vpCost,
             isPurchasableWithVP,

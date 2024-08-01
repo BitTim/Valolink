@@ -9,6 +9,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.CachePolicy
+import coil.transition.CrossfadeTransition
 import coil.util.DebugLogger
 import dagger.hilt.android.HiltAndroidApp
 import dev.bittim.valolink.core.ui.AnimatedPngDecoder
@@ -39,6 +40,8 @@ class Valolink : Application(), ImageLoaderFactory, Configuration.Provider {
             .diskCachePolicy(CachePolicy.ENABLED)
             .logger(DebugLogger())
             .respectCacheHeaders(false)
+            .transitionFactory(CrossfadeTransition.Factory())
+            .crossfade(true)
             .components {
                 add(AnimatedPngDecoder.Factory())
                 add(ImageDecoderDecoder.Factory())

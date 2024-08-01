@@ -36,17 +36,21 @@ import dev.bittim.valolink.main.data.repository.game.VersionApiRepository
 import dev.bittim.valolink.main.data.repository.game.VersionRepository
 import dev.bittim.valolink.main.data.repository.game.WeaponApiRepository
 import dev.bittim.valolink.main.data.repository.game.WeaponRepository
-import dev.bittim.valolink.main.data.repository.user.GearRepository
-import dev.bittim.valolink.main.data.repository.user.GearSupabaseRepository
-import dev.bittim.valolink.main.data.repository.user.OnboardingRepository
-import dev.bittim.valolink.main.data.repository.user.OnboardingSupabaseRepository
 import dev.bittim.valolink.main.data.repository.user.SessionRepository
 import dev.bittim.valolink.main.data.repository.user.SessionSupabaseRepository
-import dev.bittim.valolink.main.data.repository.user.UserRepository
-import dev.bittim.valolink.main.data.repository.user.UserSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserAgentRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserAgentSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserContractSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserDataSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserLevelRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserLevelSupabaseRepository
+import dev.bittim.valolink.main.data.repository.user.onboarding.OnboardingRepository
+import dev.bittim.valolink.main.data.repository.user.onboarding.OnboardingSupabaseRepository
 import dev.bittim.valolink.main.domain.usecase.game.QueueFullSyncUseCase
-import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.postgrest.Postgrest
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -88,13 +92,12 @@ object MainModule {
     @Singleton
     fun provideUserDatabase(
         @ApplicationContext context: Context,
-        moshi: Moshi,
     ): UserDatabase {
         return Room.databaseBuilder(
             context,
             UserDatabase::class.java,
             "user.db"
-        ).addTypeConverter(StringListConverter(moshi)).build()
+        ).build()
     }
 
     // --------------------------------
@@ -158,28 +161,68 @@ object MainModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(
-        sessionRepository: SessionRepository,
+    fun provideUserLevelRepository(
         userDatabase: UserDatabase,
+        database: Postgrest,
         workManager: WorkManager,
-    ): UserRepository {
-        return UserSupabaseRepository(
-            sessionRepository,
+    ): UserLevelRepository {
+        return UserLevelSupabaseRepository(
             userDatabase,
+            database,
             workManager
         )
     }
 
     @Provides
     @Singleton
-    fun provideGearRepository(
+    fun provideUserContractRepository(
+        sessionRepository: SessionRepository,
+        userLevelRepository: UserLevelRepository,
+        userDatabase: UserDatabase,
+        database: Postgrest,
+        workManager: WorkManager,
+    ): UserContractRepository {
+        return UserContractSupabaseRepository(
+            sessionRepository,
+            userLevelRepository,
+            userDatabase,
+            database,
+            workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserAgentRepository(
         sessionRepository: SessionRepository,
         userDatabase: UserDatabase,
+        database: Postgrest,
         workManager: WorkManager,
-    ): GearRepository {
-        return GearSupabaseRepository(
+    ): UserAgentRepository {
+        return UserAgentSupabaseRepository(
             sessionRepository,
             userDatabase,
+            database,
+            workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        sessionRepository: SessionRepository,
+        userAgentRepository: UserAgentRepository,
+        userContractRepository: UserContractRepository,
+        userDatabase: UserDatabase,
+        database: Postgrest,
+        workManager: WorkManager,
+    ): UserDataRepository {
+        return UserDataSupabaseRepository(
+            sessionRepository,
+            userAgentRepository,
+            userContractRepository,
+            userDatabase,
+            database,
             workManager
         )
     }
@@ -188,11 +231,11 @@ object MainModule {
     @Singleton
     fun provideOnboardingRepository(
         sessionRepository: SessionRepository,
-        userRepository: UserRepository,
+        userDataRepository: UserDataRepository,
     ): OnboardingRepository {
         return OnboardingSupabaseRepository(
             sessionRepository,
-            userRepository
+            userDataRepository
         )
     }
 
@@ -385,12 +428,6 @@ object MainModule {
     // --------------------------------
     //  Use Cases
     // --------------------------------
-
-    @Provides
-    @Singleton
-    fun provideAddUserGearUseCase(gearRepository: GearRepository): AddUserGearUseCase {
-        return AddUserGearUseCase(gearRepository)
-    }
 
     @Provides
     @Singleton

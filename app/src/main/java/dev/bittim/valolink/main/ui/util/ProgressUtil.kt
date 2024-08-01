@@ -13,6 +13,8 @@ fun getProgressPercent(
     collected: Int,
     total: Int,
 ): Int {
+    if (total == 0) return 100
+
     return floor(
         getProgressDecimal(
             collected,

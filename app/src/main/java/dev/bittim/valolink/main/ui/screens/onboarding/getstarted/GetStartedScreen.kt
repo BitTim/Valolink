@@ -22,7 +22,7 @@ fun GetStartedScreen(
     state: GetStartedState,
     onGetStartedClicked: () -> Unit,
 ) {
-    val isLoading: Boolean = state.loadingFinished == 0b0011
+    val isLoading: Boolean = state.loadingFinished != 0b0011
 
     Surface {
         Column(

@@ -17,12 +17,18 @@ data class WeaponSkin(
         amount: Int,
         levelUuid: String,
     ): RewardRelation {
+        val displayIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: ""
+
         return RewardRelation(
             uuid = uuid,
             type = RewardType.WEAPON_SKIN,
+            amount = amount,
             displayName = displayName,
-            displayIcon = levels.find { it.uuid == levelUuid }?.displayIcon ?: displayIcon ?: "",
-            amount = amount
+            displayIcon = displayIcon,
+            previewImages = if (chromas.count() > 1) chromas.map { it.fullRender to it.swatch } else listOf(
+                displayIcon to null
+            ),
+            background = wallpaper,
         )
     }
 }

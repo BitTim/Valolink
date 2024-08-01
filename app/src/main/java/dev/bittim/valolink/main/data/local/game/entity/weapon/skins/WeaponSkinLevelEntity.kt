@@ -27,6 +27,7 @@ data class WeaponSkinLevelEntity(
     @PrimaryKey val uuid: String,
     override val version: String,
     val weaponSkin: String,
+    val levelIndex: Int,
     val displayName: String,
     val levelItem: String?,
     val displayIcon: String?,
@@ -35,6 +36,7 @@ data class WeaponSkinLevelEntity(
     fun toType(): WeaponSkinLevel {
         return WeaponSkinLevel(
             uuid = uuid,
+            levelIndex = levelIndex,
             displayName = displayName,
             levelItem = levelItem,
             displayIcon = displayIcon,

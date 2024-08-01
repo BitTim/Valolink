@@ -13,11 +13,13 @@ data class WeaponSkinLevelDto(
     fun toEntity(
         version: String,
         skinUuid: String,
+        levelIndex: Int,
     ): WeaponSkinLevelEntity {
         return WeaponSkinLevelEntity(
             uuid = uuid,
             version = version,
             weaponSkin = skinUuid,
+            levelIndex = levelIndex,
             displayName = displayName,
             levelItem = levelItem,
             displayIcon = displayIcon,

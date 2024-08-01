@@ -4,9 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
-import dev.bittim.valolink.main.data.repository.user.GearRepository
-import dev.bittim.valolink.main.data.repository.user.UserRepository
-import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
+import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -17,31 +16,19 @@ import javax.inject.Inject
 @HiltViewModel
 class AgentListViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
-    private val userRepository: UserRepository,
-    private val gearRepository: GearRepository,
-    private val addUserGearUseCase: AddUserGearUseCase,
+    private val userDataRepository: UserDataRepository,
+    private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AgentListState())
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            userRepository.getCurrentUserData().collectLatest { userData ->
+            userDataRepository.getWithCurrentUser().collectLatest { userData ->
                 _state.update {
                     it.copy(
                         isLoading = false,
                         userData = userData
-                    )
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            gearRepository.getCurrentGears().collectLatest { gears ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userGears = gears
                     )
                 }
             }
@@ -61,13 +48,12 @@ class AgentListViewModel @Inject constructor(
         }
     }
 
-    fun addUserGear(contract: String) {
-        val uid = state.value.userData?.uuid ?: return
+    fun initUserContract(uuid: String) {
         viewModelScope.launch {
-            addUserGearUseCase(
-                uid,
-                contract
-            )
+            val contract = state.value.agentGears.find { it.uuid == uuid } ?: return@launch
+            val userData = state.value.userData ?: return@launch
+
+            userContractRepository.set(contract.toUserObj(userData.uuid))
         }
     }
 }

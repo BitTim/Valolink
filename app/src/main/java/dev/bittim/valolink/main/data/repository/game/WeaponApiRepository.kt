@@ -211,10 +211,11 @@ class WeaponApiRepository @Inject constructor(
             skin.map { it.chromas }
         }
         val skinChromas = skinChromaDto.zip(skins) { chroma, skin ->
-            chroma.map {
-                it.toEntity(
+            chroma.mapIndexed { index, rawChroma ->
+                rawChroma.toEntity(
                     version,
-                    skin.uuid
+                    skin.uuid,
+                    index
                 )
             }
         }.flatten()
@@ -223,10 +224,11 @@ class WeaponApiRepository @Inject constructor(
             level.map { it.levels }
         }
         val skinLevels = skinLevelDto.zip(skins) { level, skin ->
-            level.map {
-                it.toEntity(
+            level.mapIndexed { index, rawLevel ->
+                rawLevel.toEntity(
                     version,
-                    skin.uuid
+                    skin.uuid,
+                    index
                 )
             }
         }.flatten()

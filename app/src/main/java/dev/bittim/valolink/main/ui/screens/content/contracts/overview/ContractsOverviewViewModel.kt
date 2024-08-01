@@ -6,10 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
-import dev.bittim.valolink.main.data.repository.user.GearRepository
-import dev.bittim.valolink.main.data.repository.user.UserRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
-import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,9 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ContractsOverviewViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
-    private val userRepository: UserRepository,
-    private val gearRepository: GearRepository,
-    private val addUserGearUseCase: AddUserGearUseCase,
+    private val userDataRepository: UserDataRepository,
+    private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
     private val _filterState = MutableStateFlow(ContentType.SEASON)
 
@@ -37,22 +35,11 @@ class ContractsOverviewViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userRepository.getCurrentUserData().collectLatest { userData ->
+            userDataRepository.getWithCurrentUser().collectLatest { userData ->
                 _state.update {
                     it.copy(
                         isLoading = false,
                         userData = userData
-                    )
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            gearRepository.getCurrentGears().collectLatest { gears ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userGears = gears
                     )
                 }
             }
@@ -100,13 +87,12 @@ class ContractsOverviewViewModel @Inject constructor(
         _filterState.update { contentType }
     }
 
-    fun addUserGear(contract: String) {
-        val uid = state.value.userData?.uuid ?: return
+    fun initUserContract(uuid: String) {
         viewModelScope.launch {
-            addUserGearUseCase(
-                uid,
-                contract
-            )
+            val contract = state.value.agentGears.find { it.uuid == uuid } ?: return@launch
+            val userData = state.value.userData ?: return@launch
+
+            userContractRepository.set(contract.toUserObj(userData.uuid))
         }
     }
 }

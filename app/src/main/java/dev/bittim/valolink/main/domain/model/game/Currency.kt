@@ -24,9 +24,10 @@ data class Currency(
         return RewardRelation(
             uuid = uuid,
             type = RewardType.CURRENCY,
+            amount = actualAmount,
             displayName = if (actualAmount == 1) displayNameSingular else displayName,
             displayIcon = displayIcon,
-            amount = actualAmount
+            previewImages = listOf(largeIcon to null),
         )
     }
 }

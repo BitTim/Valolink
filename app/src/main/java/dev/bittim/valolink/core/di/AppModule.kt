@@ -13,6 +13,7 @@ import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.FlowType
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.PropertyConversionMethod
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.realtime.realtime
@@ -28,7 +29,9 @@ object AppModule {
             BuildConfig.SUPABASE_URL,
             BuildConfig.SUPABASE_ANON_KEY
         ) {
-            install(Postgrest)
+            install(Postgrest) {
+                propertyConversionMethod = PropertyConversionMethod.NONE
+            }
             install(Auth) {
                 flowType = FlowType.PKCE
             }

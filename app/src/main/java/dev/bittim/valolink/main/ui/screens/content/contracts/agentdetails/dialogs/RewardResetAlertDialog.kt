@@ -15,12 +15,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.PricedListItem
 
 @Composable
 fun RewardResetAlertDialog(
-    levels: List<ChapterLevel>,
+    levels: List<Level>,
     currencyDisplayIcon: String?,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,

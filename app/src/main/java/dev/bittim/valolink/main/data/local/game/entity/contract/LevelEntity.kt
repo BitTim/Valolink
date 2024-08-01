@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.main.data.local.game.entity.GameEntity
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.ChapterLevel
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 
 @Entity(
@@ -29,14 +29,18 @@ data class LevelEntity(
     @PrimaryKey val uuid: String,
     val chapterUuid: String,
     override val version: String,
+    val dependency: String?,
     val xp: Int,
     val vpCost: Int,
     val isPurchasableWithVP: Boolean,
     val doughCost: Int,
     val isPurchasableWithDough: Boolean,
 ) : GameEntity() {
-    fun toType(reward: Reward): ChapterLevel {
-        return ChapterLevel(
+    fun toType(name: String, reward: Reward): Level {
+        return Level(
+            uuid,
+            dependency,
+            name,
             xp,
             vpCost,
             isPurchasableWithVP,
