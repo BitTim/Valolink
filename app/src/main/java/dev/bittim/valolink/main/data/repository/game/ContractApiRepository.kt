@@ -302,14 +302,19 @@ class ContractApiRepository @Inject constructor(
                 )
             }
 
+            var previousLevel: String? = null
             val levelDto = chapterDto.map { it.levels }.flatten()
             val levels = chapterDto.zip(chapters) { data, chapter ->
                 data.levels.mapIndexed { index, level ->
-                    level.toEntity(
+                    val levelEntity = level.toEntity(
                         index,
+                        previousLevel,
                         version,
                         chapter.uuid
                     )
+
+                    previousLevel = levelEntity.uuid
+                    levelEntity
                 }
             }.flatten()
 
@@ -364,15 +369,26 @@ class ContractApiRepository @Inject constructor(
                 }
             }.flatten()
 
+            var previousLevel: String? = null
+            var previousContent: String? = null
             val levelDto = chapterDto.map { it.levels }.flatten()
             val levels = chapterDto.zip(chapters) { data, chapter ->
-                data.levels.mapIndexed { index, level ->
-                    level.toEntity(
+                if (chapter.contentUuid != previousContent) previousLevel = null
+
+                val levelEntities = data.levels.mapIndexed { index, level ->
+                    val levelEntity = level.toEntity(
                         index,
+                        previousLevel,
                         version,
                         chapter.uuid,
                     )
+
+                    previousLevel = levelEntity.uuid
+                    levelEntity
                 }
+
+                previousContent = chapter.contentUuid
+                levelEntities
             }.flatten()
 
             val rewards = levelDto.zip(levels) { data, level ->

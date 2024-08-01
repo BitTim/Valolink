@@ -5,19 +5,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserDataDto(
-    val uuid: String,
+    override val uuid: String,
     override val updatedAt: String,
     val isPrivate: Boolean,
     val username: String,
-) : SyncedDto() {
-    fun toEntity(): UserDataEntity {
-        return UserDataEntity(
-            uuid,
-            true,
-            updatedAt,
-            isPrivate,
-            username
-        )
+) : SyncedDto<UserDataEntity>() {
+    override fun getIdentifier(): String {
+        return uuid
+    }
+
+    override fun toEntity(isSynced: Boolean, toDelete: Boolean): UserDataEntity {
+        return UserDataEntity(uuid, isSynced, toDelete, updatedAt, isPrivate, username)
     }
 
     companion object {

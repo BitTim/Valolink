@@ -8,7 +8,6 @@ import dev.bittim.valolink.main.domain.model.user.UserData
 data class AgentDetailsState(
     val isLoading: Boolean = true,
     val agentGear: Contract? = null,
-    val userProgression: dev.bittim.valolink.main.domain.model.user.Progression? = null,
     val selectedAbility: Int = 0,
     val dough: Currency? = null,
     val userData: UserData? = null,

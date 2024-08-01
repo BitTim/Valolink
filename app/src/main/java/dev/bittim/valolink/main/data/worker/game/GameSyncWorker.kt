@@ -42,8 +42,8 @@ class GameSyncWorker @AssistedInject constructor(
 ) {
     override suspend fun doWork(): Result {
         // Get input data from params
-        val type = params.inputData.getString(KEY_TYPE)
-        val uuid = params.inputData.getString(KEY_UUID)
+        val type = inputData.getString(KEY_TYPE)
+        val uuid = inputData.getString(KEY_UUID)
 
         // Get repository that shall be used
         val repository = when (type) {

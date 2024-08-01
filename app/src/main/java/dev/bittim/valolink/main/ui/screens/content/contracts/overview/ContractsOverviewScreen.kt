@@ -51,7 +51,7 @@ import kotlin.math.floor
 @Composable
 fun ContractsOverviewScreen(
     state: ContractsOverviewState,
-    addUserGear: (String) -> Unit,
+    initUserContract: (String) -> Unit,
     onArchiveTypeFilterChange: (ContentType) -> Unit,
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
@@ -183,11 +183,11 @@ fun ContractsOverviewScreen(
                     flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = state.agentGearCarouselState)
                 ) { index ->
                     val gear = state.agentGears[index]
-                    val userGear = state.userProgressions.find { it.contract == gear.uuid }
+                    val userContract = state.userData?.contracts?.find { it.contract == gear.uuid }
                     val levelCount = gear.calcLevelCount()
 
-                    if (userGear == null) {
-                        addUserGear(gear.uuid)
+                    if (userContract == null) {
+                        initUserContract(gear.uuid)
                         return@HorizontalMultiBrowseCarousel
                     }
 
@@ -202,13 +202,12 @@ fun ContractsOverviewScreen(
                             contractUuid = gear.uuid,
                             roleName = gear.content.relation.role.displayName,
                             totalLevels = levelCount,
-                            unlockedLevels = userGear.unlockedLevels,
+                            unlockedLevels = userContract.levels.count(),
                             percentage = getProgressPercent(
-                                userGear.unlockedLevels,
+                                userContract.levels.count(),
                                 levelCount
                             ),
-                            isLocked = !(state.userData?.agents?.contains(gear.content.relation.uuid)
-                                ?: false),
+                            isLocked = !(state.userData.agents.any { it.agent == gear.content.relation.uuid }),
                             maskedWidth = carouselItemInfo.maskRect.width,
                             onNavToAgentDetails = onNavToAgentDetails
                         )

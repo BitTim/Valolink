@@ -1,6 +1,11 @@
 package dev.bittim.valolink.main.data.local.user.entity
 
-abstract class SyncedEntity {
-    abstract val isSynced: Boolean
-    abstract val updatedAt: String
+interface SyncedEntity {
+    val uuid: String
+    val isSynced: Boolean
+    val toDelete: Boolean
+    val updatedAt: String
+
+    fun getIdentifier(): String
+    fun withIsSynced(isSynced: Boolean): SyncedEntity
 }

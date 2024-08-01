@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -37,7 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
+import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.ui.components.BaseDetailsScreen
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
@@ -68,8 +68,9 @@ fun AgentDetailsScreen(
     state: AgentDetailsState,
     unlockAgent: () -> Unit,
     resetAgent: () -> Unit,
-    addUserGear: (String) -> Unit,
-    updateLevels: (List<String>?) -> Unit,
+    initUserContract: () -> Unit,
+    unlockLevel: (String) -> Unit,
+    resetLevel: (String) -> Unit,
     onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
@@ -83,15 +84,24 @@ fun AgentDetailsScreen(
         // --------------------------------
 
         val agent = state.agentGear.content.relation
-        val isLocked = !(state.userData?.agents?.contains(agent.uuid) ?: false)
+        val isLocked = !(state.userData?.agents?.any { it.agent == agent.uuid } ?: false)
 
         var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
         var isAgentResetAlertShown: Boolean by remember { mutableStateOf(false) }
         var isRewardUnlockAlertShown: Boolean by remember { mutableStateOf(false) }
         var isRewardResetAlertShown: Boolean by remember { mutableStateOf(false) }
 
-        val unlockedLevels = state.userProgression?.unlockedLevels ?: emptyList()
-        var targetRewardIndex: Int by remember { mutableIntStateOf(-1) }
+        var targetLevelUuid: String by remember { mutableStateOf("") }
+
+        val agentGearLevels = state.agentGear.content.chapters.flatMap { it.levels }
+        val userContract = state.userData?.contracts?.find {
+            it.contract == state.agentGear.uuid
+        }
+
+        if (userContract == null) {
+            initUserContract()
+            return
+        }
 
         val abilityPagerState = rememberPagerState {
             agent.abilities.count()
@@ -110,11 +120,14 @@ fun AgentDetailsScreen(
 
         // Scroll to the currently active reward
         LaunchedEffect(
-            state.userProgression?.unlockedLevels,
+            userContract.levels.count(),
             state.agentGear
         ) {
-            val targetIndex = state.userProgression?.unlockedLevels?.count() ?: 0
-            state.rewardListState.animateScrollToItem(targetIndex)
+            val targetIndex = agentGearLevels.indexOfFirst {
+                it.uuid == userContract.levels.lastOrNull()?.uuid
+            }
+
+            if (targetIndex > -1) state.rewardListState.animateScrollToItem(targetIndex)
         }
 
         // --------------------------------
@@ -193,14 +206,9 @@ fun AgentDetailsScreen(
                             }
                         }
 
-                        val userGear = state.userProgression
-                        if (userGear == null) addUserGear(state.agentGear.uuid)
-
                         val totalLevels = state.agentGear.calcLevelCount()
-                        val percentage = getProgressPercent(
-                            unlockedLevels.count(),
-                            totalLevels
-                        )
+                        val unlockedLevels = userContract.levels.count()
+                        val percentage = getProgressPercent(unlockedLevels, totalLevels)
 
                         val animatedProgress: Float by animateFloatAsState(
                             targetValue = (percentage / 100f),
@@ -308,9 +316,9 @@ fun AgentDetailsScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        itemsIndexed(
+                        items(
                             items = state.agentGear.content.chapters.flatMap { chapter -> chapter.levels },
-                            itemContent = { index, level ->
+                            itemContent = { level ->
                                 val reward = level.reward.relation
 
                                 if (reward != null) {
@@ -324,22 +332,19 @@ fun AgentDetailsScreen(
                                         amount = reward.amount,
                                         currencyIcon = state.dough?.displayIcon ?: "",
                                         isLocked = isLocked,
-                                        isOwned = unlockedLevels.contains(level.uuid),
+                                        isOwned = userContract.levels.any { it.level == level.uuid },
                                         unlockReward = {
-                                            targetRewardIndex = index
-                                            val rewardCount = index - unlockedLevels.count()
-
-                                            // Unlock multiple at the same time
-                                            if (rewardCount > 0) isRewardUnlockAlertShown = true
-                                            // Unlock just one
-                                            if (rewardCount == 0) updateLevels(
-                                                state.userProgression?.levels?.plus(
-                                                    level.uuid
-                                                )
-                                            )
+                                            if (userContract.levels.lastOrNull()?.level == level.dependency) {
+                                                // Unlock just one
+                                                unlockLevel(level.uuid)
+                                            } else {
+                                                // Unlock multiple at the same time
+                                                targetLevelUuid = level.uuid
+                                                isRewardUnlockAlertShown = true
+                                            }
                                         },
                                         resetReward = {
-                                            targetRewardIndex = index
+                                            targetLevelUuid = level.uuid
                                             isRewardResetAlertShown = true
                                         },
                                         onNavToLevelDetails = onNavToLevelDetails
@@ -482,32 +487,44 @@ fun AgentDetailsScreen(
             )
         }
 
-        if (isRewardUnlockAlertShown && unlockedLevels.count() < targetRewardIndex) {
-            val levels =
-                state.agentGear.content.chapters.flatMap { chapter -> chapter.levels }.subList(
-                    unlockedLevels.count(),
-                    targetRewardIndex + 1
-                )
+        if (isRewardUnlockAlertShown && !userContract.levels.any { it.level == targetLevelUuid }) {
+            val stagedLevels = Level.reverseTraverse(
+                agentGearLevels,
+                targetLevelUuid,
+                userContract.levels.lastOrNull()?.level,
+                false
+            )
 
             RewardUnlockAlertDialog(
-                levels = levels,
+                levels = stagedLevels,
                 currencyDisplayIcon = state.dough?.displayIcon,
                 onDismiss = { isRewardUnlockAlertShown = false },
-                onConfirm = { updateLevels(levels.map { it.uuid }) })
+                onConfirm = {
+                    stagedLevels.forEach {
+                        unlockLevel(it.uuid)
+                    }
+                }
+            )
         }
 
-        if (isRewardResetAlertShown && unlockedLevels.count() >= targetRewardIndex) {
-            val levels =
-                state.agentGear.content.chapters.flatMap { chapter -> chapter.levels }.subList(
-                    targetRewardIndex,
-                    unlockedLevels.count()
-                )
+        if (isRewardResetAlertShown && userContract.levels.any { it.level == targetLevelUuid }) {
+            val stagedLevels = Level.reverseTraverse(
+                agentGearLevels,
+                userContract.levels.lastOrNull()?.level,
+                targetLevelUuid,
+                true
+            )
 
             RewardResetAlertDialog(
-                levels = levels,
+                levels = stagedLevels,
                 currencyDisplayIcon = state.dough?.displayIcon,
                 onDismiss = { isRewardResetAlertShown = false },
-                onConfirm = { updateLevels(levels.map { it.uuid }) })
+                onConfirm = {
+                    stagedLevels.forEach {
+                        resetLevel(it.uuid)
+                    }
+                }
+            )
         }
     }
 }

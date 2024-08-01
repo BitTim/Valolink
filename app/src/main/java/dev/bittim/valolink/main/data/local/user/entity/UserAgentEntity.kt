@@ -1,58 +1,63 @@
 package dev.bittim.valolink.main.data.local.user.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.main.domain.model.user.UserAgent
-import dev.bittim.valolink.main.domain.model.user.UserContract
-import dev.bittim.valolink.main.domain.model.user.UserData
 import java.time.OffsetDateTime
 
 @Entity(
-    tableName = "Users",
+    tableName = "UserAgents",
+    foreignKeys = [
+        ForeignKey(
+            entity = UserDataEntity::class,
+            parentColumns = ["uuid"],
+            childColumns = ["user"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
     indices = [Index(
         value = ["uuid"],
         unique = true
+    ), Index(
+        value = ["user", "agent"],
+        unique = true
     )]
 )
-data class UserDataEntity(
+data class UserAgentEntity(
     @PrimaryKey override val uuid: String,
     override val isSynced: Boolean,
     override val toDelete: Boolean,
     override val updatedAt: String,
-    val isPrivate: Boolean,
-    val username: String,
+    val user: String,
+    val agent: String,
 ) : SyncedEntity {
     override fun getIdentifier(): String {
-        return uuid
+        return agent
     }
 
     override fun withIsSynced(isSynced: Boolean): SyncedEntity {
         return this.copy(isSynced = true)
     }
 
-    fun toType(
-        agents: List<UserAgent>,
-        contracts: List<UserContract>,
-    ): UserData {
-        return UserData(
+    fun toType(): UserAgent {
+        return UserAgent(
             uuid,
-            isPrivate,
-            username,
-            agents,
-            contracts
+            user,
+            agent
         )
     }
 
     companion object {
-        fun fromType(userData: UserData, isSynced: Boolean, toDelete: Boolean): UserDataEntity {
-            return UserDataEntity(
-                userData.uuid,
+        fun fromType(userAgent: UserAgent, isSynced: Boolean, toDelete: Boolean): UserAgentEntity {
+            return UserAgentEntity(
+                userAgent.uuid,
                 isSynced,
                 toDelete,
                 OffsetDateTime.now().toString(),
-                userData.isPrivate,
-                userData.username
+                userAgent.user,
+                userAgent.agent
             )
         }
     }

@@ -27,7 +27,7 @@ class SessionSupabaseRepository @Inject constructor(
     override suspend fun signOut() {
         // Delete all cached user data on sign out
         userDatabase.userDataDao.deleteAll()
-        userDatabase.gearDao.deleteAll()
+        userDatabase.userContractDao.deleteAll()
 
         // Sign out
         auth.signOut()

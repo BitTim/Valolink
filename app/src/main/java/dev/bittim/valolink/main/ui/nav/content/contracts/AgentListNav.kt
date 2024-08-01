@@ -25,7 +25,7 @@ fun NavGraphBuilder.contractsGearListScreen(
 
         AgentListScreen(
             state = gearListState,
-            addUserGear = viewModel::addUserGear,
+            initUserContract = viewModel::initUserContract,
             onNavBack = onNavBack,
             onNavToAgentDetails = onNavToAgentDetails
         )

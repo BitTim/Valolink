@@ -5,10 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
-import dev.bittim.valolink.main.data.repository.user.ProgressionRepository
-import dev.bittim.valolink.main.data.repository.user.UserRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
-import dev.bittim.valolink.main.domain.usecase.user.AddUserGearUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,16 +24,15 @@ import javax.inject.Inject
 class LevelDetailsViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
-    private val userRepository: UserRepository,
-    private val progressionRepository: ProgressionRepository,
-    private val addUserGearUseCase: AddUserGearUseCase,
+    private val userDataRepository: UserDataRepository,
+    private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LevelDetailsState(false))
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            userRepository.getCurrentUserData().collectLatest { userData ->
+            userDataRepository.getWithCurrentUser().collectLatest { userData ->
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -83,37 +81,14 @@ class LevelDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            progressionRepository.getCurrentProgression(uuid).collectLatest { progression ->
+            userContractRepository.getWithCurrentUser(uuid).collectLatest { progression ->
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        userProgression = progression
+                        userUserContract = progression
                     )
                 }
             }
-        }
-    }
-
-    fun addUserGear(contract: String) {
-        val uid = state.value.userData?.uuid ?: return
-        viewModelScope.launch {
-            addUserGearUseCase(
-                uid,
-                contract
-            )
-        }
-    }
-
-    fun updateLevels(unlockedLevels: List<String>?, purchasedLevels: List<String>?) {
-        if (unlockedLevels == null || purchasedLevels == null) return
-
-        viewModelScope.launch {
-            val newProgress =
-                state.value.userProgression?.copy(
-                    unlockedLevels = unlockedLevels,
-                    levels = purchasedLevels
-                ) ?: return@launch
-            progressionRepository.setProgression(newProgress)
         }
     }
 }

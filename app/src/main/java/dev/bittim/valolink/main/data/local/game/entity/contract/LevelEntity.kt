@@ -29,15 +29,17 @@ data class LevelEntity(
     @PrimaryKey val uuid: String,
     val chapterUuid: String,
     override val version: String,
+    val dependency: String?,
     val xp: Int,
     val vpCost: Int,
     val isPurchasableWithVP: Boolean,
     val doughCost: Int,
     val isPurchasableWithDough: Boolean,
 ) : GameEntity() {
-    fun toType(reward: Reward, name: String, contractName: String): Level {
+    fun toType(name: String, contractName: String, reward: Reward): Level {
         return Level(
             uuid,
+            dependency,
             name,
             contractName,
             xp,

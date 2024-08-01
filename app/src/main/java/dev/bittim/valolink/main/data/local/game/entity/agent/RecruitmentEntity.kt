@@ -60,6 +60,7 @@ data class RecruitmentEntity(
                         listOf(
                             Level(
                                 agent.uuid,
+                                null,
                                 "Level 1",
                                 "${agent.displayName} Recruitment",
                                 xp,

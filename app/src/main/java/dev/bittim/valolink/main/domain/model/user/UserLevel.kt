@@ -1,8 +1,8 @@
 package dev.bittim.valolink.main.domain.model.user
 
-data class ProgressionLevel(
+data class UserLevel(
     val uuid: String,
-    val progression: String,
+    val userContract: String,
     val level: String,
     val isPurchased: Boolean,
 )

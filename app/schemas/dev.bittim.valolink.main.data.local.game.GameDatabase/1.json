@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7c092a6f68f23c36f7e00dab9f94c93d",
+    "identityHash": "aa62c84aa2e2bda8821188380836d45a",
     "entities": [
       {
         "tableName": "Version",
@@ -450,7 +450,7 @@
       },
       {
         "tableName": "ContractChapterLevels",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `chapterUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `xp` INTEGER NOT NULL, `vpCost` INTEGER NOT NULL, `isPurchasableWithVP` INTEGER NOT NULL, `doughCost` INTEGER NOT NULL, `isPurchasableWithDough` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`chapterUuid`) REFERENCES `ContractChapters`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `chapterUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `dependency` TEXT, `xp` INTEGER NOT NULL, `vpCost` INTEGER NOT NULL, `isPurchasableWithVP` INTEGER NOT NULL, `doughCost` INTEGER NOT NULL, `isPurchasableWithDough` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`chapterUuid`) REFERENCES `ContractChapters`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -469,6 +469,12 @@
             "columnName": "version",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "dependency",
+            "columnName": "dependency",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "xp",
@@ -2487,7 +2493,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c092a6f68f23c36f7e00dab9f94c93d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aa62c84aa2e2bda8821188380836d45a')"
     ]
   }
 }

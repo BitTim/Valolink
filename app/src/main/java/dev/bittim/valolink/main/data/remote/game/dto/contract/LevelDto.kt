@@ -12,6 +12,7 @@ data class LevelDto(
 ) {
     fun toEntity(
         index: Int,
+        dependency: String?,
         version: String,
         chapterUuid: String,
     ): LevelEntity {
@@ -19,6 +20,7 @@ data class LevelDto(
             chapterUuid + "_" + index,
             chapterUuid,
             version,
+            dependency,
             xp,
             vpCost,
             isPurchasableWithVP,

@@ -25,9 +25,9 @@ data class LevelWithReward(
         contractName: String,
     ): Level {
         return level.toType(
-            reward.toType(relation),
             levelName,
-            contractName
+            contractName,
+            reward.toType(relation),
         )
     }
 }
