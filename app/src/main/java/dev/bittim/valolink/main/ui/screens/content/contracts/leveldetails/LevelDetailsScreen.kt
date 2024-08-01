@@ -155,7 +155,7 @@ fun LevelDetailsScreen(
                         Text(
                             text = state.level.uuid,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.outlineVariant
                         )
                     }
                 }

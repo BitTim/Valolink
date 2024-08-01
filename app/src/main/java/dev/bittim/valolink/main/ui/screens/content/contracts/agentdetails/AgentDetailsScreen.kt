@@ -22,6 +22,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -112,10 +113,9 @@ fun AgentDetailsScreen(
         }
 
         LaunchedEffect(
-            abilityPagerState.currentPage,
-            abilityPagerState.isScrollInProgress
+            abilityPagerState.currentPage
         ) {
-            if (!abilityPagerState.isScrollInProgress) onAbilityTabChanged(abilityPagerState.currentPage)
+            onAbilityTabChanged(abilityPagerState.currentPage)
         }
 
         // Scroll to the currently active reward
@@ -361,6 +361,58 @@ fun AgentDetailsScreen(
 
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Abilities",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    TabRow(selectedTabIndex = state.selectedAbility) {
+                        agent.abilities.forEachIndexed { index, ability ->
+                            val isSelected = index == state.selectedAbility
+
+                            Tab(selected = isSelected,
+                                onClick = { onAbilityTabChanged(index) },
+                                icon = {
+                                    AsyncImage(
+                                        modifier = Modifier.padding(12.dp),
+                                        model = ability.displayIcon,
+                                        contentDescription = ability.displayName,
+                                        colorFilter = ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
+                                        placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_ability_icon)
+                                    )
+                                })
+                        }
+                    }
+
+                    HorizontalPager(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Top,
+                        state = abilityPagerState
+                    ) { index ->
+                        val ability = agent.abilities[index]
+
+                        Card(
+                            modifier = Modifier.padding(16.dp),
+                        ) {
+                            AbilityDetailsItem(
+                                modifier = Modifier.padding(16.dp),
+                                displayName = ability.displayName,
+                                slot = ability.slot,
+                                description = ability.description,
+                                displayIcon = ability.displayIcon
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     text = "Details",
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -414,49 +466,6 @@ fun AgentDetailsScreen(
                     }
 
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            text = "Abilities",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        TabRow(selectedTabIndex = state.selectedAbility) {
-                            agent.abilities.forEachIndexed { index, ability ->
-                                val isSelected = index == state.selectedAbility
-
-                                Tab(selected = isSelected,
-                                    onClick = { onAbilityTabChanged(index) },
-                                    icon = {
-                                        AsyncImage(
-                                            modifier = Modifier.padding(12.dp),
-                                            model = ability.displayIcon,
-                                            contentDescription = ability.displayName,
-                                            colorFilter = ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
-                                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_ability_icon)
-                                        )
-                                    })
-                            }
-                        }
-
-                        HorizontalPager(
-                            modifier = Modifier.fillMaxWidth(),
-                            state = abilityPagerState
-                        ) { index ->
-                            val ability = agent.abilities[index]
-
-                            AbilityDetailsItem(
-                                modifier = Modifier.padding(16.dp),
-                                displayName = ability.displayName,
-                                slot = ability.slot,
-                                description = ability.description,
-                                displayIcon = ability.displayIcon
-                            )
-                        }
-                    }
-
-                    Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(2.dp)
@@ -464,13 +473,13 @@ fun AgentDetailsScreen(
                         Text(
                             text = "Contract: ${state.agentGear.uuid}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.outlineVariant
                         )
 
                         Text(
                             text = "Agent: ${agent.uuid}",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.outlineVariant
                         )
                     }
                 }
