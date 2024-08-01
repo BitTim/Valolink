@@ -7,6 +7,7 @@ import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.game.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
+import dev.bittim.valolink.main.data.repository.user.data.UserLevelRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,14 +19,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// TODO: Pass contract to this screen too for easier access of level index (for unlock) and similar
-
 @HiltViewModel
 class LevelDetailsViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
     private val userDataRepository: UserDataRepository,
     private val userContractRepository: UserContractRepository,
+    private val userLevelRepository: UserLevelRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LevelDetailsState(false))
     val state = _state.asStateFlow()
@@ -44,9 +44,24 @@ class LevelDetailsViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun fetchDetails(uuid: String?) {
-        if (uuid == null) return
+    fun fetchDetails(uuid: String?, contract: String?) {
+        if (uuid == null || contract == null) return
 
+        // Get passed contract
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+
+            contractRepository.getByUuid(contract, true).collectLatest { contract ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        contract = contract
+                    )
+                }
+            }
+        }
+
+        // Get price and unlock currency for level
         viewModelScope.launch {
             contractRepository.getLevelByUuid(uuid).flatMapLatest { level ->
                 if (level == null) return@flatMapLatest flowOf(null)
@@ -77,18 +92,42 @@ class LevelDetailsViewModel @Inject constructor(
                 _state.update { it.copy(unlockCurrency = currency) }
             }
         }
+    }
 
+
+
+    fun initUserContract() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            val contract = state.value.contract ?: return@launch
+            val userData = state.value.userData ?: return@launch
 
-            userContractRepository.getWithCurrentUser(uuid).collectLatest { progression ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userUserContract = progression
-                    )
-                }
-            }
+            userContractRepository.set(contract.toUserObj(userData.uuid))
+        }
+    }
+
+    fun unlockLevel(uuid: String, isPurchased: Boolean) {
+        viewModelScope.launch {
+            val userData = state.value.userData ?: return@launch
+            val userContract =
+                userData.contracts.find { it.contract == state.value.contract?.uuid }
+                    ?: return@launch
+            val level = state.value.contract?.content?.chapters
+                ?.flatMap { it.levels }
+                ?.find { it.uuid == uuid } ?: return@launch
+
+            userLevelRepository.set(level.toUserObj(userContract.uuid, isPurchased))
+        }
+    }
+
+    fun resetLevel(uuid: String) {
+        viewModelScope.launch {
+            val userData = state.value.userData ?: return@launch
+            val userContract =
+                userData.contracts.find { it.contract == state.value.contract?.uuid }
+                    ?: return@launch
+            val userLevel = userContract.levels.find { it.level == uuid } ?: return@launch
+
+            userLevelRepository.delete(userLevel)
         }
     }
 }

@@ -38,7 +38,7 @@ fun ContractDetailsScreen(
     state: ContractDetailsState,
     onNavBack: () -> Unit,
     onNavContractRewardsList: () -> Unit,
-    onNavToLevelDetails: (String) -> Unit,
+    onNavToLevelDetails: (String, String) -> Unit,
 ) {
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
@@ -116,7 +116,9 @@ fun ContractDetailsScreen(
                                           price = level.vpCost,
                                           amount = reward.amount,
                                           currencyIcon = state.vp?.displayIcon ?: "",
-                                          onNavToLevelDetails = onNavToLevelDetails,
+                                          onNavToLevelDetails = { levelUuid ->
+                                              onNavToLevelDetails(levelUuid, state.contract.uuid)
+                                          },
                                       )
                                   }
                               }

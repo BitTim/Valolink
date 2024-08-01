@@ -110,7 +110,7 @@ class ContractApiRepository @Inject constructor(
                         getReward(it.reward),
                         getLevelMetadata(it.level)
                     ) { level, reward, meta ->
-                        level.toType(reward, meta.name, meta.contractName)
+                        level.toType(reward, meta.name)
                     }
                 }
 

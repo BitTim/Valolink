@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LevelDetailsNav(
     val uuid: String,
+    val contract: String,
 )
 
 fun NavGraphBuilder.contractsLevelDetailsScreen(
@@ -26,17 +27,20 @@ fun NavGraphBuilder.contractsLevelDetailsScreen(
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         val args = it.toRoute<LevelDetailsNav>()
-        viewModel.fetchDetails(args.uuid)
+        viewModel.fetchDetails(args.uuid, args.contract)
 
         LevelDetailsScreen(
             state = state,
+            initUserContract = viewModel::initUserContract,
+            unlockLevel = viewModel::unlockLevel,
+            resetLevel = viewModel::resetLevel,
             onNavBack = onNavBack
         )
     }
 }
 
-fun NavController.navToContractsLevelDetails(uuid: String) {
-    navigate(LevelDetailsNav(uuid)) {
+fun NavController.navToContractsLevelDetails(uuid: String, contract: String) {
+    navigate(LevelDetailsNav(uuid, contract)) {
         launchSingleTop = true
     }
 }

@@ -74,7 +74,7 @@ fun AgentDetailsScreen(
     onAbilityTabChanged: (Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
-    onNavToLevelDetails: (String) -> Unit,
+    onNavToLevelDetails: (String, String) -> Unit,
 ) {
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
@@ -347,7 +347,9 @@ fun AgentDetailsScreen(
                                             targetLevelUuid = level.uuid
                                             isRewardResetAlertShown = true
                                         },
-                                        onNavToLevelDetails = onNavToLevelDetails
+                                        onNavToLevelDetails = { levelUuid ->
+                                            onNavToLevelDetails(levelUuid, state.agentGear.uuid)
+                                        }
                                     )
                                 }
                             }
@@ -452,6 +454,24 @@ fun AgentDetailsScreen(
                                 displayIcon = ability.displayIcon
                             )
                         }
+                    }
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Text(
+                            text = "Contract: ${state.agentGear.uuid}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Text(
+                            text = "Agent: ${agent.uuid}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             },

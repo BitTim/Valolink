@@ -28,12 +28,22 @@ fun NavGraphBuilder.contractsNavGraph(
 
         contractsAgentDetailsScreen(
             onNavBack = { navController.navigateUp() },
-            onNavToLevelDetails = { uuid -> navController.navToContractsLevelDetails(uuid) }
+            onNavToLevelDetails = { uuid, contract ->
+                navController.navToContractsLevelDetails(
+                    uuid,
+                    contract
+                )
+            }
         )
 
         contractsContractDetailsScreen(
             onNavBack = { navController.navigateUp() },
-            onNavToLevelDetails = { uuid -> navController.navToContractsLevelDetails(uuid) }
+            onNavToLevelDetails = { uuid, contract ->
+                navController.navToContractsLevelDetails(
+                    uuid,
+                    contract
+                )
+            }
         )
 
         contractsLevelDetailsScreen(

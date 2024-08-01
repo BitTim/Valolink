@@ -22,11 +22,9 @@ data class LevelWithReward(
     fun toType(
         relation: RewardRelation?,
         levelName: String,
-        contractName: String,
     ): Level {
         return level.toType(
             levelName,
-            contractName,
             reward.toType(relation),
         )
     }

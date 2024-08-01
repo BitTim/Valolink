@@ -36,12 +36,11 @@ data class LevelEntity(
     val doughCost: Int,
     val isPurchasableWithDough: Boolean,
 ) : GameEntity() {
-    fun toType(name: String, contractName: String, reward: Reward): Level {
+    fun toType(name: String, reward: Reward): Level {
         return Level(
             uuid,
             dependency,
             name,
-            contractName,
             xp,
             vpCost,
             isPurchasableWithVP,

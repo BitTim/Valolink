@@ -19,7 +19,7 @@ data class AgentDetailsNav(
 
 fun NavGraphBuilder.contractsAgentDetailsScreen(
     onNavBack: () -> Unit,
-    onNavToLevelDetails: (String) -> Unit,
+    onNavToLevelDetails: (String, String) -> Unit,
 ) {
     composable<AgentDetailsNav>(enterTransition = { Transition.forward },
                                 popExitTransition = { Transition.backward }) {

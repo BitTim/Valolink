@@ -47,6 +47,7 @@ fun LevelHeader(
     xpTotal: Int,
     xpProgress: Int = 0,
     isUnlocked: Boolean = false,
+    onUnlock: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -134,7 +135,8 @@ fun LevelHeader(
                     currencyIcon = currencyIcon,
                     price = price,
                     isPrimary = false,
-                    isUnlocked = isUnlocked
+                    isUnlocked = isUnlocked,
+                    onClick = onUnlock
                 )
             } else {
                 UnlockButton(
@@ -142,7 +144,8 @@ fun LevelHeader(
                     currencyIcon = currencyIcon,
                     price = price,
                     isPrimary = true,
-                    isUnlocked = isUnlocked
+                    isUnlocked = isUnlocked,
+                    onClick = onUnlock
                 )
             }
         }
@@ -169,6 +172,7 @@ fun LevelHeaderPreview() {
                     price = 7500,
                     currencyIcon = "",
                     xpTotal = -1,
+                    onUnlock = {}
                 )
             }
         }
@@ -196,7 +200,8 @@ fun ProgressLevelHeaderPreview() {
                     currencyIcon = "",
                     xpProgress = 65,
                     xpTotal = 100,
-                    isUnlocked = true
+                    isUnlocked = true,
+                    onUnlock = {}
                 )
             }
         }

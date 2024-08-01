@@ -28,14 +28,12 @@ data class ChapterWithLevelsAndRewards(
     fun toType(
         rewards: Pair<List<RewardRelation?>, List<RewardRelation?>>?,
         levelNames: List<String>,
-        contractName: String,
     ): Chapter {
         return chapter.toType(
             levels.mapIndexed { index, level ->
                 level.toType(
                     rewards?.first?.getOrNull(index),
                     levelNames[index],
-                    contractName
                 )
             },
             freeRewards.mapIndexed { index, freeReward ->

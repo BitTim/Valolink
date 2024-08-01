@@ -23,7 +23,7 @@ fun UnlockButton(
     price: Int,
     isPrimary: Boolean,
     isUnlocked: Boolean,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit,
 ) {
     @Composable
     fun ButtonContent(iconColor: Color) {

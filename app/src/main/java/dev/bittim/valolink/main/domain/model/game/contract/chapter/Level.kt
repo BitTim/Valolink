@@ -8,7 +8,6 @@ data class Level(
     val uuid: String,
     val dependency: String?,
     val name: String,
-    val contractName: String,
     val xp: Int,
     val vpCost: Int,
     val isPurchasableWithVP: Boolean,

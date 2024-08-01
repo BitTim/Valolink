@@ -62,7 +62,6 @@ data class RecruitmentEntity(
                                 agent.uuid,
                                 null,
                                 "Level 1",
-                                "${agent.displayName} Recruitment",
                                 xp,
                                 1000,
                                 false,
