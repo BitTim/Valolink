@@ -11,10 +11,12 @@ import dev.bittim.valolink.main.data.repository.user.data.UserLevelRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,14 +34,17 @@ class LevelDetailsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userDataRepository.getWithCurrentUser().collectLatest { userData ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userData = userData
-                    )
+            userDataRepository
+                .getWithCurrentUser()
+                .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                .collectLatest { userData ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            userData = userData
+                        )
+                    }
                 }
-            }
         }
     }
 
@@ -51,46 +56,53 @@ class LevelDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            contractRepository.getByUuid(contract, true).collectLatest { contract ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        contract = contract
-                    )
+            contractRepository
+                .getByUuid(contract, true)
+                .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                .collectLatest { contract ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            contract = contract
+                        )
+                    }
                 }
-            }
         }
 
         // Get price and unlock currency for level
         viewModelScope.launch {
-            contractRepository.getLevelByUuid(uuid).flatMapLatest { level ->
-                if (level == null) return@flatMapLatest flowOf(null)
+            contractRepository
+                .getLevelByUuid(uuid)
+                .flatMapLatest { level ->
+                    if (level == null) return@flatMapLatest flowOf(null)
 
-                val unlockCurrencyUuid: String
-                val price: Int
+                    val unlockCurrencyUuid: String
+                    val price: Int
 
-                if (level.isPurchasableWithDough) {
-                    unlockCurrencyUuid = Currency.DOUGH_UUID
-                    price = level.doughCost
-                } else if (level.isPurchasableWithVP) {
-                    unlockCurrencyUuid = Currency.VP_UUID
-                    price = level.vpCost
-                } else {
-                    return@flatMapLatest flowOf(null)
+                    if (level.isPurchasableWithDough) {
+                        unlockCurrencyUuid = Currency.DOUGH_UUID
+                        price = level.doughCost
+                    } else if (level.isPurchasableWithVP) {
+                        unlockCurrencyUuid = Currency.VP_UUID
+                        price = level.vpCost
+                    } else {
+                        return@flatMapLatest flowOf(null)
+                    }
+
+                    _state.update {
+                        it.copy(
+                            level = level,
+                            price = price,
+                            isGear = level.isPurchasableWithDough
+                        )
+                    }
+                    currencyRepository.getByUuid(unlockCurrencyUuid)
                 }
-
-                _state.update {
-                    it.copy(
-                        level = level,
-                        price = price,
-                        isGear = level.isPurchasableWithDough
-                    )
+                .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                .collectLatest { currency ->
+                    if (currency == null) return@collectLatest
+                    _state.update { it.copy(unlockCurrency = currency) }
                 }
-                currencyRepository.getByUuid(unlockCurrencyUuid)
-            }.collectLatest { currency ->
-                if (currency == null) return@collectLatest
-                _state.update { it.copy(unlockCurrency = currency) }
-            }
         }
     }
 

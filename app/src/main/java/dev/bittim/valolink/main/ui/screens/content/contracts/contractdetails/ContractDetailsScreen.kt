@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,10 +37,19 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.compon
 @Composable
 fun ContractDetailsScreen(
     state: ContractDetailsState,
+    uuid: String,
+    fetchDetails: (uuid: String) -> Unit,
     onNavBack: () -> Unit,
     onNavContractRewardsList: () -> Unit,
-    onNavToLevelDetails: (String, String) -> Unit,
+    onNavToLevelDetails: (level: String, contract: String) -> Unit,
 ) {
+    // Fetch details if they haven't been fetched yet
+    if (state.contract == null) {
+        LaunchedEffect(Unit) {
+            fetchDetails(uuid)
+        }
+    }
+
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
     if (state.contract != null) {

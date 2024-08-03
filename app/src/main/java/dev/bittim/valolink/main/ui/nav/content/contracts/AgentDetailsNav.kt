@@ -25,12 +25,12 @@ fun NavGraphBuilder.contractsAgentDetailsScreen(
                                 popExitTransition = { Transition.backward }) {
         val viewModel: AgentDetailsViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
-
         val args = it.toRoute<AgentDetailsNav>()
-        viewModel.fetchDetails(args.uuid)
 
         AgentDetailsScreen(
             state = state,
+            uuid = args.uuid,
+            fetchDetails = viewModel::fetchDetails,
             unlockAgent = viewModel::unlockAgent,
             resetAgent = viewModel::resetAgent,
             initUserContract = viewModel::initUserContract,

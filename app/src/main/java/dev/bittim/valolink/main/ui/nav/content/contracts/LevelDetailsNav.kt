@@ -25,12 +25,13 @@ fun NavGraphBuilder.contractsLevelDetailsScreen(
                                 popExitTransition = { Transition.backward }) {
         val viewModel: LevelDetailsViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
-
         val args = it.toRoute<LevelDetailsNav>()
-        viewModel.fetchDetails(args.uuid, args.contract)
 
         LevelDetailsScreen(
             state = state,
+            uuid = args.uuid,
+            contract = args.contract,
+            fetchDetails = viewModel::fetchDetails,
             initUserContract = viewModel::initUserContract,
             unlockLevel = viewModel::unlockLevel,
             resetLevel = viewModel::resetLevel,

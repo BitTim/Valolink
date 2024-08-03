@@ -15,6 +15,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,11 +41,21 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.compon
 @Composable
 fun LevelDetailsScreen(
     state: LevelDetailsState,
+    uuid: String,
+    contract: String,
+    fetchDetails: (uuid: String, contract: String) -> Unit,
     initUserContract: () -> Unit,
     unlockLevel: (uuid: String, isPurchased: Boolean) -> Unit,
     resetLevel: (uuid: String) -> Unit,
     onNavBack: () -> Unit,
 ) {
+    // Fetch details if they haven't been fetched yet
+    if (state.level == null || state.contract == null) {
+        LaunchedEffect(Unit) {
+            fetchDetails(uuid, contract)
+        }
+    }
+
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
     if (state.level != null && state.level.reward.relation != null && state.contract != null) {

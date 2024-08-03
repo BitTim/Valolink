@@ -67,16 +67,25 @@ import dev.bittim.valolink.main.ui.util.getProgressPercent
 @Composable
 fun AgentDetailsScreen(
     state: AgentDetailsState,
+    uuid: String,
+    fetchDetails: (uuid: String) -> Unit,
     unlockAgent: () -> Unit,
     resetAgent: () -> Unit,
     initUserContract: () -> Unit,
-    unlockLevel: (String) -> Unit,
-    resetLevel: (String) -> Unit,
-    onAbilityTabChanged: (Int) -> Unit,
+    unlockLevel: (uuid: String) -> Unit,
+    resetLevel: (uuid: String) -> Unit,
+    onAbilityTabChanged: (index: Int) -> Unit,
     onNavBack: () -> Unit,
     onNavGearRewardsList: () -> Unit,
-    onNavToLevelDetails: (String, String) -> Unit,
+    onNavToLevelDetails: (level: String, contract: String) -> Unit,
 ) {
+    // Fetch details if they haven't been fetched yet
+    if (state.agentGear == null) {
+        LaunchedEffect(Unit) {
+            fetchDetails(uuid)
+        }
+    }
+
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
     if (state.agentGear != null && state.agentGear.content.relation is Agent) {
