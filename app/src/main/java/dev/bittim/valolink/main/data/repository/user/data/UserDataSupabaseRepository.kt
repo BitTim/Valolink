@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class UserDataSupabaseRepository @Inject constructor(
     private val sessionRepository: SessionRepository,
@@ -62,6 +63,7 @@ class UserDataSupabaseRepository @Inject constructor(
             // Return
             combinedFlow
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -98,6 +100,7 @@ class UserDataSupabaseRepository @Inject constructor(
             // Return
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -121,6 +124,7 @@ class UserDataSupabaseRepository @Inject constructor(
                 filter { UserDataDto::uuid eq relation }
             }.decodeList<UserDataDto>()
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return null
         }
@@ -134,6 +138,7 @@ class UserDataSupabaseRepository @Inject constructor(
             database.from(TABLE_NAME).upsert(dto)
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -146,6 +151,7 @@ class UserDataSupabaseRepository @Inject constructor(
             }
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }

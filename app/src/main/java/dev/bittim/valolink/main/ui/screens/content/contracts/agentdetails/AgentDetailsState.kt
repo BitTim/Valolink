@@ -6,7 +6,6 @@ import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.domain.model.user.UserData
 
 data class AgentDetailsState(
-    val isLoading: Boolean = true,
     val agentGear: Contract? = null,
     val selectedAbility: Int = 0,
     val dough: Currency? = null,

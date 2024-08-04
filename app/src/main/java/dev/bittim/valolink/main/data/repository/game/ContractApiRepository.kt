@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ContractApiRepository @Inject constructor(
@@ -65,6 +66,7 @@ class ContractApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -91,6 +93,7 @@ class ContractApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -121,6 +124,7 @@ class ContractApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -162,6 +166,7 @@ class ContractApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -184,6 +189,7 @@ class ContractApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -234,6 +240,7 @@ class ContractApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -256,6 +263,7 @@ class ContractApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }

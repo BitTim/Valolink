@@ -9,7 +9,9 @@ import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserLevelRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,19 +35,25 @@ class LevelDetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow(LevelDetailsState(false))
     val state = _state.asStateFlow()
 
+    private var fetchUserDataJob: Job? = null
+    private var fetchDetailsJob: Job? = null
+
     init {
-        viewModelScope.launch {
-            userDataRepository
-                .getWithCurrentUser()
-                .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                .collectLatest { userData ->
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            userData = userData
-                        )
+        fetchUserDataJob?.cancel()
+        fetchUserDataJob = viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                userDataRepository
+                    .getWithCurrentUser()
+                    .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                    .collectLatest { userData ->
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                userData = userData
+                            )
+                        }
                     }
-                }
+            }
         }
     }
 
@@ -53,56 +62,63 @@ class LevelDetailsViewModel @Inject constructor(
         if (uuid == null || contract == null) return
 
         // Get passed contract
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+        fetchDetailsJob?.cancel()
+        fetchDetailsJob = viewModelScope.launch {
+            launch {
+                withContext(Dispatchers.IO) {
+                    _state.update { it.copy(isLoading = true) }
 
-            contractRepository
-                .getByUuid(contract, true)
-                .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                .collectLatest { contract ->
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            contract = contract
-                        )
-                    }
+                    contractRepository
+                        .getByUuid(contract, true)
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { contract ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    contract = contract
+                                )
+                            }
+                        }
                 }
-        }
+            }
 
-        // Get price and unlock currency for level
-        viewModelScope.launch {
-            contractRepository
-                .getLevelByUuid(uuid)
-                .flatMapLatest { level ->
-                    if (level == null) return@flatMapLatest flowOf(null)
+            // Get price and unlock currency for level
+            launch {
+                withContext(Dispatchers.IO) {
+                    contractRepository
+                        .getLevelByUuid(uuid)
+                        .flatMapLatest { level ->
+                            if (level == null) return@flatMapLatest flowOf(null)
 
-                    val unlockCurrencyUuid: String
-                    val price: Int
+                            val unlockCurrencyUuid: String
+                            val price: Int
 
-                    if (level.isPurchasableWithDough) {
-                        unlockCurrencyUuid = Currency.DOUGH_UUID
-                        price = level.doughCost
-                    } else if (level.isPurchasableWithVP) {
-                        unlockCurrencyUuid = Currency.VP_UUID
-                        price = level.vpCost
-                    } else {
-                        return@flatMapLatest flowOf(null)
-                    }
+                            if (level.isPurchasableWithDough) {
+                                unlockCurrencyUuid = Currency.DOUGH_UUID
+                                price = level.doughCost
+                            } else if (level.isPurchasableWithVP) {
+                                unlockCurrencyUuid = Currency.VP_UUID
+                                price = level.vpCost
+                            } else {
+                                return@flatMapLatest flowOf(null)
+                            }
 
-                    _state.update {
-                        it.copy(
-                            level = level,
-                            price = price,
-                            isGear = level.isPurchasableWithDough
-                        )
-                    }
-                    currencyRepository.getByUuid(unlockCurrencyUuid)
+                            _state.update {
+                                it.copy(
+                                    level = level,
+                                    price = price,
+                                    isGear = level.isPurchasableWithDough
+                                )
+                            }
+                            currencyRepository.getByUuid(unlockCurrencyUuid)
+                        }
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { currency ->
+                            if (currency == null) return@collectLatest
+                            _state.update { it.copy(unlockCurrency = currency) }
+                        }
                 }
-                .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                .collectLatest { currency ->
-                    if (currency == null) return@collectLatest
-                    _state.update { it.copy(unlockCurrency = currency) }
-                }
+            }
         }
     }
 
@@ -110,36 +126,42 @@ class LevelDetailsViewModel @Inject constructor(
 
     fun initUserContract() {
         viewModelScope.launch {
-            val contract = state.value.contract ?: return@launch
-            val userData = state.value.userData ?: return@launch
+            withContext(Dispatchers.IO) {
+                val contract = state.value.contract ?: return@withContext
+                val userData = state.value.userData ?: return@withContext
 
-            userContractRepository.set(contract.toUserObj(userData.uuid))
+                userContractRepository.set(contract.toUserObj(userData.uuid))
+            }
         }
     }
 
     fun unlockLevel(uuid: String, isPurchased: Boolean) {
         viewModelScope.launch {
-            val userData = state.value.userData ?: return@launch
-            val userContract =
-                userData.contracts.find { it.contract == state.value.contract?.uuid }
-                    ?: return@launch
-            val level = state.value.contract?.content?.chapters
-                ?.flatMap { it.levels }
-                ?.find { it.uuid == uuid } ?: return@launch
+            withContext(Dispatchers.IO) {
+                val userData = state.value.userData ?: return@withContext
+                val userContract =
+                    userData.contracts.find { it.contract == state.value.contract?.uuid }
+                        ?: return@withContext
+                val level = state.value.contract?.content?.chapters
+                    ?.flatMap { it.levels }
+                    ?.find { it.uuid == uuid } ?: return@withContext
 
-            userLevelRepository.set(level.toUserObj(userContract.uuid, isPurchased))
+                userLevelRepository.set(level.toUserObj(userContract.uuid, isPurchased))
+            }
         }
     }
 
     fun resetLevel(uuid: String) {
         viewModelScope.launch {
-            val userData = state.value.userData ?: return@launch
-            val userContract =
-                userData.contracts.find { it.contract == state.value.contract?.uuid }
-                    ?: return@launch
-            val userLevel = userContract.levels.find { it.level == uuid } ?: return@launch
+            withContext(Dispatchers.IO) {
+                val userData = state.value.userData ?: return@withContext
+                val userContract =
+                    userData.contracts.find { it.contract == state.value.contract?.uuid }
+                        ?: return@withContext
+                val userLevel = userContract.levels.find { it.level == uuid } ?: return@withContext
 
-            userLevelRepository.delete(userLevel)
+                userLevelRepository.delete(userLevel)
+            }
         }
     }
 }

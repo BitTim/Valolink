@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class UserAgentSupabaseRepository @Inject constructor(
     private val sessionRepository: SessionRepository,
@@ -53,6 +54,7 @@ class UserAgentSupabaseRepository @Inject constructor(
             // Return
             agentsFlow
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -78,6 +80,7 @@ class UserAgentSupabaseRepository @Inject constructor(
             // Return
             agentFlow
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -103,6 +106,7 @@ class UserAgentSupabaseRepository @Inject constructor(
             // Return
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -126,6 +130,7 @@ class UserAgentSupabaseRepository @Inject constructor(
                 filter { UserAgentDto::user eq relation }
             }.decodeList<UserAgentDto>()
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return null
         }
@@ -139,6 +144,7 @@ class UserAgentSupabaseRepository @Inject constructor(
             database.from(TABLE_NAME).upsert(dto)
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -151,6 +157,7 @@ class UserAgentSupabaseRepository @Inject constructor(
             }
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }

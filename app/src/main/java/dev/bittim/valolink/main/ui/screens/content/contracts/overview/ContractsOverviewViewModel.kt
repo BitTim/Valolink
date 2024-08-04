@@ -9,13 +9,18 @@ import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @OptIn(
@@ -33,50 +38,75 @@ class ContractsOverviewViewModel @Inject constructor(
     private val _state = MutableStateFlow(ContractsOverviewState())
     val state = _state.asStateFlow()
 
+    private var fetchJob: Job? = null
+
     init {
-        viewModelScope.launch {
-            userDataRepository.getWithCurrentUser().collectLatest { userData ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userData = userData
-                    )
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
+            launch {
+                withContext(Dispatchers.IO) {
+                    userDataRepository
+                        .getWithCurrentUser()
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { userData ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    userData = userData
+                                )
+                            }
+                        }
                 }
             }
-        }
 
-        viewModelScope.launch {
-            contractRepository.getActiveContracts().collectLatest { contracts ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        activeContracts = contracts
-                    )
+            launch {
+                withContext(Dispatchers.IO) {
+                    contractRepository
+                        .getActiveContracts()
+                        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
+                        .collectLatest { contracts ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    activeContracts = contracts
+                                )
+                            }
+                        }
                 }
             }
-        }
 
-        viewModelScope.launch {
-            contractRepository.getAgentGears().collectLatest { gears ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        agentGears = gears,
-                        agentGearCarouselState = CarouselState(itemCount = gears::count)
-                    )
+            launch {
+                withContext(Dispatchers.IO) {
+                    contractRepository
+                        .getAgentGears()
+                        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
+                        .collectLatest { gears ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    agentGears = gears,
+                                    agentGearCarouselState = CarouselState(itemCount = gears::count)
+                                )
+                            }
+                        }
                 }
             }
-        }
 
-        viewModelScope.launch {
-            _filterState.flatMapLatest {
-                contractRepository.getInactiveContracts(it)
-            }.collectLatest { contracts ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        inactiveContracts = contracts
-                    )
+            launch {
+                withContext(Dispatchers.IO) {
+                    _filterState
+                        .flatMapLatest {
+                            contractRepository.getInactiveContracts(it)
+                        }
+                        .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
+                        .collectLatest { contracts ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    inactiveContracts = contracts
+                                )
+                            }
+                        }
                 }
             }
         }
@@ -89,10 +119,12 @@ class ContractsOverviewViewModel @Inject constructor(
 
     fun initUserContract(uuid: String) {
         viewModelScope.launch {
-            val contract = state.value.agentGears.find { it.uuid == uuid } ?: return@launch
-            val userData = state.value.userData ?: return@launch
+            withContext(Dispatchers.IO) {
+                val contract = state.value.agentGears.find { it.uuid == uuid } ?: return@withContext
+                val userData = state.value.userData ?: return@withContext
 
-            userContractRepository.set(contract.toUserObj(userData.uuid))
+                userContractRepository.set(contract.toUserObj(userData.uuid))
+            }
         }
     }
 }

@@ -23,7 +23,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
@@ -85,8 +84,6 @@ fun AgentDetailsScreen(
             fetchDetails(uuid)
         }
     }
-
-    if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
     if (state.agentGear != null && state.agentGear.content.relation is Agent) {
         // --------------------------------
