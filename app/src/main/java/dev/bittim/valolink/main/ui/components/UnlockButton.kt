@@ -22,12 +22,13 @@ fun UnlockButton(
     currencyIcon: String,
     price: Int,
     isPrimary: Boolean,
-    isUnlocked: Boolean,
+    isLocked: Boolean,
+    isOwned: Boolean,
     onClick: () -> Unit,
 ) {
     @Composable
     fun ButtonContent(iconColor: Color) {
-        if (!isUnlocked) {
+        if (!isOwned && !isLocked) {
             AsyncImage(
                 modifier = Modifier
                     .height(24.dp)
@@ -43,14 +44,15 @@ fun UnlockButton(
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = "$price")
         } else {
-            Text(text = "Owned")
+            if (isLocked) Text(text = "Locked")
+            else Text(text = "Owned")
         }
     }
 
     if (!isPrimary) {
         FilledTonalButton(
             modifier = modifier,
-            enabled = !isUnlocked,
+            enabled = !isOwned && !isLocked,
             onClick = onClick
         ) {
             ButtonContent(MaterialTheme.colorScheme.onSecondaryContainer)
@@ -58,7 +60,7 @@ fun UnlockButton(
     } else {
         Button(
             modifier = modifier,
-            enabled = !isUnlocked,
+            enabled = !isOwned && !isLocked,
             onClick = onClick
         ) {
             ButtonContent(MaterialTheme.colorScheme.onPrimary)

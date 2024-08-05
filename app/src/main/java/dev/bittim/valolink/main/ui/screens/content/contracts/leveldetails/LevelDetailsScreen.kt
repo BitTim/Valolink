@@ -50,7 +50,9 @@ fun LevelDetailsScreen(
 ) {
     // Fetch details if they haven't been fetched yet
     if (state.level == null || state.contract == null) {
-        fetchDetails(uuid, contract)
+        if (!state.isLevelLoading && !state.isContractLoading) {
+            fetchDetails(uuid, contract)
+        }
     }
 
     // --------------------------------
@@ -61,7 +63,9 @@ fun LevelDetailsScreen(
     val contractLevels = state.contract?.content?.chapters?.flatMap { it.levels }
     val userContract = state.userData?.contracts?.find { it.contract == state.contract?.uuid }
     if (userContract == null) {
-        initUserContract()
+        if (!state.isUserDataLoading) {
+            initUserContract()
+        }
     }
 
     val isLocked = userContract?.levels?.any { it.level == state.level?.uuid }?.not()
@@ -152,7 +156,8 @@ fun LevelDetailsScreen(
                             price = state.price,
                             xpTotal = if (state.isGear) -1 else state.level.xp,
                             xpProgress = 25, // TODO: Replace with actual user values,
-                            isUnlocked = !isLocked
+                            isLocked = false, // TODO: Replace with proper isLocked state
+                            isOwned = !isLocked
                         )
                     },
                     onUnlock = {

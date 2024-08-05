@@ -47,7 +47,8 @@ data class LevelHeaderData(
     val currencyIcon: String,
     val xpTotal: Int,
     val xpProgress: Int = 0,
-    val isUnlocked: Boolean,
+    val isLocked: Boolean,
+    val isOwned: Boolean,
 )
 
 @Composable
@@ -70,8 +71,8 @@ fun LevelHeader(
                         modifier = Modifier
                             .height(96.dp)
                             .aspectRatio(1f)
-                            .clip(MaterialTheme.shapes.large)
                             .padding(1.dp)
+                            .clip(MaterialTheme.shapes.large)
                             .pulseAnimation()
                     )
                 } else {
@@ -110,8 +111,8 @@ fun LevelHeader(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(MaterialTheme.typography.labelLarge.lineHeight.value.dp)
-                                .clip(MaterialTheme.shapes.medium)
                                 .padding(1.dp)
+                                .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
                         )
                     } else {
@@ -132,8 +133,8 @@ fun LevelHeader(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(MaterialTheme.typography.titleLarge.lineHeight.value.dp)
-                                .clip(MaterialTheme.shapes.medium)
                                 .padding(1.dp)
+                                .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
                         )
                     } else {
@@ -156,8 +157,8 @@ fun LevelHeader(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
-                                .clip(MaterialTheme.shapes.medium)
                                 .padding(1.dp)
+                                .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
                         )
                     } else {
@@ -191,8 +192,8 @@ fun LevelHeader(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(ButtonDefaults.MinHeight)
-                        .clip(MaterialTheme.shapes.extraLarge)
                         .padding(1.dp)
+                        .clip(MaterialTheme.shapes.extraLarge)
                         .pulseAnimation()
                 )
             } else {
@@ -217,7 +218,8 @@ fun LevelHeader(
                             currencyIcon = it.currencyIcon,
                             price = it.price,
                             isPrimary = false,
-                            isUnlocked = it.isUnlocked,
+                            isLocked = it.isLocked,
+                            isOwned = it.isOwned,
                             onClick = onUnlock
                         )
                     } else {
@@ -226,7 +228,8 @@ fun LevelHeader(
                             currencyIcon = it.currencyIcon,
                             price = it.price,
                             isPrimary = true,
-                            isUnlocked = it.isUnlocked,
+                            isLocked = it.isLocked,
+                            isOwned = it.isOwned,
                             onClick = onUnlock
                         )
                     }
@@ -257,7 +260,8 @@ fun LevelHeaderPreview() {
                         price = 7500,
                         currencyIcon = "",
                         xpTotal = -1,
-                        isUnlocked = false
+                        isLocked = false,
+                        isOwned = false
                     ),
                     onUnlock = {}
                 )
@@ -288,7 +292,8 @@ fun ProgressLevelHeaderPreview() {
                         currencyIcon = "",
                         xpProgress = 65,
                         xpTotal = 100,
-                        isUnlocked = true
+                        isLocked = false,
+                        isOwned = true
                     ),
                     onUnlock = {}
                 )

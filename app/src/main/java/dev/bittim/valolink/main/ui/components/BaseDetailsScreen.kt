@@ -167,7 +167,7 @@ fun BaseDetailsScreenPreview() {
         Surface {
             BaseDetailsScreen(
                 isLoading = false,
-                
+
                 cardBackground = {},
                 cardImage = {},
                 cardContent = {

@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,14 +119,17 @@ fun ContractDetailsScreen(
 
                                   if (reward != null) {
                                       AgentRewardCard(
-                                          name = reward.displayName,
-                                          levelUuid = level.uuid,
-                                          type = reward.type,
-                                          previewIcon = reward.previewImages.first().first ?: "",
-                                          background = reward.background,
-                                          price = level.vpCost,
-                                          amount = reward.amount,
-                                          currencyIcon = state.vp?.displayIcon ?: "",
+                                          data = AgentRewardCardData(
+                                              name = reward.displayName,
+                                              levelUuid = level.uuid,
+                                              type = reward.type,
+                                              previewIcon = reward.previewImages.first().first
+                                                  ?: "",
+                                              background = reward.background,
+                                              price = level.vpCost,
+                                              amount = reward.amount,
+                                              currencyIcon = state.vp?.displayIcon ?: ""
+                                          ),
                                           onNavToLevelDetails = { levelUuid ->
                                               onNavToLevelDetails(levelUuid, state.contract.uuid)
                                           },
@@ -177,14 +181,16 @@ fun ContractDetailsScreen(
 
                                 if (reward != null && level != null) {
                                     AgentRewardCard(
-                                        name = reward.displayName,
-                                        levelUuid = "",
-                                        type = reward.type,
-                                        previewIcon = reward.previewImages.first().first ?: "",
-                                        background = reward.background,
-                                        price = level.vpCost,
-                                        amount = reward.amount,
-                                        currencyIcon = state.vp?.displayIcon ?: "",
+                                        data = AgentRewardCardData(
+                                            name = reward.displayName,
+                                            levelUuid = "",
+                                            type = reward.type,
+                                            previewIcon = reward.previewImages.first().first ?: "",
+                                            background = reward.background,
+                                            price = level.vpCost,
+                                            amount = reward.amount,
+                                            currencyIcon = state.vp?.displayIcon ?: ""
+                                        ),
                                         onNavToLevelDetails = {}
                                     )
                                 }

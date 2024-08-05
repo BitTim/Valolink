@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -44,9 +45,15 @@ class AgentDetailsViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 userDataRepository
                     .getWithCurrentUser()
+                    .onStart { _state.update { it.copy(isUserDataLoading = true) } }
                     .stateIn(viewModelScope, WhileSubscribed(5000), null)
                     .collectLatest { userData ->
-                        _state.update { it.copy(userData = userData) }
+                        _state.update {
+                            it.copy(
+                                isUserDataLoading = false,
+                                userData = userData
+                            )
+                        }
                     }
             }
         }
@@ -61,9 +68,15 @@ class AgentDetailsViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     contractRepository
                         .getByUuid(uuid, true)
+                        .onStart { _state.update { it.copy(isContractLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { contract ->
-                            _state.update { it.copy(agentGear = contract) }
+                            _state.update {
+                                it.copy(
+                                    isContractLoading = false,
+                                    agentGear = contract
+                                )
+                            }
                         }
                 }
             }
@@ -72,17 +85,19 @@ class AgentDetailsViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     currencyRepository
                         .getByUuid(Currency.DOUGH_UUID)
+                        .onStart { _state.update { it.copy(isCurrencyLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { currency ->
-                            _state.update { it.copy(dough = currency) }
+                            _state.update {
+                                it.copy(
+                                    isCurrencyLoading = false,
+                                    dough = currency
+                                )
+                            }
                         }
                 }
             }
         }
-    }
-
-    fun onAbilityChanged(index: Int) {
-        _state.update { it.copy(selectedAbility = index) }
     }
 
 
@@ -127,7 +142,9 @@ class AgentDetailsViewModel @Inject constructor(
         }
     }
 
-    fun unlockLevel(uuid: String) {
+    fun unlockLevel(uuid: String?) {
+        if (uuid == null) return
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val userData = state.value.userData ?: return@withContext
@@ -143,7 +160,9 @@ class AgentDetailsViewModel @Inject constructor(
         }
     }
 
-    fun resetLevel(uuid: String) {
+    fun resetLevel(uuid: String?) {
+        if (uuid == null) return
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val userData = state.value.userData ?: return@withContext
