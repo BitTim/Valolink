@@ -141,6 +141,8 @@ fun AgentDetailsScreen(
         // --------------------------------
 
         BaseDetailsScreen(
+            isLoading = false,
+
             cardBackground = {
                 AgentBackdrop(
                     modifier = Modifier.fillMaxSize(),

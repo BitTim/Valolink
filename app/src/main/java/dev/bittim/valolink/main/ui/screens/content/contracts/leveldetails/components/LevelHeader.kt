@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -33,20 +35,25 @@ import dev.bittim.valolink.main.ui.components.ProgressCluster
 import dev.bittim.valolink.main.ui.components.UnlockButton
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
+import dev.bittim.valolink.main.ui.components.pulseAnimation
+
+data class LevelHeaderData(
+    val displayName: String,
+    val type: RewardType,
+    val displayIcon: String,
+    val levelName: String,
+    val contractName: String,
+    val price: Int,
+    val currencyIcon: String,
+    val xpTotal: Int,
+    val xpProgress: Int = 0,
+    val isUnlocked: Boolean,
+)
 
 @Composable
 fun LevelHeader(
     modifier: Modifier = Modifier,
-    displayName: String,
-    type: RewardType,
-    displayIcon: String,
-    levelName: String,
-    contractName: String,
-    price: Int,
-    currencyIcon: String,
-    xpTotal: Int,
-    xpProgress: Int = 0,
-    isUnlocked: Boolean = false,
+    data: LevelHeaderData?,
     onUnlock: () -> Unit,
 ) {
     Column(
@@ -57,96 +64,173 @@ fun LevelHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Surface(
-                modifier = Modifier
-                    .height(96.dp)
-                    .aspectRatio(1f)
-                    .clip(MaterialTheme.shapes.large),
-                tonalElevation = 3.dp
-            ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .conditional(type != RewardType.PLAYER_CARD && type != RewardType.SPRAY) {
-                            padding(8.dp)
-                        },
-                    model = displayIcon,
-                    contentScale = ContentScale.Fit,
-                    colorFilter = if (type == RewardType.CURRENCY || type == RewardType.TITLE) ColorFilter.tint(
-                        MaterialTheme.colorScheme.onSurface
-                    ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(1f) }),
-                    contentDescription = displayName,
-                    placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_displayicon)
-                )
+            Crossfade(targetState = data, label = "Image loading crossfade") {
+                if (it == null) {
+                    Box(
+                        modifier = Modifier
+                            .height(96.dp)
+                            .aspectRatio(1f)
+                            .clip(MaterialTheme.shapes.large)
+                            .padding(1.dp)
+                            .pulseAnimation()
+                    )
+                } else {
+                    Surface(
+                        modifier = Modifier
+                            .height(96.dp)
+                            .aspectRatio(1f)
+                            .clip(MaterialTheme.shapes.large),
+                        tonalElevation = 3.dp
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .conditional(it.type != RewardType.PLAYER_CARD && it.type != RewardType.SPRAY) {
+                                    padding(8.dp)
+                                },
+                            model = it.displayIcon,
+                            contentScale = ContentScale.Fit,
+                            colorFilter = if (it.type == RewardType.CURRENCY || it.type == RewardType.TITLE) ColorFilter.tint(
+                                MaterialTheme.colorScheme.onSurface
+                            ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(1f) }),
+                            contentDescription = it.displayName,
+                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_displayicon)
+                        )
+                    }
+                }
             }
 
             Column {
-                Text(
-                    text = "$levelName • $contractName",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Crossfade(
+                    targetState = data,
+                    label = "Level and contract name crossfade"
+                ) {
+                    if (it == null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(MaterialTheme.typography.labelLarge.lineHeight.value.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .padding(1.dp)
+                                .pulseAnimation()
+                        )
+                    } else {
+                        Text(
+                            text = "${it.levelName} • ${it.contractName}",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
 
-                Text(
-                    text = displayName,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Crossfade(
+                    targetState = data,
+                    label = "Display name crossfade"
+                ) {
+                    if (it == null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(MaterialTheme.typography.titleLarge.lineHeight.value.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .padding(1.dp)
+                                .pulseAnimation()
+                        )
+                    } else {
+                        Text(
+                            text = it.displayName,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Crossfade(
+                    targetState = data,
+                    label = "Type crossfade"
                 ) {
-                    Icon(
-                        imageVector = type.icon,
-                        contentDescription = type.displayName,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    if (it == null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .padding(1.dp)
+                                .pulseAnimation()
+                        )
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = it.type.icon,
+                                contentDescription = it.type.displayName,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
 
-                    Text(
-                        text = type.displayName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                            Text(
+                                text = it.type.displayName,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Crossfade(
+            targetState = data,
+            label = "Progress cluster crossfade"
         ) {
-            if (xpTotal >= 0) {
-                ProgressCluster(
-                    modifier = Modifier.weight(2f),
-                    progress = xpProgress,
-                    total = xpTotal,
-                    unit = "XP",
-                    isMonochrome = false
-                )
-
-                Spacer(modifier = Modifier.width(24.dp))
-
-                UnlockButton(
+            if (it == null) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1.25f),
-                    currencyIcon = currencyIcon,
-                    price = price,
-                    isPrimary = false,
-                    isUnlocked = isUnlocked,
-                    onClick = onUnlock
+                        .height(ButtonDefaults.MinHeight)
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .padding(1.dp)
+                        .pulseAnimation()
                 )
             } else {
-                UnlockButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    currencyIcon = currencyIcon,
-                    price = price,
-                    isPrimary = true,
-                    isUnlocked = isUnlocked,
-                    onClick = onUnlock
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (it.xpTotal >= 0) {
+                        ProgressCluster(
+                            modifier = Modifier.weight(2f),
+                            progress = it.xpProgress,
+                            total = it.xpTotal,
+                            unit = "XP",
+                            isMonochrome = false
+                        )
+
+                        Spacer(modifier = Modifier.width(24.dp))
+
+                        UnlockButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1.25f),
+                            currencyIcon = it.currencyIcon,
+                            price = it.price,
+                            isPrimary = false,
+                            isUnlocked = it.isUnlocked,
+                            onClick = onUnlock
+                        )
+                    } else {
+                        UnlockButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            currencyIcon = it.currencyIcon,
+                            price = it.price,
+                            isPrimary = true,
+                            isUnlocked = it.isUnlocked,
+                            onClick = onUnlock
+                        )
+                    }
+                }
             }
         }
     }
@@ -164,14 +248,17 @@ fun LevelHeaderPreview() {
                     .padding(16.dp),
             ) {
                 LevelHeader(
-                    displayName = "Metamorphosis Card",
-                    type = RewardType.PLAYER_CARD,
-                    displayIcon = "",
-                    levelName = "Level 9",
-                    contractName = "Clove Contract",
-                    price = 7500,
-                    currencyIcon = "",
-                    xpTotal = -1,
+                    data = LevelHeaderData(
+                        displayName = "Metamorphosis Card",
+                        type = RewardType.PLAYER_CARD,
+                        displayIcon = "",
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        price = 7500,
+                        currencyIcon = "",
+                        xpTotal = -1,
+                        isUnlocked = false
+                    ),
                     onUnlock = {}
                 )
             }
@@ -191,16 +278,38 @@ fun ProgressLevelHeaderPreview() {
                     .padding(16.dp),
             ) {
                 LevelHeader(
-                    displayName = "Metamorphosis Card",
-                    type = RewardType.PLAYER_CARD,
-                    displayIcon = "",
-                    levelName = "Level 9",
-                    contractName = "Clove Contract",
-                    price = 99999,
-                    currencyIcon = "",
-                    xpProgress = 65,
-                    xpTotal = 100,
-                    isUnlocked = true,
+                    data = LevelHeaderData(
+                        displayName = "Metamorphosis Card",
+                        type = RewardType.PLAYER_CARD,
+                        displayIcon = "",
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        price = 99999,
+                        currencyIcon = "",
+                        xpProgress = 65,
+                        xpTotal = 100,
+                        isUnlocked = true
+                    ),
+                    onUnlock = {}
+                )
+            }
+        }
+    }
+}
+
+@Preview(name = "Light", showBackground = true)
+@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun NullProgressLevelHeaderPreview() {
+    ValolinkTheme {
+        Surface {
+            Box(
+                modifier = Modifier
+                    .width(412.dp)
+                    .padding(16.dp),
+            ) {
+                LevelHeader(
+                    data = null,
                     onUnlock = {}
                 )
             }

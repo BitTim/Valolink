@@ -6,9 +6,11 @@ import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.user.UserData
 
 data class LevelDetailsState(
-    val isLoading: Boolean = true,
+    val isUserDataLoading: Boolean = true,
+    val isContractLoading: Boolean = true,
+    val isLevelLoading: Boolean = true,
+    
     val userData: UserData? = null,
-
     val contract: Contract? = null,
     val level: Level? = null,
     val unlockCurrency: Currency? = null,

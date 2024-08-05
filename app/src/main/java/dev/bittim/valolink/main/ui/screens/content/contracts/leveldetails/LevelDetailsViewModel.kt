@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class LevelDetailsViewModel @Inject constructor(
     private val userContractRepository: UserContractRepository,
     private val userLevelRepository: UserLevelRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(LevelDetailsState(false))
+    private val _state = MutableStateFlow(LevelDetailsState())
     val state = _state.asStateFlow()
 
     private var fetchUserDataJob: Job? = null
@@ -44,11 +45,12 @@ class LevelDetailsViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 userDataRepository
                     .getWithCurrentUser()
+                    .onStart { _state.update { it.copy(isUserDataLoading = true) } }
                     .stateIn(viewModelScope, WhileSubscribed(5000), null)
                     .collectLatest { userData ->
                         _state.update {
                             it.copy(
-                                isLoading = false,
+                                isUserDataLoading = false,
                                 userData = userData
                             )
                         }
@@ -66,15 +68,14 @@ class LevelDetailsViewModel @Inject constructor(
         fetchDetailsJob = viewModelScope.launch {
             launch {
                 withContext(Dispatchers.IO) {
-                    _state.update { it.copy(isLoading = true) }
-
                     contractRepository
                         .getByUuid(contract, true)
+                        .onStart { _state.update { it.copy(isContractLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { contract ->
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
+                                    isContractLoading = false,
                                     contract = contract
                                 )
                             }
@@ -87,6 +88,7 @@ class LevelDetailsViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     contractRepository
                         .getLevelByUuid(uuid)
+                        .onStart { _state.update { it.copy(isLevelLoading = true) } }
                         .flatMapLatest { level ->
                             if (level == null) return@flatMapLatest flowOf(null)
 
@@ -115,7 +117,12 @@ class LevelDetailsViewModel @Inject constructor(
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { currency ->
                             if (currency == null) return@collectLatest
-                            _state.update { it.copy(unlockCurrency = currency) }
+                            _state.update {
+                                it.copy(
+                                    isLevelLoading = false,
+                                    unlockCurrency = currency
+                                )
+                            }
                         }
                 }
             }
@@ -135,7 +142,9 @@ class LevelDetailsViewModel @Inject constructor(
         }
     }
 
-    fun unlockLevel(uuid: String, isPurchased: Boolean) {
+    fun unlockLevel(uuid: String?, isPurchased: Boolean) {
+        if (uuid == null) return
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val userData = state.value.userData ?: return@withContext
@@ -151,7 +160,9 @@ class LevelDetailsViewModel @Inject constructor(
         }
     }
 
-    fun resetLevel(uuid: String) {
+    fun resetLevel(uuid: String?) {
+        if (uuid == null) return
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val userData = state.value.userData ?: return@withContext
