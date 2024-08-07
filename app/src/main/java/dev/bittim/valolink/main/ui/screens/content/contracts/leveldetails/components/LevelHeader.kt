@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +38,7 @@ import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.components.pulseAnimation
 
+@Immutable
 data class LevelHeaderData(
     val displayName: String,
     val type: RewardType,

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -47,12 +48,13 @@ class ContractsOverviewViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     userDataRepository
                         .getWithCurrentUser()
+                        .onStart { _state.update { it.copy(isUserDataLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { userData ->
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
-                                    userData = userData
+                                    userData = userData,
+                                    isUserDataLoading = false,
                                 )
                             }
                         }
@@ -63,12 +65,13 @@ class ContractsOverviewViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     contractRepository
                         .getActiveContracts()
+                        .onStart { _state.update { it.copy(isActiveContractsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
                         .collectLatest { contracts ->
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
-                                    activeContracts = contracts
+                                    activeContracts = contracts,
+                                    isActiveContractsLoading = false,
                                 )
                             }
                         }
@@ -79,13 +82,14 @@ class ContractsOverviewViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     contractRepository
                         .getAgentGears()
+                        .onStart { _state.update { it.copy(isAgentGearsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
                         .collectLatest { gears ->
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
                                     agentGears = gears,
-                                    agentGearCarouselState = CarouselState(itemCount = gears::count)
+                                    agentGearCarouselState = CarouselState(itemCount = gears::count),
+                                    isAgentGearsLoading = false,
                                 )
                             }
                         }
@@ -98,12 +102,13 @@ class ContractsOverviewViewModel @Inject constructor(
                         .flatMapLatest {
                             contractRepository.getInactiveContracts(it)
                         }
+                        .onStart { _state.update { it.copy(isInactiveContractsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
                         .collectLatest { contracts ->
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
-                                    inactiveContracts = contracts
+                                    inactiveContracts = contracts,
+                                    isInactiveContractsLoading = false,
                                 )
                             }
                         }
@@ -117,10 +122,13 @@ class ContractsOverviewViewModel @Inject constructor(
         _filterState.update { contentType }
     }
 
-    fun initUserContract(uuid: String) {
+    fun initUserContract(uuid: String?) {
+        if (uuid == null) return
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val contract = state.value.agentGears.find { it.uuid == uuid } ?: return@withContext
+                val contract =
+                    state.value.agentGears?.find { it.uuid == uuid } ?: return@withContext
                 val userData = state.value.userData ?: return@withContext
 
                 userContractRepository.set(contract.toUserObj(userData.uuid))

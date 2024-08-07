@@ -32,6 +32,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.carousel.CarouselDefaults
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,9 +43,11 @@ import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCard
-import dev.bittim.valolink.main.ui.screens.content.contracts.components.DefaultContractCard
+import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCardData
+import dev.bittim.valolink.main.ui.screens.content.contracts.components.ContractCard
+import dev.bittim.valolink.main.ui.screens.content.contracts.components.ContractCardData
 import dev.bittim.valolink.main.ui.util.getProgressPercent
-import kotlin.math.floor
+import java.util.UUID
 
 @OptIn(
     ExperimentalFoundationApi::class,
@@ -76,7 +81,7 @@ fun ContractsOverviewScreen(
             windowInsets = WindowInsets.statusBars
         )
 
-        if (state.isLoading) {
+        if (state.isUserDataLoading || state.isActiveContractsLoading || state.isAgentGearsLoading || state.isInactiveContractsLoading) {
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -111,37 +116,56 @@ fun ContractsOverviewScreen(
                 }
             }
 
-            items(items = state.activeContracts,
-                  contentType = { Contract::class },
-                  key = { it.uuid },
-                  itemContent = {
-                      var displayIcon: String? = null
-                      var backgroundImage: String? = null
-                      var backgroundGradientColors: List<String> = emptyList()
+            val activeItems =
+                if (state.isActiveContractsLoading || state.activeContracts == null) listOf(null) else state.activeContracts
+            items(
+                items = activeItems,
+                contentType = { Contract::class },
+                key = { it?.uuid ?: UUID.randomUUID().toString() },
+                itemContent = {
+                    var displayIcon: String? = null
+                    var backgroundImage: String? = null
+                    var backgroundGradientColors: List<String> = emptyList()
 
-                      if (it.content.relation is Agent) {
-                          displayIcon = it.content.relation.displayIcon
-                          backgroundImage = it.content.relation.background
-                          backgroundGradientColors = it.content.relation.backgroundGradientColors
-                      }
+                    if (it?.content?.relation is Agent) {
+                        displayIcon = it.content.relation.displayIcon
+                        backgroundImage = it.content.relation.background
+                        backgroundGradientColors = it.content.relation.backgroundGradientColors
+                    }
 
-                      val collected = it.getRandomCollectedXP()
+                    ContractCard(
+                        modifier = Modifier,
+                        data = if (it == null) {
+                            null
+                        } else {
+                            val collectedXp by remember { derivedStateOf { it.getRandomCollectedXP() } }  // TODO: Placeholder values as no userdata is present yet
+                            val remainingDays by remember { derivedStateOf { it.content.relation?.calcRemainingDays() } }
+                            val totalXp by remember { derivedStateOf { it.calcTotalXp() } }
+                            val percentage by remember {
+                                derivedStateOf {
+                                    getProgressPercent(
+                                        collectedXp,
+                                        totalXp
+                                    )
+                                }
+                            }
 
-                      DefaultContractCard(
-                          displayName = it.displayName,
-                          contractUuid = it.uuid,
-                          displayIcon = displayIcon,
-                          backgroundImage = backgroundImage,
-                          backgroundGradientColors = backgroundGradientColors,
-                          remainingDays = it.content.relation?.calcRemainingDays(),
-                          totalXp = it.calcTotalXp(), // TODO: Placeholder values as no userdata is present yet
-                          collectedXp = collected,
-                          percentage = floor(
-                              (collected.toFloat() / it.calcTotalXp().toFloat()) * 100f
-                          ).toInt(),
-                          onNavToContractDetails = onNavToContractDetails
-                      )
-                  })
+                            ContractCardData(
+                                displayName = it.displayName,
+                                contractUuid = it.uuid,
+                                displayIcon = displayIcon,
+                                backgroundImage = backgroundImage,
+                                backgroundGradientColors = backgroundGradientColors,
+                                remainingDays = remainingDays,
+                                totalXp = totalXp,
+                                collectedXp = collectedXp,
+                                percentage = percentage
+                            )
+                        },
+                        onNavToContractDetails = onNavToContractDetails
+                    )
+                }
+            )
 
             item {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -182,36 +206,62 @@ fun ContractsOverviewScreen(
                     maxSmallItemWidth = AgentCarouselCard.minCompressedWidth,
                     flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = state.agentGearCarouselState)
                 ) { index ->
-                    val gear = state.agentGears[index]
-                    val userContract = state.userData?.contracts?.find { it.contract == gear.uuid }
-                    val levelCount = gear.calcLevelCount()
+                    val cardData =
+                        if (state.agentGears == null || state.userData == null || state.isAgentGearsLoading || state.isUserDataLoading) {
+                            null
+                        } else {
+                            val gear = state.agentGears[index]
+                            if (gear.content.relation !is Agent) {
+                                null
+                            } else {
+                                val levelCount by remember { derivedStateOf { gear.calcLevelCount() } }
+                                val derivedUserContract by remember {
+                                    derivedStateOf {
+                                        state.userData.contracts.find { it.contract == gear.uuid }
+                                    }
+                                }
 
-                    if (userContract == null) {
-                        initUserContract(gear.uuid)
-                        return@HorizontalMultiBrowseCarousel
-                    }
+                                // This allows the smart casts below
+                                val userContract = derivedUserContract
+                                if (userContract == null) {
+                                    initUserContract(gear.uuid)
+                                    null
+                                } else {
+                                    val unlockedLevels by remember { derivedStateOf { userContract.levels.count() } }
+                                    val isLocked by remember { derivedStateOf { !(state.userData.agents.any { it.agent == gear.content.relation.uuid }) } }
+                                    val percentage by remember {
+                                        derivedStateOf {
+                                            getProgressPercent(
+                                                userContract.levels.count(),
+                                                levelCount
+                                            )
+                                        }
+                                    }
 
-                    if (gear.content.relation is Agent) {
-                        AgentCarouselCard(
-                            modifier = Modifier.maskClip(shape = MaterialTheme.shapes.extraLarge),
-                            backgroundGradientColors = gear.content.relation.backgroundGradientColors,
-                            backgroundImage = gear.content.relation.background,
-                            fullPortrait = gear.content.relation.fullPortrait,
-                            roleIcon = gear.content.relation.role.displayIcon,
-                            agentName = gear.content.relation.displayName,
-                            contractUuid = gear.uuid,
-                            roleName = gear.content.relation.role.displayName,
-                            totalLevels = levelCount,
-                            unlockedLevels = userContract.levels.count(),
-                            percentage = getProgressPercent(
-                                userContract.levels.count(),
-                                levelCount
-                            ),
-                            isLocked = !(state.userData.agents.any { it.agent == gear.content.relation.uuid }),
-                            maskedWidth = carouselItemInfo.maskRect.width,
-                            onNavToAgentDetails = onNavToAgentDetails
-                        )
-                    }
+                                    AgentCarouselCardData(
+                                        backgroundGradientColors = gear.content.relation.backgroundGradientColors,
+                                        backgroundImage = gear.content.relation.background,
+                                        fullPortrait = gear.content.relation.fullPortrait,
+                                        roleIcon = gear.content.relation.role.displayIcon,
+                                        agentName = gear.content.relation.displayName,
+                                        contractUuid = gear.uuid,
+                                        roleName = gear.content.relation.role.displayName,
+                                        totalLevels = levelCount,
+                                        unlockedLevels = unlockedLevels,
+                                        percentage = percentage,
+                                        isLocked = isLocked
+                                    )
+                                }
+                            }
+                        }
+
+                    AgentCarouselCard(
+                        modifier = Modifier
+                            .maskClip(shape = MaterialTheme.shapes.extraLarge),
+                        data = cardData,
+                        maskedWidth = carouselItemInfo.maskRect.width,
+                        onNavToAgentDetails = onNavToAgentDetails
+                    )
                 }
             }
 
@@ -256,37 +306,56 @@ fun ContractsOverviewScreen(
                 }
             }
 
-            items(items = state.inactiveContracts,
-                  contentType = { Contract::class },
-                  key = { it.uuid },
-                  itemContent = {
-                      var displayIcon: String? = null
-                      var backgroundImage: String? = null
-                      var backgroundGradientColors: List<String> = emptyList()
+            val inactiveItems =
+                if (state.isInactiveContractsLoading || state.inactiveContracts == null) List(5) { null } else state.inactiveContracts
+            items(
+                items = inactiveItems,
+                contentType = { Contract::class },
+                key = { it?.uuid ?: UUID.randomUUID().toString() },
+                itemContent = {
+                    var displayIcon: String? = null
+                    var backgroundImage: String? = null
+                    var backgroundGradientColors: List<String> = emptyList()
 
-                      if (it.content.relation is Agent) {
-                          displayIcon = it.content.relation.displayIcon
-                          backgroundImage = it.content.relation.background
-                          backgroundGradientColors = it.content.relation.backgroundGradientColors
-                      }
+                    if (it?.content?.relation is Agent) {
+                        displayIcon = it.content.relation.displayIcon
+                        backgroundImage = it.content.relation.background
+                        backgroundGradientColors = it.content.relation.backgroundGradientColors
+                    }
 
-                      val collected = it.getRandomCollectedXP()
+                    ContractCard(
+                        modifier = Modifier,
+                        data = if (it == null) {
+                            null
+                        } else {
+                            val collectedXp by remember { derivedStateOf { it.getRandomCollectedXP() } }  // TODO: Placeholder values as no userdata is present yet
+                            val remainingDays by remember { derivedStateOf { it.content.relation?.calcRemainingDays() } }
+                            val totalXp by remember { derivedStateOf { it.calcTotalXp() } }
+                            val percentage by remember {
+                                derivedStateOf {
+                                    getProgressPercent(
+                                        collectedXp,
+                                        totalXp
+                                    )
+                                }
+                            }
 
-                      DefaultContractCard(
-                          displayName = it.displayName,
-                          contractUuid = it.uuid,
-                          displayIcon = displayIcon,
-                          backgroundImage = backgroundImage,
-                          backgroundGradientColors = backgroundGradientColors,
-                          remainingDays = it.content.relation?.calcRemainingDays(),
-                          totalXp = it.calcTotalXp(), // TODO: Placeholder values as no userdata is present yet
-                          collectedXp = collected,
-                          percentage = floor(
-                              (collected.toFloat() / it.calcTotalXp().toFloat()) * 100f
-                          ).toInt(),
-                          onNavToContractDetails = onNavToContractDetails
-                      )
-                  })
+                            ContractCardData(
+                                displayName = it.displayName,
+                                contractUuid = it.uuid,
+                                displayIcon = displayIcon,
+                                backgroundImage = backgroundImage,
+                                backgroundGradientColors = backgroundGradientColors,
+                                remainingDays = remainingDays,
+                                totalXp = totalXp,
+                                collectedXp = collectedXp,
+                                percentage = percentage
+                            )
+                        },
+                        onNavToContractDetails = onNavToContractDetails
+                    )
+                }
+            )
 
             item {
                 Spacer(modifier = Modifier.height(4.dp))

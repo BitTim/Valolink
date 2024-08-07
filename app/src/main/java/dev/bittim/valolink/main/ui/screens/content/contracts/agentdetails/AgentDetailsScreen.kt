@@ -63,6 +63,7 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardUnlockAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentBackdrop
 import dev.bittim.valolink.main.ui.util.getProgressPercent
+import java.util.UUID
 import kotlin.math.ceil
 
 @Composable
@@ -311,9 +312,9 @@ fun AgentDetailsScreen(
                     val items =
                         state.agentGear?.content?.chapters?.flatMap { chapter -> chapter.levels }
 
-
                     items(
                         items = items ?: List(numRewardsVisible) { null },
+                        key = { it?.uuid ?: UUID.randomUUID().toString() },
                         itemContent = { level ->
                             val reward = level?.reward?.relation
 
