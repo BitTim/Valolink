@@ -18,5 +18,7 @@ data class ContractsOverviewState @OptIn(ExperimentalMaterial3Api::class) constr
     val inactiveContracts: List<Contract>? = null,
 
     val archiveTypeFilter: ContentType = ContentType.SEASON,
-    val agentGearCarouselState: CarouselState = CarouselState(itemCount = { 10 }),
+    val agentGearCarouselState: CarouselState = CarouselState(itemCount = {
+        agentGears?.count() ?: 5
+    }),
 )

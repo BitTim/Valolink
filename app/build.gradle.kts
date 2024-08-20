@@ -13,7 +13,7 @@ plugins {
 
 android {
     namespace = "dev.bittim.valolink"
-    compileSdk = 34
+    compileSdk = 35
 
     // Determine version
     applicationVariants.all {
@@ -76,7 +76,7 @@ android {
     defaultConfig {
         applicationId = "dev.bittim.valolink"
         minSdk = 33
-        targetSdk = 34
+        targetSdk = 35
         this.versionCode = buildVersion
         this.versionName = versionName
 

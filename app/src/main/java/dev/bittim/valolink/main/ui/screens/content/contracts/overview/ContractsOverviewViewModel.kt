@@ -1,7 +1,6 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.overview
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.carousel.CarouselState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -88,7 +87,6 @@ class ContractsOverviewViewModel @Inject constructor(
                             _state.update {
                                 it.copy(
                                     agentGears = gears,
-                                    agentGearCarouselState = CarouselState(itemCount = gears::count),
                                     isAgentGearsLoading = false,
                                 )
                             }

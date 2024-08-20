@@ -1,7 +1,9 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.overview
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -81,13 +83,25 @@ fun ContractsOverviewScreen(
             windowInsets = WindowInsets.statusBars
         )
 
-        if (state.isUserDataLoading || state.isActiveContractsLoading || state.isAgentGearsLoading || state.isInactiveContractsLoading) {
+        val loadingBarVisible =
+            state.isUserDataLoading || state.isActiveContractsLoading || state.isAgentGearsLoading || state.isInactiveContractsLoading
+
+        Crossfade(loadingBarVisible, label = "Loading Bar visibility") {
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth()
-                )
+                if (it) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .height(4.dp)
+                    )
+                }
             }
         }
 
@@ -134,7 +148,7 @@ fun ContractsOverviewScreen(
                     }
 
                     ContractCard(
-                        modifier = Modifier,
+                        modifier = Modifier.animateItem(),
                         data = if (it == null) {
                             null
                         } else {
@@ -203,7 +217,7 @@ fun ContractsOverviewScreen(
                     preferredItemWidth = AgentCarouselCard.preferredWidth,
                     itemSpacing = 8.dp,
                     minSmallItemWidth = AgentCarouselCard.minCompressedWidth,
-                    maxSmallItemWidth = AgentCarouselCard.minCompressedWidth,
+                    maxSmallItemWidth = AgentCarouselCard.minWidth,
                     flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = state.agentGearCarouselState)
                 ) { index ->
                     val cardData =
@@ -324,7 +338,7 @@ fun ContractsOverviewScreen(
                     }
 
                     ContractCard(
-                        modifier = Modifier,
+                        modifier = Modifier.animateItem(),
                         data = if (it == null) {
                             null
                         } else {

@@ -148,16 +148,7 @@ fun ContractCard(
                     targetState = data,
                     label = "Progress loading"
                 ) {
-                    if (it == null) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(8.dp)
-                                .padding(1.dp)
-                                .clip(MaterialTheme.shapes.small)
-                                .pulseAnimation()
-                        )
-                    } else {
+                    if (it != null) {
                         val animatedProgress by animateFloatAsState(
                             targetValue = (it.percentage / 100f),
                             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
