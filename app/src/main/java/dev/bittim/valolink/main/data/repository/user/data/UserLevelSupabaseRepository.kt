@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class UserLevelSupabaseRepository @Inject constructor(
     private val userDatabase: UserDatabase,
@@ -46,6 +47,7 @@ class UserLevelSupabaseRepository @Inject constructor(
             // Return
             levelsFlow
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -65,6 +67,7 @@ class UserLevelSupabaseRepository @Inject constructor(
             // Return
             levelFlow
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -87,6 +90,7 @@ class UserLevelSupabaseRepository @Inject constructor(
             // Return
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -110,6 +114,7 @@ class UserLevelSupabaseRepository @Inject constructor(
                 filter { UserLevelDto::userContract eq relation }
             }.decodeList<UserLevelDto>()
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return null
         }
@@ -123,6 +128,7 @@ class UserLevelSupabaseRepository @Inject constructor(
             database.from(TABLE_NAME).upsert(dto)
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -135,6 +141,7 @@ class UserLevelSupabaseRepository @Inject constructor(
             }
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }

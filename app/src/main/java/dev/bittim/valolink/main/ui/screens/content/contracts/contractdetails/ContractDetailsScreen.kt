@@ -26,20 +26,31 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractDetailsScreen(
     state: ContractDetailsState,
+    uuid: String,
+    fetchDetails: (uuid: String) -> Unit,
     onNavBack: () -> Unit,
     onNavContractRewardsList: () -> Unit,
-    onNavToLevelDetails: (String, String) -> Unit,
+    onNavToLevelDetails: (level: String, contract: String) -> Unit,
 ) {
+    // Fetch details if they haven't been fetched yet
+    if (state.contract == null) {
+        LaunchedEffect(Unit) {
+            fetchDetails(uuid)
+        }
+    }
+
     if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
 
     if (state.contract != null) {
@@ -108,14 +119,17 @@ fun ContractDetailsScreen(
 
                                   if (reward != null) {
                                       AgentRewardCard(
-                                          name = reward.displayName,
-                                          levelUuid = level.uuid,
-                                          type = reward.type,
-                                          previewIcon = reward.previewImages.first().first ?: "",
-                                          background = reward.background,
-                                          price = level.vpCost,
-                                          amount = reward.amount,
-                                          currencyIcon = state.vp?.displayIcon ?: "",
+                                          data = AgentRewardCardData(
+                                              name = reward.displayName,
+                                              levelUuid = level.uuid,
+                                              type = reward.type,
+                                              previewIcon = reward.previewImages.first().first
+                                                  ?: "",
+                                              background = reward.background,
+                                              price = level.vpCost,
+                                              amount = reward.amount,
+                                              currencyIcon = state.vp?.displayIcon ?: ""
+                                          ),
                                           onNavToLevelDetails = { levelUuid ->
                                               onNavToLevelDetails(levelUuid, state.contract.uuid)
                                           },
@@ -167,14 +181,16 @@ fun ContractDetailsScreen(
 
                                 if (reward != null && level != null) {
                                     AgentRewardCard(
-                                        name = reward.displayName,
-                                        levelUuid = "",
-                                        type = reward.type,
-                                        previewIcon = reward.previewImages.first().first ?: "",
-                                        background = reward.background,
-                                        price = level.vpCost,
-                                        amount = reward.amount,
-                                        currencyIcon = state.vp?.displayIcon ?: "",
+                                        data = AgentRewardCardData(
+                                            name = reward.displayName,
+                                            levelUuid = "",
+                                            type = reward.type,
+                                            previewIcon = reward.previewImages.first().first ?: "",
+                                            background = reward.background,
+                                            price = level.vpCost,
+                                            amount = reward.amount,
+                                            currencyIcon = state.vp?.displayIcon ?: ""
+                                        ),
                                         onNavToLevelDetails = {}
                                     )
                                 }

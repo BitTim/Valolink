@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,8 @@ data object BaseDetailsScreen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseDetailsScreen(
+    isLoading: Boolean,
+
     cardBackground: @Composable () -> Unit,
     cardImage: @Composable () -> Unit,
     cardContent: @Composable () -> Unit,
@@ -98,9 +101,19 @@ fun BaseDetailsScreen(
             ),
         ) {
             Box {
-                cardBackground()
-                cardImage()
-                cardContent()
+                Crossfade(targetState = isLoading, label = "Loading crossfade") {
+                    if (it) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .pulseAnimation()
+                        )
+                    } else {
+                        cardBackground()
+                        cardImage()
+                        cardContent()
+                    }
+                }
 
                 TopAppBar(
                     title = { },
@@ -153,6 +166,8 @@ fun BaseDetailsScreenPreview() {
     ValolinkTheme {
         Surface {
             BaseDetailsScreen(
+                isLoading = false,
+
                 cardBackground = {},
                 cardImage = {},
                 cardContent = {

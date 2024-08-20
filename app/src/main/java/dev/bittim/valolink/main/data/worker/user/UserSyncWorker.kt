@@ -14,6 +14,7 @@ import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserLevelRepository
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.OffsetDateTime
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltWorker
 class UserSyncWorker @AssistedInject constructor(
@@ -84,6 +85,7 @@ class UserSyncWorker @AssistedInject constructor(
                 }
             }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
         }
 

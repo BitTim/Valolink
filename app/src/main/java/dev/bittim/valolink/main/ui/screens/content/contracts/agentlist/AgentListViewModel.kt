@@ -6,11 +6,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.game.ContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,38 +28,58 @@ class AgentListViewModel @Inject constructor(
     private val _state = MutableStateFlow(AgentListState())
     val state = _state.asStateFlow()
 
+    private var fetchJob: Job? = null
+
     init {
-        viewModelScope.launch {
-            userDataRepository.getWithCurrentUser().collectLatest { userData ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        userData = userData
-                    )
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
+            launch {
+                withContext(Dispatchers.IO) {
+                    userDataRepository
+                        .getWithCurrentUser()
+                        .onStart { _state.update { it.copy(isUserDataLoading = true) } }
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { userData ->
+                            _state.update {
+                                it.copy(
+                                    isUserDataLoading = false,
+                                    userData = userData
+                                )
+                            }
+                        }
                 }
             }
-        }
 
-        viewModelScope.launch {
-            contractRepository.getAgentGears().collectLatest { gears ->
-                _state.update { it.copy(isLoading = true) }
-
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        agentGears = gears,
-                    )
+            launch {
+                withContext(Dispatchers.IO) {
+                    contractRepository
+                        .getAgentGears()
+                        .onStart { _state.update { it.copy(isGearsLoading = true) } }
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { gears ->
+                            _state.update {
+                                it.copy(
+                                    isGearsLoading = false,
+                                    agentGears = gears ?: emptyList(),
+                                )
+                            }
+                        }
                 }
             }
         }
     }
 
     fun initUserContract(uuid: String) {
-        viewModelScope.launch {
-            val contract = state.value.agentGears.find { it.uuid == uuid } ?: return@launch
-            val userData = state.value.userData ?: return@launch
+        if (state.value.userData == null) return
 
-            userContractRepository.set(contract.toUserObj(userData.uuid))
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val contract =
+                    state.value.agentGears?.find { it.uuid == uuid } ?: return@withContext
+                val userData = state.value.userData ?: return@withContext
+
+                userContractRepository.set(contract.toUserObj(userData.uuid))
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import io.github.jan.supabase.gotrue.providers.builtin.Email
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class SupabaseAuthRepository @Inject constructor(
     private val auth: Auth,
@@ -20,6 +21,7 @@ class SupabaseAuthRepository @Inject constructor(
             }
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -47,6 +49,7 @@ class SupabaseAuthRepository @Inject constructor(
             }
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }

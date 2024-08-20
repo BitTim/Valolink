@@ -256,13 +256,11 @@ object MainModule {
     fun providesSeasonRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): SeasonRepository {
         return SeasonApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }
@@ -272,13 +270,11 @@ object MainModule {
     fun providesEventRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): EventRepository {
         return EventApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }
@@ -288,13 +284,11 @@ object MainModule {
     fun providesAgentRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): AgentRepository {
         return AgentApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }
@@ -336,13 +330,11 @@ object MainModule {
     fun providesCurrencyRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): CurrencyRepository {
         return CurrencyApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }
@@ -352,13 +344,11 @@ object MainModule {
     fun providesSprayRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): SprayRepository {
         return SprayApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }
@@ -368,13 +358,11 @@ object MainModule {
     fun providesPlayerTitleRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): PlayerTitleRepository {
         return PlayerTitleApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }
@@ -384,13 +372,11 @@ object MainModule {
     fun providesPlayerCardRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): PlayerCardRepository {
         return PlayerCardApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }
@@ -400,13 +386,11 @@ object MainModule {
     fun providesBuddyRepository(
         gameDatabase: GameDatabase,
         gameApi: GameApi,
-        versionRepository: VersionRepository,
         workManager: WorkManager,
     ): BuddyRepository {
         return BuddyApiRepository(
             gameDatabase,
             gameApi,
-            versionRepository,
             workManager
         )
     }

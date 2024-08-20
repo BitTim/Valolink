@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -31,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,28 +54,35 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
+import dev.bittim.valolink.main.ui.components.UnlockButton
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
+import dev.bittim.valolink.main.ui.components.pulseAnimation
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
 
 data object AgentRewardCard {
     val width: Dp = 256.dp
 }
 
+@Immutable
+data class AgentRewardCardData(
+    val name: String,
+    val levelUuid: String,
+    val type: RewardType,
+    val price: Int,
+    val amount: Int,
+    val previewIcon: String,
+    val currencyIcon: String,
+    val background: String? = null,
+    val isLocked: Boolean = false,
+    val isOwned: Boolean = false,
+)
+
 // TODO: Rework these a bit
 @Composable
 fun AgentRewardCard(
     modifier: Modifier = Modifier,
-    name: String,
-    levelUuid: String,
-    type: RewardType,
-    price: Int,
-    amount: Int,
-    previewIcon: String,
-    currencyIcon: String,
-    background: String? = null,
-    isLocked: Boolean = false,
-    isOwned: Boolean = false,
+    data: AgentRewardCardData?,
     unlockReward: () -> Unit = {},
     resetReward: () -> Unit = {},
     onNavToLevelDetails: (String) -> Unit,
@@ -83,14 +92,8 @@ fun AgentRewardCard(
             .width(AgentRewardCard.width)
             .aspectRatio(0.8f)
             .fillMaxSize()
-            .clickable { onNavToLevelDetails(levelUuid) }
+            .clickable { if (data?.levelUuid != null) onNavToLevelDetails(data.levelUuid) }
     ) {
-        val imagePadding = when (type) {
-            RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
-            RewardType.PLAYER_CARD                -> PaddingValues(0.dp)
-            else                                  -> PaddingValues(16.dp)
-        }
-
         var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
 
         Surface(
@@ -100,114 +103,134 @@ fun AgentRewardCard(
                 .clip(MaterialTheme.shapes.medium),
             tonalElevation = 3.dp
         ) {
-            if (type != RewardType.PLAYER_CARD) {
-                LevelBackdrop(isDisabled = isLocked, backgroundImage = background) {
+            Crossfade(targetState = data, label = "Image Loading") {
+                if (it == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .pulseAnimation()
+                    )
+                } else {
+                    if (it.type != RewardType.PLAYER_CARD) {
+                        LevelBackdrop(
+                            isDisabled = it.isLocked,
+                            backgroundImage = it.background
+                        ) {}
+                    }
 
-                }
-            }
+                    val imagePadding = when (it.type) {
+                        RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
+                        RewardType.PLAYER_CARD                -> PaddingValues(0.dp)
+                        else                                  -> PaddingValues(16.dp)
+                    }
 
-            AsyncImage(
-                modifier = Modifier
-                    .padding(imagePadding)
-                    .conditional(isLocked || isOwned) {
-                        blur(
-                            4.dp,
-                            BlurredEdgeTreatment.Rectangle
-                        )
-                    },
-                model = previewIcon,
-                contentDescription = null,
-                colorFilter = if (type == RewardType.CURRENCY || type == RewardType.TITLE) ColorFilter.tint(
-                    MaterialTheme.colorScheme.onSurface
-                ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (isLocked) 0.3f else 1f) }),
-                contentScale = if (type == RewardType.PLAYER_CARD) ContentScale.FillWidth else ContentScale.Fit,
-                alignment = if (type == RewardType.PLAYER_CARD) Alignment.TopCenter else Alignment.Center,
-                placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_largeart)
-            )
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(imagePadding)
+                            .conditional(it.isLocked || it.isOwned) {
+                                blur(
+                                    4.dp,
+                                    BlurredEdgeTreatment.Rectangle
+                                )
+                            },
+                        model = it.previewIcon,
+                        contentDescription = null,
+                        colorFilter = if (it.type == RewardType.CURRENCY || it.type == RewardType.TITLE) ColorFilter.tint(
+                            MaterialTheme.colorScheme.onSurface
+                        ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (it.isLocked) 0.3f else 1f) }),
+                        contentScale = if (it.type == RewardType.PLAYER_CARD) ContentScale.FillWidth else ContentScale.Fit,
+                        alignment = if (it.type == RewardType.PLAYER_CARD) Alignment.TopCenter else Alignment.Center,
+                        placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_largeart)
+                    )
 
 
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    Box {
-                        FilledTonalIconButton(
-                            modifier = Modifier.padding(8.dp),
-                            onClick = { isMenuExpanded = true },
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.TopEnd
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = null
-                            )
+                            Box {
+                                FilledTonalIconButton(
+                                    modifier = Modifier.padding(8.dp),
+                                    onClick = { isMenuExpanded = true },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = null
+                                    )
+                                }
+
+                                DropdownMenu(expanded = isMenuExpanded,
+                                             onDismissRequest = { isMenuExpanded = false }) {
+                                    DropdownMenuItem(enabled = data?.isLocked == false && data.isOwned,
+                                                     text = { Text(text = "Reset") },
+                                                     onClick = {
+                                                         resetReward()
+                                                         isMenuExpanded = false
+                                                     })
+                                }
+                            }
                         }
 
-                        DropdownMenu(expanded = isMenuExpanded,
-                                     onDismissRequest = { isMenuExpanded = false }) {
-                            DropdownMenuItem(enabled = !isLocked && isOwned,
-                                             text = { Text(text = "Reset") },
-                                             onClick = {
-                                                 resetReward()
-                                                 isMenuExpanded = false
-                                             })
+                        if (it.isLocked) {
+                            Box(
+                                modifier = Modifier
+                                    .height(88.dp)
+                                    .aspectRatio(1f)
+                                    .clip(CircleShape)
+                                    .background(
+                                        Brush.radialGradient(
+                                            listOf(
+                                                MaterialTheme.colorScheme.surfaceContainer,
+                                                Color.Transparent
+                                            )
+                                        )
+                                    ),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .height(64.dp)
+                                        .aspectRatio(1f),
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
-                    }
-                }
 
-                if (isLocked) {
-                    Box(
-                        modifier = Modifier
-                            .height(88.dp)
-                            .aspectRatio(1f)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.radialGradient(
-                                    listOf(
-                                        MaterialTheme.colorScheme.surfaceContainer,
-                                        Color.Transparent
-                                    )
-                                )
-                            ),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .height(64.dp)
-                                .aspectRatio(1f),
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
 
-                if (isOwned && !isLocked) {
-                    Box(
-                        modifier = Modifier
-                            .height(88.dp)
-                            .aspectRatio(1f)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.radialGradient(
-                                    listOf(
-                                        MaterialTheme.colorScheme.surfaceContainer,
-                                        Color.Transparent
-                                    )
+                        if (!it.isLocked && it.isOwned) {
+                            Box(
+                                modifier = Modifier
+                                    .height(88.dp)
+                                    .aspectRatio(1f)
+                                    .clip(CircleShape)
+                                    .background(
+                                        Brush.radialGradient(
+                                            listOf(
+                                                MaterialTheme.colorScheme.surfaceContainer,
+                                                Color.Transparent
+                                            )
+                                        )
+                                    ),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .height(64.dp)
+                                        .aspectRatio(1f),
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
-                            ),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .height(64.dp)
-                                .aspectRatio(1f),
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                            }
+                        }
                     }
                 }
             }
@@ -226,45 +249,75 @@ fun AgentRewardCard(
                 ),
             verticalArrangement = Arrangement.Bottom
         ) {
-            Text(
-                text = if (amount > 1) "$amount $name" else name,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = type.displayName,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Crossfade(
+                targetState = data,
+                label = "Name Loading"
+            ) {
+                if (it == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
+                            .padding(1.dp)
+                            .clip(MaterialTheme.shapes.small)
+                            .pulseAnimation()
+                    )
+                } else {
+                    Text(
+                        text = if (it.amount > 1) "${it.amount} ${it.name}" else it.name,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+
+            Crossfade(targetState = data, label = "Type Loading") {
+                if (it == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(MaterialTheme.typography.labelMedium.lineHeight.value.dp)
+                            .padding(1.dp)
+                            .clip(MaterialTheme.shapes.small)
+                            .pulseAnimation()
+                    )
+                } else {
+                    Text(
+                        text = it.type.displayName,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+            Crossfade(
+                targetState = data,
+                label = "Unlock button Loading"
             ) {
-                Button(
-                    onClick = unlockReward,
-                    enabled = !isLocked && !isOwned
-                ) {
-                    if (!isLocked && !isOwned) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .width(16.dp)
-                                .aspectRatio(1f),
-                            model = currencyIcon,
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
-                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_kingdom_kreds)
+                if (it == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(ButtonDefaults.MinHeight)
+                            .padding(1.dp)
+                            .clip(MaterialTheme.shapes.extraLarge)
+                            .pulseAnimation()
+                    )
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        UnlockButton(
+                            currencyIcon = it.currencyIcon,
+                            price = it.price,
+                            isPrimary = true,
+                            isLocked = it.isLocked,
+                            isOwned = it.isOwned,
+                            onClick = unlockReward
                         )
                     }
-
-                    val buttonText =
-                        if (!isLocked && !isOwned) "$price" else if (isLocked) "Locked" else "Owned"
-
-                    Text(
-                        text = buttonText,
-                    )
                 }
             }
         }
@@ -287,13 +340,15 @@ fun AgentRewardCardPreview() {
             modifier = Modifier.wrapContentSize()
         ) {
             AgentRewardCard(
-                name = "Metamorphosis Card",
-                levelUuid = "",
-                type = RewardType.PLAYER_CARD,
-                price = 2000,
-                amount = 1,
-                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
+                data = AgentRewardCardData(
+                    name = "Metamorphosis Card",
+                    levelUuid = "",
+                    type = RewardType.PLAYER_CARD,
+                    price = 2000,
+                    amount = 1,
+                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png"
+                ),
                 onNavToLevelDetails = {}
             )
         }
@@ -316,14 +371,16 @@ fun LockedAgentRewardCardPreview() {
             modifier = Modifier.wrapContentSize()
         ) {
             AgentRewardCard(
-                name = "Metamorphosis Card",
-                levelUuid = "",
-                type = RewardType.PLAYER_CARD,
-                price = 2000,
-                amount = 1,
-                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
-                isLocked = true,
+                data = AgentRewardCardData(
+                    name = "Metamorphosis Card",
+                    levelUuid = "",
+                    type = RewardType.PLAYER_CARD,
+                    price = 2000,
+                    amount = 1,
+                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
+                    isLocked = true
+                ),
                 onNavToLevelDetails = {}
             )
         }
@@ -346,14 +403,39 @@ fun OwnedAgentRewardCardPreview() {
             modifier = Modifier.wrapContentSize()
         ) {
             AgentRewardCard(
-                name = "Metamorphosis Card",
-                levelUuid = "",
-                type = RewardType.PLAYER_CARD,
-                price = 2000,
-                amount = 1,
-                previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
-                isOwned = true,
+                data = AgentRewardCardData(
+                    name = "Metamorphosis Card",
+                    levelUuid = "",
+                    type = RewardType.PLAYER_CARD,
+                    price = 2000,
+                    amount = 1,
+                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
+                    isOwned = true
+                ),
+                onNavToLevelDetails = {}
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "Light Mode",
+    showBackground = true
+)
+@Preview(
+    name = "Dark Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true
+)
+@Composable
+fun LoadingAgentRewardCardPreview() {
+    ValolinkTheme {
+        Column(
+            modifier = Modifier.wrapContentSize()
+        ) {
+            AgentRewardCard(
+                data = null,
                 onNavToLevelDetails = {}
             )
         }

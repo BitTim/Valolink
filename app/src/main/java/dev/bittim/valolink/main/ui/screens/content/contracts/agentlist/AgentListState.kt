@@ -4,7 +4,9 @@ import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.domain.model.user.UserData
 
 data class AgentListState(
-    val isLoading: Boolean = true,
-    val agentGears: List<Contract> = emptyList(),
+    val isUserDataLoading: Boolean = true,
+    val isGearsLoading: Boolean = false,
+
+    val agentGears: List<Contract>? = null,
     val userData: UserData? = null,
 )

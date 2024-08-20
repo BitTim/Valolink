@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class WeaponApiRepository @Inject constructor(
     private val gameDatabase: GameDatabase,
@@ -44,6 +45,7 @@ class WeaponApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -66,6 +68,7 @@ class WeaponApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -90,6 +93,7 @@ class WeaponApiRepository @Inject constructor(
             // Return
             local
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }

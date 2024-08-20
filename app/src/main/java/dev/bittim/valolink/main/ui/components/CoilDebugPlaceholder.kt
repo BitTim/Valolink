@@ -6,8 +6,9 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 
 @Composable
-fun coilDebugPlaceholder(@DrawableRes debugPreview: Int) = if (LocalInspectionMode.current) {
-    painterResource(id = debugPreview)
-} else {
-    null
-}
+fun coilDebugPlaceholder(@DrawableRes debugPreview: Int, visible: Boolean = true) =
+    if (LocalInspectionMode.current && visible) {
+        painterResource(id = debugPreview)
+    } else {
+        null
+    }

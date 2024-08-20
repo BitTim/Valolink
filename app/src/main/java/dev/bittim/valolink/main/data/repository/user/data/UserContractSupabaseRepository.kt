@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class UserContractSupabaseRepository @Inject constructor(
     private val sessionRepository: SessionRepository,
@@ -67,6 +68,7 @@ class UserContractSupabaseRepository @Inject constructor(
             // Return
             contractsFlow
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -99,6 +101,7 @@ class UserContractSupabaseRepository @Inject constructor(
             // Return
             combinedFlow
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return flow { }
         }
@@ -125,6 +128,7 @@ class UserContractSupabaseRepository @Inject constructor(
             // Return
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -148,6 +152,7 @@ class UserContractSupabaseRepository @Inject constructor(
                 filter { UserContractDto::user eq relation }
             }.decodeList<UserContractDto>()
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             return null
         }
@@ -161,6 +166,7 @@ class UserContractSupabaseRepository @Inject constructor(
             database.from(TABLE_NAME).upsert(dto)
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }
@@ -173,6 +179,7 @@ class UserContractSupabaseRepository @Inject constructor(
             }
             true
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             e.printStackTrace()
             false
         }

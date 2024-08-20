@@ -25,12 +25,12 @@ fun NavGraphBuilder.contractsContractDetailsScreen(
                                    popExitTransition = { Transition.backward }) {
         val viewModel: ContractDetailsViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
-
         val args = it.toRoute<ContractDetailsNav>()
-        viewModel.fetchDetails(args.uuid)
 
         ContractDetailsScreen(
             state = state,
+            uuid = args.uuid,
+            fetchDetails = viewModel::fetchDetails,
             onNavBack = onNavBack,
             onNavContractRewardsList = {},
             onNavToLevelDetails = onNavToLevelDetails
