@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,11 +37,12 @@ class AgentListViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     userDataRepository
                         .getWithCurrentUser()
+                        .onStart { _state.update { it.copy(isUserDataLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { userData ->
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
+                                    isUserDataLoading = false,
                                     userData = userData
                                 )
                             }
@@ -52,13 +54,12 @@ class AgentListViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     contractRepository
                         .getAgentGears()
+                        .onStart { _state.update { it.copy(isGearsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { gears ->
-                            _state.update { it.copy(isLoading = true) }
-
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
+                                    isGearsLoading = false,
                                     agentGears = gears ?: emptyList(),
                                 )
                             }
@@ -69,9 +70,12 @@ class AgentListViewModel @Inject constructor(
     }
 
     fun initUserContract(uuid: String) {
+        if (state.value.userData == null) return
+
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val contract = state.value.agentGears.find { it.uuid == uuid } ?: return@withContext
+                val contract =
+                    state.value.agentGears?.find { it.uuid == uuid } ?: return@withContext
                 val userData = state.value.userData ?: return@withContext
 
                 userContractRepository.set(contract.toUserObj(userData.uuid))

@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.carousel.CarouselDefaults
+import androidx.compose.material3.carousel.CarouselState
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -212,13 +213,20 @@ fun ContractsOverviewScreen(
             }
 
             item {
+                val carouselState by remember(state.agentGears) {
+                    derivedStateOf {
+                        val itemCount = state.agentGears?.count()
+                        CarouselState(itemCount = { if (itemCount == null || itemCount == 0) 5 else itemCount })
+                    }
+                }
+
                 HorizontalMultiBrowseCarousel(
-                    state = state.agentGearCarouselState,
+                    state = carouselState,
                     preferredItemWidth = AgentCarouselCard.preferredWidth,
                     itemSpacing = 8.dp,
                     minSmallItemWidth = AgentCarouselCard.minCompressedWidth,
                     maxSmallItemWidth = AgentCarouselCard.minWidth,
-                    flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = state.agentGearCarouselState)
+                    flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = carouselState)
                 ) { index ->
                     val cardData =
                         if (state.agentGears == null || state.userData == null || state.isAgentGearsLoading || state.isUserDataLoading) {
