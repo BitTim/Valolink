@@ -112,7 +112,7 @@ fun LevelHeader(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(MaterialTheme.typography.labelLarge.lineHeight.value.dp)
+                                .height(MaterialTheme.typography.labelLarge.lineHeight.value.dp - 2.dp) // 2.dp is the padding
                                 .padding(1.dp)
                                 .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
@@ -134,7 +134,7 @@ fun LevelHeader(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(MaterialTheme.typography.titleLarge.lineHeight.value.dp)
+                                .height(MaterialTheme.typography.titleLarge.lineHeight.value.dp - 2.dp) // 2.dp is the padding
                                 .padding(1.dp)
                                 .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
@@ -158,7 +158,7 @@ fun LevelHeader(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
+                                .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp - 2.dp) // 2.dp is the padding
                                 .padding(1.dp)
                                 .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
