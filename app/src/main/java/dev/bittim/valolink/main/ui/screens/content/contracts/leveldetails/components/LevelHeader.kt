@@ -46,7 +46,7 @@ data class LevelHeaderData(
     val levelName: String,
     val contractName: String,
     val price: Int,
-    val currencyIcon: String,
+    val currencyIcon: String?,
     val xpTotal: Int,
     val xpProgress: Int = 0,
     val isLocked: Boolean,
@@ -213,27 +213,31 @@ fun LevelHeader(
 
                         Spacer(modifier = Modifier.width(24.dp))
 
-                        UnlockButton(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1.25f),
-                            currencyIcon = it.currencyIcon,
-                            price = it.price,
-                            isPrimary = false,
-                            isLocked = it.isLocked,
-                            isOwned = it.isOwned,
-                            onClick = onUnlock
-                        )
+                        if (it.currencyIcon != null) {
+                            UnlockButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1.25f),
+                                currencyIcon = it.currencyIcon,
+                                price = it.price,
+                                isPrimary = false,
+                                isLocked = it.isLocked,
+                                isOwned = it.isOwned,
+                                onClick = onUnlock
+                            )
+                        }
                     } else {
-                        UnlockButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            currencyIcon = it.currencyIcon,
-                            price = it.price,
-                            isPrimary = true,
-                            isLocked = it.isLocked,
-                            isOwned = it.isOwned,
-                            onClick = onUnlock
-                        )
+                        if (it.currencyIcon != null) {
+                            UnlockButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                currencyIcon = it.currencyIcon,
+                                price = it.price,
+                                isPrimary = true,
+                                isLocked = it.isLocked,
+                                isOwned = it.isOwned,
+                                onClick = onUnlock
+                            )
+                        }
                     }
                 }
             }

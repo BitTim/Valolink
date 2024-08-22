@@ -9,6 +9,7 @@ data class LevelDetailsState(
     val isUserDataLoading: Boolean = true,
     val isContractLoading: Boolean = false,
     val isLevelLoading: Boolean = false,
+    val isCurrencyLoading: Boolean = false,
 
     val userData: UserData? = null,
     val contract: Contract? = null,
