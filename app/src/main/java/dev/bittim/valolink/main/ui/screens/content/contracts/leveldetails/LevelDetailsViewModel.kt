@@ -102,11 +102,13 @@ class LevelDetailsViewModel @Inject constructor(
                                 unlockCurrencyUuid = Currency.VP_UUID
                                 price = level.vpCost
                             } else {
-                                return@flatMapLatest flowOf(null)
+                                unlockCurrencyUuid = ""
+                                price = -1
                             }
 
                             _state.update {
                                 it.copy(
+                                    isLevelLoading = false,
                                     level = level,
                                     price = price,
                                     isGear = level.isPurchasableWithDough
@@ -114,12 +116,12 @@ class LevelDetailsViewModel @Inject constructor(
                             }
                             currencyRepository.getByUuid(unlockCurrencyUuid)
                         }
+                        .onStart { _state.update { it.copy(isCurrencyLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { currency ->
-                            if (currency == null) return@collectLatest
                             _state.update {
                                 it.copy(
-                                    isLevelLoading = false,
+                                    isCurrencyLoading = false,
                                     unlockCurrency = currency
                                 )
                             }

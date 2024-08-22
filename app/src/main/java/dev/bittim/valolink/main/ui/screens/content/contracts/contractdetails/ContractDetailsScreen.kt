@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,19 +38,22 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.compon
 fun ContractDetailsScreen(
     state: ContractDetailsState,
     uuid: String,
-    fetchDetails: (uuid: String) -> Unit,
+    isRecruitment: Boolean,
+    fetchDetails: (uuid: String, isRecruitment: Boolean) -> Unit,
     onNavBack: () -> Unit,
     onNavContractRewardsList: () -> Unit,
+    onNavToAgentDetails: (String) -> Unit,
     onNavToLevelDetails: (level: String, contract: String) -> Unit,
 ) {
     // Fetch details if they haven't been fetched yet
-    if (state.contract == null) {
-        LaunchedEffect(Unit) {
-            fetchDetails(uuid)
+    if (state.contract == null || state.vp == null) {
+        if (!state.isContractLoading && !state.isCurrencyLoading) {
+            fetchDetails(uuid, isRecruitment)
         }
     }
 
-    if (state.isLoading) CircularProgressIndicator() // TODO: Temporary
+    val isLoading = state.isContractLoading || state.isCurrencyLoading
+    if (isLoading) CircularProgressIndicator() // TODO: Temporary
 
     if (state.contract != null) {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -121,7 +123,7 @@ fun ContractDetailsScreen(
                                       AgentRewardCard(
                                           data = AgentRewardCardData(
                                               name = reward.displayName,
-                                              levelUuid = level.uuid,
+                                              levelUuid = level.uuid, // TODO: Replace with uuid to agent gear for recruitments
                                               type = reward.type,
                                               previewIcon = reward.previewImages.first().first
                                                   ?: "",
@@ -131,7 +133,14 @@ fun ContractDetailsScreen(
                                               currencyIcon = state.vp?.displayIcon ?: ""
                                           ),
                                           onNavToLevelDetails = { levelUuid ->
-                                              onNavToLevelDetails(levelUuid, state.contract.uuid)
+                                              if (isRecruitment) {
+                                                  onNavToAgentDetails(levelUuid)
+                                              } else {
+                                                  onNavToLevelDetails(
+                                                      levelUuid,
+                                                      state.contract.uuid
+                                                  )
+                                              }
                                           },
                                       )
                                   }

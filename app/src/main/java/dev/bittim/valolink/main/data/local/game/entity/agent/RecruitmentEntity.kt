@@ -12,7 +12,6 @@ import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.game.contract.content.Content
 import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
 import java.time.Instant
-import java.util.UUID
 
 @Entity(
     tableName = "AgentRecruitments",
@@ -48,7 +47,7 @@ data class RecruitmentEntity(
         )
 
         return Contract(
-            UUID.randomUUID().toString(),
+            uuid,
             agent.displayName,
             useLevelVpCostOverride,
             levelVpCostOverride,
@@ -63,16 +62,16 @@ data class RecruitmentEntity(
                                 null,
                                 "Level 1",
                                 xp,
-                                1000,
+                                0,
                                 false,
-                                8000,
-                                true,
+                                0,
+                                false,
                                 Reward(
                                     "Agent",
                                     agent.uuid,
                                     1,
                                     false,
-                                    null
+                                    agent.toRewardRelation()
                                 )
                             )
                         ),

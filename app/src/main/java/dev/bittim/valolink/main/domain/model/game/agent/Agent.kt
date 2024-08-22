@@ -1,6 +1,8 @@
 package dev.bittim.valolink.main.domain.model.game.agent
 
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.domain.model.user.UserAgent
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -45,6 +47,17 @@ data class Agent(
             UUID.randomUUID().toString(),
             uid,
             uuid
+        )
+    }
+
+    fun toRewardRelation(): RewardRelation {
+        return RewardRelation(
+            uuid,
+            RewardType.AGENT,
+            1,
+            displayName,
+            displayIcon,
+            listOf(fullPortrait to null)
         )
     }
 }

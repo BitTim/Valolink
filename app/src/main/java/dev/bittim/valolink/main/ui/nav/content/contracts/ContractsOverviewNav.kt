@@ -18,7 +18,7 @@ object ContractsOverviewNav
 fun NavGraphBuilder.contractsOverviewScreen(
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
-    onNavToContractDetails: (String) -> Unit,
+    onNavToContractDetails: (String, Boolean) -> Unit,
 ) {
     composable<ContractsOverviewNav>(enterTransition = { Transition.topLevelEnter },
                                      exitTransition = { Transition.topLevelExit },

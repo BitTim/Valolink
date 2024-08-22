@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.domain.model.game.contract.reward
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material.icons.filled.FormatPaint
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Loyalty
@@ -19,5 +20,6 @@ enum class RewardType(
     PLAYER_CARD("Player Card", "PlayerCard", Icons.Filled.Image),
     TITLE("Title", "Title", Icons.Filled.MilitaryTech),
     SPRAY("Spray", "Spray", Icons.Filled.FormatPaint),
-    WEAPON_SKIN("Weapon Skin", "EquippableSkinLevel", Icons.Filled.Palette)
+    WEAPON_SKIN("Weapon Skin", "EquippableSkinLevel", Icons.Filled.Palette),
+    AGENT("Agent", "Agent", Icons.Filled.EmojiPeople)
 }
