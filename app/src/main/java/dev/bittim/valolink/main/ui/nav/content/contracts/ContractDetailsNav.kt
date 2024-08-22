@@ -15,10 +15,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ContractDetailsNav(
     val uuid: String,
+    val isRecruitment: Boolean,
 )
 
 fun NavGraphBuilder.contractsContractDetailsScreen(
     onNavBack: () -> Unit,
+    onNavToAgentDetails: (String) -> Unit,
     onNavToLevelDetails: (String, String) -> Unit,
 ) {
     composable<ContractDetailsNav>(enterTransition = { Transition.forward },
@@ -30,16 +32,18 @@ fun NavGraphBuilder.contractsContractDetailsScreen(
         ContractDetailsScreen(
             state = state,
             uuid = args.uuid,
+            isRecruitment = args.isRecruitment,
             fetchDetails = viewModel::fetchDetails,
             onNavBack = onNavBack,
             onNavContractRewardsList = {},
+            onNavToAgentDetails = onNavToAgentDetails,
             onNavToLevelDetails = onNavToLevelDetails
         )
     }
 }
 
-fun NavController.navToContractsContractDetails(uuid: String) {
-    navigate(ContractDetailsNav(uuid)) {
+fun NavController.navToContractsContractDetails(uuid: String, isRecruitment: Boolean) {
+    navigate(ContractDetailsNav(uuid, isRecruitment)) {
         launchSingleTop = true
     }
 }

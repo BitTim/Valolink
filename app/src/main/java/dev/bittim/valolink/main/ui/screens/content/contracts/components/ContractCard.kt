@@ -40,6 +40,7 @@ import java.util.UUID
 @Immutable
 data class ContractCardData(
     val contractUuid: String,
+    val isRecruitment: Boolean,
     val displayName: String,
     val displayIcon: String?,
     val backgroundImage: String?,
@@ -54,10 +55,15 @@ data class ContractCardData(
 fun ContractCard(
     modifier: Modifier = Modifier,
     data: ContractCardData?,
-    onNavToContractDetails: (String) -> Unit,
+    onNavToContractDetails: (String, Boolean) -> Unit,
 ) {
     AgentCardBase(
-        modifier = modifier.clickable { if (data != null) onNavToContractDetails(data.contractUuid) },
+        modifier = modifier.clickable {
+            if (data != null) onNavToContractDetails(
+                data.contractUuid,
+                data.isRecruitment
+            )
+        },
         backgroundGradientColors = data?.backgroundGradientColors ?: emptyList(),
         backgroundImage = data?.backgroundImage
     ) { useGradient ->
@@ -223,6 +229,7 @@ fun DefaultAgentContractCardPreview() {
         ContractCard(
             data = ContractCardData(
                 displayName = "Clove",
+                isRecruitment = true,
                 contractUuid = UUID.randomUUID().toString(),
                 displayIcon = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
                 backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
@@ -237,7 +244,7 @@ fun DefaultAgentContractCardPreview() {
                 totalXp = 200000,
                 percentage = 0
             ),
-            onNavToContractDetails = {}
+            onNavToContractDetails = { _, _ -> }
         )
     }
 }
@@ -250,6 +257,7 @@ fun DefaultAgentContractCardWithTimePreview() {
         ContractCard(
             data = ContractCardData(
                 displayName = "Clove",
+                isRecruitment = true,
                 contractUuid = UUID.randomUUID().toString(),
                 displayIcon = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/displayicon.png",
                 backgroundImage = "https://media.valorant-api.com/agents/1dbf2edd-4729-0984-3115-daa5eed44993/background.png",
@@ -264,7 +272,7 @@ fun DefaultAgentContractCardWithTimePreview() {
                 totalXp = 200000,
                 percentage = 74
             ),
-            onNavToContractDetails = {}
+            onNavToContractDetails = { _, _ -> }
         )
     }
 }
@@ -277,6 +285,7 @@ fun DefaultContractCardPreview() {
         ContractCard(
             data = ContractCardData(
                 displayName = "Ignition: Act I",
+                isRecruitment = false,
                 contractUuid = UUID.randomUUID().toString(),
                 displayIcon = null,
                 backgroundImage = null,
@@ -286,7 +295,7 @@ fun DefaultContractCardPreview() {
                 totalXp = 0,
                 percentage = 0
             ),
-            onNavToContractDetails = {}
+            onNavToContractDetails = { _, _ -> }
         )
     }
 }
@@ -299,6 +308,7 @@ fun DefaultContractCardWithTimePreview() {
         ContractCard(
             data = ContractCardData(
                 displayName = "Ignition: Act I",
+                isRecruitment = false,
                 contractUuid = UUID.randomUUID().toString(),
                 displayIcon = null,
                 backgroundImage = null,
@@ -308,7 +318,7 @@ fun DefaultContractCardWithTimePreview() {
                 totalXp = 200000,
                 percentage = 74
             ),
-            onNavToContractDetails = {}
+            onNavToContractDetails = { _, _ -> }
         )
     }
 }
@@ -320,7 +330,7 @@ fun LoadingDefaultContractCard() {
     ValolinkTheme {
         ContractCard(
             data = null,
-            onNavToContractDetails = {}
+            onNavToContractDetails = { _, _ -> }
         )
     }
 }

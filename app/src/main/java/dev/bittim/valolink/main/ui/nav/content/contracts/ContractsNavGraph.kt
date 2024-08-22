@@ -18,7 +18,12 @@ fun NavGraphBuilder.contractsNavGraph(
         contractsOverviewScreen(
             onNavToGearList = { navController.navToContractsGearList() },
             onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
-            onNavToContractDetails = { uuid -> navController.navToContractsContractDetails(uuid) }
+            onNavToContractDetails = { uuid, isRecruitment ->
+                navController.navToContractsContractDetails(
+                    uuid,
+                    isRecruitment
+                )
+            }
         )
 
         contractsGearListScreen(
@@ -38,6 +43,7 @@ fun NavGraphBuilder.contractsNavGraph(
 
         contractsContractDetailsScreen(
             onNavBack = { navController.navigateUp() },
+            onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
             onNavToLevelDetails = { uuid, contract ->
                 navController.navToContractsLevelDetails(
                     uuid,
