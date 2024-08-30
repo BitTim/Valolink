@@ -6,4 +6,14 @@ data class Ability(
     val displayName: String,
     val description: String,
     val displayIcon: String?,
-)
+) {
+    companion object {
+        val EMPTY = Ability(
+            agent = "",
+            slot = "",
+            displayName = "",
+            description = "",
+            displayIcon = null
+        )
+    }
+}

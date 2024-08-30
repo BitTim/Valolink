@@ -5,4 +5,13 @@ data class BuddyLevel(
     val hideIfNotOwned: Boolean,
     val displayName: String,
     val displayIcon: String,
-)
+) {
+    companion object {
+        val EMPTY = BuddyLevel(
+            uuid = "",
+            hideIfNotOwned = false,
+            displayName = "",
+            displayIcon = ""
+        )
+    }
+}

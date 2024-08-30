@@ -12,13 +12,27 @@ data class Buddy(
     val levels: List<BuddyLevel>,
 ) {
     fun asRewardRelation(amount: Int): RewardRelation {
+        val actualAmount = if (amount < 1) 1 else amount
+        val actualDisplayIcon = levels.firstOrNull()?.displayIcon ?: displayIcon
+
         return RewardRelation(
             uuid = uuid,
             type = RewardType.BUDDY,
-            amount = amount,
+            amount = actualAmount,
             displayName = displayName,
-            previewImages = listOf(if (levels.isNotEmpty()) levels[0].displayIcon to null else displayIcon to null),
-            displayIcon = if (levels.isNotEmpty()) levels[0].displayIcon else displayIcon,
+            previewImages = listOf(actualDisplayIcon to null),
+            displayIcon = actualDisplayIcon,
+        )
+    }
+
+    companion object {
+        val EMPTY = Buddy(
+            uuid = "",
+            displayName = "",
+            isHiddenIfNotOwned = false,
+            themeUuid = null,
+            displayIcon = "",
+            levels = emptyList(),
         )
     }
 }
