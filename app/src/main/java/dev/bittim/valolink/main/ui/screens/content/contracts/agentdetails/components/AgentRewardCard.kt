@@ -47,6 +47,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -62,6 +64,7 @@ import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.components.pulseAnimation
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
+import dev.bittim.valolink.main.ui.util.getScaledLineHeightFromFontStyle
 
 data object AgentRewardCard {
     val width: Dp = 256.dp
@@ -91,6 +94,9 @@ fun AgentRewardCard(
     resetReward: () -> Unit = {},
     onNavToLevelDetails: (String) -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+
     Card(
         modifier = modifier
             .width(AgentRewardCard.width)
@@ -256,7 +262,13 @@ fun AgentRewardCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(MaterialTheme.typography.labelMedium.lineHeight.value.dp)
+                            .height(
+                                getScaledLineHeightFromFontStyle(
+                                    density,
+                                    configuration,
+                                    MaterialTheme.typography.labelMedium
+                                )
+                            )
                             .clip(MaterialTheme.shapes.small)
                             .pulseAnimation()
                     )
@@ -281,7 +293,13 @@ fun AgentRewardCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
+                            .height(
+                                getScaledLineHeightFromFontStyle(
+                                    density,
+                                    configuration,
+                                    MaterialTheme.typography.titleMedium
+                                )
+                            )
                             .clip(MaterialTheme.shapes.small)
                             .pulseAnimation()
                     )
@@ -297,19 +315,11 @@ fun AgentRewardCard(
 
             Spacer(Modifier.height(8.dp))
 
-            Crossfade(targetState = data, label = "Type Loading") {
-                if (it == null) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(MaterialTheme.typography.labelMedium.lineHeight.value.dp)
-                            .clip(MaterialTheme.shapes.small)
-                            .pulseAnimation()
-                    )
-                } else {
-                    RewardTypeLabel(it.type, RewardTypeLabelStyle.SMALL)
-                }
-            }
+            RewardTypeLabel(
+                modifier = Modifier.fillMaxWidth(),
+                rewardType = data?.type,
+                style = RewardTypeLabelStyle.SMALL
+            )
 
             Spacer(Modifier.height(8.dp))
 
@@ -321,9 +331,9 @@ fun AgentRewardCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(ButtonDefaults.MinHeight)
+                            .height(ButtonDefaults.MinHeight * configuration.fontScale)
                             .padding(1.dp)
-                            .clip(MaterialTheme.shapes.extraLarge)
+                            .clip(ButtonDefaults.shape)
                             .pulseAnimation()
                     )
                 } else {
