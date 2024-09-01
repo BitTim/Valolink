@@ -1,9 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -40,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
@@ -54,8 +50,8 @@ import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.ui.components.BaseDetailsScreen
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
-import dev.bittim.valolink.main.ui.components.pulseAnimation
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AbilitySection
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentDetailsSection
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.AgentResetAlertDialog
@@ -284,87 +280,15 @@ fun AgentDetailsScreen(
             }
         },
         content = {
-            Column {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Rewards",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                text = "Details",
+                style = MaterialTheme.typography.titleLarge
+            )
 
-                    IconButton(onClick = onNavGearRewardsList) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                            contentDescription = null
-                        )
-                    }
-                }
+            Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                LazyRow(
-                    state = state.rewardListState,
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    val items =
-                        state.agentGear?.content?.chapters?.flatMap { chapter -> chapter.levels }
-
-                    items(
-                        items = items ?: List(numRewardsVisible) { null },
-                        key = { it?.uuid ?: UUID.randomUUID().toString() },
-                        itemContent = { level ->
-                            val reward = level?.reward?.relation
-
-                            AgentRewardCard(
-                                data = if (level == null || reward == null) {
-                                    null
-                                } else {
-                                    AgentRewardCardData(
-                                        name = reward.displayName,
-                                        levelUuid = level.uuid,
-                                        type = reward.type,
-                                        previewIcon = reward.previewImages.first().first ?: "",
-                                        background = reward.background,
-                                        price = level.doughCost,
-                                        amount = reward.amount,
-                                        currencyIcon = state.dough?.displayIcon ?: "",
-                                        isLocked = isLocked,
-                                        isOwned = userContract?.levels?.any { it.level == level.uuid }
-                                            ?: false,
-                                    )
-                                },
-                                unlockReward = {
-                                    if (userContract?.levels?.lastOrNull()?.level == level?.dependency) {
-                                        // Unlock just one
-                                        unlockLevel(level?.uuid)
-                                    } else {
-                                        if (level == null) return@AgentRewardCard
-
-                                        // Unlock multiple at the same time
-                                        targetLevelUuid = level.uuid
-                                        isRewardUnlockAlertShown = true
-                                    }
-                                },
-                                resetReward = {
-                                    if (level == null) return@AgentRewardCard
-
-                                    targetLevelUuid = level.uuid
-                                    isRewardResetAlertShown = true
-                                },
-                                onNavToLevelDetails = { levelUuid ->
-                                    onNavToLevelDetails(
-                                        levelUuid,
-                                        state.agentGear?.uuid ?: ""
-                                    )
-                                }
-                            )
-                        }
-                    )
-                }
-            }
+            AgentDetailsSection(agent)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -380,138 +304,106 @@ fun AgentDetailsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
+            Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                text = "Details",
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Column(
-                modifier = Modifier.wrapContentHeight(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Crossfade(targetState = agent?.displayName, label = "Agent name loading") {
-                        if (it == null) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
-                                    .padding(1.dp)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .pulseAnimation()
-                            )
-                        } else {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
-                    }
+                Text(
+                    text = "Rewards",
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-                    Crossfade(
-                        targetState = agent?.description,
-                        label = "Agent description loading"
-                    ) {
-                        if (it == null) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(MaterialTheme.typography.bodyMedium.lineHeight.value.dp * 5)
-                                    .padding(1.dp)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .pulseAnimation()
-                            )
-                        } else {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
+                IconButton(onClick = onNavGearRewardsList) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.ArrowForward,
+                        contentDescription = null
+                    )
                 }
+            }
 
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Crossfade(targetState = agent?.role, label = "Agent role loading") {
-                        if (it == null) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
-                                    .padding(1.dp)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .pulseAnimation()
-                            )
-                        } else {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .height(16.dp)
-                                        .aspectRatio(1f),
-                                    model = it.displayIcon,
-                                    contentDescription = it.displayName,
-                                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                                    placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_role_icon)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LazyRow(
+                state = state.rewardListState,
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                val items =
+                    state.agentGear?.content?.chapters?.flatMap { chapter -> chapter.levels }
+
+                items(
+                    items = items ?: List(numRewardsVisible) { null },
+                    key = { it?.uuid ?: UUID.randomUUID().toString() },
+                    itemContent = { level ->
+                        val reward = level?.reward?.relation
+
+                        AgentRewardCard(
+                            data = if (level == null || reward == null) {
+                                null
+                            } else {
+                                AgentRewardCardData(
+                                    name = reward.displayName,
+                                    levelUuid = level.uuid,
+                                    type = reward.type,
+                                    levelName = level.name,
+                                    contractName = state.agentGear?.displayName ?: "",
+                                    previewIcon = reward.previewImages.first().first ?: "",
+                                    background = reward.background,
+                                    price = level.doughCost,
+                                    amount = reward.amount,
+                                    currencyIcon = state.dough?.displayIcon ?: "",
+                                    isLocked = isLocked,
+                                    isOwned = userContract?.levels?.any { it.level == level.uuid }
+                                        ?: false,
                                 )
+                            },
+                            unlockReward = {
+                                if (userContract?.levels?.lastOrNull()?.level == level?.dependency) {
+                                    // Unlock just one
+                                    unlockLevel(level?.uuid)
+                                } else {
+                                    if (level == null) return@AgentRewardCard
 
-                                Text(
-                                    text = it.displayName,
-                                    style = MaterialTheme.typography.titleMedium
+                                    // Unlock multiple at the same time
+                                    targetLevelUuid = level.uuid
+                                    isRewardUnlockAlertShown = true
+                                }
+                            },
+                            resetReward = {
+                                if (level == null) return@AgentRewardCard
+
+                                targetLevelUuid = level.uuid
+                                isRewardResetAlertShown = true
+                            },
+                            onNavToLevelDetails = { levelUuid ->
+                                onNavToLevelDetails(
+                                    levelUuid,
+                                    state.agentGear?.uuid ?: ""
                                 )
                             }
-                        }
+                        )
                     }
+                )
+            }
 
-                    Crossfade(
-                        targetState = agent?.role?.description,
-                        label = "Role description loading"
-                    ) {
-                        if (it == null) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(MaterialTheme.typography.bodyMedium.lineHeight.value.dp * 5)
-                                    .padding(1.dp)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .pulseAnimation()
-                            )
-                        } else {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
+            Spacer(modifier = Modifier.height(24.dp))
 
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Text(
-                        text = "Contract: ${state.agentGear?.uuid}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = "Contract: ${state.agentGear?.uuid}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
-                    Text(
-                        text = "Agent: ${agent?.uuid}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
-                }
+                Text(
+                    text = "Agent: ${agent?.uuid}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
             }
         },
         dropdown = {

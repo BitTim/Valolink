@@ -14,6 +14,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:hardwareAccelerated="true"
+            android:enableOnBackInvokedCallback="true"
             android:theme="@style/Theme.Valolink">
         <activity
                 android:name=".MainActivity"
