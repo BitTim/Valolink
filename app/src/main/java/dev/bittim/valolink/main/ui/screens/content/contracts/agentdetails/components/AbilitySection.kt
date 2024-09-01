@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.compo
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,7 +61,11 @@ fun AbilitySection(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Crossfade(targetState = abilities, label = "Ability tabs loading") {
+        Crossfade(
+            modifier = Modifier.animateContentSize(),
+            targetState = abilities,
+            label = "Ability tabs loading"
+        ) {
             if (it == null) {
                 Row(
                     modifier = Modifier
@@ -95,14 +100,19 @@ fun AbilitySection(
                                     colorFilter = ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
                                     placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_ability_icon)
                                 )
-                            })
+                            }
+                        )
                     }
                 }
             }
         }
 
 
-        Crossfade(targetState = abilities, label = "Ability details loading") {
+        Crossfade(
+            modifier = Modifier.animateContentSize(),
+            targetState = abilities,
+            label = "Ability details loading"
+        ) {
             if (it == null) {
                 Box(
                     modifier = Modifier
@@ -114,7 +124,9 @@ fun AbilitySection(
                 )
             } else {
                 HorizontalPager(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateContentSize(),
                     verticalAlignment = Alignment.Top,
                     state = abilityPagerState
                 ) { index ->

@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
@@ -32,7 +33,7 @@ fun ProgressCluster(
     progress: Int,
     total: Int,
     unit: String,
-    isMonochrome: Boolean
+    isMonochrome: Boolean,
 ) {
     val percentage = getProgressPercent(
         progress,
@@ -64,13 +65,23 @@ fun ProgressCluster(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(2f),
+                textAlign = TextAlign.Start,
                 text = "$progress / $total $unit",
-                color = if (isMonochrome) Color.White else MaterialTheme.colorScheme.onSurface
+                color = if (isMonochrome) Color.White else MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelLarge
             )
 
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                textAlign = TextAlign.End,
                 text = "$percentage %",
-                color = if (isMonochrome) Color.White else MaterialTheme.colorScheme.onSurface
+                color = if (isMonochrome) Color.White else MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelLarge
             )
         }
     }

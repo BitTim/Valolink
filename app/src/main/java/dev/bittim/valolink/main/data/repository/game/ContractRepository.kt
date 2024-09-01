@@ -16,4 +16,5 @@ interface ContractRepository : GameRepository<Contract> {
     suspend fun getInactiveContracts(contentType: ContentType): Flow<List<Contract>>
 
     suspend fun getLevelByUuid(uuid: String): Flow<Level?>
+    suspend fun getLevelByDependency(dependency: String): Flow<Level?>
 }

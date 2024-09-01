@@ -31,14 +31,13 @@ data class Agent(
     override val startTime: Instant? = null,
     override val endTime: Instant? = null,
 ) : ContentRelation() {
-
     override fun calcRemainingDays(): Int? {
         if (startTime == null || endTime == null) return null
 
-        val days = Instant.now().until(
-            endTime,
-            ChronoUnit.DAYS
-        ).toInt()
+        val now = Instant.now()
+        if (now.isBefore(startTime)) return null
+
+        val days = now.until(endTime, ChronoUnit.DAYS).toInt()
         return if (days < 0) null else days
     }
 
@@ -58,6 +57,31 @@ data class Agent(
             displayName,
             displayIcon,
             listOf(fullPortrait to null)
+        )
+    }
+
+    companion object {
+        val EMPTY = Agent(
+            uuid = "",
+            displayName = "",
+            description = "",
+            developerName = "",
+            characterTags = null,
+            displayIcon = "",
+            displayIconSmall = "",
+            bustPortrait = "",
+            fullPortrait = "",
+            fullPortraitV2 = "",
+            killfeedPortrait = "",
+            background = "",
+            backgroundGradientColors = emptyList(),
+            isFullPortraitRightFacing = false,
+            isAvailableForTest = false,
+            isBaseContent = false,
+            role = Role.EMPTY,
+            abilities = emptyList(),
+            startTime = null,
+            endTime = null
         )
     }
 }

@@ -5,4 +5,13 @@ data class Role(
     val displayName: String,
     val description: String,
     val displayIcon: String,
-)
+) {
+    companion object {
+        val EMPTY = Role(
+            uuid = "",
+            displayName = "",
+            description = "",
+            displayIcon = ""
+        )
+    }
+}

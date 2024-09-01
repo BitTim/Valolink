@@ -77,6 +77,10 @@ interface ContractsDao {
     fun getLevelByUuid(uuid: String): Flow<LevelWithReward?>
 
     @Transaction
+    @Query("SELECT * FROM ContractChapterLevels WHERE dependency = :dependency LIMIT 1")
+    fun getLevelByDependency(dependency: String): Flow<LevelWithReward?>
+
+    @Transaction
     @Query("SELECT * FROM AgentRecruitments WHERE uuid = :uuid LIMIT 1")
     fun getRecruitmentByUuid(uuid: String): Flow<RecruitmentWithAgentWithRoleAndAbilities?>
 

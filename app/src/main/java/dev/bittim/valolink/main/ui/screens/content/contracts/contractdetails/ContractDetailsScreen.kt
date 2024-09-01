@@ -125,6 +125,8 @@ fun ContractDetailsScreen(
                                               name = reward.displayName,
                                               levelUuid = level.uuid, // TODO: Replace with uuid to agent gear for recruitments
                                               type = reward.type,
+                                              levelName = level.name,
+                                              contractName = state.contract.displayName,
                                               previewIcon = reward.previewImages.first().first
                                                   ?: "",
                                               background = reward.background,
@@ -194,6 +196,8 @@ fun ContractDetailsScreen(
                                             name = reward.displayName,
                                             levelUuid = "",
                                             type = reward.type,
+                                            levelName = level.name,
+                                            contractName = state.contract.displayName,
                                             previewIcon = reward.previewImages.first().first ?: "",
                                             background = reward.background,
                                             price = level.vpCost,

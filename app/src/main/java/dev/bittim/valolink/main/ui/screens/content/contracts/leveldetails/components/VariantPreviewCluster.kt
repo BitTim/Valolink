@@ -48,7 +48,6 @@ fun VariantPreviewCluster(
                 Row(
                     modifier = Modifier.padding(8.dp),
                 ) {
-
                     variants.forEachIndexed { index, image ->
                         val isSelected = selected == index
 

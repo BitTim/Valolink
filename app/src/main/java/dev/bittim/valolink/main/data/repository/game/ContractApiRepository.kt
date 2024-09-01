@@ -130,6 +130,37 @@ class ContractApiRepository @Inject constructor(
         }
     }
 
+    override suspend fun getLevelByDependency(dependency: String): Flow<Level?> {
+        return try {
+            // Get from local database
+            val local = gameDatabase.contractsDao
+                .getLevelByDependency(dependency)
+                .distinctUntilChanged()
+                .flatMapLatest {
+                    if (it == null) return@flatMapLatest flowOf(null)
+
+                    combine(
+                        flowOf(it),
+                        getReward(it.reward),
+                        getLevelMetadata(it.level)
+                    ) { level, reward, meta ->
+                        level.toType(reward, meta.name)
+                    }
+                }
+
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
+
+            // Return
+            local
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            e.printStackTrace()
+            return flow { }
+        }
+    }
+
 
 
     override suspend fun getActiveContracts(): Flow<List<Contract>> {

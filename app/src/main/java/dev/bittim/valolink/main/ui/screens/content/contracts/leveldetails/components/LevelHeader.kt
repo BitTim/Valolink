@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.compo
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,6 +26,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -33,10 +35,13 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.components.ProgressCluster
+import dev.bittim.valolink.main.ui.components.RewardTypeLabel
+import dev.bittim.valolink.main.ui.components.RewardTypeLabelStyle
 import dev.bittim.valolink.main.ui.components.UnlockButton
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.components.pulseAnimation
+import dev.bittim.valolink.main.ui.util.getScaledLineHeightFromFontStyle
 
 @Immutable
 data class LevelHeaderData(
@@ -59,6 +64,9 @@ fun LevelHeader(
     data: LevelHeaderData?,
     onUnlock: () -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -67,7 +75,11 @@ fun LevelHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Crossfade(targetState = data, label = "Image loading crossfade") {
+            Crossfade(
+                modifier = Modifier.animateContentSize(),
+                targetState = data,
+                label = "Image loading crossfade"
+            ) {
                 if (it == null) {
                     Box(
                         modifier = Modifier
@@ -105,6 +117,7 @@ fun LevelHeader(
 
             Column {
                 Crossfade(
+                    modifier = Modifier.animateContentSize(),
                     targetState = data,
                     label = "Level and contract name crossfade"
                 ) {
@@ -112,7 +125,13 @@ fun LevelHeader(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(MaterialTheme.typography.labelLarge.lineHeight.value.dp - 2.dp) // 2.dp is the padding
+                                .height(
+                                    getScaledLineHeightFromFontStyle(
+                                        density,
+                                        configuration,
+                                        MaterialTheme.typography.labelLarge
+                                    ) - 2.dp // 2.dp is the padding
+                                )
                                 .padding(1.dp)
                                 .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
@@ -121,12 +140,13 @@ fun LevelHeader(
                         Text(
                             text = "${it.levelName} • ${it.contractName}",
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
 
                 Crossfade(
+                    modifier = Modifier.animateContentSize(),
                     targetState = data,
                     label = "Display name crossfade"
                 ) {
@@ -134,7 +154,13 @@ fun LevelHeader(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(MaterialTheme.typography.titleLarge.lineHeight.value.dp - 2.dp) // 2.dp is the padding
+                                .height(
+                                    getScaledLineHeightFromFontStyle(
+                                        density,
+                                        configuration,
+                                        MaterialTheme.typography.titleLarge
+                                    ) - 2.dp // 2.dp is the padding
+                                )
                                 .padding(1.dp)
                                 .clip(MaterialTheme.shapes.small)
                                 .pulseAnimation()
@@ -143,49 +169,23 @@ fun LevelHeader(
                         Text(
                             text = it.displayName,
                             style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Crossfade(
-                    targetState = data,
-                    label = "Type crossfade"
-                ) {
-                    if (it == null) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp - 2.dp) // 2.dp is the padding
-                                .padding(1.dp)
-                                .clip(MaterialTheme.shapes.small)
-                                .pulseAnimation()
-                        )
-                    } else {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = it.type.icon,
-                                contentDescription = it.type.displayName,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            Text(
-                                text = it.type.displayName,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
+                RewardTypeLabel(
+                    modifier = Modifier.fillMaxWidth(),
+                    rewardType = data?.type,
+                    style = RewardTypeLabelStyle.DEFAULT
+                )
             }
         }
 
         Crossfade(
+            modifier = Modifier.animateContentSize(),
             targetState = data,
             label = "Progress cluster crossfade"
         ) {
@@ -193,7 +193,7 @@ fun LevelHeader(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(ButtonDefaults.MinHeight)
+                        .height(ButtonDefaults.MinHeight * configuration.fontScale)
                         .padding(1.dp)
                         .clip(MaterialTheme.shapes.extraLarge)
                         .pulseAnimation()

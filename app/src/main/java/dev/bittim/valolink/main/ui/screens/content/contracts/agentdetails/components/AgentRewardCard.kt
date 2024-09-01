@@ -47,6 +47,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -54,11 +57,14 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
+import dev.bittim.valolink.main.ui.components.RewardTypeLabel
+import dev.bittim.valolink.main.ui.components.RewardTypeLabelStyle
 import dev.bittim.valolink.main.ui.components.UnlockButton
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.components.pulseAnimation
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
+import dev.bittim.valolink.main.ui.util.getScaledLineHeightFromFontStyle
 
 data object AgentRewardCard {
     val width: Dp = 256.dp
@@ -69,6 +75,8 @@ data class AgentRewardCardData(
     val name: String,
     val levelUuid: String,
     val type: RewardType,
+    val levelName: String,
+    val contractName: String,
     val price: Int,
     val amount: Int,
     val previewIcon: String,
@@ -78,28 +86,27 @@ data class AgentRewardCardData(
     val isOwned: Boolean = false,
 )
 
-// TODO: Rework these a bit
 @Composable
 fun AgentRewardCard(
     modifier: Modifier = Modifier,
     data: AgentRewardCardData?,
     unlockReward: () -> Unit = {},
     resetReward: () -> Unit = {},
-    onNavToLevelDetails: (String) -> Unit,
+    onNavToLevelDetails: (levelUuid: String) -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+
     Card(
         modifier = modifier
             .width(AgentRewardCard.width)
-            .aspectRatio(0.8f)
-            .fillMaxSize()
             .clickable { if (data?.levelUuid != null) onNavToLevelDetails(data.levelUuid) }
     ) {
         var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
 
         Surface(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(1.8f)
+                .aspectRatio(4f / 3f)
                 .clip(MaterialTheme.shapes.medium),
             tonalElevation = 3.dp
         ) {
@@ -240,14 +247,12 @@ fun AgentRewardCard(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
                 .padding(
                     start = 16.dp,
                     bottom = 16.dp,
                     end = 16.dp
                 ),
-            verticalArrangement = Arrangement.Bottom
+            verticalArrangement = Arrangement.Top
         ) {
             Crossfade(
                 targetState = data,
@@ -257,39 +262,66 @@ fun AgentRewardCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(MaterialTheme.typography.titleMedium.lineHeight.value.dp)
-                            .padding(1.dp)
+                            .height(
+                                getScaledLineHeightFromFontStyle(
+                                    density,
+                                    configuration,
+                                    MaterialTheme.typography.labelMedium
+                                )
+                            )
+                            .clip(MaterialTheme.shapes.small)
+                            .pulseAnimation()
+                    )
+                } else {
+                    Text(
+                        text = "${it.levelName} • ${it.contractName}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(2.dp))
+
+            Crossfade(
+                targetState = data,
+                label = "Name Loading"
+            ) {
+                if (it == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(
+                                getScaledLineHeightFromFontStyle(
+                                    density,
+                                    configuration,
+                                    MaterialTheme.typography.titleMedium
+                                )
+                            )
                             .clip(MaterialTheme.shapes.small)
                             .pulseAnimation()
                     )
                 } else {
                     Text(
                         text = if (it.amount > 1) "${it.amount} ${it.name}" else it.name,
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
 
-            Crossfade(targetState = data, label = "Type Loading") {
-                if (it == null) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(MaterialTheme.typography.labelMedium.lineHeight.value.dp)
-                            .padding(1.dp)
-                            .clip(MaterialTheme.shapes.small)
-                            .pulseAnimation()
-                    )
-                } else {
-                    Text(
-                        text = it.type.displayName,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+            Spacer(Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
+            RewardTypeLabel(
+                modifier = Modifier.fillMaxWidth(),
+                rewardType = data?.type,
+                style = RewardTypeLabelStyle.SMALL
+            )
+
+            Spacer(Modifier.height(8.dp))
 
             Crossfade(
                 targetState = data,
@@ -299,9 +331,9 @@ fun AgentRewardCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(ButtonDefaults.MinHeight)
+                            .height(ButtonDefaults.MinHeight * configuration.fontScale)
                             .padding(1.dp)
-                            .clip(MaterialTheme.shapes.extraLarge)
+                            .clip(ButtonDefaults.shape)
                             .pulseAnimation()
                     )
                 } else {
@@ -344,6 +376,41 @@ fun AgentRewardCardPreview() {
                     name = "Metamorphosis Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
+                    levelName = "Level 9",
+                    contractName = "Clove Contract",
+                    price = 2000,
+                    amount = 1,
+                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
+                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png"
+                ),
+                onNavToLevelDetails = {}
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "Light Mode",
+    showBackground = true
+)
+@Preview(
+    name = "Dark Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true
+)
+@Composable
+fun LongNameAgentRewardCardPreview() {
+    ValolinkTheme {
+        Column(
+            modifier = Modifier.wrapContentSize()
+        ) {
+            AgentRewardCard(
+                data = AgentRewardCardData(
+                    name = "Epilogue: Build Your Own Vandal Card",
+                    levelUuid = "",
+                    type = RewardType.PLAYER_CARD,
+                    levelName = "Level 9",
+                    contractName = "Clove Contract",
                     price = 2000,
                     amount = 1,
                     previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
@@ -375,6 +442,8 @@ fun LockedAgentRewardCardPreview() {
                     name = "Metamorphosis Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
+                    levelName = "Level 9",
+                    contractName = "Clove Contract",
                     price = 2000,
                     amount = 1,
                     previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
@@ -407,6 +476,8 @@ fun OwnedAgentRewardCardPreview() {
                     name = "Metamorphosis Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
+                    levelName = "Level 9",
+                    contractName = "Clove Contract",
                     price = 2000,
                     amount = 1,
                     previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",

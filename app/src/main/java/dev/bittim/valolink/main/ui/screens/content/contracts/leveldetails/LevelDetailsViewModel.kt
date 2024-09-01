@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
@@ -68,6 +69,8 @@ class LevelDetailsViewModel @Inject constructor(
         fetchDetailsJob = viewModelScope.launch {
             launch {
                 withContext(Dispatchers.IO) {
+                    _state.update { LevelDetailsState() }
+
                     contractRepository
                         .getByUuid(contract, true)
                         .onStart { _state.update { it.copy(isContractLoading = true) } }
@@ -114,15 +117,32 @@ class LevelDetailsViewModel @Inject constructor(
                                     isGear = level.isPurchasableWithDough
                                 )
                             }
-                            currencyRepository.getByUuid(unlockCurrencyUuid)
+
+                            // Get data related to level
+                            val currencyFlow = currencyRepository.getByUuid(unlockCurrencyUuid)
+                            val prevLevelFlow =
+                                if (level.dependency != null) contractRepository.getLevelByUuid(
+                                    level.dependency
+                                ) else flowOf(null)
+                            val nextLevelFlow = contractRepository.getLevelByDependency(level.uuid)
+
+                            combine(
+                                currencyFlow,
+                                prevLevelFlow,
+                                nextLevelFlow
+                            ) { currency, prevLevel, nextLevel ->
+                                Pair(currency, Pair(prevLevel, nextLevel))
+                            }
                         }
-                        .onStart { _state.update { it.copy(isCurrencyLoading = true) } }
+                        .onStart { _state.update { it.copy(isLevelRelationsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                        .collectLatest { currency ->
+                        .collectLatest { relations ->
                             _state.update {
                                 it.copy(
-                                    isCurrencyLoading = false,
-                                    unlockCurrency = currency
+                                    isLevelRelationsLoading = false,
+                                    unlockCurrency = relations?.first,
+                                    previousLevel = relations?.second?.first,
+                                    nextLevel = relations?.second?.second
                                 )
                             }
                         }
