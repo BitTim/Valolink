@@ -3,6 +3,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.compo
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -102,6 +103,7 @@ fun RelationsSection(
                 )
 
                 Crossfade(
+                    modifier = Modifier.animateContentSize(),
                     targetState = data,
                     label = "Relation name Loading"
                 ) {
@@ -184,7 +186,7 @@ fun RelationsSection(
                 onNavToLevelDetails = onNavToLevelDetails
             )
         }
-        
+
         Spacer(Modifier.height(24.dp))
     }
 }

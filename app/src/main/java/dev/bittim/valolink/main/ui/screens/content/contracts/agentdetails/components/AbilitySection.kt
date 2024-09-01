@@ -61,7 +61,11 @@ fun AbilitySection(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Crossfade(targetState = abilities, label = "Ability tabs loading") {
+        Crossfade(
+            modifier = Modifier.animateContentSize(),
+            targetState = abilities,
+            label = "Ability tabs loading"
+        ) {
             if (it == null) {
                 Row(
                     modifier = Modifier
@@ -104,7 +108,11 @@ fun AbilitySection(
         }
 
 
-        Crossfade(targetState = abilities, label = "Ability details loading") {
+        Crossfade(
+            modifier = Modifier.animateContentSize(),
+            targetState = abilities,
+            label = "Ability details loading"
+        ) {
             if (it == null) {
                 Box(
                     modifier = Modifier

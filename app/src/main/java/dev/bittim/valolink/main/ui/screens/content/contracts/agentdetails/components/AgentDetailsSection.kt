@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +35,11 @@ fun AgentDetailsSection(agent: Agent?) {
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Crossfade(targetState = agent?.displayName, label = "Agent name loading") {
+            Crossfade(
+                modifier = Modifier.animateContentSize(),
+                targetState = agent?.displayName,
+                label = "Agent name loading"
+            ) {
                 if (it == null) {
                     Box(
                         modifier = Modifier
@@ -53,6 +58,7 @@ fun AgentDetailsSection(agent: Agent?) {
             }
 
             Crossfade(
+                modifier = Modifier.animateContentSize(),
                 targetState = agent?.description,
                 label = "Agent description loading"
             ) {
@@ -78,7 +84,11 @@ fun AgentDetailsSection(agent: Agent?) {
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Crossfade(targetState = agent?.role, label = "Agent role loading") {
+            Crossfade(
+                modifier = Modifier.animateContentSize(),
+                targetState = agent?.role,
+                label = "Agent role loading"
+            ) {
                 if (it == null) {
                     Box(
                         modifier = Modifier
@@ -112,6 +122,7 @@ fun AgentDetailsSection(agent: Agent?) {
             }
 
             Crossfade(
+                modifier = Modifier.animateContentSize(),
                 targetState = agent?.role?.description,
                 label = "Role description loading"
             ) {

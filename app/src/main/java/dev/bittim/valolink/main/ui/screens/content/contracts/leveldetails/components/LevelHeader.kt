@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.compo
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -74,7 +75,11 @@ fun LevelHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Crossfade(targetState = data, label = "Image loading crossfade") {
+            Crossfade(
+                modifier = Modifier.animateContentSize(),
+                targetState = data,
+                label = "Image loading crossfade"
+            ) {
                 if (it == null) {
                     Box(
                         modifier = Modifier
@@ -112,6 +117,7 @@ fun LevelHeader(
 
             Column {
                 Crossfade(
+                    modifier = Modifier.animateContentSize(),
                     targetState = data,
                     label = "Level and contract name crossfade"
                 ) {
@@ -140,6 +146,7 @@ fun LevelHeader(
                 }
 
                 Crossfade(
+                    modifier = Modifier.animateContentSize(),
                     targetState = data,
                     label = "Display name crossfade"
                 ) {
@@ -178,6 +185,7 @@ fun LevelHeader(
         }
 
         Crossfade(
+            modifier = Modifier.animateContentSize(),
             targetState = data,
             label = "Progress cluster crossfade"
         ) {

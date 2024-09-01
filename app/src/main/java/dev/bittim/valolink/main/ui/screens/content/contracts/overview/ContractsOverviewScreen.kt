@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.overview
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -88,7 +89,11 @@ fun ContractsOverviewScreen(
         val loadingBarVisible =
             state.isUserDataLoading || state.isActiveContractsLoading || state.isAgentGearsLoading || state.isInactiveContractsLoading
 
-        Crossfade(loadingBarVisible, label = "Loading Bar visibility") {
+        Crossfade(
+            modifier = Modifier.animateContentSize(),
+            targetState = loadingBarVisible,
+            label = "Loading Bar visibility"
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -123,6 +128,8 @@ fun ContractsOverviewScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .animateItem()
+                        .animateContentSize()
                 ) {
                     Text(
                         modifier = Modifier.padding(bottom = 4.dp),
@@ -150,7 +157,9 @@ fun ContractsOverviewScreen(
                     }
 
                     ContractCard(
-                        modifier = Modifier.animateItem(),
+                        modifier = Modifier
+                            .animateItem()
+                            .animateContentSize(),
                         data = if (it == null) {
                             null
                         } else {
@@ -192,7 +201,12 @@ fun ContractsOverviewScreen(
             )
 
             item {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier
+                        .height(8.dp)
+                        .animateItem()
+                        .animateContentSize()
+                )
             }
 
             stickyHeader {
@@ -200,6 +214,8 @@ fun ContractsOverviewScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .animateItem()
+                        .animateContentSize()
                 ) {
                     Row(
                         modifier = Modifier.padding(bottom = 4.dp),
@@ -230,6 +246,9 @@ fun ContractsOverviewScreen(
                 }
 
                 HorizontalMultiBrowseCarousel(
+                    modifier = Modifier
+                        .animateItem()
+                        .animateContentSize(),
                     state = carouselState,
                     preferredItemWidth = AgentCarouselCard.preferredWidth,
                     itemSpacing = 8.dp,
@@ -288,7 +307,9 @@ fun ContractsOverviewScreen(
 
                     AgentCarouselCard(
                         modifier = Modifier
-                            .maskClip(shape = MaterialTheme.shapes.extraLarge),
+                            .maskClip(shape = MaterialTheme.shapes.extraLarge)
+                            .animateItem()
+                            .animateContentSize(),
                         data = cardData,
                         maskedWidth = carouselItemInfo.maskRect.width,
                         onNavToAgentDetails = onNavToAgentDetails
@@ -297,7 +318,12 @@ fun ContractsOverviewScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier
+                        .height(8.dp)
+                        .animateItem()
+                        .animateContentSize()
+                )
             }
 
             stickyHeader {
@@ -305,6 +331,8 @@ fun ContractsOverviewScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .animateItem()
+                        .animateContentSize()
                 ) {
                     Column(
                         modifier = Modifier
@@ -355,7 +383,9 @@ fun ContractsOverviewScreen(
                     }
 
                     ContractCard(
-                        modifier = Modifier.animateItem(),
+                        modifier = Modifier
+                            .animateItem()
+                            .animateContentSize(),
                         data = if (it == null) {
                             null
                         } else {
@@ -398,7 +428,12 @@ fun ContractsOverviewScreen(
             )
 
             item {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(
+                    modifier = Modifier
+                        .height(4.dp)
+                        .animateItem()
+                        .animateContentSize()
+                )
             }
         }
     }

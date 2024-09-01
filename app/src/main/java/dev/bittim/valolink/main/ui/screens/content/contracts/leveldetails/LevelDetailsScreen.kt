@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -102,6 +103,7 @@ fun LevelDetailsScreen(
         cardImage = {
             Box {
                 Crossfade(
+                    modifier = Modifier.animateContentSize(),
                     targetState = selectedVariant,
                     label = "Preview Image Transition"
                 ) {
