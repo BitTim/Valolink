@@ -41,32 +41,35 @@ class AgentTest {
 
     @Test
     fun calcRemainingDays_returnsCorrectValue_whenNowIsBetweenStartAndEndTime() {
+        // Offset calculation by 10 Minutes to facilitate slower machines running the tests
+        val now = Instant.now().plus(10, ChronoUnit.MINUTES)
+
         assertEquals(
             1,
             Agent.EMPTY.copy(
-                startTime = Instant.now().minus(2, ChronoUnit.DAYS),
-                endTime = Instant.now().plus(1, ChronoUnit.DAYS)
+                startTime = now.minus(2, ChronoUnit.DAYS),
+                endTime = now.plus(1, ChronoUnit.DAYS)
             ).calcRemainingDays()
         )
         assertEquals(
             0,
             Agent.EMPTY.copy(
-                startTime = Instant.now().minus(2, ChronoUnit.DAYS),
-                endTime = Instant.now()
+                startTime = now.minus(2, ChronoUnit.DAYS),
+                endTime = now
             ).calcRemainingDays()
         )
         assertEquals(
             1,
             Agent.EMPTY.copy(
-                startTime = Instant.now().minus(2, ChronoUnit.DAYS),
-                endTime = Instant.now().plus(1, ChronoUnit.DAYS).plus(12, ChronoUnit.HOURS)
+                startTime = now.minus(2, ChronoUnit.DAYS),
+                endTime = now.plus(1, ChronoUnit.DAYS).plus(12, ChronoUnit.HOURS)
             ).calcRemainingDays()
         )
         assertEquals(
             0,
             Agent.EMPTY.copy(
-                startTime = Instant.now().minus(2, ChronoUnit.DAYS),
-                endTime = Instant.now().plus(12, ChronoUnit.HOURS)
+                startTime = now.minus(2, ChronoUnit.DAYS),
+                endTime = now.plus(12, ChronoUnit.HOURS)
             ).calcRemainingDays()
         )
     }
