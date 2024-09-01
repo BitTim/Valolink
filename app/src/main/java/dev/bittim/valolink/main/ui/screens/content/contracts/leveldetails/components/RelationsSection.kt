@@ -1,6 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -129,20 +131,23 @@ fun RelationsSection(
                 }
             }
 
-            Crossfade(
+            AnimatedContent(
+                modifier = Modifier.wrapContentWidth(Alignment.End),
                 targetState = data,
-                label = "Relation buttons Loading"
+                label = "Relation buttons Loading",
             ) { checkedData ->
                 if (checkedData == null) {
                     Box(
                         modifier = Modifier
-                            .width(ButtonDefaults.MinHeight * 2 + 16.dp)
+                            .width(ButtonDefaults.MinWidth * 2)
                             .height(ButtonDefaults.MinHeight)
                             .clip(ButtonDefaults.filledTonalShape)
                             .pulseAnimation()
                     )
                 } else {
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.End
+                    ) {
                         checkedData.relations.forEachIndexed { index, relation ->
                             val isSelected = selectedRelation == index
 

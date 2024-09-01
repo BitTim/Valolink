@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Redo
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -30,12 +33,15 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.ui.components.BaseDetailsScreen
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardListCardData
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardResetAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardUnlockAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.LevelHeader
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.LevelHeaderData
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RelationsSection
+import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RelationsSectionData
+import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RelationsSectionRelation
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
 
 @Composable
@@ -171,8 +177,54 @@ fun LevelDetailsScreen(
                     }
                 )
 
+                val prevLevel = state.previousLevel
+                val prevLevelReward = prevLevel?.reward?.relation
+                val isPrevLevelOwned = userContract?.levels?.any { it.level == prevLevel?.uuid }
+
+                val nextLevel = state.nextLevel
+                val nextLevelReward = nextLevel?.reward?.relation
+                val isNextLevelOwned = userContract?.levels?.any { it.level == nextLevel?.uuid }
+
+                val relationsSectionData =
+                    if (state.isLevelRelationsLoading || state.contract == null) null else RelationsSectionData(
+                        relations = listOfNotNull(
+                            if (prevLevel == null || prevLevelReward == null || isPrevLevelOwned == null) null else RelationsSectionRelation(
+                                level = AgentRewardListCardData(
+                                    name = prevLevelReward.displayName,
+                                    levelUuid = prevLevel.uuid,
+                                    type = prevLevelReward.type,
+                                    levelName = prevLevel.name,
+                                    contractName = state.contract.displayName,
+                                    amount = prevLevelReward.amount,
+                                    displayIcon = prevLevelReward.displayIcon,
+                                    background = prevLevelReward.background,
+                                    isLocked = false, // TODO: Replace with proper isLocked state
+                                    isOwned = isPrevLevelOwned,
+                                ),
+                                name = "Previous",
+                                icon = Icons.AutoMirrored.Default.Undo
+                            ),
+                            if (nextLevel == null || nextLevelReward == null || isNextLevelOwned == null) null else RelationsSectionRelation(
+                                level = AgentRewardListCardData(
+                                    name = nextLevelReward.displayName,
+                                    levelUuid = nextLevel.uuid,
+                                    type = nextLevelReward.type,
+                                    levelName = nextLevel.name,
+                                    contractName = state.contract.displayName,
+                                    amount = nextLevelReward.amount,
+                                    displayIcon = nextLevelReward.displayIcon,
+                                    background = nextLevelReward.background,
+                                    isLocked = false, // TODO: Replace with proper isLocked state
+                                    isOwned = isNextLevelOwned,
+                                ),
+                                name = "Next",
+                                icon = Icons.AutoMirrored.Default.Redo
+                            )
+                        )
+                    )
+
                 RelationsSection(
-                    data = null,
+                    data = relationsSectionData,
                     onNavToLevelDetails = {} // TODO Add this
                 )
 

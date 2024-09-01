@@ -121,9 +121,9 @@ fun AgentRewardListCard(
                         }
 
                         val imagePadding = when (it.type) {
-                            RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
-                            RewardType.PLAYER_CARD                -> PaddingValues(0.dp)
-                            else                                  -> PaddingValues(16.dp)
+                            RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(16.dp)
+                            RewardType.PLAYER_CARD, RewardType.SPRAY -> PaddingValues(0.dp)
+                            else -> PaddingValues(8.dp)
                         }
 
                         AsyncImage(
