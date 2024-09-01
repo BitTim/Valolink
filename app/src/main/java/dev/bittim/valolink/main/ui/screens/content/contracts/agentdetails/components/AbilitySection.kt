@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.compo
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -115,7 +116,9 @@ fun AbilitySection(
                 )
             } else {
                 HorizontalPager(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateContentSize(),
                     verticalAlignment = Alignment.Top,
                     state = abilityPagerState
                 ) { index ->
