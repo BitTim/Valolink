@@ -95,7 +95,8 @@ fun AbilitySection(
                                     colorFilter = ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
                                     placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_ability_icon)
                                 )
-                            })
+                            }
+                        )
                     }
                 }
             }

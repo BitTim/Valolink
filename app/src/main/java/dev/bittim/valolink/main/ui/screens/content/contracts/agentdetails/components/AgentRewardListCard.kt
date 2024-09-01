@@ -82,6 +82,7 @@ data class AgentRewardListCardData(
 fun AgentRewardListCard(
     modifier: Modifier = Modifier,
     data: AgentRewardListCardData?,
+    showMenuButton: Boolean = true,
     resetReward: () -> Unit = {},
     onNavToLevelDetails: (String) -> Unit,
 ) {
@@ -291,33 +292,35 @@ fun AgentRewardListCard(
                 )
             }
 
-            Crossfade(targetState = data, label = "Menu Button Loading") {
-                if (it != null) {
-                    Box(
-                        contentAlignment = Alignment.CenterEnd
-                    ) {
-                        IconButton(
-                            modifier = Modifier.padding(8.dp),
-                            onClick = { isMenuExpanded = true },
+            if (showMenuButton) {
+                Crossfade(targetState = data, label = "Menu Button Loading") {
+                    if (it != null) {
+                        Box(
+                            contentAlignment = Alignment.CenterEnd
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = null
-                            )
-                        }
+                            IconButton(
+                                modifier = Modifier.padding(8.dp),
+                                onClick = { isMenuExpanded = true },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = null
+                                )
+                            }
 
-                        DropdownMenu(
-                            expanded = isMenuExpanded,
-                            onDismissRequest = { isMenuExpanded = false }
-                        ) {
-                            DropdownMenuItem(
-                                enabled = data?.isLocked == false && data.isOwned,
-                                text = { Text(text = "Reset") },
-                                onClick = {
-                                    resetReward()
-                                    isMenuExpanded = false
-                                }
-                            )
+                            DropdownMenu(
+                                expanded = isMenuExpanded,
+                                onDismissRequest = { isMenuExpanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    enabled = data?.isLocked == false && data.isOwned,
+                                    text = { Text(text = "Reset") },
+                                    onClick = {
+                                        resetReward()
+                                        isMenuExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }

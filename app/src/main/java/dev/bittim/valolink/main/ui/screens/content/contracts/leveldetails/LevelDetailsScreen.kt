@@ -35,6 +35,7 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.LevelHeader
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.LevelHeaderData
+import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RelationsSection
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
 
 @Composable
@@ -168,6 +169,11 @@ fun LevelDetailsScreen(
                             isRewardUnlockAlertShown = true
                         }
                     }
+                )
+
+                RelationsSection(
+                    data = null,
+                    onNavToLevelDetails = {} // TODO Add this
                 )
 
                 Column(
