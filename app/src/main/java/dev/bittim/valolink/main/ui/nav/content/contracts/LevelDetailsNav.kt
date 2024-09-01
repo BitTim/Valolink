@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -20,6 +21,7 @@ data class LevelDetailsNav(
 
 fun NavGraphBuilder.contractsLevelDetailsScreen(
     onNavBack: () -> Unit,
+    onNavToLevelDetails: (level: String, contract: String) -> Unit,
 ) {
     composable<LevelDetailsNav>(enterTransition = { Transition.forward },
                                 popExitTransition = { Transition.backward }) {
@@ -35,13 +37,16 @@ fun NavGraphBuilder.contractsLevelDetailsScreen(
             initUserContract = viewModel::initUserContract,
             unlockLevel = viewModel::unlockLevel,
             resetLevel = viewModel::resetLevel,
-            onNavBack = onNavBack
+            onNavBack = onNavBack,
+            onNavToLevelDetails = onNavToLevelDetails
         )
     }
 }
 
 fun NavController.navToContractsLevelDetails(uuid: String, contract: String) {
-    navigate(LevelDetailsNav(uuid, contract)) {
-        launchSingleTop = true
+    if (currentDestination?.hasRoute(LevelDetailsNav::class) == true) {
+        popBackStack<LevelDetailsNav>(true)
     }
+
+    navigate(LevelDetailsNav(uuid, contract))
 }

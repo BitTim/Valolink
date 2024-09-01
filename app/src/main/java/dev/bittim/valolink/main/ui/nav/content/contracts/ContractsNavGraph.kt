@@ -53,7 +53,13 @@ fun NavGraphBuilder.contractsNavGraph(
         )
 
         contractsLevelDetailsScreen(
-            onNavBack = { navController.navigateUp() }
+            onNavBack = { navController.navigateUp() },
+            onNavToLevelDetails = { uuid, contract ->
+                navController.navToContractsLevelDetails(
+                    uuid,
+                    contract
+                )
+            }
         )
     }
 }

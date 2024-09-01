@@ -92,7 +92,7 @@ fun AgentRewardCard(
     data: AgentRewardCardData?,
     unlockReward: () -> Unit = {},
     resetReward: () -> Unit = {},
-    onNavToLevelDetails: (String) -> Unit,
+    onNavToLevelDetails: (levelUuid: String) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current

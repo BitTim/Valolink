@@ -84,7 +84,7 @@ fun AgentRewardListCard(
     data: AgentRewardListCardData?,
     showMenuButton: Boolean = true,
     resetReward: () -> Unit = {},
-    onNavToLevelDetails: (String) -> Unit,
+    onNavToLevelDetails: (levelUuid: String) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current

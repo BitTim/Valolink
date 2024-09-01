@@ -69,6 +69,8 @@ class LevelDetailsViewModel @Inject constructor(
         fetchDetailsJob = viewModelScope.launch {
             launch {
                 withContext(Dispatchers.IO) {
+                    _state.update { LevelDetailsState() }
+
                     contractRepository
                         .getByUuid(contract, true)
                         .onStart { _state.update { it.copy(isContractLoading = true) } }

@@ -54,9 +54,10 @@ fun LevelDetailsScreen(
     unlockLevel: (uuid: String?, isPurchased: Boolean) -> Unit,
     resetLevel: (uuid: String) -> Unit,
     onNavBack: () -> Unit,
+    onNavToLevelDetails: (level: String, contract: String) -> Unit,
 ) {
     // Fetch details if they haven't been fetched yet
-    if (state.level == null || state.contract == null) {
+    if (state.level == null || state.contract == null || state.level.uuid != uuid || state.contract.uuid != contract) {
         if (!state.isLevelLoading && !state.isContractLoading) {
             fetchDetails(uuid, contract)
         }
@@ -225,7 +226,12 @@ fun LevelDetailsScreen(
 
                 RelationsSection(
                     data = relationsSectionData,
-                    onNavToLevelDetails = {} // TODO Add this
+                    onNavToLevelDetails = { levelUuid ->
+                        onNavToLevelDetails(
+                            levelUuid,
+                            state.contract?.uuid ?: ""
+                        )
+                    }
                 )
 
                 Column(
