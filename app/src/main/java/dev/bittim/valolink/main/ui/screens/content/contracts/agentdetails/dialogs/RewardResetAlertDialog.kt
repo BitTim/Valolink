@@ -42,11 +42,11 @@ fun RewardResetAlertDialog(
                 items(
                     items = levels,
                     itemContent = { level ->
-                        val reward = level.reward.relation
+                        val rewards = level.rewards.map { it.relation }
 
-                        if (reward != null) {
+                        if (rewards.isNotEmpty()) {
                             PricedListItem(
-                                reward.displayName,
+                                rewards.joinToString("\n"),
                                 currencyDisplayIcon,
                                 level.doughCost,
                                 MaterialTheme.colorScheme.onSurface

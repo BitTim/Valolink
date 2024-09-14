@@ -105,15 +105,16 @@ class ContractApiRepository @Inject constructor(
             val local = gameDatabase.contractsDao
                 .getLevelByUuid(uuid)
                 .distinctUntilChanged()
-                .flatMapLatest {
-                    if (it == null) return@flatMapLatest flowOf(null)
+                .flatMapLatest { level ->
+                    if (level == null) return@flatMapLatest flowOf(null)
+                    val rewardsFlow = combine(level.rewards.map { getReward(it) }) { it.toList() }
 
                     combine(
-                        flowOf(it),
-                        getReward(it.reward),
-                        getLevelMetadata(it.level)
-                    ) { level, reward, meta ->
-                        level.toType(reward, meta.name)
+                        flowOf(level),
+                        rewardsFlow,
+                        getLevelMetadata(level.level)
+                    ) { combinedLevel, rewards, meta ->
+                        combinedLevel.toType(rewards, meta.name)
                     }
                 }
 
@@ -136,15 +137,16 @@ class ContractApiRepository @Inject constructor(
             val local = gameDatabase.contractsDao
                 .getLevelByDependency(dependency)
                 .distinctUntilChanged()
-                .flatMapLatest {
-                    if (it == null) return@flatMapLatest flowOf(null)
+                .flatMapLatest { level ->
+                    if (level == null) return@flatMapLatest flowOf(null)
+                    val rewardsFlow = combine(level.rewards.map { getReward(it) }) { it.toList() }
 
                     combine(
-                        flowOf(it),
-                        getReward(it.reward),
-                        getLevelMetadata(it.level)
-                    ) { level, reward, meta ->
-                        level.toType(reward, meta.name)
+                        flowOf(level),
+                        rewardsFlow,
+                        getLevelMetadata(level.level)
+                    ) { combinedLevel, rewards, meta ->
+                        combinedLevel.toType(rewards, meta.name)
                     }
                 }
 
@@ -355,27 +357,31 @@ class ContractApiRepository @Inject constructor(
                     previousLevel = levelEntity.uuid
                     levelEntity
                 }
-            }.flatten()
+            }
 
-            val rewards = levelDto.zip(levels) { data, level ->
+            val rewards = levelDto.zip(levels.flatten()) { data, level ->
                 data.reward.toEntity(
                     version,
-                    levelUuid = level.uuid
+                    false,
+                    level.uuid
                 )
             }.plus(chapterDto.zip(chapters) { data, chapter ->
+                val levelList =
+                    levels.find { levelList -> levelList.any { it.chapterUuid == chapter.uuid } }
                 data.freeRewards?.map {
                     it.toEntity(
                         version,
-                        chapterUuid = chapter.uuid
+                        true,
+                        levelList?.lastOrNull()?.uuid ?: ""
                     )
-                }.orEmpty()
+                } ?: emptyList()
             }.flatten())
 
             gameDatabase.contractsDao.upsert(
                 contract,
                 content,
                 chapters.distinct().toSet(),
-                levels.distinct().toSet(),
+                levels.flatten().distinct().toSet(),
                 rewards.distinct().toSet()
             )
         }
@@ -428,27 +434,31 @@ class ContractApiRepository @Inject constructor(
 
                 previousContent = chapter.contentUuid
                 levelEntities
-            }.flatten()
+            }
 
-            val rewards = levelDto.zip(levels) { data, level ->
+            val rewards = levelDto.zip(levels.flatten()) { data, level ->
                 data.reward.toEntity(
                     version,
-                    levelUuid = level.uuid
+                    false,
+                    level.uuid
                 )
             }.plus(chapterDto.zip(chapters) { data, chapter ->
+                val levelList =
+                    levels.find { levelList -> levelList.any { it.chapterUuid == chapter.uuid } }
                 data.freeRewards?.map {
                     it.toEntity(
                         version,
-                        chapterUuid = chapter.uuid
+                        true,
+                        levelList?.lastOrNull()?.uuid ?: ""
                     )
-                }.orEmpty()
+                } ?: emptyList()
             }.flatten())
 
             gameDatabase.contractsDao.upsert(
                 contracts.distinct().toSet(),
                 contents.distinct().toSet(),
                 chapters.distinct().toSet(),
-                levels.distinct().toSet(),
+                levels.flatten().distinct().toSet(),
                 rewards.distinct().toSet()
             )
         }
@@ -479,20 +489,9 @@ class ContractApiRepository @Inject constructor(
 
         val rewardsFlow = if (withRewards) {
             combine(contractEntity.content.chapters.map { chapter ->
-                val levelRewardsFlow = if (chapter.levels.isNotEmpty())
-                    combine(chapter.levels.map { level -> getReward(level.reward) }) { it.toList() }
+                if (chapter.levels.isNotEmpty())
+                    combine(chapter.levels.map { level -> combine(level.rewards.map { getReward(it) }) { it.toList() } }) { it.toList() }
                 else flow { emit(emptyList()) }
-
-                val freeRewardsFlow = if (chapter.freeRewards.isNotEmpty())
-                    combine(chapter.freeRewards.map { reward -> getReward(reward) }) { it.toList() }
-                else flow { emit(emptyList()) }
-
-                levelRewardsFlow.combine(freeRewardsFlow) { levelRewards, freeRewards ->
-                    Pair(
-                        levelRewards,
-                        freeRewards
-                    )
-                }
             }) { it.toList() }
         } else {
             flow { emit(emptyList()) }

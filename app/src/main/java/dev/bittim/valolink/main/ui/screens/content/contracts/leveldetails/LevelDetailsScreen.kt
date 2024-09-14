@@ -68,7 +68,7 @@ fun LevelDetailsScreen(
     //  Logic
     // --------------------------------
 
-    val reward = state.level?.reward?.relation
+    val reward = state.level?.rewards?.find { !it.isFreeReward }?.relation
     val contractLevels = state.contract?.content?.chapters?.flatMap { it.levels }
     val userContract = state.userData?.contracts?.find { it.contract == state.contract?.uuid }
     if (userContract == null) {
@@ -181,11 +181,11 @@ fun LevelDetailsScreen(
                 )
 
                 val prevLevel = state.previousLevel
-                val prevLevelReward = prevLevel?.reward?.relation
+                val prevLevelReward = prevLevel?.rewards?.find { !it.isFreeReward }?.relation
                 val isPrevLevelOwned = userContract?.levels?.any { it.level == prevLevel?.uuid }
 
                 val nextLevel = state.nextLevel
-                val nextLevelReward = nextLevel?.reward?.relation
+                val nextLevelReward = nextLevel?.rewards?.find { !it.isFreeReward }?.relation
                 val isNextLevelOwned = userContract?.levels?.any { it.level == nextLevel?.uuid }
 
                 val relationsSectionData =

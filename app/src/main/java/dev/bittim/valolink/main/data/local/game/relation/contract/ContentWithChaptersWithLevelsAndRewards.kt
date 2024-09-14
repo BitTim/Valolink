@@ -23,13 +23,13 @@ data class ContentWithChaptersWithLevelsAndRewards(
 
     fun toType(
         relation: ContentRelation?,
-        rewards: List<Pair<List<RewardRelation?>, List<RewardRelation?>>>,
+        rewards: List<List<List<RewardRelation?>>>,
         levelNames: List<List<String>>,
     ): Content {
         return content.toType(
             relation,
             chapters.mapIndexed { index, rawChapter ->
-                rawChapter.toType(rewards.getOrNull(index), levelNames[index])
+                rawChapter.toType(rewards.getOrNull(index) ?: emptyList(), levelNames[index])
             }
         )
     }

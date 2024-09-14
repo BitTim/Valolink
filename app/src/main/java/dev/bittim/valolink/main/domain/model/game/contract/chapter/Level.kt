@@ -13,7 +13,7 @@ data class Level(
     val isPurchasableWithVP: Boolean,
     val doughCost: Int,
     val isPurchasableWithDough: Boolean,
-    val reward: Reward,
+    val rewards: List<Reward>,
 ) {
     fun toUserObj(userContract: String, isPurchased: Boolean): UserLevel {
         return UserLevel(

@@ -8,24 +8,24 @@ import dev.bittim.valolink.main.data.local.game.entity.contract.RewardEntity
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
 
-data class LevelWithReward(
+data class LevelWithRewards(
     @Embedded val level: LevelEntity,
     @Relation(
         parentColumn = "uuid",
         entityColumn = "levelUuid"
-    ) val reward: RewardEntity,
+    ) val rewards: List<RewardEntity>,
 ) : VersionedEntity {
     override fun getApiVersion(): String {
         return level.version
     }
 
     fun toType(
-        relation: RewardRelation?,
+        relations: List<RewardRelation?>,
         levelName: String,
     ): Level {
         return level.toType(
             levelName,
-            reward.toType(relation),
+            this.rewards.zip(relations) { reward, relation -> reward.toType(relation) },
         )
     }
 }

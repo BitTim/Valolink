@@ -178,7 +178,7 @@ fun ContractsOverviewScreen(
                                 derivedStateOf {
                                     it.content.chapters
                                         .flatMap { chapter -> chapter.levels }
-                                        .firstOrNull { level -> level.reward.relation?.type == RewardType.AGENT } != null
+                                        .firstOrNull { level -> level.rewards.any { reward -> reward.relation?.type == RewardType.AGENT } } != null
                                 }
                             }
 
@@ -405,7 +405,7 @@ fun ContractsOverviewScreen(
                                 derivedStateOf {
                                     it.content.chapters
                                         .flatMap { chapter -> chapter.levels }
-                                        .firstOrNull { level -> level.reward.relation?.type == RewardType.AGENT } != null
+                                        .firstOrNull { level -> level.rewards.any { reward -> reward.relation?.type == RewardType.AGENT } } != null
                                 }
                             }
 

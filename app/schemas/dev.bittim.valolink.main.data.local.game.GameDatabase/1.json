@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "aa62c84aa2e2bda8821188380836d45a",
+    "identityHash": "d428f28578ab63f82bcabba23dd3dfa1",
     "entities": [
       {
         "tableName": "Version",
@@ -549,7 +549,7 @@
       },
       {
         "tableName": "ContractRewards",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `levelUuid` TEXT, `chapterUuid` TEXT, `version` TEXT NOT NULL, `rewardType` TEXT NOT NULL, `rewardUuid` TEXT NOT NULL, `amount` INTEGER NOT NULL, `isHighlighted` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`levelUuid`) REFERENCES `ContractChapterLevels`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`chapterUuid`) REFERENCES `ContractChapters`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `levelUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `rewardType` TEXT NOT NULL, `rewardUuid` TEXT NOT NULL, `amount` INTEGER NOT NULL, `isHighlighted` INTEGER NOT NULL, `isFreeReward` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`levelUuid`) REFERENCES `ContractChapterLevels`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -561,13 +561,7 @@
             "fieldPath": "levelUuid",
             "columnName": "levelUuid",
             "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "chapterUuid",
-            "columnName": "chapterUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "version",
@@ -598,6 +592,12 @@
             "columnName": "isHighlighted",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isFreeReward",
+            "columnName": "isFreeReward",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -624,15 +624,6 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_ContractRewards_levelUuid` ON `${TABLE_NAME}` (`levelUuid`)"
-          },
-          {
-            "name": "index_ContractRewards_chapterUuid",
-            "unique": false,
-            "columnNames": [
-              "chapterUuid"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_ContractRewards_chapterUuid` ON `${TABLE_NAME}` (`chapterUuid`)"
           }
         ],
         "foreignKeys": [
@@ -642,17 +633,6 @@
             "onUpdate": "CASCADE",
             "columns": [
               "levelUuid"
-            ],
-            "referencedColumns": [
-              "uuid"
-            ]
-          },
-          {
-            "table": "ContractChapters",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "chapterUuid"
             ],
             "referencedColumns": [
               "uuid"
@@ -2493,7 +2473,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aa62c84aa2e2bda8821188380836d45a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd428f28578ab63f82bcabba23dd3dfa1')"
     ]
   }
 }
