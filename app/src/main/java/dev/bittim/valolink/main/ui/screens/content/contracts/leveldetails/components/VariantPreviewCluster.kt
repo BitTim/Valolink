@@ -1,8 +1,6 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,47 +31,40 @@ fun VariantPreviewCluster(
         mutableIntStateOf(0)
     }
 
-    if (variants.count() > 1) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Bottom
+    Surface(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.extraLarge,
+        shadowElevation = 3.dp,
+        color = MaterialTheme.colorScheme.surface,
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
         ) {
-            Surface(
-                shape = MaterialTheme.shapes.extraLarge,
-                shadowElevation = 3.dp,
-                color = MaterialTheme.colorScheme.surface,
-            ) {
-                Row(
-                    modifier = Modifier.padding(8.dp),
-                ) {
-                    variants.forEachIndexed { index, image ->
-                        val isSelected = selected == index
+            variants.forEachIndexed { index, image ->
+                val isSelected = selected == index
 
-                        if (image is ImageVector) {
-                            FilledIconToggleButton(checked = isSelected, onCheckedChange = {
-                                if (it) {
-                                    selected = index
-                                    onSelected(index)
-                                }
-                            }) {
-                                Icon(imageVector = image, contentDescription = null)
+                if (image is ImageVector) {
+                    FilledIconToggleButton(checked = isSelected, onCheckedChange = {
+                        if (it) {
+                            selected = index
+                            onSelected(index)
+                        }
+                    }) {
+                        Icon(imageVector = image, contentDescription = null)
+                    }
+                }
+
+                if (image is String) {
+                    ChromaToggleButton(
+                        swatch = image,
+                        checked = isSelected,
+                        onCheckedChange = {
+                            if (it) {
+                                selected = index
+                                onSelected(index)
                             }
                         }
-
-                        if (image is String) {
-                            ChromaToggleButton(
-                                swatch = image,
-                                checked = isSelected,
-                                onCheckedChange = {
-                                    if (it) {
-                                        selected = index
-                                        onSelected(index)
-                                    }
-                                }
-                            )
-                        }
-                    }
+                    )
                 }
             }
         }
