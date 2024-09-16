@@ -10,5 +10,4 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.compose.compiler) apply false
-    id("com.adarshr.test-logger") version "4.0.0"
 }

@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
@@ -43,12 +41,13 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.compon
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardResetAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardUnlockAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
-import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.LevelHeader
+import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.HeaderSection
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.LevelHeaderData
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RelationsSection
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RelationsSectionData
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RelationsSectionRelation
-import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.RewardSelector
+import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.UnlockSection
+import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.UnlockSectionData
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
 
 @Composable
@@ -74,7 +73,7 @@ fun LevelDetailsScreen(
     //  Logic
     // --------------------------------
 
-    val rewards = state.level?.rewards?.map { it.relation }
+    val rewards = state.level?.rewards
     val contractLevels = state.contract?.content?.chapters?.flatMap { it.levels }
     val userContract = state.userData?.contracts?.find { it.contract == state.contract?.uuid }
     if (userContract == null) {
@@ -108,13 +107,13 @@ fun LevelDetailsScreen(
         cardBackground = {
             LevelBackdrop(
                 isDisabled = false,
-                backgroundImage = reward?.background
+                backgroundImage = reward?.relation?.background
             ) {}
         },
         cardImage = {
             Box {
                 Crossfade(
-                    modifier = Modifier.animateContentSize(),
+                    modifier = Modifier,
                     targetState = selectedVariant,
                     label = "Preview Image Transition"
                 ) {
@@ -133,7 +132,7 @@ fun LevelDetailsScreen(
                             .Builder(
                                 LocalContext.current
                             )
-                            .data(reward?.previewImages?.getOrNull(it)?.first ?: "")
+                            .data(reward?.relation?.previewImages?.getOrNull(it)?.first ?: "")
                             .crossfade(true)
                             .build(),
                         contentDescription = null,
@@ -150,36 +149,18 @@ fun LevelDetailsScreen(
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.End
             ) {
                 Crossfade(
-                    rewards,
-                    label = "RewardSelector appearance"
-                ) { checkedRewards ->
-                    if (checkedRewards != null && checkedRewards.count() > 1) {
-                        RewardSelector(
-                            displayIcons = checkedRewards.map { it?.displayIcon ?: "" },
-                            onRewardSelected = {
-                                selectedVariant = 0
-                                selectedReward = it
-                            }
-                        )
-                    } else {
-                        Spacer(Modifier.width(1.dp))
-                    }
-                }
-
-                Crossfade(
-                    reward?.previewImages?.map { it.second } ?: emptyList(),
+                    reward?.relation?.previewImages?.map { it.second } ?: emptyList(),
                     label = "VariantCluster appearance"
                 ) { checkedVariants ->
                     if (checkedVariants.count() > 1) {
                         VariantPreviewCluster(
+                            modifier = Modifier.animateContentSize(),
                             variants = checkedVariants,
                             onSelected = { selectedVariant = it }
                         )
-                    } else {
-                        Spacer(Modifier.width(1.dp))
                     }
                 }
             }
@@ -187,32 +168,47 @@ fun LevelDetailsScreen(
         content = {
             Column {
                 val checkedReward = reward
+                val levelHeaderData = if (
+                    checkedReward?.relation == null ||
+                    state.contract == null
+                ) {
+                    null
+                } else {
+                    LevelHeaderData(
+                        displayName = if (checkedReward.amount > 1) "${checkedReward.amount} ${checkedReward.relation.displayName}" else checkedReward.relation.displayName,
+                        type = checkedReward.relation.type,
+                        displayIcon = checkedReward.relation.displayIcon,
+                        levelName = state.level?.name ?: "",
+                        contractName = state.contract.displayName,
+                    )
+                }
 
-                LevelHeader(
+                HeaderSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    data = if (
-                        checkedReward == null ||
-                        state.contract == null ||
-                        isLocked == null
-                    ) {
-                        null
-                    } else {
-                        LevelHeaderData(
-                            displayName = if (checkedReward.amount > 1) "${checkedReward.amount} ${checkedReward.displayName}" else checkedReward.displayName,
-                            type = checkedReward.type,
-                            displayIcon = checkedReward.displayIcon,
-                            levelName = state.level?.name ?: "",
-                            contractName = state.contract.displayName,
-                            currencyIcon = state.unlockCurrency?.displayIcon,
-                            price = state.price,
-                            xpTotal = if (state.isGear) -1 else state.level?.xp ?: 0,
-                            xpProgress = 25, // TODO: Replace with actual user values,
-                            isLocked = false, // TODO: Replace with proper isLocked state
-                            isOwned = !isLocked
-                        )
-                    },
+                        .padding(start = 16.dp, end = 16.dp),
+                    levelHeaderData = levelHeaderData,
+                    rewards = rewards,
+                    onRewardSelected = {
+                        selectedVariant = 0
+                        selectedReward = it
+                    }
+                )
+
+                val unlockSectionData = if (isLocked == null) null else UnlockSectionData(
+                    currencyIcon = state.unlockCurrency?.displayIcon,
+                    price = state.price,
+                    xpTotal = if (state.isGear) -1 else state.level?.xp ?: 0,
+                    xpProgress = 25, // TODO: Replace with actual user values,
+                    isLocked = false, // TODO: Replace with proper isLocked state
+                    isOwned = !isLocked
+                )
+
+                UnlockSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp),
+                    data = unlockSectionData,
                     onUnlock = {
                         if (userContract?.levels?.lastOrNull()?.level == state.level?.dependency) {
                             // Unlock just one
@@ -221,7 +217,7 @@ fun LevelDetailsScreen(
                             // Unlock multiple at the same time
                             isRewardUnlockAlertShown = true
                         }
-                    }
+                    },
                 )
 
                 val prevLevel = state.previousLevel
