@@ -16,12 +16,6 @@ import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
         childColumns = ["levelUuid"],
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
-    ), ForeignKey(
-        entity = ChapterEntity::class,
-        parentColumns = ["uuid"],
-        childColumns = ["chapterUuid"],
-        onUpdate = ForeignKey.CASCADE,
-        onDelete = ForeignKey.CASCADE
     )],
     indices = [Index(
         value = ["uuid"],
@@ -29,20 +23,17 @@ import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardRelation
     ), Index(
         value = ["levelUuid"],
         unique = false
-    ), Index(
-        value = ["chapterUuid"],
-        unique = false
     )]
 )
 data class RewardEntity(
     @PrimaryKey val uuid: String,
-    val levelUuid: String?,
-    val chapterUuid: String?,
+    val levelUuid: String,
     override val version: String,
     val rewardType: String,
     val rewardUuid: String,
     val amount: Int,
     val isHighlighted: Boolean,
+    val isFreeReward: Boolean,
 ) : GameEntity() {
     fun toType(relation: RewardRelation?): Reward {
         return Reward(
@@ -50,6 +41,7 @@ data class RewardEntity(
             rewardUuid,
             amount,
             isHighlighted,
+            isFreeReward,
             relation
         )
     }

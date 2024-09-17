@@ -14,7 +14,7 @@ import dev.bittim.valolink.main.data.local.game.relation.agent.RecruitmentWithAg
 import dev.bittim.valolink.main.data.local.game.relation.contract.ChapterWithLevelsAndRewards
 import dev.bittim.valolink.main.data.local.game.relation.contract.ContentWithChaptersWithLevelsAndRewards
 import dev.bittim.valolink.main.data.local.game.relation.contract.ContractWithContentWithChaptersWithLevelsAndRewards
-import dev.bittim.valolink.main.data.local.game.relation.contract.LevelWithReward
+import dev.bittim.valolink.main.data.local.game.relation.contract.LevelWithRewards
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -74,11 +74,11 @@ interface ContractsDao {
 
     @Transaction
     @Query("SELECT * FROM ContractChapterLevels WHERE uuid = :uuid LIMIT 1")
-    fun getLevelByUuid(uuid: String): Flow<LevelWithReward?>
+    fun getLevelByUuid(uuid: String): Flow<LevelWithRewards?>
 
     @Transaction
     @Query("SELECT * FROM ContractChapterLevels WHERE dependency = :dependency LIMIT 1")
-    fun getLevelByDependency(dependency: String): Flow<LevelWithReward?>
+    fun getLevelByDependency(dependency: String): Flow<LevelWithRewards?>
 
     @Transaction
     @Query("SELECT * FROM AgentRecruitments WHERE uuid = :uuid LIMIT 1")

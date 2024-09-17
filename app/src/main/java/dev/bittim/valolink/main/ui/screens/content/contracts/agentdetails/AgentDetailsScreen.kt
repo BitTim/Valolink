@@ -335,7 +335,7 @@ fun AgentDetailsScreen(
                     items = items ?: List(numRewardsVisible) { null },
                     key = { it?.uuid ?: UUID.randomUUID().toString() },
                     itemContent = { level ->
-                        val reward = level?.reward?.relation
+                        val reward = level?.rewards?.find { !it.isFreeReward }?.relation
 
                         AgentRewardCard(
                             data = if (level == null || reward == null) {
@@ -347,6 +347,7 @@ fun AgentDetailsScreen(
                                     type = reward.type,
                                     levelName = level.name,
                                     contractName = state.agentGear?.displayName ?: "",
+                                    rewardCount = level.rewards.count(),
                                     previewIcon = reward.previewImages.first().first ?: "",
                                     background = reward.background,
                                     price = level.doughCost,

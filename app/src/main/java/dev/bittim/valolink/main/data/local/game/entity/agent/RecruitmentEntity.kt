@@ -47,36 +47,38 @@ data class RecruitmentEntity(
         )
 
         return Contract(
-            uuid,
-            agent.displayName,
-            useLevelVpCostOverride,
-            levelVpCostOverride,
-            Content(
-                agentWithTime,
-                -1,
-                listOf(
+            uuid = uuid,
+            displayName = agent.displayName,
+            useLevelVPCostOverride = useLevelVpCostOverride,
+            levelVPCostOverride = levelVpCostOverride,
+            content = Content(
+                relation = agentWithTime,
+                premiumVPCost = -1,
+                chapters = listOf(
                     Chapter(
-                        listOf(
-                            Level(
-                                agent.uuid,
-                                null,
-                                "Level 1",
-                                xp,
-                                0,
-                                false,
-                                0,
-                                false,
-                                Reward(
-                                    "Agent",
-                                    agent.uuid,
-                                    1,
-                                    false,
-                                    agent.toRewardRelation()
+                        levels = listOf(
+                            element = Level(
+                                uuid = agent.uuid,
+                                dependency = null,
+                                name = "Level 1",
+                                xp = xp,
+                                vpCost = 0,
+                                isPurchasableWithVP = false,
+                                doughCost = 0,
+                                isPurchasableWithDough = false,
+                                rewards = listOf(
+                                    Reward(
+                                        rewardType = "Agent",
+                                        rewardUuid = agent.uuid,
+                                        amount = 1,
+                                        isHighlighted = false,
+                                        isFreeReward = false,
+                                        relation = agent.toRewardRelation()
+                                    )
                                 )
                             )
                         ),
-                        emptyList(),
-                        false
+                        isEpilogue = false
                     )
                 )
             )

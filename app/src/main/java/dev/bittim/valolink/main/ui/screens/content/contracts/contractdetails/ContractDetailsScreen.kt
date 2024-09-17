@@ -117,7 +117,7 @@ fun ContractDetailsScreen(
                     ) {
                         items(items = state.contract.content.chapters.flatMap { it.levels },
                               itemContent = { level ->
-                                  val reward = level.reward.relation
+                                  val reward = level.rewards.find { !it.isFreeReward }?.relation
 
                                   if (reward != null) {
                                       AgentRewardCard(
@@ -127,6 +127,7 @@ fun ContractDetailsScreen(
                                               type = reward.type,
                                               levelName = level.name,
                                               contractName = state.contract.displayName,
+                                              rewardCount = level.rewards.count(),
                                               previewIcon = reward.previewImages.first().first
                                                   ?: "",
                                               background = reward.background,
@@ -147,67 +148,6 @@ fun ContractDetailsScreen(
                                       )
                                   }
                               }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Free Rewards",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        IconButton(onClick = onNavContractRewardsList) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                                contentDescription = null
-                            )
-                        }
-                    }
-
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = state.contract.content.chapters.flatMap { chapter ->
-                                chapter.freeRewards?.map {
-                                    Pair(
-                                        it,
-                                        chapter.levels.lastOrNull()
-                                    )
-                                } ?: emptyList()
-                            },
-                            itemContent = {
-                                val reward = it.first.relation
-                                val level = it.second
-
-                                if (reward != null && level != null) {
-                                    AgentRewardCard(
-                                        data = AgentRewardCardData(
-                                            name = reward.displayName,
-                                            levelUuid = "",
-                                            type = reward.type,
-                                            levelName = level.name,
-                                            contractName = state.contract.displayName,
-                                            previewIcon = reward.previewImages.first().first ?: "",
-                                            background = reward.background,
-                                            price = level.vpCost,
-                                            amount = reward.amount,
-                                            currencyIcon = state.vp?.displayIcon ?: ""
-                                        ),
-                                        onNavToLevelDetails = {}
-                                    )
-                                }
-                            }
                         )
                     }
                 }

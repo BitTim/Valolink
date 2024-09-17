@@ -2,6 +2,7 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.compo
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -30,13 +31,14 @@ fun ChromaToggleButton(
     FilledIconToggleButton(
         modifier = modifier
             .padding(4.dp)
-            .height(60.dp)
+            .height(52.dp)
             .aspectRatio(1f),
         checked = checked,
         onCheckedChange = onCheckedChange
     ) {
         AsyncImage(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(6.dp)
                 .clip(CircleShape),
             model = swatch,

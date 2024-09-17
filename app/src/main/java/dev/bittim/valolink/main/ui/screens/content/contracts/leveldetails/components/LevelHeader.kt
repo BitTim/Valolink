@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,10 +33,8 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
-import dev.bittim.valolink.main.ui.components.ProgressCluster
 import dev.bittim.valolink.main.ui.components.RewardTypeLabel
 import dev.bittim.valolink.main.ui.components.RewardTypeLabelStyle
-import dev.bittim.valolink.main.ui.components.UnlockButton
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.components.pulseAnimation
@@ -50,19 +47,12 @@ data class LevelHeaderData(
     val displayIcon: String,
     val levelName: String,
     val contractName: String,
-    val price: Int,
-    val currencyIcon: String?,
-    val xpTotal: Int,
-    val xpProgress: Int = 0,
-    val isLocked: Boolean,
-    val isOwned: Boolean,
 )
 
 @Composable
 fun LevelHeader(
     modifier: Modifier = Modifier,
     data: LevelHeaderData?,
-    onUnlock: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
@@ -183,65 +173,6 @@ fun LevelHeader(
                 )
             }
         }
-
-        Crossfade(
-            modifier = Modifier.animateContentSize(),
-            targetState = data,
-            label = "Progress cluster crossfade"
-        ) {
-            if (it == null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(ButtonDefaults.MinHeight * configuration.fontScale)
-                        .padding(1.dp)
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .pulseAnimation()
-                )
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (it.xpTotal >= 0) {
-                        ProgressCluster(
-                            modifier = Modifier.weight(2f),
-                            progress = it.xpProgress,
-                            total = it.xpTotal,
-                            unit = "XP",
-                            isMonochrome = false
-                        )
-
-                        Spacer(modifier = Modifier.width(24.dp))
-
-                        if (it.currencyIcon != null) {
-                            UnlockButton(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1.25f),
-                                currencyIcon = it.currencyIcon,
-                                price = it.price,
-                                isPrimary = false,
-                                isLocked = it.isLocked,
-                                isOwned = it.isOwned,
-                                onClick = onUnlock
-                            )
-                        }
-                    } else {
-                        if (it.currencyIcon != null) {
-                            UnlockButton(
-                                modifier = Modifier.fillMaxWidth(),
-                                currencyIcon = it.currencyIcon,
-                                price = it.price,
-                                isPrimary = true,
-                                isLocked = it.isLocked,
-                                isOwned = it.isOwned,
-                                onClick = onUnlock
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -263,13 +194,7 @@ fun LevelHeaderPreview() {
                         displayIcon = "",
                         levelName = "Level 9",
                         contractName = "Clove Contract",
-                        price = 7500,
-                        currencyIcon = "",
-                        xpTotal = -1,
-                        isLocked = false,
-                        isOwned = false
                     ),
-                    onUnlock = {}
                 )
             }
         }
@@ -294,14 +219,7 @@ fun ProgressLevelHeaderPreview() {
                         displayIcon = "",
                         levelName = "Level 9",
                         contractName = "Clove Contract",
-                        price = 99999,
-                        currencyIcon = "",
-                        xpProgress = 65,
-                        xpTotal = 100,
-                        isLocked = false,
-                        isOwned = true
                     ),
-                    onUnlock = {}
                 )
             }
         }
@@ -321,7 +239,6 @@ fun NullProgressLevelHeaderPreview() {
             ) {
                 LevelHeader(
                     data = null,
-                    onUnlock = {}
                 )
             }
         }

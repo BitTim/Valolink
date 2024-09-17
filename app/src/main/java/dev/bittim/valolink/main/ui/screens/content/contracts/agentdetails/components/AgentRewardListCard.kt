@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -71,6 +72,7 @@ data class AgentRewardListCardData(
     val type: RewardType,
     val levelName: String,
     val contractName: String,
+    val rewardCount: Int,
     val amount: Int,
     val displayIcon: String,
     val background: String? = null,
@@ -292,35 +294,65 @@ fun AgentRewardListCard(
                 )
             }
 
-            if (showMenuButton) {
-                Crossfade(targetState = data, label = "Menu Button Loading") {
-                    if (it != null) {
-                        Box(
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            IconButton(
-                                modifier = Modifier.padding(8.dp),
-                                onClick = { isMenuExpanded = true },
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                if (showMenuButton) {
+                    Crossfade(targetState = data, label = "Menu Button Loading") {
+                        if (it != null) {
+                            Box(
+                                contentAlignment = Alignment.CenterEnd
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = null
-                                )
-                            }
+                                IconButton(
+                                    modifier = Modifier.padding(top = 8.dp, end = 8.dp),
+                                    onClick = { isMenuExpanded = true },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = null
+                                    )
+                                }
 
-                            DropdownMenu(
-                                expanded = isMenuExpanded,
-                                onDismissRequest = { isMenuExpanded = false }
-                            ) {
-                                DropdownMenuItem(
-                                    enabled = data?.isLocked == false && data.isOwned,
-                                    text = { Text(text = "Reset") },
-                                    onClick = {
-                                        resetReward()
-                                        isMenuExpanded = false
-                                    }
-                                )
+                                DropdownMenu(
+                                    expanded = isMenuExpanded,
+                                    onDismissRequest = { isMenuExpanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        enabled = data?.isLocked == false && data.isOwned,
+                                        text = { Text(text = "Reset") },
+                                        onClick = {
+                                            resetReward()
+                                            isMenuExpanded = false
+                                        }
+                                    )
+                                }
                             }
+                        }
+                    }
+                } else {
+                    Spacer(Modifier.height(56.dp))
+                }
+
+                Crossfade(
+                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+                    targetState = data?.rewardCount,
+                    label = "Reward count badge Loading"
+                ) { count ->
+                    if (count == null || count < 2) {
+                        Spacer(modifier = Modifier.height(MaterialTheme.typography.titleSmall.lineHeight.value.dp * configuration.fontScale + 16.dp))
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.secondary)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = "+${count - 1}",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSecondary
+                            )
                         }
                     }
                 }
@@ -346,12 +378,14 @@ fun AgentRewardListCardPreview() {
         ) {
             AgentRewardListCard(
                 modifier = Modifier.fillMaxWidth(),
+                showMenuButton = false,
                 data = AgentRewardListCardData(
                     name = "Metamorphosis Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 3,
                     amount = 1,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 ),
@@ -384,6 +418,7 @@ fun LongNameAgentRewardListCardPreview() {
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 3,
                     amount = 1,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 ),
@@ -416,6 +451,7 @@ fun LockedAgentRewardListCardPreview() {
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 1,
                     amount = 1,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                     isLocked = true
@@ -449,6 +485,7 @@ fun OwnedAgentRewardListCardPreview() {
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 1,
                     amount = 1,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                     isOwned = true
