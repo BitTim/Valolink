@@ -77,6 +77,7 @@ data class AgentRewardCardData(
     val type: RewardType,
     val levelName: String,
     val contractName: String,
+    val rewardCount: Int,
     val price: Int,
     val amount: Int,
     val previewIcon: String,
@@ -159,27 +160,55 @@ fun AgentRewardCard(
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.TopEnd
+                            contentAlignment = Alignment.TopStart
                         ) {
-                            Box {
-                                FilledTonalIconButton(
-                                    modifier = Modifier.padding(8.dp),
-                                    onClick = { isMenuExpanded = true },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.MoreVert,
-                                        contentDescription = null
-                                    )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Crossfade(
+                                    targetState = data?.rewardCount,
+                                    label = "Reward count badge Loading"
+                                ) { count ->
+                                    if (count == null || count < 2) {
+                                        Spacer(Modifier.width(1.dp))
+                                    } else {
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(12.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.secondary)
+                                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        ) {
+                                            Text(
+                                                text = "+${count - 1}",
+                                                style = MaterialTheme.typography.titleSmall,
+                                                color = MaterialTheme.colorScheme.onSecondary
+                                            )
+                                        }
+                                    }
                                 }
 
-                                DropdownMenu(expanded = isMenuExpanded,
-                                             onDismissRequest = { isMenuExpanded = false }) {
-                                    DropdownMenuItem(enabled = data?.isLocked == false && data.isOwned,
-                                                     text = { Text(text = "Reset") },
-                                                     onClick = {
-                                                         resetReward()
-                                                         isMenuExpanded = false
-                                                     })
+                                Box {
+                                    FilledTonalIconButton(
+                                        modifier = Modifier.padding(8.dp),
+                                        onClick = { isMenuExpanded = true },
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.MoreVert,
+                                            contentDescription = null
+                                        )
+                                    }
+
+                                    DropdownMenu(expanded = isMenuExpanded,
+                                        onDismissRequest = { isMenuExpanded = false }) {
+                                        DropdownMenuItem(enabled = data?.isLocked == false && data.isOwned,
+                                            text = { Text(text = "Reset") },
+                                            onClick = {
+                                                resetReward()
+                                                isMenuExpanded = false
+                                            })
+                                    }
                                 }
                             }
                         }
@@ -378,6 +407,7 @@ fun AgentRewardCardPreview() {
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 3,
                     price = 2000,
                     amount = 1,
                     previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
@@ -411,6 +441,7 @@ fun LongNameAgentRewardCardPreview() {
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 1,
                     price = 2000,
                     amount = 1,
                     previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
@@ -444,6 +475,7 @@ fun LockedAgentRewardCardPreview() {
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 1,
                     price = 2000,
                     amount = 1,
                     previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
@@ -478,6 +510,7 @@ fun OwnedAgentRewardCardPreview() {
                     type = RewardType.PLAYER_CARD,
                     levelName = "Level 9",
                     contractName = "Clove Contract",
+                    rewardCount = 1,
                     price = 2000,
                     amount = 1,
                     previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",

@@ -127,6 +127,7 @@ fun ContractDetailsScreen(
                                               type = reward.type,
                                               levelName = level.name,
                                               contractName = state.contract.displayName,
+                                              rewardCount = level.rewards.count(),
                                               previewIcon = reward.previewImages.first().first
                                                   ?: "",
                                               background = reward.background,

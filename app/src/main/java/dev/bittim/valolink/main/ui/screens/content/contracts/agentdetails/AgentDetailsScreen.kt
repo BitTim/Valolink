@@ -347,6 +347,7 @@ fun AgentDetailsScreen(
                                     type = reward.type,
                                     levelName = level.name,
                                     contractName = state.agentGear?.displayName ?: "",
+                                    rewardCount = level.rewards.count(),
                                     previewIcon = reward.previewImages.first().first ?: "",
                                     background = reward.background,
                                     price = level.doughCost,

@@ -207,6 +207,7 @@ fun RelationsSectionPreview() {
                                 type = RewardType.PLAYER_CARD,
                                 levelName = "Level 7",
                                 contractName = "Clove Contract",
+                                rewardCount = 1,
                                 amount = 1,
                                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                                 background = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/background.png"
@@ -221,6 +222,7 @@ fun RelationsSectionPreview() {
                                 type = RewardType.PLAYER_CARD,
                                 levelName = "Level 9",
                                 contractName = "Clove Contract",
+                                rewardCount = 1,
                                 amount = 1,
                                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                                 background = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/background.png"
