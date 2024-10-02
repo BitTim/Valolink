@@ -2,6 +2,9 @@ package dev.bittim.valolink.main.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,12 +32,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -71,6 +80,11 @@ fun BaseDetailsScreen(
     val maxCardHeight =
         (configuration.screenHeightDp * BaseDetailsScreen.MAX_CARD_HEIGHT_FRACTION).dp
 
+    var isMaximized: Boolean by remember { mutableStateOf(false) }
+    val maximizedCardSize = with(density) {
+        LocalView.current.height.toDp()
+    }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val scrollState = rememberScrollState()
     val cardSize = with(density) {
@@ -79,6 +93,11 @@ fun BaseDetailsScreen(
             maxCardHeight - scrollState.value.toDp()
         )
     }
+
+    val animatedCardSize by animateDpAsState(
+        targetValue = if (isMaximized) maximizedCardSize else cardSize,
+        label = "Card Maximization animation"
+    )
 
     // --------------------------------
     //  Layout
@@ -91,17 +110,26 @@ fun BaseDetailsScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(cardSize),
             colors = CardDefaults.cardColors().copy(contentColor = Color.White),
-            shape = MaterialTheme.shapes.extraLarge.copy(
+            shape = if (!isMaximized) MaterialTheme.shapes.extraLarge.copy(
                 topStart = CornerSize(0.dp),
                 topEnd = CornerSize(0.dp)
-            ),
+            ) else RectangleShape,
         ) {
-            Box {
-                Crossfade(targetState = isLoading, label = "Loading crossfade") {
+            Box(
+                modifier = Modifier
+                    .height(animatedCardSize)
+                    .fillMaxWidth()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = { isMaximized = !isMaximized }
+                    ),
+            ) {
+                Crossfade(
+                    targetState = isLoading,
+                    label = "Loading crossfade"
+                ) {
                     if (it) {
                         Box(
                             modifier = Modifier
@@ -111,7 +139,13 @@ fun BaseDetailsScreen(
                     } else {
                         cardBackground()
                         cardImage()
-                        cardContent()
+
+                        Crossfade(
+                            targetState = isMaximized,
+                            label = "Maximized crossfade"
+                        ) {
+                            if (!it) cardContent()
+                        }
                     }
                 }
 
@@ -145,17 +179,19 @@ fun BaseDetailsScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .padding(top = cardSize - 16.dp)
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .offset(y = maxCardHeight - cardSize)
-    ) {
-        Spacer(modifier = Modifier.height(32.dp))
-        content()
-        Spacer(modifier = Modifier.height(maxCardHeight - cardSize + 16.dp))
+    Crossfade(targetState = isMaximized, label = "Maximized crossfade") {
+        if (!it) Column(
+            modifier = Modifier
+                .padding(top = cardSize - 16.dp)
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .offset(y = maxCardHeight - cardSize)
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            content()
+            Spacer(modifier = Modifier.height(maxCardHeight - cardSize + 16.dp))
+        }
     }
 }
 

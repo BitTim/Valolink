@@ -113,7 +113,6 @@ fun LevelDetailsScreen(
         cardImage = {
             Box {
                 Crossfade(
-                    modifier = Modifier,
                     targetState = selectedVariant,
                     label = "Preview Image Transition"
                 ) {
@@ -159,6 +158,7 @@ fun LevelDetailsScreen(
                         VariantPreviewCluster(
                             modifier = Modifier.animateContentSize(),
                             variants = checkedVariants,
+                            selected = selectedVariant,
                             onSelected = { selectedVariant = it }
                         )
                     }
@@ -296,7 +296,7 @@ fun LevelDetailsScreen(
                 onDismissRequest = { isMenuExpanded = false }
             ) {
                 DropdownMenuItem(
-                    enabled = isLocked?.not() ?: false,
+                    enabled = isLocked?.not() == true,
                     text = { Text(text = "Reset") },
                     onClick = {
                         isRewardResetAlertShown = true
