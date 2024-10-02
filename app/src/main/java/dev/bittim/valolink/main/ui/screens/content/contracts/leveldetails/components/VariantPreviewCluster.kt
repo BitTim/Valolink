@@ -25,10 +25,11 @@ import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 fun VariantPreviewCluster(
     modifier: Modifier = Modifier,
     variants: List<Any?> = emptyList(),
+    selected: Int = 0,
     onSelected: (Int) -> Unit,
 ) {
     var selected by remember {
-        mutableIntStateOf(0)
+        mutableIntStateOf(selected)
     }
 
     Surface(

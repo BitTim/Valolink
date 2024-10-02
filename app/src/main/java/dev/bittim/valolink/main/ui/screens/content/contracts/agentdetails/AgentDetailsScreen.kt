@@ -91,7 +91,7 @@ fun AgentDetailsScreen(
         ceil(LocalConfiguration.current.screenWidthDp / AgentRewardCard.width.value).toInt()
 
     val agent = state.agentGear?.content?.relation as? Agent?
-    val isLocked = !(state.userData?.agents?.any { it.agent == agent?.uuid } ?: false)
+    val isLocked = state.userData?.agents?.any { it.agent == agent?.uuid } != true
 
     val agentGearLevels = state.agentGear?.content?.chapters?.flatMap { it.levels }
     val userContract = state.userData?.contracts?.find {
@@ -354,8 +354,7 @@ fun AgentDetailsScreen(
                                     amount = reward.amount,
                                     currencyIcon = state.dough?.displayIcon ?: "",
                                     isLocked = isLocked,
-                                    isOwned = userContract?.levels?.any { it.level == level.uuid }
-                                        ?: false,
+                                    isOwned = userContract?.levels?.any { it.level == level.uuid } == true,
                                 )
                             },
                             unlockReward = {
