@@ -65,6 +65,10 @@ interface ContractsDao {
     fun getByUuid(uuid: String): Flow<ContractWithContentWithChaptersWithLevelsAndRewards?>
 
     @Transaction
+    @Query("SELECT Contracts.* FROM Contracts INNER JOIN ContractContents ON Contracts.uuid = ContractContents.contractUuid WHERE ContractContents.relationUuid = :uuid LIMIT 1")
+    fun getGearByAgent(uuid: String): Flow<ContractWithContentWithChaptersWithLevelsAndRewards?>
+
+    @Transaction
     @Query("SELECT * FROM ContractContents WHERE uuid = :uuid LIMIT 1")
     fun getContentByUuid(uuid: String): Flow<ContentWithChaptersWithLevelsAndRewards?>
 

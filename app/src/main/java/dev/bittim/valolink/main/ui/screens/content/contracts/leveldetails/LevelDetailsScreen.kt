@@ -35,11 +35,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.bittim.valolink.R
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
-import dev.bittim.valolink.main.ui.components.BaseDetailsScreen
+import dev.bittim.valolink.main.ui.components.DetailScreen
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardListCardData
-import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardResetAlertDialog
-import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardUnlockAlertDialog
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.LevelUnlockAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.LevelBackdrop
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.HeaderSection
 import dev.bittim.valolink.main.ui.screens.content.contracts.leveldetails.components.LevelHeaderData
@@ -101,7 +101,7 @@ fun LevelDetailsScreen(
     //  Layout
     // --------------------------------
 
-    BaseDetailsScreen(
+    DetailScreen(
         isLoading = state.isLevelLoading,
 
         cardBackground = {
@@ -318,9 +318,9 @@ fun LevelDetailsScreen(
             false
         )
 
-        RewardUnlockAlertDialog(
+        LevelUnlockAlertDialog(
             levels = stagedLevels,
-            currencyDisplayIcon = state.unlockCurrency?.displayIcon,
+            currency = state.unlockCurrency,
             onDismiss = { isRewardUnlockAlertShown = false },
             onConfirm = {
                 stagedLevels.forEach {
@@ -338,9 +338,9 @@ fun LevelDetailsScreen(
             true
         )
 
-        RewardResetAlertDialog(
+        LevelResetAlertDialog(
             levels = stagedLevels,
-            currencyDisplayIcon = state.unlockCurrency?.displayIcon,
+            currency = state.unlockCurrency,
             onDismiss = { isRewardResetAlertShown = false },
             onConfirm = {
                 stagedLevels.forEach {

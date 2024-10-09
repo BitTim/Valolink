@@ -56,7 +56,18 @@ class ContractApiRepository @Inject constructor(
                 .getByUuid(uuid)
                 .distinctUntilChanged()
                 .flatMapLatest {
-                    withRelation(it, withRewards)
+                    // If contract could not be found in database, try finding it as recruitment
+                    if (it == null) gameDatabase.contractsDao
+                        .getRecruitmentByUuid(uuid)
+                        .distinctUntilChanged()
+                        .flatMapLatest {
+                            // If it is not a recruitment either, try resolving the UUID to an agent gear
+                            if (it == null) gameDatabase.contractsDao
+                                .getGearByAgent(uuid)
+                                .flatMapLatest { withRelation(it, withRewards) }
+                            else flowOf(it.toContract())
+                        }
+                    else withRelation(it, withRewards)
                 }
 
             // Queue worker to fetch newest data from API
@@ -74,29 +85,6 @@ class ContractApiRepository @Inject constructor(
 
     override suspend fun getByUuid(uuid: String): Flow<Contract?> {
         return getByUuid(uuid, false)
-    }
-
-    override suspend fun getRecruitmentAsContract(
-        uuid: String,
-    ): Flow<Contract?> {
-        return try {
-            // Get from local database
-            val local = gameDatabase.contractsDao
-                .getRecruitmentByUuid(uuid)
-                .distinctUntilChanged()
-                .map { it?.toContract() }
-
-            // Queue worker to fetch newest data from API
-            //  -> Worker will check if fetch is needed itself
-            agentRepository.queueWorker()
-
-            // Return
-            local
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            e.printStackTrace()
-            return flow { }
-        }
     }
 
     override suspend fun getLevelByUuid(uuid: String): Flow<Level?> {

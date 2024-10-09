@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
 
@@ -38,17 +39,16 @@ import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.compon
 fun ContractDetailsScreen(
     state: ContractDetailsState,
     uuid: String,
-    isRecruitment: Boolean,
-    fetchDetails: (uuid: String, isRecruitment: Boolean) -> Unit,
+    fetchDetails: (uuid: String) -> Unit,
     onNavBack: () -> Unit,
-    onNavContractRewardsList: () -> Unit,
-    onNavToAgentDetails: (String) -> Unit,
+    onNavLevelList: (uuid: String) -> Unit,
+    onNavToAgentDetails: (uuid: String) -> Unit,
     onNavToLevelDetails: (level: String, contract: String) -> Unit,
 ) {
     // Fetch details if they haven't been fetched yet
     if (state.contract == null || state.vp == null) {
         if (!state.isContractLoading && !state.isCurrencyLoading) {
-            fetchDetails(uuid, isRecruitment)
+            fetchDetails(uuid)
         }
     }
 
@@ -103,7 +103,7 @@ fun ContractDetailsScreen(
                             style = MaterialTheme.typography.titleLarge
                         )
 
-                        IconButton(onClick = onNavContractRewardsList) {
+                        IconButton(onClick = { onNavLevelList(uuid) }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Default.ArrowForward,
                                 contentDescription = null
@@ -136,8 +136,8 @@ fun ContractDetailsScreen(
                                               currencyIcon = state.vp?.displayIcon ?: ""
                                           ),
                                           onNavToLevelDetails = { levelUuid ->
-                                              if (isRecruitment) {
-                                                  onNavToAgentDetails(levelUuid)
+                                              if (reward.type == RewardType.AGENT) {
+                                                  onNavToAgentDetails(reward.uuid)
                                               } else {
                                                   onNavToLevelDetails(
                                                       levelUuid,

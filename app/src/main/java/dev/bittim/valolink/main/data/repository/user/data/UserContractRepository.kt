@@ -12,7 +12,7 @@ interface UserContractRepository : UserRepository<UserContract, UserContractDto>
 
     suspend fun set(obj: UserContract, toDelete: Boolean): Boolean
     suspend fun set(obj: UserContract): Boolean
-    suspend fun delete(obj: UserContract): Boolean
+    suspend fun delete(obj: UserContract?): Boolean
 
     fun queueWorker(uid: String)
 }

@@ -18,11 +18,8 @@ fun NavGraphBuilder.contractsNavGraph(
         contractsOverviewScreen(
             onNavToGearList = { navController.navToContractsGearList() },
             onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
-            onNavToContractDetails = { uuid, isRecruitment ->
-                navController.navToContractsContractDetails(
-                    uuid,
-                    isRecruitment
-                )
+            onNavToContractDetails = { uuid ->
+                navController.navToContractsContractDetails(uuid)
             }
         )
 
@@ -33,7 +30,8 @@ fun NavGraphBuilder.contractsNavGraph(
 
         contractsAgentDetailsScreen(
             onNavBack = { navController.navigateUp() },
-            onNavToLevelDetails = { uuid, contract ->
+            onNavLevelList = { uuid -> navController.navToLevelList(uuid) },
+            onNavLevelDetails = { uuid, contract ->
                 navController.navToContractsLevelDetails(
                     uuid,
                     contract
@@ -43,6 +41,7 @@ fun NavGraphBuilder.contractsNavGraph(
 
         contractsContractDetailsScreen(
             onNavBack = { navController.navigateUp() },
+            onNavLevelList = { uuid -> navController.navToLevelList(uuid) },
             onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
             onNavToLevelDetails = { uuid, contract ->
                 navController.navToContractsLevelDetails(
@@ -54,6 +53,17 @@ fun NavGraphBuilder.contractsNavGraph(
 
         contractsLevelDetailsScreen(
             onNavBack = { navController.navigateUp() },
+            onNavToLevelDetails = { uuid, contract ->
+                navController.navToContractsLevelDetails(
+                    uuid,
+                    contract
+                )
+            }
+        )
+
+        contractsLevelListScreen(
+            onNavBack = { navController.navigateUp() },
+            onNavToAgentDetails = { uuid -> navController.navToContractsAgentDetails(uuid) },
             onNavToLevelDetails = { uuid, contract ->
                 navController.navToContractsLevelDetails(
                     uuid,

@@ -29,20 +29,14 @@ class ContractDetailsViewModel @Inject constructor(
 
     private var fetchJob: Job? = null
 
-    fun fetchDetails(uuid: String?, isRecruitment: Boolean?) {
-        if (uuid == null || isRecruitment == null) return
+    fun fetchDetails(uuid: String?) {
+        if (uuid == null) return
 
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             launch {
                 withContext(Dispatchers.IO) {
-                    val contractFlow = if (isRecruitment) {
-                        contractRepository.getRecruitmentAsContract(uuid)
-                    } else {
-                        contractRepository.getByUuid(uuid, true)
-                    }
-
-                    contractFlow
+                    contractRepository.getByUuid(uuid, true)
                         .onStart { _state.update { it.copy(isContractLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { contract ->
