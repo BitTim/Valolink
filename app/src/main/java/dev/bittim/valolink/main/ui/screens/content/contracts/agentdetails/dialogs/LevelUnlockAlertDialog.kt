@@ -18,13 +18,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.main.domain.model.game.Currency
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.PricedListItem
 
 @Composable
-fun RewardUnlockAlertDialog(
+fun LevelUnlockAlertDialog(
     levels: List<Level>,
-    currencyDisplayIcon: String?,
+    currency: Currency?,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
@@ -44,13 +45,17 @@ fun RewardUnlockAlertDialog(
 
                 items(items = levels,
                       itemContent = { level ->
-                          val rewards = level.rewards.map { it.relation }
+                          val rewards = level.rewards.map { it.relation?.displayName }
 
                           if (rewards.isNotEmpty()) {
                               PricedListItem(
                                   rewards.joinToString("\n"),
-                                  currencyDisplayIcon,
-                                  level.doughCost,
+                                  currency?.displayIcon,
+                                  when (currency?.uuid) {
+                                      Currency.DOUGH_UUID -> level.doughCost
+                                      Currency.VP_UUID    -> level.vpCost
+                                      else                -> 0
+                                  },
                                   MaterialTheme.colorScheme.onSurface
                               )
                           }
@@ -68,8 +73,14 @@ fun RewardUnlockAlertDialog(
                 item {
                     PricedListItem(
                         "Total cost",
-                        currencyDisplayIcon,
-                        levels.sumOf { it.doughCost },
+                        currency?.displayIcon,
+                        levels.sumOf {
+                            when (currency?.uuid) {
+                                Currency.DOUGH_UUID -> it.doughCost
+                                Currency.VP_UUID    -> it.vpCost
+                                else                -> 0
+                            }
+                        },
                         MaterialTheme.colorScheme.onSurface
                     )
                 }

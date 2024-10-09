@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.domain.model.game.contract.Contract
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCardData
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.ContractCard
@@ -65,7 +64,7 @@ fun ContractsOverviewScreen(
     onArchiveTypeFilterChange: (ContentType) -> Unit,
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
-    onNavToContractDetails: (String, Boolean) -> Unit,
+    onNavToContractDetails: (String) -> Unit,
 ) {
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -174,18 +173,10 @@ fun ContractsOverviewScreen(
                                     )
                                 }
                             }
-                            val isRecruitment by remember {
-                                derivedStateOf {
-                                    it.content.chapters
-                                        .flatMap { chapter -> chapter.levels }
-                                        .firstOrNull { level -> level.rewards.any { reward -> reward.relation?.type == RewardType.AGENT } } != null
-                                }
-                            }
 
                             ContractCardData(
                                 displayName = it.displayName,
                                 contractUuid = it.uuid,
-                                isRecruitment = isRecruitment,
                                 displayIcon = displayIcon,
                                 backgroundImage = backgroundImage,
                                 backgroundGradientColors = backgroundGradientColors,
@@ -401,18 +392,9 @@ fun ContractsOverviewScreen(
                                 }
                             }
 
-                            val isRecruitment by remember {
-                                derivedStateOf {
-                                    it.content.chapters
-                                        .flatMap { chapter -> chapter.levels }
-                                        .firstOrNull { level -> level.rewards.any { reward -> reward.relation?.type == RewardType.AGENT } } != null
-                                }
-                            }
-
                             ContractCardData(
                                 displayName = it.displayName,
                                 contractUuid = it.uuid,
-                                isRecruitment = isRecruitment,
                                 displayIcon = displayIcon,
                                 backgroundImage = backgroundImage,
                                 backgroundGradientColors = backgroundGradientColors,

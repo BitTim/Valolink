@@ -58,7 +58,7 @@ data object BaseDetailsScreen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BaseDetailsScreen(
+fun DetailScreen(
     isLoading: Boolean,
 
     cardBackground: @Composable () -> Unit,
@@ -198,10 +198,10 @@ fun BaseDetailsScreen(
 @Preview(name = "Light", showBackground = true)
 @Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun BaseDetailsScreenPreview() {
+fun DetailScreenPreview() {
     ValolinkTheme {
         Surface {
-            BaseDetailsScreen(
+            DetailScreen(
                 isLoading = false,
 
                 cardBackground = {},

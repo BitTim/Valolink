@@ -19,7 +19,8 @@ data class AgentDetailsNav(
 
 fun NavGraphBuilder.contractsAgentDetailsScreen(
     onNavBack: () -> Unit,
-    onNavToLevelDetails: (String, String) -> Unit,
+    onNavLevelList: (uuid: String) -> Unit,
+    onNavLevelDetails: (levelUuid: String, contractUuid: String) -> Unit,
 ) {
     composable<AgentDetailsNav>(enterTransition = { Transition.forward },
                                 popExitTransition = { Transition.backward }) {
@@ -37,8 +38,8 @@ fun NavGraphBuilder.contractsAgentDetailsScreen(
             unlockLevel = viewModel::unlockLevel,
             resetLevel = viewModel::resetLevel,
             onNavBack = onNavBack,
-            onNavGearRewardsList = {},
-            onNavToLevelDetails = onNavToLevelDetails
+            onNavLevelList = onNavLevelList,
+            onNavLevelDetails = onNavLevelDetails
         )
     }
 }
