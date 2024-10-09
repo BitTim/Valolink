@@ -8,41 +8,42 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import dev.bittim.valolink.core.ui.theme.Transition
-import dev.bittim.valolink.main.ui.screens.content.contracts.contractdetails.ContractDetailsScreen
-import dev.bittim.valolink.main.ui.screens.content.contracts.contractdetails.ContractDetailsViewModel
+import dev.bittim.valolink.main.ui.screens.content.contracts.levellist.LevelListScreen
+import dev.bittim.valolink.main.ui.screens.content.contracts.levellist.LevelListViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ContractDetailsNav(
+data class LevelListNav(
     val uuid: String,
 )
 
-fun NavGraphBuilder.contractsContractDetailsScreen(
+fun NavGraphBuilder.contractsLevelListScreen(
     onNavBack: () -> Unit,
-    onNavLevelList: (uuid: String) -> Unit,
     onNavToAgentDetails: (uuid: String) -> Unit,
     onNavToLevelDetails: (levelUuid: String, contractUuid: String) -> Unit,
 ) {
-    composable<ContractDetailsNav>(enterTransition = { Transition.forward },
-                                   popExitTransition = { Transition.backward }) {
-        val viewModel: ContractDetailsViewModel = hiltViewModel()
+    composable<LevelListNav>(enterTransition = { Transition.forward },
+                             popExitTransition = { Transition.backward }) {
+        val viewModel: LevelListViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
-        val args = it.toRoute<ContractDetailsNav>()
+        val args = it.toRoute<LevelListNav>()
 
-        ContractDetailsScreen(
+        LevelListScreen(
             state = state,
             uuid = args.uuid,
             fetchDetails = viewModel::fetchDetails,
+            resetContract = viewModel::resetContract,
+            initUserContract = viewModel::initUserContract,
+            resetLevel = viewModel::resetLevel,
             onNavBack = onNavBack,
-            onNavLevelList = onNavLevelList,
             onNavToAgentDetails = onNavToAgentDetails,
             onNavToLevelDetails = onNavToLevelDetails
         )
     }
 }
 
-fun NavController.navToContractsContractDetails(uuid: String) {
-    navigate(ContractDetailsNav(uuid)) {
+fun NavController.navToLevelList(uuid: String) {
+    navigate(LevelListNav(uuid)) {
         launchSingleTop = true
     }
 }

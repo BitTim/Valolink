@@ -138,7 +138,8 @@ class UserContractSupabaseRepository @Inject constructor(
         return set(obj, false)
     }
 
-    override suspend fun delete(obj: UserContract): Boolean {
+    override suspend fun delete(obj: UserContract?): Boolean {
+        if (obj == null) return false
         return set(obj, true)
     }
 

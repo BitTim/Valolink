@@ -47,16 +47,16 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.main.domain.model.game.agent.Agent
 import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
-import dev.bittim.valolink.main.ui.components.BaseDetailsScreen
+import dev.bittim.valolink.main.ui.components.DetailScreen
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AbilitySection
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentDetailsSection
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
-import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.AgentResetAlertDialog
-import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardResetAlertDialog
-import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.RewardUnlockAlertDialog
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.ContractResetAlertDialog
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
+import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.LevelUnlockAlertDialog
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentBackdrop
 import dev.bittim.valolink.main.ui.util.getProgressPercent
 import java.util.UUID
@@ -73,8 +73,8 @@ fun AgentDetailsScreen(
     unlockLevel: (uuid: String?) -> Unit,
     resetLevel: (uuid: String?) -> Unit,
     onNavBack: () -> Unit,
-    onNavGearRewardsList: () -> Unit,
-    onNavToLevelDetails: (level: String, contract: String) -> Unit,
+    onNavLevelList: (uuid: String) -> Unit,
+    onNavLevelDetails: (level: String, contract: String) -> Unit,
 ) {
     // Fetch details if they haven't been fetched yet
     if (state.agentGear == null) {
@@ -127,7 +127,7 @@ fun AgentDetailsScreen(
     //  Layout
     // --------------------------------
 
-    BaseDetailsScreen(
+    DetailScreen(
         isLoading = state.isContractLoading || state.isUserDataLoading || state.isCurrencyLoading,
 
         cardBackground = {
@@ -313,7 +313,7 @@ fun AgentDetailsScreen(
                     style = MaterialTheme.typography.titleLarge
                 )
 
-                IconButton(onClick = onNavGearRewardsList) {
+                IconButton(onClick = { onNavLevelList(uuid) }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowForward,
                         contentDescription = null
@@ -336,27 +336,28 @@ fun AgentDetailsScreen(
                     key = { it?.uuid ?: UUID.randomUUID().toString() },
                     itemContent = { level ->
                         val reward = level?.rewards?.find { !it.isFreeReward }?.relation
+                        val rewardCardData = if (level == null || reward == null) {
+                            null
+                        } else {
+                            AgentRewardCardData(
+                                name = reward.displayName,
+                                levelUuid = level.uuid,
+                                type = reward.type,
+                                levelName = level.name,
+                                contractName = state.agentGear?.displayName ?: "",
+                                rewardCount = level.rewards.count(),
+                                previewIcon = reward.previewImages.first().first ?: "",
+                                background = reward.background,
+                                price = level.doughCost,
+                                amount = reward.amount,
+                                currencyIcon = state.dough?.displayIcon ?: "",
+                                isLocked = isLocked,
+                                isOwned = userContract?.levels?.any { it.level == level.uuid } == true,
+                            )
+                        }
 
                         AgentRewardCard(
-                            data = if (level == null || reward == null) {
-                                null
-                            } else {
-                                AgentRewardCardData(
-                                    name = reward.displayName,
-                                    levelUuid = level.uuid,
-                                    type = reward.type,
-                                    levelName = level.name,
-                                    contractName = state.agentGear?.displayName ?: "",
-                                    rewardCount = level.rewards.count(),
-                                    previewIcon = reward.previewImages.first().first ?: "",
-                                    background = reward.background,
-                                    price = level.doughCost,
-                                    amount = reward.amount,
-                                    currencyIcon = state.dough?.displayIcon ?: "",
-                                    isLocked = isLocked,
-                                    isOwned = userContract?.levels?.any { it.level == level.uuid } == true,
-                                )
-                            },
+                            data = rewardCardData,
                             unlockReward = {
                                 if (userContract?.levels?.lastOrNull()?.level == level?.dependency) {
                                     // Unlock just one
@@ -376,7 +377,7 @@ fun AgentDetailsScreen(
                                 isRewardResetAlertShown = true
                             },
                             onNavToLevelDetails = { levelUuid ->
-                                onNavToLevelDetails(
+                                onNavLevelDetails(
                                     levelUuid,
                                     state.agentGear?.uuid ?: ""
                                 )
@@ -401,6 +402,12 @@ fun AgentDetailsScreen(
 
                 Text(
                     text = "Agent: ${agent?.uuid}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
+                Text(
+                    text = "Provided UUID: $uuid",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.outlineVariant
                 )
@@ -431,8 +438,8 @@ fun AgentDetailsScreen(
     // --------------------------------
 
     if (isAgentResetAlertShown) {
-        AgentResetAlertDialog(
-            agentName = agent?.displayName ?: "",
+        ContractResetAlertDialog(
+            contractName = agent?.displayName ?: "",
             onDismiss = { isAgentResetAlertShown = false },
             onConfirm = resetAgent
         )
@@ -446,9 +453,9 @@ fun AgentDetailsScreen(
             false
         )
 
-        RewardUnlockAlertDialog(
+        LevelUnlockAlertDialog(
             levels = stagedLevels,
-            currencyDisplayIcon = state.dough?.displayIcon,
+            state.dough,
             onDismiss = { isRewardUnlockAlertShown = false },
             onConfirm = {
                 stagedLevels.forEach {
@@ -466,9 +473,9 @@ fun AgentDetailsScreen(
             true
         )
 
-        RewardResetAlertDialog(
+        LevelResetAlertDialog(
             levels = stagedLevels,
-            currencyDisplayIcon = state.dough?.displayIcon,
+            state.dough,
             onDismiss = { isRewardResetAlertShown = false },
             onConfirm = {
                 stagedLevels.forEach {
