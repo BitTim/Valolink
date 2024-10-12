@@ -179,19 +179,17 @@ fun DetailScreen(
         }
     }
 
-    Crossfade(targetState = isMaximized, label = "Maximized crossfade") {
-        if (!it) Column(
-            modifier = Modifier
-                .padding(top = cardSize - 16.dp)
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .offset(y = maxCardHeight - cardSize)
-        ) {
-            Spacer(modifier = Modifier.height(32.dp))
-            content()
-            Spacer(modifier = Modifier.height(maxCardHeight - cardSize + 16.dp))
-        }
+    Column(
+        modifier = Modifier
+            .padding(top = cardSize - 16.dp)
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .offset(y = maxCardHeight - cardSize)
+    ) {
+        Spacer(modifier = Modifier.height(32.dp))
+        content()
+        Spacer(modifier = Modifier.height(maxCardHeight - cardSize + 16.dp))
     }
 }
 
