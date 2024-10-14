@@ -1,19 +1,28 @@
+/*
+Copyright (c) 2024 BitTim
+
+Project:        Valolink
+License:        GPLv3
+
+File:           AppModule.kt
+Author:         Tim Anhalt (BitTim)
+Created:        25.03.2024
+Description:    Handles dependency injection for the app.
+*/
+
 package dev.bittim.valolink.core.di
 
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.bittim.valolink.BuildConfig
+import dev.bittim.valolink.core.domain.usecase.supabase.CreateSupabaseClientUseCase
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.functions.functions
-import io.github.jan.supabase.gotrue.Auth
-import io.github.jan.supabase.gotrue.FlowType
-import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.postgrest.PropertyConversionMethod
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.realtime.realtime
@@ -22,22 +31,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    // ================================
+    //  Supabase
+    // ================================
+
     @Provides
     @Singleton
-    fun provideSupabaseClient(): SupabaseClient {
-        return createSupabaseClient(
-            BuildConfig.SUPABASE_URL,
-            BuildConfig.SUPABASE_ANON_KEY
-        ) {
-            install(Postgrest) {
-                propertyConversionMethod = PropertyConversionMethod.NONE
-            }
-            install(Auth) {
-                flowType = FlowType.PKCE
-            }
-            install(Realtime)
-            install(Functions)
-        }
+    fun provideSupabaseClient(createSupabaseClientUseCase: CreateSupabaseClientUseCase): SupabaseClient {
+        return createSupabaseClientUseCase()
     }
 
     @Provides
@@ -60,7 +61,17 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSupabaseStorage(client: SupabaseClient): Functions {
+    fun provideSupabaseFunctions(client: SupabaseClient): Functions {
         return client.functions
+    }
+
+    // ================================
+    //  UseCases
+    // ================================
+
+    @Provides
+    @Singleton
+    fun provideCreateSupabaseClientUseCase(): CreateSupabaseClientUseCase {
+        return CreateSupabaseClientUseCase()
     }
 }

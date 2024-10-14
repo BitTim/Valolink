@@ -1,4 +1,17 @@
-package dev.bittim.valolink.core.ui
+/*
+Copyright (c) 2024 BitTim
+
+Project:        Valolink
+License:        GPLv3
+
+File:           AnimatedPngDecoder.kt
+Author:         Tim Anhalt (BitTim) - Modified from source
+Source:         colinrtwhite (https://github.com/coil-kt/coil/issues/506#issuecomment-952526682)
+Created:        11.05.2024
+Description:    Decoder to load animated PNGs with coil.
+*/
+
+package dev.bittim.valolink.core.ui.decoder
 
 import coil.ImageLoader
 import coil.decode.DecodeResult

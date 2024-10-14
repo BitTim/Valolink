@@ -49,7 +49,7 @@ import dev.bittim.valolink.main.data.repository.user.data.UserLevelSupabaseRepos
 import dev.bittim.valolink.main.data.repository.user.onboarding.OnboardingRepository
 import dev.bittim.valolink.main.data.repository.user.onboarding.OnboardingSupabaseRepository
 import dev.bittim.valolink.main.domain.usecase.game.QueueFullSyncUseCase
-import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import okhttp3.Cache
 import okhttp3.OkHttpClient

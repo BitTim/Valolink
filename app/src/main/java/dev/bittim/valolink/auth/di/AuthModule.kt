@@ -12,7 +12,7 @@ import dev.bittim.valolink.auth.domain.ValidateEmailUseCase
 import dev.bittim.valolink.auth.domain.ValidatePasswordUseCase
 import dev.bittim.valolink.auth.domain.ValidateUsernameUseCase
 import dev.bittim.valolink.auth.domain.ValidationUseCases
-import io.github.jan.supabase.gotrue.Auth
+import io.github.jan.supabase.auth.Auth
 import javax.inject.Singleton
 
 @Module

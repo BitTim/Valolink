@@ -1,8 +1,8 @@
 package dev.bittim.valolink.main.data.repository.user
 
-import io.github.jan.supabase.gotrue.SessionStatus
-import io.github.jan.supabase.gotrue.user.UserInfo
-import io.github.jan.supabase.gotrue.user.UserUpdateBuilder
+import io.github.jan.supabase.auth.status.SessionStatus
+import io.github.jan.supabase.auth.user.UserInfo
+import io.github.jan.supabase.auth.user.UserUpdateBuilder
 import kotlinx.coroutines.flow.StateFlow
 
 interface SessionRepository {

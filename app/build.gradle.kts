@@ -222,7 +222,7 @@ dependencies {
 
     // Supabase
     implementation(platform(libs.supabase.bom))
-    implementation(libs.supabase.gotrue.kt)
+    implementation(libs.supabase.auth.kt)
     implementation(libs.supabase.postgrest.kt)
     implementation(libs.supabase.realtime.kt)
     implementation(libs.supabase.functions.kt)

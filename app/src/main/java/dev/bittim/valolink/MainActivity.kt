@@ -12,7 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.bittim.valolink.core.ui.nav.RootNavGraph
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.handleDeeplinks
+import io.github.jan.supabase.auth.handleDeeplinks
 import javax.inject.Inject
 
 @AndroidEntryPoint

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.main.data.repository.user.SessionRepository
 import dev.bittim.valolink.main.domain.usecase.game.QueueFullSyncUseCase
-import io.github.jan.supabase.gotrue.SessionStatus
+import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContentContainerViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
-    private val queueFullSyncUseCase: QueueFullSyncUseCase
+    private val queueFullSyncUseCase: QueueFullSyncUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(ContentContainerState())
     val state = _state.asStateFlow()
@@ -61,11 +61,5 @@ class ContentContainerViewModel @Inject constructor(
             sessionRepository.signOut()
             _state.update { it.copy(isAuthenticated = false) }
         }
-    }
-
-
-
-    companion object {
-        const val CHECK_AUTH_INTERVAL: Long = 10000
     }
 }

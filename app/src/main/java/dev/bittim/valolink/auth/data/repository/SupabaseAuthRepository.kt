@@ -1,7 +1,7 @@
 package dev.bittim.valolink.auth.data.repository
 
-import io.github.jan.supabase.gotrue.Auth
-import io.github.jan.supabase.gotrue.providers.builtin.Email
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.auth.providers.builtin.Email
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import javax.inject.Inject
