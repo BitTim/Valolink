@@ -1,3 +1,15 @@
+/*
+Copyright (c) 2024 BitTim
+
+Project:        Valolink
+License:        GPLv3
+
+File:           StringListConverter.kt
+Author:         Tim Anhalt (BitTim)
+Created:        23.05.2024
+Description:    A type converter for lists of strings to be used with Room.
+*/
+
 package dev.bittim.valolink.main.data.local.converter
 
 import androidx.room.ProvidedTypeConverter
@@ -6,7 +18,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 
 @ProvidedTypeConverter
-class StringListConverter constructor(
+class StringListConverter(
     private val moshi: Moshi,
 ) {
     @TypeConverter
