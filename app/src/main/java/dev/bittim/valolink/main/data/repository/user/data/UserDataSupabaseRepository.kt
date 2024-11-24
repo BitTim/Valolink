@@ -22,160 +22,154 @@ import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 class UserDataSupabaseRepository @Inject constructor(
-    private val sessionRepository: SessionRepository,
-    private val userAgentRepository: UserAgentRepository,
-    private val userContractRepository: UserContractRepository,
-    private val userDatabase: UserDatabase,
-    private val database: Postgrest,
-    private val workManager: WorkManager,
+	private val sessionRepository: SessionRepository,
+	private val userAgentRepository: UserAgentRepository,
+	private val userContractRepository: UserContractRepository,
+	private val userDatabase: UserDatabase,
+	private val database: Postgrest,
+	private val workManager: WorkManager,
 ) : UserDataRepository {
-    companion object {
-        const val TABLE_NAME = "users"
-    }
+	companion object {
+		const val TABLE_NAME = "users"
+	}
 
-    // ================================
-    //  Get User Data
-    // ================================
+	// ================================
+	//  Get User Data
+	// ================================
 
-    override suspend fun getWithCurrentUser(): Flow<UserData?> {
-        val uid = sessionRepository.getUid() ?: return flow { }
-        return get(uid)
-    }
+	override suspend fun getWithCurrentUser(): Flow<UserData?> {
+		val uid = sessionRepository.getUid() ?: return flow { }
+		return get(uid)
+	}
 
-    override suspend fun get(uid: String): Flow<UserData?> {
-        return try {
-            // Get from local database
-            val userFlow = userDatabase.userDataDao.getByUuid(uid).distinctUntilChanged()
-            val agentsFlow = userAgentRepository.getAll(uid)
-            val contractsFlow = userContractRepository.getAll(uid)
+	override suspend fun get(uid: String): Flow<UserData?> {
+		return try {
+			// Get from local database
+			val userFlow = userDatabase.userDataDao.getByUuid(uid).distinctUntilChanged()
+			val agentsFlow = userAgentRepository.getAll(uid)
+			val contractsFlow = userContractRepository.getAll(uid)
 
-            val combinedFlow = combine(
-                userFlow,
-                agentsFlow,
-                contractsFlow
-            ) { user, agents, contracts ->
-                user?.toType(agents, contracts)
-            }
+			val combinedFlow = combine(
+				userFlow, agentsFlow, contractsFlow
+			) { user, agents, contracts ->
+				user?.toType(agents, contracts)
+			}
 
-            // Queue worker to sync with Supabase
-            queueWorker(uid)
+			// Queue worker to sync with Supabase
+			queueWorker(uid)
 
-            // Return
-            combinedFlow
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            e.printStackTrace()
-            return flow { }
-        }
-    }
+			// Return
+			combinedFlow
+		} catch (e: Exception) {
+			if (e is CancellationException) throw e
+			e.printStackTrace()
+			return flow { }
+		}
+	}
 
-    // ================================
-    //  Set User Data
-    // ================================
+	// ================================
+	//  Set User Data
+	// ================================
 
-    override suspend fun setWithCurrentUser(userData: UserData): Boolean {
-        val uid = sessionRepository.getUid() ?: return false
-        return set(
-            uid,
-            userData
-        )
-    }
+	override suspend fun setWithCurrentUser(userData: UserData): Boolean {
+		val uid = sessionRepository.getUid() ?: return false
+		return set(
+			uid, userData
+		)
+	}
 
-    override suspend fun set(
-        uid: String,
-        userData: UserData,
-        toDelete: Boolean,
-    ): Boolean {
-        return try {
-            // Insert into local database
-            userDatabase.userDataDao.upsert(
-                UserDataEntity.fromType(userData, false, toDelete)
-            )
-            userData.agents.forEach { userAgentRepository.set(it, toDelete) }
-            userData.contracts.forEach { userContractRepository.set(it, toDelete) }
+	override suspend fun set(
+		uid: String,
+		userData: UserData,
+		toDelete: Boolean,
+	): Boolean {
+		return try {
+			// Insert into local database
+			userDatabase.userDataDao.upsert(
+				UserDataEntity.fromType(userData, false, toDelete)
+			)
+			userData.agents.forEach { userAgentRepository.set(it, toDelete) }
+			userData.contracts.forEach { userContractRepository.set(it, toDelete) }
 
-            // Queue worker to sync with Supabase
-            queueWorker(uid)
+			// Queue worker to sync with Supabase
+			queueWorker(uid)
 
-            // Return
-            true
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            e.printStackTrace()
-            false
-        }
-    }
+			// Return
+			true
+		} catch (e: Exception) {
+			if (e is CancellationException) throw e
+			e.printStackTrace()
+			false
+		}
+	}
 
-    override suspend fun set(uid: String, userData: UserData): Boolean {
-        return set(uid, userData, false)
-    }
+	override suspend fun set(uid: String, userData: UserData): Boolean {
+		return set(uid, userData, false)
+	}
 
-    override suspend fun delete(uid: String, userData: UserData): Boolean {
-        return set(uid, userData, true)
-    }
+	override suspend fun delete(uid: String, userData: UserData): Boolean {
+		return set(uid, userData, true)
+	}
 
-    // ================================
-    //  Remote operations
-    // ================================
+	// ================================
+	//  Remote operations
+	// ================================
 
-    override suspend fun remoteQuery(relation: String): List<UserDataDto>? {
-        try {
-            return database.from(TABLE_NAME).select {
-                filter { UserDataDto::uuid eq relation }
-            }.decodeList<UserDataDto>()
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            e.printStackTrace()
-            return null
-        }
-    }
+	override suspend fun remoteQuery(relation: String): List<UserDataDto>? {
+		try {
+			return database.from(TABLE_NAME).select {
+				filter { UserDataDto::uuid eq relation }
+			}.decodeList<UserDataDto>()
+		} catch (e: Exception) {
+			if (e is CancellationException) throw e
+			e.printStackTrace()
+			return null
+		}
+	}
 
-    override suspend fun remoteUpsert(uuid: String): Boolean {
-        return try {
-            val entity = userDatabase.userDataDao.getByUuid(uuid).firstOrNull() ?: return false
-            val dto = UserDataDto.fromEntity(entity)
+	override suspend fun remoteUpsert(uuid: String): Boolean {
+		return try {
+			val entity = userDatabase.userDataDao.getByUuid(uuid).firstOrNull() ?: return false
+			val dto = UserDataDto.fromEntity(entity)
 
-            database.from(TABLE_NAME).upsert(dto)
-            true
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            e.printStackTrace()
-            false
-        }
-    }
+			database.from(TABLE_NAME).upsert(dto)
+			true
+		} catch (e: Exception) {
+			if (e is CancellationException) throw e
+			e.printStackTrace()
+			false
+		}
+	}
 
-    override suspend fun remoteDelete(uuid: String): Boolean {
-        return try {
-            database.from(TABLE_NAME).delete {
-                filter { UserDataDto::uuid eq uuid }
-            }
-            true
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            e.printStackTrace()
-            false
-        }
-    }
+	override suspend fun remoteDelete(uuid: String): Boolean {
+		return try {
+			database.from(TABLE_NAME).delete {
+				filter { UserDataDto::uuid eq uuid }
+			}
+			true
+		} catch (e: Exception) {
+			if (e is CancellationException) throw e
+			e.printStackTrace()
+			false
+		}
+	}
 
-    // ================================
-    //  Private Methods
-    // ================================
+	// ================================
+	//  Private Methods
+	// ================================
 
-    private fun queueWorker(uid: String) {
-        val workRequest = OneTimeWorkRequestBuilder<UserSyncWorker>()
-            .setInputData(
-                workDataOf(
-                    UserSyncWorker.KEY_TYPE to UserData::class.simpleName,
-                    UserSyncWorker.KEY_RELATION to uid
-                )
-            )
-            .setConstraints(Constraints(NetworkType.CONNECTED))
-            .build()
+	private fun queueWorker(uid: String) {
+		val workRequest = OneTimeWorkRequestBuilder<UserSyncWorker>().setInputData(
+			workDataOf(
+				UserSyncWorker.KEY_TYPE to UserData::class.simpleName,
+				UserSyncWorker.KEY_RELATION to uid
+			)
+		).setConstraints(Constraints(NetworkType.CONNECTED)).build()
 
-        workManager.enqueueUniqueWork(
-            UserData::class.simpleName + UserSyncWorker.WORK_BASE_NAME,
-            ExistingWorkPolicy.REPLACE,
-            workRequest
-        )
-    }
+		workManager.enqueueUniqueWork(
+			UserData::class.simpleName + UserSyncWorker.WORK_BASE_NAME,
+			ExistingWorkPolicy.REPLACE,
+			workRequest
+		)
+	}
 }

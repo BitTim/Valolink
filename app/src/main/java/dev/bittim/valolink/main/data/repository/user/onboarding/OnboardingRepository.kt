@@ -4,8 +4,8 @@ import dev.bittim.valolink.main.domain.model.user.UserAgent
 import dev.bittim.valolink.main.domain.model.user.UserContract
 
 interface OnboardingRepository {
-    suspend fun setOnboardingComplete(
-        agents: List<UserAgent>,
-        userContracts: List<UserContract>,
-    ): Boolean
+	suspend fun setOnboardingComplete(
+		agents: List<UserAgent>,
+		userContracts: List<UserContract>,
+	): Boolean
 }

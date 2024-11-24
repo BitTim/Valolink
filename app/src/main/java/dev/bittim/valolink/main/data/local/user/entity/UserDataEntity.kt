@@ -9,51 +9,45 @@ import dev.bittim.valolink.main.domain.model.user.UserData
 import java.time.OffsetDateTime
 
 @Entity(
-    tableName = "Users",
-    indices = [Index(
-        value = ["uuid"],
-        unique = true
-    )]
+	tableName = "Users", indices = [Index(
+		value = ["uuid"], unique = true
+	)]
 )
 data class UserDataEntity(
-    @PrimaryKey override val uuid: String,
-    override val isSynced: Boolean,
-    override val toDelete: Boolean,
-    override val updatedAt: String,
-    val isPrivate: Boolean,
-    val username: String,
+	@PrimaryKey override val uuid: String,
+	override val isSynced: Boolean,
+	override val toDelete: Boolean,
+	override val updatedAt: String,
+	val isPrivate: Boolean,
+	val username: String,
 ) : SyncedEntity {
-    override fun getIdentifier(): String {
-        return uuid
-    }
+	override fun getIdentifier(): String {
+		return uuid
+	}
 
-    override fun withIsSynced(isSynced: Boolean): SyncedEntity {
-        return this.copy(isSynced = true)
-    }
+	override fun withIsSynced(isSynced: Boolean): SyncedEntity {
+		return this.copy(isSynced = true)
+	}
 
-    fun toType(
-        agents: List<UserAgent>,
-        contracts: List<UserContract>,
-    ): UserData {
-        return UserData(
-            uuid,
-            isPrivate,
-            username,
-            agents,
-            contracts
-        )
-    }
+	fun toType(
+		agents: List<UserAgent>,
+		contracts: List<UserContract>,
+	): UserData {
+		return UserData(
+			uuid, isPrivate, username, agents, contracts
+		)
+	}
 
-    companion object {
-        fun fromType(userData: UserData, isSynced: Boolean, toDelete: Boolean): UserDataEntity {
-            return UserDataEntity(
-                userData.uuid,
-                isSynced,
-                toDelete,
-                OffsetDateTime.now().toString(),
-                userData.isPrivate,
-                userData.username
-            )
-        }
-    }
+	companion object {
+		fun fromType(userData: UserData, isSynced: Boolean, toDelete: Boolean): UserDataEntity {
+			return UserDataEntity(
+				userData.uuid,
+				isSynced,
+				toDelete,
+				OffsetDateTime.now().toString(),
+				userData.isPrivate,
+				userData.username
+			)
+		}
+	}
 }

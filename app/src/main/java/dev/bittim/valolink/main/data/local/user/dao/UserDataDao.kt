@@ -10,38 +10,38 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDataDao {
-    // --------------------------------
-    //  Upsert
-    // --------------------------------
+	// --------------------------------
+	//  Upsert
+	// --------------------------------
 
-    @Upsert
-    suspend fun upsert(userData: UserDataEntity)
+	@Upsert
+	suspend fun upsert(userData: UserDataEntity)
 
-    // --------------------------------
-    //  Queries
-    // --------------------------------
+	// --------------------------------
+	//  Queries
+	// --------------------------------
 
-    @Transaction
-    @Query("SELECT * FROM Users WHERE uuid = :uuid LIMIT 1")
-    fun getByUuid(uuid: String): Flow<UserDataEntity?>
+	@Transaction
+	@Query("SELECT * FROM Users WHERE uuid = :uuid LIMIT 1")
+	fun getByUuid(uuid: String): Flow<UserDataEntity?>
 
-    @Query("SELECT updatedAt FROM Users WHERE uuid = :uuid LIMIT 1")
-    fun getUpdatedAtByUuid(uuid: String): Flow<String?>
+	@Query("SELECT updatedAt FROM Users WHERE uuid = :uuid LIMIT 1")
+	fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
-    @Query("SELECT * FROM Users WHERE isSynced = false ORDER BY updatedAt ASC")
-    fun getSyncQueue(): Flow<List<UserDataEntity?>>
+	@Query("SELECT * FROM Users WHERE isSynced = false ORDER BY updatedAt ASC")
+	fun getSyncQueue(): Flow<List<UserDataEntity?>>
 
-    // --------------------------------
-    //  Delete
-    // --------------------------------
+	// --------------------------------
+	//  Delete
+	// --------------------------------
 
-    @Delete
-    suspend fun delete(userData: UserDataEntity)
+	@Delete
+	suspend fun delete(userData: UserDataEntity)
 
-    @Query("DELETE FROM Users WHERE uuid = :uuid")
-    suspend fun deleteByUuid(uuid: String)
+	@Query("DELETE FROM Users WHERE uuid = :uuid")
+	suspend fun deleteByUuid(uuid: String)
 
-    @Transaction
-    @Query("DELETE FROM Users")
-    suspend fun deleteAll()
+	@Transaction
+	@Query("DELETE FROM Users")
+	suspend fun deleteAll()
 }

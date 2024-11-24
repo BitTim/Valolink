@@ -13,47 +13,47 @@ import kotlinx.serialization.json.jsonPrimitive
 import javax.inject.Inject
 
 class SessionSupabaseRepository @Inject constructor(
-    private val auth: Auth,
-    private val userDatabase: UserDatabase,
+	private val auth: Auth,
+	private val userDatabase: UserDatabase,
 ) : SessionRepository, DefaultLifecycleObserver {
-    // ================================
-    //  Session
-    // ================================
+	// ================================
+	//  Session
+	// ================================
 
-    override fun getSessionStatus(): StateFlow<SessionStatus> {
-        return auth.sessionStatus
-    }
+	override fun getSessionStatus(): StateFlow<SessionStatus> {
+		return auth.sessionStatus
+	}
 
-    override suspend fun signOut() {
-        // Delete all cached user data on sign out
-        userDatabase.userDataDao.deleteAll()
-        userDatabase.userContractDao.deleteAll()
+	override suspend fun signOut() {
+		// Delete all cached user data on sign out
+		userDatabase.userDataDao.deleteAll()
+		userDatabase.userContractDao.deleteAll()
 
-        // Sign out
-        auth.signOut()
-    }
+		// Sign out
+		auth.signOut()
+	}
 
-    // ================================
-    //  User Metadata
-    // ================================
+	// ================================
+	//  User Metadata
+	// ================================
 
-    override suspend fun getUserInfo(): UserInfo? {
-        return auth.currentUserOrNull()
-    }
+	override suspend fun getUserInfo(): UserInfo? {
+		return auth.currentUserOrNull()
+	}
 
-    override suspend fun getUid(): String? {
-        return getUserInfo()?.id
-    }
+	override suspend fun getUid(): String? {
+		return getUserInfo()?.id
+	}
 
-    override suspend fun getHasOnboarded(): Boolean? {
-        return getUserInfo()?.userMetadata?.get("hasOnboarded")?.jsonPrimitive?.booleanOrNull
-    }
+	override suspend fun getHasOnboarded(): Boolean? {
+		return getUserInfo()?.userMetadata?.get("hasOnboarded")?.jsonPrimitive?.booleanOrNull
+	}
 
-    override suspend fun getUsernameFromMetadata(): String? {
-        return getUserInfo()?.userMetadata?.get("display_name")?.jsonPrimitive?.contentOrNull
-    }
+	override suspend fun getUsernameFromMetadata(): String? {
+		return getUserInfo()?.userMetadata?.get("display_name")?.jsonPrimitive?.contentOrNull
+	}
 
-    override suspend fun updateUserInfo(userInfo: UserUpdateBuilder.() -> Unit) {
-        auth.updateUser(config = userInfo)
-    }
+	override suspend fun updateUserInfo(userInfo: UserUpdateBuilder.() -> Unit) {
+		auth.updateUser(config = userInfo)
+	}
 }
