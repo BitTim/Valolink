@@ -4,7 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.core.data.repository.game.ContractRepository
+import dev.bittim.valolink.core.data.repository.content.contract.ContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
 import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType

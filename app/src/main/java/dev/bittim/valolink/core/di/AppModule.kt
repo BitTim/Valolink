@@ -22,31 +22,31 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.bittim.valolink.core.data.local.content.ContentDatabase
 import dev.bittim.valolink.core.data.local.converter.StringListConverter
-import dev.bittim.valolink.core.data.local.game.GameDatabase
-import dev.bittim.valolink.core.data.remote.game.GameApi
-import dev.bittim.valolink.core.data.repository.game.AgentApiRepository
-import dev.bittim.valolink.core.data.repository.game.AgentRepository
-import dev.bittim.valolink.core.data.repository.game.BuddyApiRepository
-import dev.bittim.valolink.core.data.repository.game.BuddyRepository
-import dev.bittim.valolink.core.data.repository.game.ContractApiRepository
-import dev.bittim.valolink.core.data.repository.game.ContractRepository
-import dev.bittim.valolink.core.data.repository.game.CurrencyApiRepository
-import dev.bittim.valolink.core.data.repository.game.CurrencyRepository
-import dev.bittim.valolink.core.data.repository.game.EventApiRepository
-import dev.bittim.valolink.core.data.repository.game.EventRepository
-import dev.bittim.valolink.core.data.repository.game.PlayerCardApiRepository
-import dev.bittim.valolink.core.data.repository.game.PlayerCardRepository
-import dev.bittim.valolink.core.data.repository.game.PlayerTitleApiRepository
-import dev.bittim.valolink.core.data.repository.game.PlayerTitleRepository
-import dev.bittim.valolink.core.data.repository.game.SeasonApiRepository
-import dev.bittim.valolink.core.data.repository.game.SeasonRepository
-import dev.bittim.valolink.core.data.repository.game.SprayApiRepository
-import dev.bittim.valolink.core.data.repository.game.SprayRepository
-import dev.bittim.valolink.core.data.repository.game.VersionApiRepository
-import dev.bittim.valolink.core.data.repository.game.VersionRepository
-import dev.bittim.valolink.core.data.repository.game.WeaponApiRepository
-import dev.bittim.valolink.core.data.repository.game.WeaponRepository
+import dev.bittim.valolink.core.data.remote.content.ContentApi
+import dev.bittim.valolink.core.data.repository.content.agent.AgentApiRepository
+import dev.bittim.valolink.core.data.repository.content.agent.AgentRepository
+import dev.bittim.valolink.core.data.repository.content.buddy.BuddyApiRepository
+import dev.bittim.valolink.core.data.repository.content.buddy.BuddyRepository
+import dev.bittim.valolink.core.data.repository.content.contract.ContractApiRepository
+import dev.bittim.valolink.core.data.repository.content.contract.ContractRepository
+import dev.bittim.valolink.core.data.repository.content.currency.CurrencyApiRepository
+import dev.bittim.valolink.core.data.repository.content.currency.CurrencyRepository
+import dev.bittim.valolink.core.data.repository.content.event.EventApiRepository
+import dev.bittim.valolink.core.data.repository.content.event.EventRepository
+import dev.bittim.valolink.core.data.repository.content.playerCard.PlayerCardApiRepository
+import dev.bittim.valolink.core.data.repository.content.playerCard.PlayerCardRepository
+import dev.bittim.valolink.core.data.repository.content.playerTitle.PlayerTitleApiRepository
+import dev.bittim.valolink.core.data.repository.content.playerTitle.PlayerTitleRepository
+import dev.bittim.valolink.core.data.repository.content.season.SeasonApiRepository
+import dev.bittim.valolink.core.data.repository.content.season.SeasonRepository
+import dev.bittim.valolink.core.data.repository.content.spray.SprayApiRepository
+import dev.bittim.valolink.core.data.repository.content.spray.SprayRepository
+import dev.bittim.valolink.core.data.repository.content.version.VersionApiRepository
+import dev.bittim.valolink.core.data.repository.content.version.VersionRepository
+import dev.bittim.valolink.core.data.repository.content.weapon.WeaponApiRepository
+import dev.bittim.valolink.core.data.repository.content.weapon.WeaponRepository
 import dev.bittim.valolink.core.domain.usecase.supabase.CreateSupabaseClientUseCase
 import dev.bittim.valolink.main.data.local.user.UserDatabase
 import dev.bittim.valolink.main.domain.usecase.game.QueueFullSyncUseCase
@@ -123,9 +123,9 @@ object AppModule {
 	fun provideGameDatabase(
 		@ApplicationContext context: Context,
 		moshi: Moshi,
-	): GameDatabase {
+	): ContentDatabase {
 		return Room.databaseBuilder(
-			context, GameDatabase::class.java, "game.db"
+			context, ContentDatabase::class.java, "game.db"
 		).addTypeConverter(StringListConverter(moshi)).build()
 	}
 
@@ -170,10 +170,10 @@ object AppModule {
 	fun providesGameApi(
 		moshi: Moshi,
 		okHttpClient: OkHttpClient,
-	): GameApi {
-		return Retrofit.Builder().baseUrl(GameApi.BASE_URL)
+	): ContentApi {
+		return Retrofit.Builder().baseUrl(ContentApi.BASE_URL)
 			.addConverterFactory(MoshiConverterFactory.create(moshi)).client(okHttpClient).build()
-			.create(GameApi::class.java)
+			.create(ContentApi::class.java)
 	}
 
 	// ================================
@@ -193,55 +193,55 @@ object AppModule {
 	@Provides
 	@Singleton
 	fun providesVersionRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 	): VersionRepository {
 		return VersionApiRepository(
-			gameDatabase, gameApi
+			contentDatabase, contentApi
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesSeasonRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): SeasonRepository {
 		return SeasonApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesEventRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): EventRepository {
 		return EventApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesAgentRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): AgentRepository {
 		return AgentApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesContractRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 		seasonRepository: SeasonRepository,
 		eventRepository: EventRepository,
@@ -254,8 +254,8 @@ object AppModule {
 		weaponRepository: WeaponRepository,
 	): ContractRepository {
 		return ContractApiRepository(
-			gameDatabase,
-			gameApi,
+			contentDatabase,
+			contentApi,
 			workManager,
 			seasonRepository,
 			eventRepository,
@@ -272,72 +272,72 @@ object AppModule {
 	@Provides
 	@Singleton
 	fun providesCurrencyRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): CurrencyRepository {
 		return CurrencyApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesSprayRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): SprayRepository {
 		return SprayApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesPlayerTitleRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): PlayerTitleRepository {
 		return PlayerTitleApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesPlayerCardRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): PlayerCardRepository {
 		return PlayerCardApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesBuddyRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): BuddyRepository {
 		return BuddyApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 
 	@Provides
 	@Singleton
 	fun providesWeaponRepository(
-		gameDatabase: GameDatabase,
-		gameApi: GameApi,
+		contentDatabase: ContentDatabase,
+		contentApi: ContentApi,
 		workManager: WorkManager,
 	): WeaponRepository {
 		return WeaponApiRepository(
-			gameDatabase, gameApi, workManager
+			contentDatabase, contentApi, workManager
 		)
 	}
 

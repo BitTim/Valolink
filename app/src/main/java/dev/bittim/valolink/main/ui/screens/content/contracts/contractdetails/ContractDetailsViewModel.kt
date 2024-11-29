@@ -3,8 +3,8 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.contractdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.core.data.repository.game.ContractRepository
-import dev.bittim.valolink.core.data.repository.game.CurrencyRepository
+import dev.bittim.valolink.core.data.repository.content.contract.ContractRepository
+import dev.bittim.valolink.core.data.repository.content.currency.CurrencyRepository
 import dev.bittim.valolink.main.domain.model.game.Currency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

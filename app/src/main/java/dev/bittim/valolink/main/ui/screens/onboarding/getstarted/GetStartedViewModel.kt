@@ -3,8 +3,8 @@ package dev.bittim.valolink.main.ui.screens.onboarding.getstarted
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.core.data.repository.game.AgentRepository
-import dev.bittim.valolink.core.data.repository.game.ContractRepository
+import dev.bittim.valolink.core.data.repository.content.agent.AgentRepository
+import dev.bittim.valolink.core.data.repository.content.contract.ContractRepository
 import dev.bittim.valolink.main.data.repository.user.SessionRepository
 import dev.bittim.valolink.main.data.repository.user.onboarding.OnboardingRepository
 import dev.bittim.valolink.main.domain.model.user.UserAgent

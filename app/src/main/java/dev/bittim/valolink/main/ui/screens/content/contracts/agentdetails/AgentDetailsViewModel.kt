@@ -3,8 +3,8 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.core.data.repository.game.ContractRepository
-import dev.bittim.valolink.core.data.repository.game.CurrencyRepository
+import dev.bittim.valolink.core.data.repository.content.contract.ContractRepository
+import dev.bittim.valolink.core.data.repository.content.currency.CurrencyRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserAgentRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
 import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository

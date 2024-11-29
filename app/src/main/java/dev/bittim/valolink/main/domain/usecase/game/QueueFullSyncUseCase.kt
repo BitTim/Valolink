@@ -1,15 +1,15 @@
 package dev.bittim.valolink.main.domain.usecase.game
 
-import dev.bittim.valolink.core.data.repository.game.AgentRepository
-import dev.bittim.valolink.core.data.repository.game.BuddyRepository
-import dev.bittim.valolink.core.data.repository.game.ContractRepository
-import dev.bittim.valolink.core.data.repository.game.CurrencyRepository
-import dev.bittim.valolink.core.data.repository.game.EventRepository
-import dev.bittim.valolink.core.data.repository.game.PlayerCardRepository
-import dev.bittim.valolink.core.data.repository.game.PlayerTitleRepository
-import dev.bittim.valolink.core.data.repository.game.SeasonRepository
-import dev.bittim.valolink.core.data.repository.game.SprayRepository
-import dev.bittim.valolink.core.data.repository.game.WeaponRepository
+import dev.bittim.valolink.core.data.repository.content.agent.AgentRepository
+import dev.bittim.valolink.core.data.repository.content.buddy.BuddyRepository
+import dev.bittim.valolink.core.data.repository.content.contract.ContractRepository
+import dev.bittim.valolink.core.data.repository.content.currency.CurrencyRepository
+import dev.bittim.valolink.core.data.repository.content.event.EventRepository
+import dev.bittim.valolink.core.data.repository.content.playerCard.PlayerCardRepository
+import dev.bittim.valolink.core.data.repository.content.playerTitle.PlayerTitleRepository
+import dev.bittim.valolink.core.data.repository.content.season.SeasonRepository
+import dev.bittim.valolink.core.data.repository.content.spray.SprayRepository
+import dev.bittim.valolink.core.data.repository.content.weapon.WeaponRepository
 
 class QueueFullSyncUseCase(
 	private val agentRepository: AgentRepository,
