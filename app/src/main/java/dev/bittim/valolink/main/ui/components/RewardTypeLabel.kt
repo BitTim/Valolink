@@ -22,8 +22,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.util.getScaledLineHeightFromFontStyle
 
 enum class RewardTypeLabelStyle {
@@ -42,12 +42,12 @@ fun RewardTypeLabel(
 
     val textStyle = when (style) {
         RewardTypeLabelStyle.DEFAULT -> MaterialTheme.typography.titleMedium
-        RewardTypeLabelStyle.SMALL   -> MaterialTheme.typography.labelMedium
+        RewardTypeLabelStyle.SMALL -> MaterialTheme.typography.labelMedium
     }
 
     val iconSize = when (style) {
         RewardTypeLabelStyle.DEFAULT -> 24.dp
-        RewardTypeLabelStyle.SMALL   -> 20.dp
+        RewardTypeLabelStyle.SMALL -> 20.dp
     }
 
     Crossfade(

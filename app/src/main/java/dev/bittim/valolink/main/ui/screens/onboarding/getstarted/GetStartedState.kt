@@ -1,7 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.onboarding.getstarted
 
-import dev.bittim.valolink.main.domain.model.user.UserAgent
-import dev.bittim.valolink.main.domain.model.user.UserContract
+import dev.bittim.valolink.user.domain.model.UserAgent
+import dev.bittim.valolink.user.domain.model.UserContract
 
 data class GetStartedState(
     val loadingFinished: Int = 0,

@@ -55,8 +55,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.components.RewardTypeLabel
 import dev.bittim.valolink.main.ui.components.RewardTypeLabelStyle
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder

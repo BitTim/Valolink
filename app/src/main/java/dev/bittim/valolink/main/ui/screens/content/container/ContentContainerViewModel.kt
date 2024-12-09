@@ -3,8 +3,8 @@ package dev.bittim.valolink.main.ui.screens.content.container
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.main.data.repository.user.SessionRepository
-import dev.bittim.valolink.main.domain.usecase.game.QueueFullSyncUseCase
+import dev.bittim.valolink.content.domain.usecase.QueueFullSyncUseCase
+import dev.bittim.valolink.user.data.repository.SessionRepository
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +29,7 @@ class ContentContainerViewModel @Inject constructor(
         viewModelScope.launch {
             sessionRepository.getSessionStatus().collectLatest { sessionStatus ->
                 when (sessionStatus) {
-                    is SessionStatus.Authenticated    -> {
+                    is SessionStatus.Authenticated -> {
                         _state.update {
                             it.copy(isAuthenticated = true)
                         }
@@ -41,7 +41,7 @@ class ContentContainerViewModel @Inject constructor(
                         }
                     }
 
-                    else                              -> {}
+                    else -> {}
                 }
             }
         }

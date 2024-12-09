@@ -1,9 +1,9 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails
 
 import androidx.compose.foundation.lazy.LazyListState
-import dev.bittim.valolink.main.domain.model.game.Currency
-import dev.bittim.valolink.main.domain.model.game.contract.Contract
-import dev.bittim.valolink.main.domain.model.user.UserData
+import dev.bittim.valolink.content.domain.model.Currency
+import dev.bittim.valolink.content.domain.model.contract.Contract
+import dev.bittim.valolink.user.domain.model.UserData
 
 data class AgentDetailsState(
     val isUserDataLoading: Boolean = true,

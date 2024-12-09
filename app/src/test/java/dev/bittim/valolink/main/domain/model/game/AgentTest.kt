@@ -1,7 +1,7 @@
 package dev.bittim.valolink.main.domain.model.game
 
-import dev.bittim.valolink.main.domain.model.game.agent.Agent
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
+import dev.bittim.valolink.content.domain.model.agent.Agent
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import java.time.Instant

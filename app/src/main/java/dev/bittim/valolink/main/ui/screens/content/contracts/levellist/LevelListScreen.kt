@@ -34,9 +34,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.main.domain.model.game.agent.Agent
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
+import dev.bittim.valolink.content.domain.model.agent.Agent
+import dev.bittim.valolink.content.domain.model.contract.chapter.Level
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardListCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardListCardData
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.dialogs.ContractResetAlertDialog

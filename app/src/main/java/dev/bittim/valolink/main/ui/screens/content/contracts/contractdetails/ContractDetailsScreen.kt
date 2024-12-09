@@ -30,7 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
 

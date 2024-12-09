@@ -3,14 +3,14 @@ package dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.bittim.valolink.core.data.repository.content.contract.ContractRepository
-import dev.bittim.valolink.core.data.repository.content.currency.CurrencyRepository
-import dev.bittim.valolink.main.data.repository.user.data.UserAgentRepository
-import dev.bittim.valolink.main.data.repository.user.data.UserContractRepository
-import dev.bittim.valolink.main.data.repository.user.data.UserDataRepository
-import dev.bittim.valolink.main.data.repository.user.data.UserLevelRepository
-import dev.bittim.valolink.main.domain.model.game.Currency
-import dev.bittim.valolink.main.domain.model.game.agent.Agent
+import dev.bittim.valolink.content.data.repository.contract.ContractRepository
+import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
+import dev.bittim.valolink.content.domain.model.Currency
+import dev.bittim.valolink.content.domain.model.agent.Agent
+import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
+import dev.bittim.valolink.user.data.repository.data.UserContractRepository
+import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,146 +26,145 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AgentDetailsViewModel @Inject constructor(
-	private val contractRepository: ContractRepository,
-	private val currencyRepository: CurrencyRepository,
-	private val userDataRepository: UserDataRepository,
-	private val userAgentRepository: UserAgentRepository,
-	private val userContractRepository: UserContractRepository,
-	private val userLevelRepository: UserLevelRepository,
+    private val contractRepository: ContractRepository,
+    private val currencyRepository: CurrencyRepository,
+    private val userDataRepository: UserDataRepository,
+    private val userAgentRepository: UserAgentRepository,
+    private val userContractRepository: UserContractRepository,
+    private val userLevelRepository: UserLevelRepository,
 ) : ViewModel() {
-	private val _state = MutableStateFlow(AgentDetailsState())
-	val state = _state.asStateFlow()
+    private val _state = MutableStateFlow(AgentDetailsState())
+    val state = _state.asStateFlow()
 
-	private var fetchUserDataJob: Job? = null
-	private var fetchDetailsJob: Job? = null
+    private var fetchUserDataJob: Job? = null
+    private var fetchDetailsJob: Job? = null
 
-	init {
-		fetchUserDataJob?.cancel()
-		fetchUserDataJob = viewModelScope.launch {
-			withContext(Dispatchers.IO) {
-				userDataRepository.getWithCurrentUser()
-					.onStart { _state.update { it.copy(isUserDataLoading = true) } }
-					.stateIn(viewModelScope, WhileSubscribed(5000), null)
-					.collectLatest { userData ->
-						_state.update {
-							it.copy(
-								isUserDataLoading = false, userData = userData
-							)
-						}
-					}
-			}
-		}
-	}
+    init {
+        fetchUserDataJob?.cancel()
+        fetchUserDataJob = viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                userDataRepository.getWithCurrentUser()
+                    .onStart { _state.update { it.copy(isUserDataLoading = true) } }
+                    .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                    .collectLatest { userData ->
+                        _state.update {
+                            it.copy(
+                                isUserDataLoading = false, userData = userData
+                            )
+                        }
+                    }
+            }
+        }
+    }
 
-	fun fetchDetails(uuid: String?) {
-		if (uuid == null) return
+    fun fetchDetails(uuid: String?) {
+        if (uuid == null) return
 
-		fetchDetailsJob?.cancel()
-		fetchDetailsJob = viewModelScope.launch {
-			launch {
-				withContext(Dispatchers.IO) {
-					contractRepository.getByUuid(uuid, true)
-						.onStart { _state.update { it.copy(isContractLoading = true) } }
-						.stateIn(viewModelScope, WhileSubscribed(5000), null)
-						.collectLatest { contract ->
-							_state.update {
-								it.copy(
-									isContractLoading = false, agentGear = contract
-								)
-							}
-						}
-				}
-			}
+        fetchDetailsJob?.cancel()
+        fetchDetailsJob = viewModelScope.launch {
+            launch {
+                withContext(Dispatchers.IO) {
+                    contractRepository.getByUuid(uuid, true)
+                        .onStart { _state.update { it.copy(isContractLoading = true) } }
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { contract ->
+                            _state.update {
+                                it.copy(
+                                    isContractLoading = false, agentGear = contract
+                                )
+                            }
+                        }
+                }
+            }
 
-			launch {
-				withContext(Dispatchers.IO) {
-					currencyRepository.getByUuid(Currency.DOUGH_UUID)
-						.onStart { _state.update { it.copy(isCurrencyLoading = true) } }
-						.stateIn(viewModelScope, WhileSubscribed(5000), null)
-						.collectLatest { currency ->
-							_state.update {
-								it.copy(
-									isCurrencyLoading = false, dough = currency
-								)
-							}
-						}
-				}
-			}
-		}
-	}
+            launch {
+                withContext(Dispatchers.IO) {
+                    currencyRepository.getByUuid(Currency.DOUGH_UUID)
+                        .onStart { _state.update { it.copy(isCurrencyLoading = true) } }
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { currency ->
+                            _state.update {
+                                it.copy(
+                                    isCurrencyLoading = false, dough = currency
+                                )
+                            }
+                        }
+                }
+            }
+        }
+    }
 
 
+    fun unlockAgent() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val agent = state.value.agentGear?.content?.relation as Agent? ?: return@withContext
+                val userData = state.value.userData ?: return@withContext
 
-	fun unlockAgent() {
-		viewModelScope.launch {
-			withContext(Dispatchers.IO) {
-				val agent = state.value.agentGear?.content?.relation as Agent? ?: return@withContext
-				val userData = state.value.userData ?: return@withContext
+                userAgentRepository.set(agent.toUserObj(userData.uuid))
+            }
+        }
+    }
 
-				userAgentRepository.set(agent.toUserObj(userData.uuid))
-			}
-		}
-	}
+    fun resetAgent() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val contract = state.value.agentGear ?: return@withContext
+                contract.content.chapters.flatMap { it.levels }.forEach { resetLevel(it.uuid) }
 
-	fun resetAgent() {
-		viewModelScope.launch {
-			withContext(Dispatchers.IO) {
-				val contract = state.value.agentGear ?: return@withContext
-				contract.content.chapters.flatMap { it.levels }.forEach { resetLevel(it.uuid) }
+                val agent = state.value.agentGear?.content?.relation as Agent? ?: return@withContext
+                if (!agent.isBaseContent) {
+                    val userData = state.value.userData ?: return@withContext
+                    val userAgent =
+                        userData.agents.find { it.agent == agent.uuid } ?: return@withContext
 
-				val agent = state.value.agentGear?.content?.relation as Agent? ?: return@withContext
-				if (!agent.isBaseContent) {
-					val userData = state.value.userData ?: return@withContext
-					val userAgent =
-						userData.agents.find { it.agent == agent.uuid } ?: return@withContext
+                    userAgentRepository.delete(userAgent)
+                }
+            }
+        }
+    }
 
-					userAgentRepository.delete(userAgent)
-				}
-			}
-		}
-	}
+    fun initUserContract() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val contract = state.value.agentGear ?: return@withContext
+                val userData = state.value.userData ?: return@withContext
 
-	fun initUserContract() {
-		viewModelScope.launch {
-			withContext(Dispatchers.IO) {
-				val contract = state.value.agentGear ?: return@withContext
-				val userData = state.value.userData ?: return@withContext
+                userContractRepository.set(contract.toUserObj(userData.uuid))
+            }
+        }
+    }
 
-				userContractRepository.set(contract.toUserObj(userData.uuid))
-			}
-		}
-	}
+    fun unlockLevel(uuid: String?) {
+        if (uuid == null) return
 
-	fun unlockLevel(uuid: String?) {
-		if (uuid == null) return
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val userData = state.value.userData ?: return@withContext
+                val userContract =
+                    userData.contracts.find { it.contract == state.value.agentGear?.uuid }
+                        ?: return@withContext
+                val level = state.value.agentGear?.content?.chapters?.flatMap { it.levels }
+                    ?.find { it.uuid == uuid } ?: return@withContext
 
-		viewModelScope.launch {
-			withContext(Dispatchers.IO) {
-				val userData = state.value.userData ?: return@withContext
-				val userContract =
-					userData.contracts.find { it.contract == state.value.agentGear?.uuid }
-						?: return@withContext
-				val level = state.value.agentGear?.content?.chapters?.flatMap { it.levels }
-					?.find { it.uuid == uuid } ?: return@withContext
+                userLevelRepository.set(level.toUserObj(userContract.uuid, true))
+            }
+        }
+    }
 
-				userLevelRepository.set(level.toUserObj(userContract.uuid, true))
-			}
-		}
-	}
+    fun resetLevel(uuid: String?) {
+        if (uuid == null) return
 
-	fun resetLevel(uuid: String?) {
-		if (uuid == null) return
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val userData = state.value.userData ?: return@withContext
+                val userContract =
+                    userData.contracts.find { it.contract == state.value.agentGear?.uuid }
+                        ?: return@withContext
+                val userLevel = userContract.levels.find { it.level == uuid } ?: return@withContext
 
-		viewModelScope.launch {
-			withContext(Dispatchers.IO) {
-				val userData = state.value.userData ?: return@withContext
-				val userContract =
-					userData.contracts.find { it.contract == state.value.agentGear?.uuid }
-						?: return@withContext
-				val userLevel = userContract.levels.find { it.level == uuid } ?: return@withContext
-
-				userLevelRepository.delete(userLevel)
-			}
-		}
-	}
+                userLevelRepository.delete(userLevel)
+            }
+        }
+    }
 }

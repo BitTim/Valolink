@@ -18,8 +18,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.main.domain.model.game.Currency
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
+import dev.bittim.valolink.content.domain.model.Currency
+import dev.bittim.valolink.content.domain.model.contract.chapter.Level
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.PricedListItem
 
 @Composable

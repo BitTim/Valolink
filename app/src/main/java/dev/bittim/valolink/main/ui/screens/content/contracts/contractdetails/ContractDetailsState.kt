@@ -1,7 +1,7 @@
 package dev.bittim.valolink.main.ui.screens.content.contracts.contractdetails
 
-import dev.bittim.valolink.main.domain.model.game.Currency
-import dev.bittim.valolink.main.domain.model.game.contract.Contract
+import dev.bittim.valolink.content.domain.model.Currency
+import dev.bittim.valolink.content.domain.model.contract.Contract
 
 data class ContractDetailsState(
     val isContractLoading: Boolean = false,

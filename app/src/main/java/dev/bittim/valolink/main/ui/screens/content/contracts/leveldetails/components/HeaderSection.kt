@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.main.domain.model.game.contract.reward.Reward
+import dev.bittim.valolink.content.domain.model.contract.reward.Reward
 
 @Composable
 fun HeaderSection(

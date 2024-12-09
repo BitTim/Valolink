@@ -45,8 +45,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
-import dev.bittim.valolink.main.domain.model.game.agent.Agent
-import dev.bittim.valolink.main.domain.model.game.contract.chapter.Level
+import dev.bittim.valolink.content.domain.model.agent.Agent
+import dev.bittim.valolink.content.domain.model.contract.chapter.Level
 import dev.bittim.valolink.main.ui.components.DetailScreen
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.conditional

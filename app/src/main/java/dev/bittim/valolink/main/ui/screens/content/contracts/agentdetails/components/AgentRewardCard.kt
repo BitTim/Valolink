@@ -55,8 +55,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.components.RewardTypeLabel
 import dev.bittim.valolink.main.ui.components.RewardTypeLabelStyle
 import dev.bittim.valolink.main.ui.components.UnlockButton
@@ -128,8 +128,8 @@ fun AgentRewardCard(
 
                     val imagePadding = when (it.type) {
                         RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
-                        RewardType.PLAYER_CARD                -> PaddingValues(0.dp)
-                        else                                  -> PaddingValues(16.dp)
+                        RewardType.PLAYER_CARD -> PaddingValues(0.dp)
+                        else -> PaddingValues(16.dp)
                     }
 
                     AsyncImage(

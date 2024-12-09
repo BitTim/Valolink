@@ -1,8 +1,8 @@
 package dev.bittim.valolink.main.domain.model.game
 
-import dev.bittim.valolink.main.domain.model.game.buddy.Buddy
-import dev.bittim.valolink.main.domain.model.game.buddy.BuddyLevel
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
+import dev.bittim.valolink.content.domain.model.buddy.Buddy
+import dev.bittim.valolink.content.domain.model.buddy.BuddyLevel
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.UUID

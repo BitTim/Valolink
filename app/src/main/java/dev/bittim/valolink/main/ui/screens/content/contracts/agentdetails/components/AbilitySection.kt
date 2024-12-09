@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.domain.model.agent.Ability
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.main.domain.model.game.agent.Ability
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.main.ui.components.pulseAnimation
 

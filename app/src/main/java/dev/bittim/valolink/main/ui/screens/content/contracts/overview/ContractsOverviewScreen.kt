@@ -43,9 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.main.domain.model.game.agent.Agent
-import dev.bittim.valolink.main.domain.model.game.contract.Contract
-import dev.bittim.valolink.main.domain.model.game.contract.content.ContentType
+import dev.bittim.valolink.content.domain.model.agent.Agent
+import dev.bittim.valolink.content.domain.model.contract.Contract
+import dev.bittim.valolink.content.domain.model.contract.content.ContentType
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.AgentCarouselCardData
 import dev.bittim.valolink.main.ui.screens.content.contracts.components.ContractCard

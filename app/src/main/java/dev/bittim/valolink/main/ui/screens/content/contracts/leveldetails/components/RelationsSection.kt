@@ -40,8 +40,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.main.domain.model.game.contract.reward.RewardType
 import dev.bittim.valolink.main.ui.components.pulseAnimation
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardListCard
 import dev.bittim.valolink.main.ui.screens.content.contracts.agentdetails.components.AgentRewardListCardData
