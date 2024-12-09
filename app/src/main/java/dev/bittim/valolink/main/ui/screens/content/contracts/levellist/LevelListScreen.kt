@@ -69,8 +69,7 @@ fun LevelListScreen(
 
     val contractLevels = state.contract?.content?.chapters?.flatMap { it.levels }
     val contractRelation = state.contract?.content?.relation
-    val isGear = contractRelation is Agent
-    val isLocked = when (isGear) {
+    val isLocked = when (contractRelation is Agent) {
         true -> state.userData?.agents?.any { it.agent == contractRelation.uuid } != true
         false -> state.contract?.content?.relation?.endTime?.isBefore(Instant.now()) != false
     }
@@ -180,47 +179,47 @@ fun LevelListScreen(
             val items = state.contract?.content?.chapters?.flatMap { it.levels }
 
             items(items = items ?: List(numRewardsVisible) { null },
-                  key = { it?.uuid ?: UUID.randomUUID().toString() },
-                  itemContent = { level ->
-                      val reward = level?.rewards?.find { !it.isFreeReward }?.relation
-                      val rewardCardData = if (level == null || reward == null) {
-                          null
-                      } else {
-                          AgentRewardListCardData(
-                              name = reward.displayName,
-                              levelUuid = level.uuid,
-                              type = reward.type,
-                              levelName = level.name,
-                              contractName = state.contract?.displayName ?: "",
-                              rewardCount = level.rewards.count(),
-                              amount = reward.amount,
-                              displayIcon = reward.displayIcon,
-                              background = reward.background,
-                              isLocked = isLocked,
-                              isOwned = userContract?.levels?.any { it.level == level.uuid } == true,
-                          )
-                      }
+                key = { it?.uuid ?: UUID.randomUUID().toString() },
+                itemContent = { level ->
+                    val reward = level?.rewards?.find { !it.isFreeReward }?.relation
+                    val rewardCardData = if (level == null || reward == null) {
+                        null
+                    } else {
+                        AgentRewardListCardData(
+                            name = reward.displayName,
+                            levelUuid = level.uuid,
+                            type = reward.type,
+                            levelName = level.name,
+                            contractName = state.contract?.displayName ?: "",
+                            rewardCount = level.rewards.count(),
+                            amount = reward.amount,
+                            displayIcon = reward.displayIcon,
+                            background = reward.background,
+                            isLocked = isLocked,
+                            isOwned = userContract?.levels?.any { it.level == level.uuid } == true,
+                        )
+                    }
 
-                      AgentRewardListCard(
-                          data = rewardCardData,
-                          resetReward = {
-                              if (level == null) return@AgentRewardListCard
+                    AgentRewardListCard(
+                        data = rewardCardData,
+                        resetReward = {
+                            if (level == null) return@AgentRewardListCard
 
-                              targetLevelUuid = level.uuid
-                              isLevelResetAlertShown = true
-                          },
-                          onNavToLevelDetails = { levelUuid ->
-                              if (reward?.type == RewardType.AGENT) {
-                                  onNavToAgentDetails(reward.uuid)
-                              } else {
-                                  onNavToLevelDetails(
-                                      levelUuid,
-                                      state.contract?.uuid ?: ""
-                                  )
-                              }
-                          }
-                      )
-                  }
+                            targetLevelUuid = level.uuid
+                            isLevelResetAlertShown = true
+                        },
+                        onNavToLevelDetails = { levelUuid ->
+                            if (reward?.type == RewardType.AGENT) {
+                                onNavToAgentDetails(reward.uuid)
+                            } else {
+                                onNavToLevelDetails(
+                                    levelUuid,
+                                    state.contract?.uuid ?: ""
+                                )
+                            }
+                        }
+                    )
+                }
             )
 
             item {
