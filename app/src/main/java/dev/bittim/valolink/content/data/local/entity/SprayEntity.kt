@@ -23,7 +23,7 @@ data class SprayEntity(
     val fullTransparentIcon: String?,
     val animationPng: String?,
     val animationGif: String?,
-) : GameEntity() {
+) : VersionedEntity {
     fun toType(): Spray {
         return Spray(
             uuid = uuid,

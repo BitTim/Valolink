@@ -22,65 +22,65 @@ import kotlinx.coroutines.flow.firstOrNull
 
 @HiltWorker
 class ContentSyncWorker @AssistedInject constructor(
-	@Assisted private val context: Context,
-	@Assisted private val params: WorkerParameters,
-	private val contentDatabase: ContentDatabase,
-	private val versionRepository: VersionRepository,
-	private val agentRepository: AgentRepository,
-	private val buddyRepository: BuddyRepository,
-	private val contractRepository: ContractRepository,
-	private val currencyRepository: CurrencyRepository,
-	private val eventRepository: EventRepository,
-	private val playerCardRepository: PlayerCardRepository,
-	private val playerTitleRepository: PlayerTitleRepository,
-	private val seasonRepository: SeasonRepository,
-	private val sprayRepository: SprayRepository,
-	private val weaponRepository: WeaponRepository,
+    @Assisted private val context: Context,
+    @Assisted private val params: WorkerParameters,
+    private val contentDatabase: ContentDatabase,
+    private val versionRepository: VersionRepository,
+    private val agentRepository: AgentRepository,
+    private val buddyRepository: BuddyRepository,
+    private val contractRepository: ContractRepository,
+    private val currencyRepository: CurrencyRepository,
+    private val eventRepository: EventRepository,
+    private val playerCardRepository: PlayerCardRepository,
+    private val playerTitleRepository: PlayerTitleRepository,
+    private val seasonRepository: SeasonRepository,
+    private val sprayRepository: SprayRepository,
+    private val weaponRepository: WeaponRepository,
 ) : CoroutineWorker(
-	context, params
+    context, params
 ) {
-	override suspend fun doWork(): Result {
-		// Get input data from params
-		val type = inputData.getString(KEY_TYPE)
-		val uuid = inputData.getString(KEY_UUID)
+    override suspend fun doWork(): Result {
+        // Get input data from params
+        val type = inputData.getString(KEY_TYPE)
+        val uuid = inputData.getString(KEY_UUID)
 
-		// Get repository that shall be used
-		val repository = when (type) {
-			"Agent"       -> agentRepository
-			"Buddy"       -> buddyRepository
-			"Contract"    -> contractRepository
-			"Currency"    -> currencyRepository
-			"Event"       -> eventRepository
-			"PlayerCard"  -> playerCardRepository
-			"PlayerTitle" -> playerTitleRepository
-			"Season"      -> seasonRepository
-			"Spray"       -> sprayRepository
-			"Weapon"      -> weaponRepository
+        // Get repository that shall be used
+        val repository = when (type) {
+            "Agent" -> agentRepository
+            "Buddy" -> buddyRepository
+            "Contract" -> contractRepository
+            "Currency" -> currencyRepository
+            "Event" -> eventRepository
+            "PlayerCard" -> playerCardRepository
+            "PlayerTitle" -> playerTitleRepository
+            "Season" -> seasonRepository
+            "Spray" -> sprayRepository
+            "Weapon" -> weaponRepository
 
-			else          -> return Result.failure()
-		}
+            else -> return Result.failure()
+        }
 
-		// Get versions of local cache
-		val localVersions =
-			contentDatabase.getAllOfType(type).firstOrNull()?.map { it?.getApiVersion() }
+        // Get versions of local cache
+        val localVersions =
+            contentDatabase.getAllOfType(type).firstOrNull()?.map { it?.version }
 
-		// Get remote version
-		val remoteVersion = versionRepository.get().firstOrNull()?.version
-		if (remoteVersion.isNullOrEmpty()) return Result.retry()
+        // Get remote version
+        val remoteVersion = versionRepository.get().firstOrNull()?.version
+        if (remoteVersion.isNullOrEmpty()) return Result.retry()
 
-		// Fetch from API if remote version is different
-		if (localVersions.isNullOrEmpty() || localVersions.any { it != remoteVersion }) {
-			if (uuid.isNullOrEmpty()) repository.fetchAll(remoteVersion)
-			else repository.fetch(uuid, remoteVersion)
-		}
+        // Fetch from API if remote version is different
+        if (localVersions.isNullOrEmpty() || localVersions.any { it != remoteVersion }) {
+            if (uuid.isNullOrEmpty()) repository.fetchAll(remoteVersion)
+            else repository.fetch(uuid, remoteVersion)
+        }
 
-		return Result.success()
-	}
+        return Result.success()
+    }
 
 
-	companion object {
-		const val KEY_TYPE = "KEY_TYPE"
-		const val KEY_UUID = "KEY_UUID"
-		const val WORK_BASE_NAME = "GameSyncWorker"
-	}
+    companion object {
+        const val KEY_TYPE = "KEY_TYPE"
+        const val KEY_UUID = "KEY_UUID"
+        const val WORK_BASE_NAME = "GameSyncWorker"
+    }
 }

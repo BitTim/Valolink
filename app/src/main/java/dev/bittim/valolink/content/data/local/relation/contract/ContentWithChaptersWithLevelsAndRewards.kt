@@ -10,22 +10,21 @@ import dev.bittim.valolink.content.domain.model.contract.content.ContentRelation
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardRelation
 
 data class ContentWithChaptersWithLevelsAndRewards(
-	@Embedded val content: ContentEntity,
-	@Relation(
-		entity = ChapterEntity::class, parentColumn = "uuid", entityColumn = "contentUuid"
-	) val chapters: List<ChapterWithLevelsAndRewards>,
+    @Embedded val content: ContentEntity,
+    @Relation(
+        entity = ChapterEntity::class, parentColumn = "uuid", entityColumn = "contentUuid"
+    ) val chapters: List<ChapterWithLevelsAndRewards>,
 ) : VersionedEntity {
-	override fun getApiVersion(): String {
-		return content.version
-	}
+    override val version: String
+        get() = content.version
 
-	fun toType(
-		relation: ContentRelation?,
-		rewards: List<List<List<RewardRelation?>>>,
-		levelNames: List<List<String>>,
-	): Content {
-		return content.toType(relation, chapters.mapIndexed { index, rawChapter ->
-			rawChapter.toType(rewards.getOrNull(index) ?: emptyList(), levelNames[index])
-		})
-	}
+    fun toType(
+        relation: ContentRelation?,
+        rewards: List<List<List<RewardRelation?>>>,
+        levelNames: List<List<String>>,
+    ): Content {
+        return content.toType(relation, chapters.mapIndexed { index, rawChapter ->
+            rawChapter.toType(rewards.getOrNull(index) ?: emptyList(), levelNames[index])
+        })
+    }
 }

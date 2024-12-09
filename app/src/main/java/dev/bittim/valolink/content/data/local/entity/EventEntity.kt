@@ -21,7 +21,7 @@ data class EventEntity(
     val startTime: String,
     val endTime: String,
     val assetPath: String,
-) : GameEntity() {
+) : VersionedEntity {
     fun toType(): Event {
         return Event(
             uuid,

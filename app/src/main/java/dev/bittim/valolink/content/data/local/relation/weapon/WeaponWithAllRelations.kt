@@ -10,24 +10,23 @@ import dev.bittim.valolink.content.data.local.entity.weapon.stats.WeaponStatsEnt
 import dev.bittim.valolink.content.domain.model.weapon.Weapon
 
 data class WeaponWithAllRelations(
-	@Embedded val weapon: WeaponEntity,
-	@Relation(
-		entity = WeaponStatsEntity::class, parentColumn = "uuid", entityColumn = "weapon"
-	) val weaponStats: WeaponStatsWithAllRelations?,
-	@Relation(
-		entity = WeaponShopDataEntity::class, parentColumn = "uuid", entityColumn = "weapon"
-	) val shopData: WeaponShopDataWithAllRelations?,
-	@Relation(
-		entity = WeaponSkinEntity::class, parentColumn = "uuid", entityColumn = "weapon"
-	) val skins: Set<WeaponSkinWithChromasAndLevels>,
+    @Embedded val weapon: WeaponEntity,
+    @Relation(
+        entity = WeaponStatsEntity::class, parentColumn = "uuid", entityColumn = "weapon"
+    ) val weaponStats: WeaponStatsWithAllRelations?,
+    @Relation(
+        entity = WeaponShopDataEntity::class, parentColumn = "uuid", entityColumn = "weapon"
+    ) val shopData: WeaponShopDataWithAllRelations?,
+    @Relation(
+        entity = WeaponSkinEntity::class, parentColumn = "uuid", entityColumn = "weapon"
+    ) val skins: Set<WeaponSkinWithChromasAndLevels>,
 ) : VersionedEntity {
-	override fun getApiVersion(): String {
-		return weapon.version
-	}
+    override val version: String
+        get() = weapon.version
 
-	fun toType(): Weapon {
-		return weapon.toType(weaponStats = weaponStats?.toType(),
-							 shopData = shopData?.toType(),
-							 skins = skins.map { it.toType() })
-	}
+    fun toType(): Weapon {
+        return weapon.toType(weaponStats = weaponStats?.toType(),
+            shopData = shopData?.toType(),
+            skins = skins.map { it.toType() })
+    }
 }

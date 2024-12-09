@@ -21,7 +21,7 @@ data class SeasonEntity(
     val startTime: String,
     val endTime: String,
     val parentUuid: String?,
-) : GameEntity() {
+) : VersionedEntity {
     fun toType(): Season {
         return Season(
             uuid,

@@ -24,7 +24,7 @@ data class VersionEntity(
     val riotClientVersion: String,
     val riotClientBuild: String,
     val buildDate: String,
-) : GameEntity() {
+) : VersionedEntity {
     fun toType(): Version {
         return Version(
             manifestId = manifestId,

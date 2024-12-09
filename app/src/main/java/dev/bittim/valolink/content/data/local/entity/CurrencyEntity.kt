@@ -19,7 +19,7 @@ data class CurrencyEntity(
     val displayNameSingular: String,
     val displayIcon: String,
     val largeIcon: String,
-) : GameEntity() {
+) : VersionedEntity {
     fun toType(): Currency {
         return Currency(
             uuid,

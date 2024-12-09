@@ -22,7 +22,7 @@ data class PlayerCardEntity(
     val smallArt: String,
     val wideArt: String,
     val largeArt: String?,
-) : GameEntity() {
+) : VersionedEntity {
     fun toType(): PlayerCard {
         return PlayerCard(
             uuid = uuid,

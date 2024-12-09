@@ -18,7 +18,7 @@ data class PlayerTitleEntity(
     val displayName: String?,
     val titleText: String?,
     val isHiddenIfNotOwned: Boolean,
-) : GameEntity() {
+) : VersionedEntity {
     fun toType(): PlayerTitle {
         return PlayerTitle(
             uuid = uuid,

@@ -8,16 +8,15 @@ import dev.bittim.valolink.content.data.local.entity.agent.RecruitmentEntity
 import dev.bittim.valolink.content.domain.model.contract.Contract
 
 data class RecruitmentWithAgentWithRoleAndAbilities(
-	@Embedded val recruitment: RecruitmentEntity,
-	@Relation(
-		entity = AgentEntity::class, parentColumn = "uuid", entityColumn = "recruitment"
-	) val agentEntity: AgentWithRoleAndAbilities,
+    @Embedded val recruitment: RecruitmentEntity,
+    @Relation(
+        entity = AgentEntity::class, parentColumn = "uuid", entityColumn = "recruitment"
+    ) val agentEntity: AgentWithRoleAndAbilities,
 ) : VersionedEntity {
-	override fun getApiVersion(): String {
-		return recruitment.version
-	}
+    override val version: String
+        get() = recruitment.version
 
-	fun toContract(): Contract {
-		return recruitment.toContract(agentEntity.toType())
-	}
+    fun toContract(): Contract {
+        return recruitment.toContract(agentEntity.toType())
+    }
 }

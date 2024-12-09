@@ -11,28 +11,27 @@ import dev.bittim.valolink.content.data.local.entity.weapon.stats.WeaponStatsEnt
 import dev.bittim.valolink.content.domain.model.weapon.stats.WeaponStats
 
 data class WeaponStatsWithAllRelations(
-	@Embedded val weaponStats: WeaponStatsEntity,
-	@Relation(
-		parentColumn = "uuid", entityColumn = "weaponStats"
-	) val weaponAdsStats: WeaponAdsStatsEntity?,
-	@Relation(
-		parentColumn = "uuid", entityColumn = "weaponStats"
-	) val weaponAltShotgunStats: WeaponAltShotgunStatsEntity?,
-	@Relation(
-		parentColumn = "uuid", entityColumn = "weaponStats"
-	) val weaponAirBurstStats: WeaponAirBurstStatsEntity?,
-	@Relation(
-		parentColumn = "uuid", entityColumn = "weaponStats"
-	) val weaponDamageRanges: Set<WeaponDamageRangeEntity>,
+    @Embedded val weaponStats: WeaponStatsEntity,
+    @Relation(
+        parentColumn = "uuid", entityColumn = "weaponStats"
+    ) val weaponAdsStats: WeaponAdsStatsEntity?,
+    @Relation(
+        parentColumn = "uuid", entityColumn = "weaponStats"
+    ) val weaponAltShotgunStats: WeaponAltShotgunStatsEntity?,
+    @Relation(
+        parentColumn = "uuid", entityColumn = "weaponStats"
+    ) val weaponAirBurstStats: WeaponAirBurstStatsEntity?,
+    @Relation(
+        parentColumn = "uuid", entityColumn = "weaponStats"
+    ) val weaponDamageRanges: Set<WeaponDamageRangeEntity>,
 ) : VersionedEntity {
-	override fun getApiVersion(): String {
-		return weaponStats.version
-	}
+    override val version: String
+        get() = weaponStats.version
 
-	fun toType(): WeaponStats {
-		return weaponStats.toType(adsStats = weaponAdsStats?.toType(),
-								  altShotgunStats = weaponAltShotgunStats?.toType(),
-								  airBurstStats = weaponAirBurstStats?.toType(),
-								  damageRanges = weaponDamageRanges.map { it.toType() })
-	}
+    fun toType(): WeaponStats {
+        return weaponStats.toType(adsStats = weaponAdsStats?.toType(),
+            altShotgunStats = weaponAltShotgunStats?.toType(),
+            airBurstStats = weaponAirBurstStats?.toType(),
+            damageRanges = weaponDamageRanges.map { it.toType() })
+    }
 }

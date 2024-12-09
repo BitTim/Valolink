@@ -8,16 +8,15 @@ import dev.bittim.valolink.content.data.local.entity.buddy.BuddyLevelEntity
 import dev.bittim.valolink.content.domain.model.buddy.Buddy
 
 data class BuddyWithLevels(
-	@Embedded val buddy: BuddyEntity,
-	@Relation(
-		parentColumn = "uuid", entityColumn = "buddy"
-	) val levels: List<BuddyLevelEntity>,
+    @Embedded val buddy: BuddyEntity,
+    @Relation(
+        parentColumn = "uuid", entityColumn = "buddy"
+    ) val levels: List<BuddyLevelEntity>,
 ) : VersionedEntity {
-	override fun getApiVersion(): String {
-		return buddy.version
-	}
+    override val version: String
+        get() = buddy.version
 
-	fun toType(): Buddy {
-		return buddy.toType(levels.map { it.toType() })
-	}
+    fun toType(): Buddy {
+        return buddy.toType(levels.map { it.toType() })
+    }
 }
