@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Valolink</string>
+
+    <string name="onboarding_landing_title">Wilkommen</string>
+    <string name="onboarding_landing_description">Wilkommen bei Valolink! Erhalte Einsicht in deine Spiele, deinen Fortschritt im Battlepass und deinen Rang indem du dich anmeldest</string>
+    <string name="onboarding_landing_button_local">Lokales Konto verwenden</string>
+    <string name="onboarding_landing_button_google">Weiter mit Google</string>
+    <string name="onboarding_landing_button_riot">Weiter mit Riot</string>
+    <string name="onboarding_landing_button_email">Weiter mit E-Mail</string>
+</resources>

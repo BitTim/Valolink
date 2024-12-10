@@ -19,6 +19,7 @@ import dev.bittim.valolink.core.ui.components.SimpleLoadingContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.ScreenPreviewAnnotations
+import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
 import dev.bittim.valolink.onboarding.ui.components.landing.OutlinedSocialButton
@@ -38,9 +39,9 @@ fun LandingScreen(
 ) {
     OnboardingScreen(
         modifier = Modifier.fillMaxSize(),
-        title = "Welcome",
+        title = UiText.StringResource(R.string.onboarding_landing_title).asString(),
         progress = 0f,
-        description = "Welcome to Valolink! Start to get insights in your matches, battlepass progress and rank by signing in",
+        description = UiText.StringResource(R.string.onboarding_landing_description).asString(),
         content = {
             SimpleLoadingContainer(
                 modifier = Modifier.fillMaxSize(),
@@ -48,7 +49,9 @@ fun LandingScreen(
                 label = "Spray image loading crossfade"
             ) {
                 AsyncImage(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(Spacing.l),
                     model = state.spray?.fullTransparentIcon,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
@@ -73,7 +76,8 @@ fun LandingScreen(
                     onClick = onGoogleClicked,
                     painter = painterResource(id = R.drawable.ic_google_logo),
                     contentDescription = "Google",
-                    text = "Continue with Google"
+                    text = UiText.StringResource(R.string.onboarding_landing_button_google)
+                        .asString(),
                 )
 
                 //TODO: This button will be enabled when Riot Games integration will be implemented
@@ -82,7 +86,8 @@ fun LandingScreen(
                     onClick = onRiotClicked,
                     painter = painterResource(id = R.drawable.ic_riot_logo),
                     contentDescription = "Riot",
-                    text = "Continue with Riot",
+                    text = UiText.StringResource(R.string.onboarding_landing_button_riot)
+                        .asString(),
                     enabled = false
                 )
 
@@ -94,14 +99,16 @@ fun LandingScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onLocalClicked
                 ) {
-                    Text("Use local account")
+                    Text(UiText.StringResource(R.string.onboarding_landing_button_local).asString())
                 }
 
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onEmailClicked
                 ) {
-                    Text("Continue with E-Mail")
+                    Text(
+                        UiText.StringResource(R.string.onboarding_landing_button_email).asString(),
+                    )
                 }
             }
         }

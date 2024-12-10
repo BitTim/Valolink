@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Valolink</string>
+
+    <string name="onboarding_landing_title">Welcome</string>
+    <string name="onboarding_landing_description">Welcome to Valolink! Start to get insights in your matches, battlepass progress and rank by signing in</string>
+    <string name="onboarding_landing_button_local">Use local account</string>
+    <string name="onboarding_landing_button_google">Continue with Google</string>
+    <string name="onboarding_landing_button_riot">Continue with Riot</string>
+    <string name="onboarding_landing_button_email">Continue with E-Mail</string>
 </resources>
