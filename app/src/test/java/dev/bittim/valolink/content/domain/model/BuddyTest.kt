@@ -1,4 +1,4 @@
-package dev.bittim.valolink.main.domain.model.game
+package dev.bittim.valolink.content.domain.model
 
 import dev.bittim.valolink.content.domain.model.buddy.Buddy
 import dev.bittim.valolink.content.domain.model.buddy.BuddyLevel
