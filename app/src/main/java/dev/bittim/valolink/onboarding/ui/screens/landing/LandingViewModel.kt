@@ -2,6 +2,7 @@ package dev.bittim.valolink.onboarding.ui.screens.landing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,8 +15,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LandingViewModel(
+@HiltViewModel
+class LandingViewModel @Inject constructor(
     private val sprayRepository: SprayRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(LandingState())

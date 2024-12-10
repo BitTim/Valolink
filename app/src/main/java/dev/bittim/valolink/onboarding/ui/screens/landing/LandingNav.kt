@@ -9,13 +9,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 object LandingNav
 
-fun NavGraphBuilder.landingScreen() {
+fun NavGraphBuilder.landingScreen(
+    onNavToAuth: () -> Unit
+) {
     composable<LandingNav> {
         val viewModel: LandingViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()
 
         LandingScreen(
             state = state.value,
+            onLegacyClicked = onNavToAuth,
             onLocalClicked = { },
             onGoogleClicked = { },
             onRiotClicked = { },

@@ -1,7 +1,7 @@
 package dev.bittim.valolink.onboarding.ui.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
@@ -11,31 +11,42 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.ComponentPreviewAnnotations
 
 @Composable
 fun OnboardingHeader(
     modifier: Modifier = Modifier,
     title: String,
     progress: Float,
+    description: String
 ) {
-    Row(
+    Column(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(Spacing.l)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.displaySmall
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.displaySmall
+            )
 
-        CircularProgressIndicator(progress = { progress })
+            CircularProgressIndicator(progress = { progress })
+        }
+
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
-@Preview(name = "Light", showBackground = true)
-@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ComponentPreviewAnnotations
 @Composable
 fun OnboardingHeaderPreview() {
     ValolinkTheme {
@@ -44,6 +55,7 @@ fun OnboardingHeaderPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 title = "Sample section",
                 progress = 0.37f,
+                description = "This is a sample section that is supposed to serve as a preview to this composable. If this text is visible, then this sample is working fine. If you see this in the finished app, something went wrong... Like really wrong"
             )
         }
     }
