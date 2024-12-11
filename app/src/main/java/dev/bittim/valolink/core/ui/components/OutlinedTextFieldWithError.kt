@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.core.ui.util.ComponentPreviewAnnotations
+import dev.bittim.valolink.core.ui.util.annotations.ComponentPreviewAnnotations
 
 @Composable
 fun OutlinedTextFieldWithError(

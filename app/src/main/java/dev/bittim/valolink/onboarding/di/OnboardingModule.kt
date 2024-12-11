@@ -4,8 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.bittim.valolink.auth.data.validator.AndroidEmailPatternValidator
-import dev.bittim.valolink.auth.data.validator.EmailPatternValidator
+import dev.bittim.valolink.user.data.validator.AndroidEmailPatternValidator
+import dev.bittim.valolink.user.data.validator.EmailPatternValidator
 import javax.inject.Singleton
 
 @Module

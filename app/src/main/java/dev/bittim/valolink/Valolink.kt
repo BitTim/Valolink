@@ -24,7 +24,7 @@ import coil.request.CachePolicy
 import coil.transition.CrossfadeTransition
 import coil.util.DebugLogger
 import dagger.hilt.android.HiltAndroidApp
-import dev.bittim.valolink.core.ui.decoder.AnimatedPngDecoder
+import dev.bittim.valolink.core.ui.util.decoder.AnimatedPngDecoder
 import javax.inject.Inject
 
 @HiltAndroidApp

@@ -11,7 +11,7 @@ Created:        11.05.2024
 Description:    Decoder to load animated PNGs with coil.
 */
 
-package dev.bittim.valolink.core.ui.decoder
+package dev.bittim.valolink.core.ui.util.decoder
 
 import coil.ImageLoader
 import coil.decode.DecodeResult

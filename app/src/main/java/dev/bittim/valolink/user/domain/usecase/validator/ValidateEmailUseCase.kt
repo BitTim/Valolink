@@ -1,8 +1,8 @@
 package dev.bittim.valolink.user.domain.usecase.validator
 
-import dev.bittim.valolink.auth.data.validator.EmailPatternValidator
 import dev.bittim.valolink.core.domain.util.Error
 import dev.bittim.valolink.core.domain.util.Result
+import dev.bittim.valolink.user.data.validator.EmailPatternValidator
 import javax.inject.Inject
 
 

@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.core.ui.util.ComponentPreviewAnnotations
+import dev.bittim.valolink.core.ui.util.annotations.ComponentPreviewAnnotations
 
 @Composable
 fun OnboardingHeader(

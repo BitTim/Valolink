@@ -1,4 +1,4 @@
-package dev.bittim.valolink.auth.data.validator
+package dev.bittim.valolink.user.data.validator
 
 import android.util.Patterns
 

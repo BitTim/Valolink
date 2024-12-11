@@ -27,8 +27,8 @@ import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.components.SimpleLoadingContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.core.ui.util.ScreenPreviewAnnotations
 import dev.bittim.valolink.core.ui.util.UiText
+import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
 import dev.bittim.valolink.user.domain.usecase.validator.EmailError

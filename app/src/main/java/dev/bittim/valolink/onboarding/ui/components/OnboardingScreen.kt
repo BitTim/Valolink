@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import dev.bittim.valolink.core.ui.components.OrientableContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.core.ui.util.ScreenPreviewAnnotations
+import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 
 @Composable
 fun OnboardingScreen(
