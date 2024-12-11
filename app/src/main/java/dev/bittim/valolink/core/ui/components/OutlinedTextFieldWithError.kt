@@ -3,6 +3,7 @@ package dev.bittim.valolink.core.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
@@ -32,10 +33,12 @@ fun OutlinedTextFieldWithError(
     value: String,
     error: String?,
     onValueChange: (String) -> Unit,
+    singleLine: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
     enableVisibilityToggle: Boolean = false,
     visibility: Boolean = !enableVisibilityToggle,
     onVisibilityChange: (Boolean) -> Unit = {},
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     var visibilityState by remember { mutableStateOf(visibility) }
 
@@ -47,7 +50,8 @@ fun OutlinedTextFieldWithError(
             onValueChange = onValueChange,
             label = { Text(text = label) },
             leadingIcon = leadingIcon,
-            singleLine = true,
+            singleLine = singleLine,
+            keyboardOptions = keyboardOptions,
             visualTransformation = if (visibilityState) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 if (enableVisibilityToggle) {
