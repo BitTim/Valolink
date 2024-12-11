@@ -6,6 +6,8 @@ import androidx.navigation.compose.navigation
 import dev.bittim.valolink.main.ui.nav.navToMainGraph
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.landingScreen
+import dev.bittim.valolink.onboarding.ui.screens.signin.SigninNav
+import dev.bittim.valolink.onboarding.ui.screens.signin.signinScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +19,11 @@ fun NavGraphBuilder.onboardingNavGraph(
     navigation<OnboardingNavGraph>(
         startDestination = LandingNav,
     ) {
-        landingScreen(onNavToAuth = { navController.navToMainGraph() })
+        landingScreen(
+            onNavToAuth = { navController.navToMainGraph() },
+            onNavToSignin = { navController.navigate(SigninNav) }
+        )
+
+        signinScreen(onNavBack = { navController.navigateUp() })
     }
 }

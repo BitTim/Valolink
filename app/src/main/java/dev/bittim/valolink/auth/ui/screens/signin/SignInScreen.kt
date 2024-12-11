@@ -28,8 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.auth.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.auth.ui.screens.signin.components.ForgotAlertDialog
+import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 
 @Composable
@@ -47,9 +47,9 @@ fun SignInScreen(
     onNavSignUp: () -> Unit,
 ) {
     Scaffold(Modifier.padding(16.dp),
-             snackbarHost = {
-                 SnackbarHost(hostState = snackbarHostState)
-             }) {
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -195,16 +195,16 @@ fun SignInScreen(
 fun LoadingSignInScreenPreview() {
     ValolinkTheme {
         SignInScreen(state = SignInState(isLoading = true),
-                     snackbarHostState = remember { SnackbarHostState() },
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {})
+            snackbarHostState = remember { SnackbarHostState() },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {})
     }
 }
 
@@ -213,16 +213,16 @@ fun LoadingSignInScreenPreview() {
 fun InputSignInScreenPreview() {
     ValolinkTheme {
         SignInScreen(state = SignInState(),
-                     snackbarHostState = remember { SnackbarHostState() },
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {})
+            snackbarHostState = remember { SnackbarHostState() },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {})
     }
 }
 
@@ -240,16 +240,16 @@ fun ForgotInputSignInScreenPreview() {
             forgotEmail = "",
             forgotEmailError = null
         ),
-                     snackbarHostState = remember { SnackbarHostState() },
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {})
+            snackbarHostState = remember { SnackbarHostState() },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {})
     }
 }
 
@@ -267,15 +267,15 @@ fun ErrorInputSignInScreenPreview() {
             forgotEmail = "",
             forgotEmailError = null
         ),
-                     snackbarHostState = remember { SnackbarHostState() },
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {})
+            snackbarHostState = remember { SnackbarHostState() },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {})
     }
 }

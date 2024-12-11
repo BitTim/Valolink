@@ -1,10 +1,26 @@
 <resources>
     <string name="app_name">Valolink</string>
 
+    <string name="button_cancel">Cancel</string>
+    <string name="button_continue">Continue</string>
+
+    <string name="error_empty_email">E-Mail cannot be empty</string>
+    <string name="error_invalid_email">Invalid E-Mail address</string>
+
     <string name="onboarding_landing_title">Welcome</string>
     <string name="onboarding_landing_description">Welcome to Valolink! Start to get insights in your matches, battlepass progress and rank by signing in</string>
     <string name="onboarding_landing_button_local">Use local account</string>
     <string name="onboarding_landing_button_google">Continue with Google</string>
     <string name="onboarding_landing_button_riot">Continue with Riot</string>
     <string name="onboarding_landing_button_email">Continue with E-Mail</string>
+
+    <string name="onboarding_signin_title">Sign In</string>
+    <string name="onboarding_signin_description">Sign in below to get started with Valolink!</string>
+    <string name="onboarding_signin_label_email">E-Mail</string>
+    <string name="onboarding_signin_label_password">Password</string>
+    <string name="onboarding_signin_button_forgot_password">Forgot Password?</string>
+    <string name="onboarding_signin_button_create_account">Create Account</string>
+
+    <string name="onboarding_create_account_title">Create account</string>
+    <string name="onboarding_create_account_description">Don’t have an account yet? No problem, just create one below and you’re all set!</string>
 </resources>

@@ -26,6 +26,7 @@ import dev.bittim.valolink.onboarding.ui.components.landing.OutlinedSocialButton
 
 data object LandingScreen {
     const val SPRAY_UUID: String = "40cc1645-43f4-4db3-ebb2-fdb46f8e9bf3"
+    const val PROGRESS: Float = 0f
 }
 
 @Composable
@@ -40,7 +41,7 @@ fun LandingScreen(
     OnboardingScreen(
         modifier = Modifier.fillMaxSize(),
         title = UiText.StringResource(R.string.onboarding_landing_title).asString(),
-        progress = 0f,
+        progress = LandingScreen.PROGRESS,
         description = UiText.StringResource(R.string.onboarding_landing_description).asString(),
         content = {
             SimpleLoadingContainer(

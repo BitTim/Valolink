@@ -10,7 +10,8 @@ import kotlinx.serialization.Serializable
 object LandingNav
 
 fun NavGraphBuilder.landingScreen(
-    onNavToAuth: () -> Unit
+    onNavToAuth: () -> Unit,
+    onNavToSignin: () -> Unit
 ) {
     composable<LandingNav> {
         val viewModel: LandingViewModel = hiltViewModel()
@@ -22,7 +23,7 @@ fun NavGraphBuilder.landingScreen(
             onLocalClicked = { },
             onGoogleClicked = { },
             onRiotClicked = { },
-            onEmailClicked = { }
+            onEmailClicked = onNavToSignin
         )
     }
 }

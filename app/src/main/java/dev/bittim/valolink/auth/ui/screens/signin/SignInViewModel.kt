@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.auth.data.repository.AuthRepository
-import dev.bittim.valolink.auth.domain.ValidationUseCases
+import dev.bittim.valolink.core.domain.util.Result
+import dev.bittim.valolink.user.domain.usecase.validator.EmailError
+import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -15,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val authRepo: AuthRepository,
-    private val validationUseCases: ValidationUseCases,
+    private val validateEmailUseCase: ValidateEmailUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(
         SignInState(
@@ -33,14 +35,15 @@ class SignInViewModel @Inject constructor(
     val snackbarHostState = SnackbarHostState()
 
     fun onSignInClicked() = viewModelScope.launch {
-        val emailError: String? = validateEmail(state.value.email)
-        val passwordError: String? = validatePassword(state.value.password)
+        val emailResult = validateEmail(state.value.forgotEmail)
 
-        if (emailError != null || passwordError != null) {
+        if (emailResult is Result.Failure) {
             _state.update {
                 it.copy(
-                    emailError = emailError,
-                    passwordError = passwordError
+                    forgotEmailError = when (emailResult.error) {
+                        EmailError.EMPTY -> "Email cannot be empty"
+                        EmailError.INVALID -> "Email is invalid"
+                    }
                 )
             }
 
@@ -79,11 +82,16 @@ class SignInViewModel @Inject constructor(
     }
 
     fun onForgotConfirmation() = viewModelScope.launch {
-        val emailError = validateEmail(state.value.forgotEmail)
+        val emailResult = validateEmail(state.value.forgotEmail)
 
-        if (emailError != null) {
+        if (emailResult is Result.Failure) {
             _state.update {
-                it.copy(forgotEmailError = emailError)
+                it.copy(
+                    forgotEmailError = when (emailResult.error) {
+                        EmailError.EMPTY -> "Email cannot be empty"
+                        EmailError.INVALID -> "Email is invalid"
+                    }
+                )
             }
 
             return@launch
@@ -113,14 +121,9 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    private fun validateEmail(email: String): String? {
-        return validationUseCases.validateEmail(email)
+    private fun validateEmail(email: String): Result<Unit, EmailError> {
+        return validateEmailUseCase(email)
     }
-
-    private fun validatePassword(password: String): String? {
-        return validationUseCases.validatePassword(password)
-    }
-
 
 
     fun onForgotClicked() {

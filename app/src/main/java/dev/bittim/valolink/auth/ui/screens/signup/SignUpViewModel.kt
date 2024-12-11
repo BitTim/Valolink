@@ -4,7 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.auth.data.repository.AuthRepository
-import dev.bittim.valolink.auth.domain.ValidationUseCases
+import dev.bittim.valolink.core.domain.util.Result
+import dev.bittim.valolink.user.domain.usecase.validator.EmailError
+import dev.bittim.valolink.user.domain.usecase.validator.PasswordError
+import dev.bittim.valolink.user.domain.usecase.validator.UsernameError
+import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
+import dev.bittim.valolink.user.domain.usecase.validator.ValidatePasswordUseCase
+import dev.bittim.valolink.user.domain.usecase.validator.ValidateUsernameUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,7 +20,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val authRepo: AuthRepository,
-    private val validationUseCases: ValidationUseCases,
+    private val validateEmailUseCase: ValidateEmailUseCase,
+    private val validatePasswordUseCase: ValidatePasswordUseCase,
+    private val validateUsernameUseCase: ValidateUsernameUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(
         SignUpState(
@@ -32,20 +40,49 @@ class SignUpViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun onSignUpClicked() = viewModelScope.launch {
-        val emailError: String? = validateEmail(state.value.email)
-        val usernameError: String? = validateUsername(state.value.username)
-        val passwordError: String? = validatePassword(
-            state.value.password,
-            state.value.confirmPassword
-        )
+        val emailResult = validateEmail(state.value.email)
+        val usernameResult = validateUsername(state.value.username)
+        val passwordResult = validatePassword(state.value.password)
 
-        if (emailError != null || usernameError != null || passwordError != null) {
+        if (emailResult is Result.Failure || usernameResult is Result.Failure || passwordResult is Result.Failure) {
             _state.update {
                 it.copy(
-                    emailError = emailError,
-                    usernameError = usernameError,
-                    passwordError = passwordError,
-                    confirmPasswordError = passwordError
+                    emailError = when (emailResult) {
+                        is Result.Failure -> {
+                            when (emailResult.error) {
+                                EmailError.EMPTY -> "Email cannot be empty"
+                                EmailError.INVALID -> "Email is invalid"
+                            }
+                        }
+
+                        is Result.Success -> null
+                    },
+
+                    usernameError = when (usernameResult) {
+                        is Result.Failure -> {
+                            when (usernameResult.error) {
+                                UsernameError.EMPTY -> "Username cannot be empty"
+                                UsernameError.TOO_SHORT -> "Username must be at least 4 characters long"
+                            }
+                        }
+
+                        is Result.Success -> null
+                    },
+
+                    passwordError = when (passwordResult) {
+                        is Result.Failure -> {
+                            when (passwordResult.error) {
+                                PasswordError.EMPTY -> "Password cannot be empty"
+                                PasswordError.TOO_SHORT -> "Password must be at least 12 characters long"
+                                PasswordError.NO_DIGIT -> "Password must contain at least one digit"
+                                PasswordError.NO_UPPERCASE -> "Password must contain at least one uppercase letter"
+                                PasswordError.NO_SPECIAL_CHAR -> "Password must contain at least one special character"
+                                PasswordError.PASSWORDS_NO_MATCH -> "Passwords do not match"
+                            }
+                        }
+
+                        is Result.Success -> null
+                    }
                 )
             }
 
@@ -86,24 +123,23 @@ class SignUpViewModel @Inject constructor(
     }
 
 
-    private fun validateEmail(email: String): String? {
-        return validationUseCases.validateEmail(email)
+    private fun validateEmail(email: String): Result<Unit, EmailError> {
+        return validateEmailUseCase(email)
     }
 
-    private fun validateUsername(username: String): String? {
-        return validationUseCases.validateUsername(username)
+    private fun validateUsername(username: String): Result<Unit, UsernameError> {
+        return validateUsernameUseCase(username)
     }
 
     private fun validatePassword(
         password: String,
         confirmPassword: String? = null,
-    ): String? {
-        return validationUseCases.validatePassword(
+    ): Result<Unit, PasswordError> {
+        return validatePasswordUseCase(
             password,
             confirmPassword
         )
     }
-
 
 
     fun onEmailChange(email: String) {
