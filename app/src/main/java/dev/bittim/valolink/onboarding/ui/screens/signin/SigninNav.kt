@@ -19,10 +19,10 @@ fun NavGraphBuilder.signinScreen(
         SigninScreen(
             state = state.value,
             validateEmail = viewModel::validateEmail,
-            onForgotPasswordClicked = { },
-            onCreateAccountClicked = { },
-            onCancelClicked = onNavBack,
-            onContinueClicked = { }
+            onForgotPassword = { },
+            onCreateAccount = { },
+            onCancel = onNavBack,
+            onContinue = { }
         )
     }
 }

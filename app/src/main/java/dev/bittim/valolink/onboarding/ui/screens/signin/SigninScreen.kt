@@ -2,18 +2,13 @@ package dev.bittim.valolink.onboarding.ui.screens.signin
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +33,9 @@ import dev.bittim.valolink.core.ui.util.autofill.autofillRequestHandler
 import dev.bittim.valolink.core.ui.util.extensions.connectNode
 import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
+import dev.bittim.valolink.onboarding.ui.components.signin.SigninButtons
 import dev.bittim.valolink.user.domain.usecase.validator.EmailError
 
 data object SigninScreen {
@@ -51,10 +48,10 @@ data object SigninScreen {
 fun SigninScreen(
     state: SigninState,
     validateEmail: (email: String) -> Unit,
-    onForgotPasswordClicked: () -> Unit,
-    onCreateAccountClicked: () -> Unit,
-    onCancelClicked: () -> Unit,
-    onContinueClicked: () -> Unit,
+    onForgotPassword: () -> Unit,
+    onCreateAccount: () -> Unit,
+    onCancel: () -> Unit,
+    onContinue: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -160,41 +157,22 @@ fun SigninScreen(
                     )
                 )
 
-                Row(
+                SigninButtons(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    TextButton(onClick = onForgotPasswordClicked) {
-                        Text(
-                            text = UiText.StringResource(R.string.onboarding_signin_button_forgot_password)
-                                .asString()
-                        )
-                    }
-
-                    TextButton(onClick = onCreateAccountClicked) {
-                        Text(
-                            text = UiText.StringResource(R.string.onboarding_signin_button_create_account)
-                                .asString()
-                        )
-                    }
-                }
+                    onForgotPassword = onForgotPassword,
+                    onCreateAccount = onCreateAccount
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Row(
+                OnboardingButtons(
                     modifier = Modifier
                         .fillMaxWidth()
                         .imePadding(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    OutlinedButton(onClick = onCancelClicked) {
-                        Text(text = UiText.StringResource(R.string.button_cancel).asString())
-                    }
-
-                    Button(onClick = onContinueClicked) {
-                        Text(text = UiText.StringResource(R.string.button_continue).asString())
-                    }
-                }
+                    onDismiss = onCancel,
+                    onContinue = onContinue,
+                    dismissText = UiText.StringResource(R.string.button_cancel)
+                )
             }
         }
     )
@@ -208,10 +186,10 @@ fun SigninScreenPreview() {
             SigninScreen(
                 state = SigninState(),
                 validateEmail = {},
-                onForgotPasswordClicked = {},
-                onCreateAccountClicked = {},
-                onCancelClicked = {},
-                onContinueClicked = {},
+                onForgotPassword = {},
+                onCreateAccount = {},
+                onCancel = {},
+                onContinue = {},
             )
         }
     }

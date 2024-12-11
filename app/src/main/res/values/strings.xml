@@ -2,6 +2,7 @@
     <string name="app_name">Valolink</string>
 
     <string name="button_cancel">Cancel</string>
+    <string name="button_back">Back</string>
     <string name="button_continue">Continue</string>
 
     <string name="error_empty_email">E-Mail cannot be empty</string>
