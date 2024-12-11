@@ -3,7 +3,11 @@ package dev.bittim.valolink.onboarding.ui.screens.signin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
+import dev.bittim.valolink.core.domain.util.Result
+import dev.bittim.valolink.core.ui.util.UiText
+import dev.bittim.valolink.user.domain.usecase.validator.EmailError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -50,6 +54,16 @@ class SigninViewModel @Inject constructor(
 
     fun validateEmail(email: String) {
         val emailResult = validateEmailUseCase(email)
-        _state.update { it.copy(emailResult = emailResult) }
+        val emailError = when (emailResult) {
+            is Result.Success -> null
+            is Result.Failure -> {
+                when (emailResult.error) {
+                    EmailError.EMPTY -> UiText.StringResource(R.string.error_empty)
+                    EmailError.INVALID -> UiText.StringResource(R.string.error_email_invalid)
+                }
+            }
+        }
+
+        _state.update { it.copy(emailError = emailError) }
     }
 }

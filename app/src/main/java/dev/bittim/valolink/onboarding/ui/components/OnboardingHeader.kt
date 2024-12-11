@@ -20,7 +20,9 @@ fun OnboardingHeader(
     modifier: Modifier = Modifier,
     title: String,
     progress: Float,
-    description: String
+    description: String,
+    minLines: Int = 2,
+    maxLines: Int = 2
 ) {
     Column(
         modifier = modifier,
@@ -41,7 +43,9 @@ fun OnboardingHeader(
 
         Text(
             text = description,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            minLines = minLines,
+            maxLines = maxLines
         )
     }
 }

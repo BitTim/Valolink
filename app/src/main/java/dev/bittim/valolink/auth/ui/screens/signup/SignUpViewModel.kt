@@ -75,9 +75,9 @@ class SignUpViewModel @Inject constructor(
                                 PasswordError.EMPTY -> "Password cannot be empty"
                                 PasswordError.TOO_SHORT -> "Password must be at least 12 characters long"
                                 PasswordError.NO_DIGIT -> "Password must contain at least one digit"
+                                PasswordError.NO_LOWERCASE -> "Password must contain at least one lowercase letter"
                                 PasswordError.NO_UPPERCASE -> "Password must contain at least one uppercase letter"
                                 PasswordError.NO_SPECIAL_CHAR -> "Password must contain at least one special character"
-                                PasswordError.PASSWORDS_NO_MATCH -> "Passwords do not match"
                             }
                         }
 
@@ -132,12 +132,10 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun validatePassword(
-        password: String,
-        confirmPassword: String? = null,
+        password: String
     ): Result<Unit, PasswordError> {
         return validatePasswordUseCase(
-            password,
-            confirmPassword
+            password
         )
     }
 

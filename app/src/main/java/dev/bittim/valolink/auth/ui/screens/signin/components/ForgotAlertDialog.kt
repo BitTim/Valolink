@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.UiText
 
 @Composable
 fun ForgotAlertDialog(
@@ -38,7 +39,7 @@ fun ForgotAlertDialog(
                                 )
                             },
                             value = email,
-                            error = emailError,
+                            error = UiText.DynamicString(emailError ?: ""),
                             enableVisibilityToggle = false,
                             onValueChange = onEmailValueChange,
                         )

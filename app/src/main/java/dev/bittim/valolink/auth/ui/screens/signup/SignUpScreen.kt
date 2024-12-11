@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.UiText
 
 @Composable
 fun SignUpScreen(
@@ -88,7 +89,7 @@ fun SignUpScreen(
                     )
                 },
                 value = state.email,
-                error = state.emailError,
+                error = UiText.DynamicString(state.emailError ?: ""),
                 enableVisibilityToggle = false,
                 onValueChange = onEmailValueChange
             )
@@ -104,7 +105,7 @@ fun SignUpScreen(
                     )
                 },
                 value = state.username,
-                error = state.usernameError,
+                error = UiText.DynamicString(state.usernameError ?: ""),
                 enableVisibilityToggle = false,
                 onValueChange = onUsernameValueChange
             )
@@ -120,7 +121,7 @@ fun SignUpScreen(
                     )
                 },
                 value = state.password,
-                error = state.passwordError,
+                error = UiText.DynamicString(state.passwordError ?: ""),
                 enableVisibilityToggle = true,
                 onValueChange = onPasswordValueChange
             )
@@ -136,7 +137,7 @@ fun SignUpScreen(
                     )
                 },
                 value = state.confirmPassword,
-                error = state.confirmPasswordError,
+                error = UiText.DynamicString(state.passwordError ?: ""),
                 enableVisibilityToggle = true,
                 onValueChange = onConfirmPasswordValueChange
             )
@@ -201,13 +202,13 @@ fun SignUpScreen(
 fun LoadingSignUpScreenPreview() {
     ValolinkTheme {
         SignUpScreen(state = SignUpState(isLoading = true),
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {})
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {})
     }
 }
 
@@ -226,13 +227,13 @@ fun InputSignUpScreenPreview() {
             confirmPasswordError = null,
             authError = null
         ),
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {})
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {})
     }
 }
 
@@ -251,12 +252,12 @@ fun ErrorInputSignUpScreenPreview() {
             confirmPasswordError = "",
             authError = "Something went wrong"
         ),
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {},
-                     {})
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {})
     }
 }

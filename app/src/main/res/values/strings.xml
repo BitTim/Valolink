@@ -5,8 +5,21 @@
     <string name="button_back">Back</string>
     <string name="button_continue">Continue</string>
 
-    <string name="error_empty_email">E-Mail cannot be empty</string>
-    <string name="error_invalid_email">Invalid E-Mail address</string>
+    <string name="error_empty">Cannot be empty</string>
+
+    <string name="error_email_invalid">Invalid E-Mail address</string>
+
+    <string name="error_password_tooShort">Must be at least %d characters long</string>
+    <string name="error_password_noDigit">Must contain at least one digit</string>
+    <string name="error_password_noLowercase">Must contain at least one lowercase letter</string>
+    <string name="error_password_noUppercase">Must contain at least one uppercase letter</string>
+    <string name="error_password_noSpecialChar">Must contain at least one special character</string>
+
+    <string name="error_confirmPassword_noMatch">Passwords do not match</string>
+
+    <string name="onboarding_textField_label_email">E-Mail</string>
+    <string name="onboarding_textField_label_password">Password</string>
+    <string name="onboarding_textField_label_confirmPassword">Confirm password</string>
 
     <string name="onboarding_landing_title">Welcome</string>
     <string name="onboarding_landing_description">Welcome to Valolink! Start to get insights in your matches, battlepass progress and rank by signing in</string>
@@ -17,11 +30,10 @@
 
     <string name="onboarding_signin_title">Sign In</string>
     <string name="onboarding_signin_description">Sign in below to get started with Valolink!</string>
-    <string name="onboarding_signin_label_email">E-Mail</string>
-    <string name="onboarding_signin_label_password">Password</string>
-    <string name="onboarding_signin_button_forgot_password">Forgot Password?</string>
-    <string name="onboarding_signin_button_create_account">Create Account</string>
+    <string name="onboarding_signin_button_forgotPassword">Forgot Password?</string>
+    <string name="onboarding_signin_button_createAccount">Create Account</string>
 
-    <string name="onboarding_create_account_title">Create account</string>
-    <string name="onboarding_create_account_description">Don’t have an account yet? No problem, just create one below and you’re all set!</string>
+    <string name="onboarding_createAccount_title">Create account</string>
+    <string name="onboarding_createAccount_description">Don’t have an account yet? No problem, just create one below and you’re all set!</string>
+    <string name="onboarding_createAccount_button_createAccount">Create account</string>
 </resources>

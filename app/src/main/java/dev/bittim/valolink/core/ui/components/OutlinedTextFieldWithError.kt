@@ -3,6 +3,7 @@ package dev.bittim.valolink.core.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ComponentPreviewAnnotations
 
 @Composable
@@ -31,7 +33,7 @@ fun OutlinedTextFieldWithError(
     modifier: Modifier = Modifier,
     label: String,
     value: String,
-    error: String?,
+    error: UiText?,
     onValueChange: (String) -> Unit,
     singleLine: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -39,6 +41,7 @@ fun OutlinedTextFieldWithError(
     visibility: Boolean = !enableVisibilityToggle,
     onVisibilityChange: (Boolean) -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
     var visibilityState by remember { mutableStateOf(visibility) }
 
@@ -52,6 +55,7 @@ fun OutlinedTextFieldWithError(
             leadingIcon = leadingIcon,
             singleLine = singleLine,
             keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
             visualTransformation = if (visibilityState) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 if (enableVisibilityToggle) {
@@ -78,10 +82,10 @@ fun OutlinedTextFieldWithError(
             }
         )
 
-        if (!error.isNullOrEmpty()) {
+        if (error != null) {
             Text(
                 modifier = Modifier.padding(top = Spacing.s),
-                text = error,
+                text = error.asString(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )
@@ -96,7 +100,7 @@ fun OutlinedTextFieldWithErrorPreview() {
     ValolinkTheme {
         Surface {
             var value: String by remember { mutableStateOf("") }
-            var error: String? by remember { mutableStateOf(null) }
+            var error: UiText? by remember { mutableStateOf(null) }
 
             OutlinedTextFieldWithError(
                 modifier = Modifier.fillMaxWidth(),
@@ -114,7 +118,7 @@ fun OutlinedTextFieldWithErrorPreview() {
                     value = it
 
                     error = if (it.lowercase() == "error") {
-                        "This is a sample error"
+                        UiText.DynamicString("This is a sample error")
                     } else {
                         null
                     }

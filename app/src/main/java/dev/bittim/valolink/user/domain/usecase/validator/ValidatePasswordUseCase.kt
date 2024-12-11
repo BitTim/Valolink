@@ -5,26 +5,23 @@ import dev.bittim.valolink.core.domain.util.Result
 import javax.inject.Inject
 
 class ValidatePasswordUseCase @Inject constructor() {
-    private val _minPasswordLength = 12
-
     operator fun invoke(
         password: String,
-        confirmPassword: String? = null,
     ): Result<Unit, PasswordError> {
-        if (confirmPassword != null && password != confirmPassword) {
-            return Result.Failure(PasswordError.PASSWORDS_NO_MATCH)
-        }
-
         if (password.isEmpty()) {
             return Result.Failure(PasswordError.EMPTY)
         }
 
-        if (password.length < _minPasswordLength) {
+        if (password.length < MIN_PASSWORD_LENGTH) {
             return Result.Failure(PasswordError.TOO_SHORT)
         }
 
         if (!password.any { it.isDigit() }) {
             return Result.Failure(PasswordError.NO_DIGIT)
+        }
+
+        if (!password.any { it.isLowerCase() }) {
+            return Result.Failure(PasswordError.NO_LOWERCASE)
         }
 
         if (!password.any { it.isUpperCase() }) {
@@ -37,13 +34,17 @@ class ValidatePasswordUseCase @Inject constructor() {
 
         return Result.Success(Unit)
     }
+
+    companion object {
+        const val MIN_PASSWORD_LENGTH = 12
+    }
 }
 
 enum class PasswordError : Error {
     EMPTY,
     TOO_SHORT,
     NO_DIGIT,
+    NO_LOWERCASE,
     NO_UPPERCASE,
-    NO_SPECIAL_CHAR,
-    PASSWORDS_NO_MATCH
+    NO_SPECIAL_CHAR
 }

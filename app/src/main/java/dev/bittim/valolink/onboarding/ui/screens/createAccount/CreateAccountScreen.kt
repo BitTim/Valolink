@@ -1,11 +1,10 @@
-package dev.bittim.valolink.onboarding.ui.screens.signin
+package dev.bittim.valolink.onboarding.ui.screens.createAccount
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
@@ -34,25 +33,25 @@ import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
-import dev.bittim.valolink.onboarding.ui.components.signin.SigninButtons
 
-data object SigninScreen {
-    const val SPRAY_UUID: String = "dc5edd15-455d-1782-7ee3-a294a6a3d293"
+data object CreateAccountScreen {
+    const val SPRAY_UUID: String = "51dc5786-4f73-8a5b-fd04-8eb6e78b9d74"
     const val PROGRESS: Float = 1f / 6f
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SigninScreen(
-    state: SigninState,
+fun CreateAccountScreen(
+    state: CreateAccountState,
     validateEmail: (email: String) -> Unit,
-    onForgotPassword: () -> Unit,
-    onCreateAccount: () -> Unit,
+    validatePassword: (password: String) -> Unit,
+    validateConfirmPassword: (password: String, confirmPassword: String) -> Unit,
     onCancel: () -> Unit,
-    onContinue: () -> Unit,
+    onCreateAccount: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     val onEmailChanged = { value: String ->
         email = value
@@ -61,6 +60,12 @@ fun SigninScreen(
 
     val onPasswordChanged = { value: String ->
         password = value
+        validatePassword(value)
+    }
+
+    val onConfirmPasswordChanged = { value: String ->
+        confirmPassword = value
+        validateConfirmPassword(password, value)
     }
 
     val emailAutoFillHandler =
@@ -71,25 +76,25 @@ fun SigninScreen(
 
     val passwordAutoFillHandler =
         autofillRequestHandler(
-            autofillTypes = listOf(AutofillType.Password),
+            autofillTypes = listOf(AutofillType.NewPassword),
             onFill = onPasswordChanged
         )
 
     OnboardingScreen(
         modifier = Modifier.fillMaxSize(),
-        title = UiText.StringResource(R.string.onboarding_signin_title).asString(),
-        progress = SigninScreen.PROGRESS,
-        description = UiText.StringResource(R.string.onboarding_signin_description).asString(),
+        title = UiText.StringResource(R.string.onboarding_createAccount_title).asString(),
+        progress = CreateAccountScreen.PROGRESS,
+        description = UiText.StringResource(R.string.onboarding_createAccount_description)
+            .asString(),
         content = {
             SimpleLoadingContainer(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize(),
                 isLoading = state.loading,
                 label = "Spray image loading crossfade"
             ) {
                 AsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(Spacing.l),
+                    modifier = Modifier.fillMaxSize(),
                     model = state.spray?.fullTransparentIcon,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
@@ -129,7 +134,7 @@ fun SigninScreen(
                     label = UiText.StringResource(R.string.onboarding_textField_label_password)
                         .asString(),
                     value = password,
-                    error = null,
+                    error = state.passwordError,
                     onValueChange = {
                         if (it.isEmpty()) passwordAutoFillHandler.requestVerifyManual()
                         onPasswordChanged(it)
@@ -137,26 +142,36 @@ fun SigninScreen(
                     enableVisibilityToggle = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { onContinue() }
+                        imeAction = ImeAction.Next
                     )
                 )
 
-                SigninButtons(
+                OutlinedTextFieldWithError(
                     modifier = Modifier.fillMaxWidth(),
-                    onForgotPassword = onForgotPassword,
-                    onCreateAccount = onCreateAccount
+                    label = UiText.StringResource(R.string.onboarding_textField_label_confirmPassword)
+                        .asString(),
+                    value = confirmPassword,
+                    error = state.confirmPasswordError,
+                    onValueChange = onConfirmPasswordChanged,
+                    enableVisibilityToggle = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onCreateAccount() }
+                    )
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 OnboardingButtons(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     onDismiss = onCancel,
-                    onContinue = onContinue,
-                    dismissText = UiText.StringResource(R.string.button_cancel)
+                    onContinue = onCreateAccount,
+                    dismissText = UiText.StringResource(R.string.button_cancel),
+                    continueText = UiText.StringResource(R.string.onboarding_createAccount_button_createAccount)
                 )
             }
         }
@@ -165,16 +180,16 @@ fun SigninScreen(
 
 @ScreenPreviewAnnotations
 @Composable
-fun SigninScreenPreview() {
+fun CreateAccountScreenPreview() {
     ValolinkTheme {
         Surface {
-            SigninScreen(
-                state = SigninState(),
+            CreateAccountScreen(
+                state = CreateAccountState(),
                 validateEmail = {},
-                onForgotPassword = {},
-                onCreateAccount = {},
+                validatePassword = {},
+                validateConfirmPassword = { _, _ -> },
                 onCancel = {},
-                onContinue = {},
+                onCreateAccount = {}
             )
         }
     }

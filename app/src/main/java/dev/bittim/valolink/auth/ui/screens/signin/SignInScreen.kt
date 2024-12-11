@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.auth.ui.screens.signin.components.ForgotAlertDialog
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.UiText
 
 @Composable
 fun SignInScreen(
@@ -93,7 +94,7 @@ fun SignInScreen(
                         )
                     },
                     value = state.email,
-                    error = state.emailError,
+                    error = UiText.DynamicString(state.emailError ?: ""),
                     enableVisibilityToggle = false,
                     onValueChange = onEmailValueChange
                 )
@@ -109,7 +110,7 @@ fun SignInScreen(
                         )
                     },
                     value = state.password,
-                    error = state.passwordError,
+                    error = UiText.DynamicString(state.passwordError ?: ""),
                     enableVisibilityToggle = true,
                     onValueChange = onPasswordValueChange
                 )

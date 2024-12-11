@@ -21,14 +21,14 @@ fun SigninButtons(
     ) {
         TextButton(onClick = onForgotPassword) {
             Text(
-                text = UiText.StringResource(R.string.onboarding_signin_button_forgot_password)
+                text = UiText.StringResource(R.string.onboarding_signin_button_forgotPassword)
                     .asString()
             )
         }
 
         TextButton(onClick = onCreateAccount) {
             Text(
-                text = UiText.StringResource(R.string.onboarding_signin_button_create_account)
+                text = UiText.StringResource(R.string.onboarding_signin_button_createAccount)
                     .asString()
             )
         }

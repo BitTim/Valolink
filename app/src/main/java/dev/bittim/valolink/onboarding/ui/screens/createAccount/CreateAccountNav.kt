@@ -1,4 +1,4 @@
-package dev.bittim.valolink.onboarding.ui.screens.signin
+package dev.bittim.valolink.onboarding.ui.screens.createAccount
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -7,23 +7,22 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SigninNav
+object CreateAccountNav
 
-fun NavGraphBuilder.signinScreen(
-    onNavBack: () -> Unit,
-    onNavToCreateAccount: () -> Unit,
+fun NavGraphBuilder.createAccountScreen(
+    onNavBack: () -> Unit
 ) {
-    composable<SigninNav> {
-        val viewModel: SigninViewModel = hiltViewModel()
+    composable<CreateAccountNav> {
+        val viewModel: CreateAccountViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()
 
-        SigninScreen(
+        CreateAccountScreen(
             state = state.value,
             validateEmail = viewModel::validateEmail,
-            onForgotPassword = { },
-            onCreateAccount = onNavToCreateAccount,
+            validatePassword = viewModel::validatePassword,
+            validateConfirmPassword = viewModel::validateConfirmPassword,
             onCancel = onNavBack,
-            onContinue = { }
+            onCreateAccount = {}
         )
     }
 }

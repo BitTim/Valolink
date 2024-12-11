@@ -33,7 +33,8 @@ fun OnboardingScreen(
     form: @Composable () -> Unit
 ) {
     Column(
-        modifier = modifier.safeContentPadding(),
+        modifier = modifier
+            .safeContentPadding(),
         verticalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
         OnboardingHeader(
@@ -48,37 +49,31 @@ fun OnboardingScreen(
             portraitContainer = { containerModifier, containerContent ->
                 Column(
                     modifier = containerModifier,
-                    verticalArrangement = Arrangement.SpaceBetween
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.Start
                 ) { containerContent() }
             },
             landscapeContainer = { containerModifier, containerContent ->
                 Row(
                     modifier = containerModifier,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
                 ) { containerContent() }
             }
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.BottomStart
-            ) {
-                content()
-            }
+            ) { content() }
 
             Spacer(
                 modifier = Modifier.size(Spacing.m)
             )
 
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.BottomStart
-            ) {
-                form()
-            }
+            ) { form() }
         }
     }
 }

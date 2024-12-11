@@ -2,6 +2,7 @@ package dev.bittim.valolink.onboarding.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -19,7 +20,7 @@ fun OnboardingButtons(
     continueText: UiText = UiText.StringResource(R.string.button_continue)
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.wrapContentHeight(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         OutlinedButton(onClick = onDismiss) {

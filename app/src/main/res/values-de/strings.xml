@@ -6,8 +6,21 @@
     <string name="button_back">Zurück</string>
     <string name="button_continue">Weiter</string>
 
-    <string name="error_empty_email">E-Mail darf nicht leer sein</string>
-    <string name="error_invalid_email">Ungültige E-Mail Adresse</string>
+    <string name="error_empty">Darf nicht leer sin</string>
+
+    <string name="error_email_invalid">Ungültige E-Mail Adresse</string>
+
+    <string name="error_password_tooShort">Muss mindestens %d Zeichen lang sein</string>
+    <string name="error_password_noDigit">Muss mindestens eine Ziffer enthalten</string>
+    <string name="error_password_noLowercase">Muss mindestens einen kleinen Buchstaben enthalten</string>
+    <string name="error_password_noUppercase">Muss mindestens einen großen Buchstaben enthalten</string>
+    <string name="error_password_noSpecialChar">Muss mindestens ein Sonderzeichen enthalten</string>
+
+    <string name="error_confirmPassword_noMatch">Passwörter stimmen nicht überein</string>
+
+    <string name="onboarding_textField_label_email">E-Mail</string>
+    <string name="onboarding_textField_label_password">Passwort</string>
+    <string name="onboarding_textField_label_confirmPassword">Passwort wiederholen</string>
 
     <string name="onboarding_landing_title">Wilkommen</string>
     <string name="onboarding_landing_description">Wilkommen bei Valolink! Erhalte Einsicht in deine Spiele, deinen Fortschritt im Battlepass und deinen Rang indem du dich anmeldest</string>
@@ -18,11 +31,10 @@
 
     <string name="onboarding_signin_title">Anmelden</string>
     <string name="onboarding_signin_description">Melde dich hier an um mit Valolink loszulegen!</string>
-    <string name="onboarding_signin_label_email">E-Mail</string>
-    <string name="onboarding_signin_label_password">Passwort</string>
-    <string name="onboarding_signin_button_forgot_password">Passwort vergessen?</string>
-    <string name="onboarding_signin_button_create_account">Konto erstellen</string>
+    <string name="onboarding_signin_button_forgotPassword">Passwort vergessen?</string>
+    <string name="onboarding_signin_button_createAccount">Konto erstellen</string>
 
-    <string name="onboarding_create_account_title">Konto erstellen</string>
-    <string name="onboarding_create_account_description">Du hast noch kein Konto? Kein Problem, erstelle hier einfach eins und dann kann es losgehen!</string>
+    <string name="onboarding_createAccount_title">Konto erstellen</string>
+    <string name="onboarding_createAccount_description">Du hast noch kein Konto? Kein Problem, erstelle hier einfach eins und dann kann es losgehen!</string>
+    <string name="onboarding_createAccount_button_createAccount">Konto Erstellen</string>
 </resources>
