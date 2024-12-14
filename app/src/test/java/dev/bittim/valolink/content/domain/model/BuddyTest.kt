@@ -1,3 +1,15 @@
+/*
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       BuddyTest.kt
+ Module:     Valolink.app.unitTest
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:30
+ */
+
 package dev.bittim.valolink.content.domain.model
 
 import dev.bittim.valolink.content.domain.model.buddy.Buddy

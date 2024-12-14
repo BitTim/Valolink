@@ -1,3 +1,15 @@
+/*
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       UserDataEntity.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:29
+ */
+
 package dev.bittim.valolink.user.data.local.entity
 
 import androidx.room.Entity

@@ -1,3 +1,15 @@
+/*
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       build.gradle.kts
+ Module:     Valolink.app
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:30
+ */
+
 import java.io.FileInputStream
 import java.util.Properties
 

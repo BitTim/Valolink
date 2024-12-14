@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (c) 2024 Tim Anhalt (BitTim)
+  
+  Project:    Valolink
+  License:    GPLv3
+  
+  File:       ic_launcher.xml
+  Module:     Valolink.app.main
+  Author:     Tim Anhalt (BitTim)
+  Modified:   14.12.24, 14:29
+  -->
+
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background" />
     <foreground android:drawable="@drawable/ic_launcher_foreground" />

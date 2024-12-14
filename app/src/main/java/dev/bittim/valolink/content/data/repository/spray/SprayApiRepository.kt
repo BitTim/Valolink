@@ -1,3 +1,15 @@
+/*
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       SprayApiRepository.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:29
+ */
+
 package dev.bittim.valolink.content.data.repository.spray
 
 import androidx.work.Constraints
@@ -18,108 +30,108 @@ import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 class SprayApiRepository @Inject constructor(
-	private val contentDatabase: ContentDatabase,
-	private val contentApi: ContentApi,
-	private val workManager: WorkManager,
+    private val contentDatabase: ContentDatabase,
+    private val contentApi: ContentApi,
+    private val workManager: WorkManager,
 ) : SprayRepository {
-	// --------------------------------
-	//  Query from Database
-	// --------------------------------
+    // --------------------------------
+    //  Query from Database
+    // --------------------------------
 
-	// -------- [ Single queries ] --------
+    // -------- [ Single queries ] --------
 
-	override suspend fun getByUuid(
-		uuid: String,
-	): Flow<Spray?> {
-		return try {
-			// Get from local database
-			val local =
-				contentDatabase.sprayDao.getByUuid(uuid).distinctUntilChanged().map { it?.toType() }
+    override suspend fun getByUuid(
+        uuid: String,
+    ): Flow<Spray?> {
+        return try {
+            // Get from local database
+            val local =
+                contentDatabase.sprayDao.getByUuid(uuid).distinctUntilChanged().map { it?.toType() }
 
-			// Queue worker to fetch newest data from API
-			//  -> Worker will check if fetch is needed itself
-			queueWorker(uuid)
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker(uuid)
 
-			// Return
-			local
-		} catch (e: Exception) {
-			if (e is CancellationException) throw e
-			e.printStackTrace()
-			return flow { }
-		}
-	}
+            // Return
+            local
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            e.printStackTrace()
+            return flow { }
+        }
+    }
 
-	// -------- [ Bulk queries ] --------
+    // -------- [ Bulk queries ] --------
 
-	override suspend fun getAll(
-	): Flow<List<Spray>> {
-		return try {
-			// Get from local database
-			val local = contentDatabase.sprayDao.getAll().distinctUntilChanged().map { entities ->
-				entities.map { it.toType() }
-			}
+    override suspend fun getAll(
+    ): Flow<List<Spray>> {
+        return try {
+            // Get from local database
+            val local = contentDatabase.sprayDao.getAll().distinctUntilChanged().map { entities ->
+                entities.map { it.toType() }
+            }
 
-			// Queue worker to fetch newest data from API
-			//  -> Worker will check if fetch is needed itself
-			queueWorker()
+            // Queue worker to fetch newest data from API
+            //  -> Worker will check if fetch is needed itself
+            queueWorker()
 
-			// Return
-			local
-		} catch (e: Exception) {
-			if (e is CancellationException) throw e
-			e.printStackTrace()
-			return flow { }
-		}
-	}
+            // Return
+            local
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            e.printStackTrace()
+            return flow { }
+        }
+    }
 
-	// --------------------------------
-	//  Fetching from API
-	// --------------------------------
+    // --------------------------------
+    //  Fetching from API
+    // --------------------------------
 
-	// -------- [ Single fetching ] --------
+    // -------- [ Single fetching ] --------
 
-	override suspend fun fetch(
-		uuid: String,
-		version: String,
-	) {
-		val response = contentApi.getSpray(uuid)
-		if (response.isSuccessful) {
-			contentDatabase.sprayDao.upsert(response.body()!!.data!!.toEntity(version))
-		}
-	}
+    override suspend fun fetch(
+        uuid: String,
+        version: String,
+    ) {
+        val response = contentApi.getSpray(uuid)
+        if (response.isSuccessful) {
+            contentDatabase.sprayDao.upsert(response.body()!!.data!!.toEntity(version))
+        }
+    }
 
-	// -------- [ Bulk fetching ] --------
+    // -------- [ Bulk fetching ] --------
 
-	override suspend fun fetchAll(
-		version: String,
-	) {
-		val response = contentApi.getAllSprays()
-		if (response.isSuccessful) {
-			contentDatabase.sprayDao.upsert(
-				response.body()!!.data!!.map {
-					it.toEntity(version)
-				}.distinct().toSet()
-			)
-		}
-	}
+    override suspend fun fetchAll(
+        version: String,
+    ) {
+        val response = contentApi.getAllSprays()
+        if (response.isSuccessful) {
+            contentDatabase.sprayDao.upsert(
+                response.body()!!.data!!.map {
+                    it.toEntity(version)
+                }.distinct().toSet()
+            )
+        }
+    }
 
-	// ================================
-	//  Queue Worker
-	// ================================
+    // ================================
+    //  Queue Worker
+    // ================================
 
-	override fun queueWorker(
-		uuid: String?,
-	) {
-		val workRequest = OneTimeWorkRequestBuilder<ContentSyncWorker>().setInputData(
-			workDataOf(
-				ContentSyncWorker.KEY_TYPE to Spray::class.simpleName,
-				ContentSyncWorker.KEY_UUID to uuid,
-			)
-		).setConstraints(Constraints(NetworkType.CONNECTED)).build()
-		workManager.enqueueUniqueWork(
-			Spray::class.simpleName + ContentSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
-			ExistingWorkPolicy.KEEP,
-			workRequest
-		)
-	}
+    override fun queueWorker(
+        uuid: String?,
+    ) {
+        val workRequest = OneTimeWorkRequestBuilder<ContentSyncWorker>().setInputData(
+            workDataOf(
+                ContentSyncWorker.KEY_TYPE to Spray::class.simpleName,
+                ContentSyncWorker.KEY_UUID to uuid,
+            )
+        ).setConstraints(Constraints(NetworkType.CONNECTED)).build()
+        workManager.enqueueUniqueWork(
+            Spray::class.simpleName + ContentSyncWorker.WORK_BASE_NAME + if (!uuid.isNullOrEmpty()) "_$uuid" else "",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
+    }
 }

@@ -1,14 +1,14 @@
 /*
-Copyright (c) 2024 BitTim
-
-Project:        Valolink
-License:        GPLv3
-
-File:           AppModule.kt
-Author:         Tim Anhalt (BitTim)
-Created:        25.03.2024
-Description:    Handles dependency injection for the app.
-*/
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       AppModule.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:29
+ */
 
 package dev.bittim.valolink.core.di
 

@@ -1,14 +1,14 @@
 /*
-Copyright (c) 2024 BitTim
-
-Project:        Valolink
-License:        GPLv3
-
-File:           StringListConverter.kt
-Author:         Tim Anhalt (BitTim)
-Created:        23.05.2024
-Description:    A type converter for lists of strings to be used with Room.
-*/
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       StringListConverter.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:29
+ */
 
 package dev.bittim.valolink.core.data.local.converter
 

@@ -1,3 +1,15 @@
+/*
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       AgentCarouselCard.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:29
+ */
+
 @file:Suppress("SpellCheckingInspection")
 
 package dev.bittim.valolink.main.ui.screens.content.contracts.components
@@ -100,7 +112,7 @@ fun AgentCarouselCard(
             },
         backgroundGradientColors = data?.backgroundGradientColors ?: emptyList(),
         backgroundImage = data?.backgroundImage,
-        isDisabled = data?.isLocked ?: true
+        isDisabled = data?.isLocked != false
     ) {
         Crossfade(targetState = data, label = "Data loaading") { checkedData ->
             if (checkedData == null) {

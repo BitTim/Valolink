@@ -1,14 +1,14 @@
 /*
-Copyright (c) 2024 BitTim
-
-Project:        Valolink
-License:        GPLv3
-
-File:           CreateSupabaseClientUseCase.kt
-Author:         Tim Anhalt (BitTim)
-Created:        14.10.2024
-Description:    Handles the creation of the Supabase client.
-*/
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       CreateSupabaseClientUseCase.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:29
+ */
 
 package dev.bittim.valolink.core.domain.usecase.supabase
 

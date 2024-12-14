@@ -1,14 +1,15 @@
 /*
-Copyright (c) 2024 BitTim
-
-Project:        Valolink
-License:        GPLv3
-
-File:           AutofillHandler.kt
-Author:         Bagadesh (https://medium.com/@bagadeshrp/compose-ui-textfield-autofill-6e2ac434e380)
-Created:        11.12.2024
-Description:    Interface for handling autofill requests.
-*/
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       AutofillHandler.kt
+ Module:     Valolink.app.main
+ Author:     Bagadesh
+ Source:     https://medium.com/@bagadeshrp/compose-ui-textfield-autofill-6e2ac434e380
+ Modified:   14.12.24, 14:35
+ */
 
 package dev.bittim.valolink.core.ui.util.autofill
 
