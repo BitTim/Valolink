@@ -19,10 +19,8 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
-import dev.bittim.valolink.user.domain.usecase.validator.ConfirmPasswordError
 import dev.bittim.valolink.user.domain.usecase.validator.EmailError
 import dev.bittim.valolink.user.domain.usecase.validator.PasswordError
-import dev.bittim.valolink.user.domain.usecase.validator.ValidateConfirmPasswordUseCase
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import dev.bittim.valolink.user.domain.usecase.validator.ValidatePasswordUseCase
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +41,6 @@ class CreateAccountViewModel @Inject constructor(
     private val sprayRepository: SprayRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
-    private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CreateAccountState())
     val state = _state.asStateFlow()
@@ -105,20 +102,5 @@ class CreateAccountViewModel @Inject constructor(
         }
 
         _state.update { it.copy(passwordError = passwordError) }
-    }
-
-    fun validateConfirmPassword(password: String, confirmPassword: String) {
-        val confirmPasswordResult = validateConfirmPasswordUseCase(password, confirmPassword)
-        val confirmPasswordError = when (confirmPasswordResult) {
-            is Result.Success -> null
-            is Result.Failure -> {
-                when (confirmPasswordResult.error) {
-                    ConfirmPasswordError.EMPTY -> UiText.StringResource(R.string.error_empty)
-                    ConfirmPasswordError.NO_MATCH -> UiText.StringResource(R.string.error_confirmPassword_noMatch)
-                }
-            }
-        }
-
-        _state.update { it.copy(confirmPasswordError = confirmPasswordError) }
     }
 }

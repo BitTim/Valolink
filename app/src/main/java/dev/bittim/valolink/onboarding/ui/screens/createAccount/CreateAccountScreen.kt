@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
@@ -57,13 +57,11 @@ fun CreateAccountScreen(
     state: CreateAccountState,
     validateEmail: (email: String) -> Unit,
     validatePassword: (password: String) -> Unit,
-    validateConfirmPassword: (password: String, confirmPassword: String) -> Unit,
     onCancel: () -> Unit,
     onCreateAccount: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
 
     val onEmailChanged = { value: String ->
         email = value
@@ -73,11 +71,6 @@ fun CreateAccountScreen(
     val onPasswordChanged = { value: String ->
         password = value
         validatePassword(value)
-    }
-
-    val onConfirmPasswordChanged = { value: String ->
-        confirmPassword = value
-        validateConfirmPassword(password, value)
     }
 
     val emailAutoFillHandler =
@@ -110,6 +103,7 @@ fun CreateAccountScreen(
                     model = state.spray?.fullTransparentIcon,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
+                    alignment = Alignment.TopCenter,
                     placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_displayicon),
                 )
             }
@@ -158,23 +152,6 @@ fun CreateAccountScreen(
                     )
                 )
 
-                OutlinedTextFieldWithError(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = UiText.StringResource(R.string.onboarding_textField_label_confirmPassword)
-                        .asString(),
-                    value = confirmPassword,
-                    error = state.confirmPasswordError,
-                    onValueChange = onConfirmPasswordChanged,
-                    enableVisibilityToggle = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { onCreateAccount() }
-                    )
-                )
-
                 Spacer(modifier = Modifier.weight(1f))
 
                 OnboardingButtons(
@@ -199,7 +176,6 @@ fun CreateAccountScreenPreview() {
                 state = CreateAccountState(),
                 validateEmail = {},
                 validatePassword = {},
-                validateConfirmPassword = { _, _ -> },
                 onCancel = {},
                 onCreateAccount = {}
             )

@@ -32,7 +32,6 @@ fun NavGraphBuilder.createAccountScreen(
             state = state.value,
             validateEmail = viewModel::validateEmail,
             validatePassword = viewModel::validatePassword,
-            validateConfirmPassword = viewModel::validateConfirmPassword,
             onCancel = onNavBack,
             onCreateAccount = {}
         )

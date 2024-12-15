@@ -31,7 +31,6 @@
 
     <string name="onboarding_textField_label_email">E-Mail</string>
     <string name="onboarding_textField_label_password">Password</string>
-    <string name="onboarding_textField_label_confirmPassword">Confirm password</string>
 
     <string name="onboarding_landing_title">Welcome</string>
     <string name="onboarding_landing_description">Welcome to Valolink! Start to get insights in your matches, battlepass progress and rank by signing in</string>

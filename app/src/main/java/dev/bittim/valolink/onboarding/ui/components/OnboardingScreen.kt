@@ -73,7 +73,6 @@ fun OnboardingScreen(
                 ) { containerContent() }
             }
         ) {
-
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.BottomStart

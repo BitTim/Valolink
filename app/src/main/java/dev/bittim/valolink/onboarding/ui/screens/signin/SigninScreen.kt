@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.AutofillType
@@ -105,6 +106,7 @@ fun SigninScreen(
                     model = state.spray?.fullTransparentIcon,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
+                    alignment = Alignment.TopCenter,
                     placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_displayicon),
                 )
             }
