@@ -7,7 +7,7 @@
  File:       StringListConverterTest.kt
  Module:     Valolink.app.unitTest
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:30
+ Modified:   14.12.24, 14:48
  */
 
 package dev.bittim.valolink.core.data.local.converter

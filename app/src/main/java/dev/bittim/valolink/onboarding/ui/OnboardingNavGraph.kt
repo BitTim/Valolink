@@ -7,7 +7,7 @@
  File:       OnboardingNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:30
+ Modified:   15.12.24, 17:29
  */
 
 package dev.bittim.valolink.onboarding.ui
@@ -20,6 +20,8 @@ import dev.bittim.valolink.onboarding.ui.screens.createAccount.CreateAccountNav
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.createAccountScreen
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.landingScreen
+import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.PasswordForgotNav
+import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.passwordForgotScreen
 import dev.bittim.valolink.onboarding.ui.screens.signin.SigninNav
 import dev.bittim.valolink.onboarding.ui.screens.signin.signinScreen
 import kotlinx.serialization.Serializable
@@ -40,8 +42,11 @@ fun NavGraphBuilder.onboardingNavGraph(
 
         signinScreen(
             onNavBack = { navController.navigateUp() },
+            onNavToPasswordForgot = { navController.navigate(PasswordForgotNav) },
             onNavToCreateAccount = { navController.navigate(CreateAccountNav) }
         )
+
+        passwordForgotScreen(onNavBack = { navController.navigateUp() })
 
         createAccountScreen(onNavBack = { navController.navigateUp() })
     }

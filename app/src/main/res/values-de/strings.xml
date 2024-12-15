@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   14.12.24, 14:29
+  Modified:   15.12.24, 17:29
   -->
 
 <resources>
@@ -47,4 +47,8 @@
     <string name="onboarding_createAccount_title">Konto erstellen</string>
     <string name="onboarding_createAccount_description">Du hast noch kein Konto? Kein Problem, erstelle hier einfach eins und dann kann es losgehen!</string>
     <string name="onboarding_createAccount_button_createAccount">Konto Erstellen</string>
+
+    <string name="onboarding_passwordForgot_title">Passwort vergessen</string>
+    <string name="onboarding_passwordForgot_description">Keine Sorge, das passiert den Besten von uns. Gib deine E-Mail Adresse ein und wir senden dir einen Link zum Zurücksetzen des Passworts</string>
+    <string name="onboarding_passwordForgot_button_send">Send reset link</string>
 </resources>

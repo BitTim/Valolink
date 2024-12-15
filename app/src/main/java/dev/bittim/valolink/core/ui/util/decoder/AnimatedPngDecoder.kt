@@ -8,7 +8,7 @@
  Module:     Valolink.app.main
  Author:     colinrtwhite
  Source:     https://github.com/coil-kt/coil/issues/506#issuecomment-952526682
- Modified:   14.12.24, 14:34
+ Modified:   14.12.24, 14:47
  */
 
 package dev.bittim.valolink.core.ui.util.decoder

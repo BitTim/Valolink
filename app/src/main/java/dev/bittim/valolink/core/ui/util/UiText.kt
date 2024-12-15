@@ -8,7 +8,7 @@
  Module:     Valolink.app.main
  Author:     Philipp Lackner
  Source:     https://www.youtube.com/watch?v=mB1Lej0aDus
- Modified:   14.12.24, 14:35
+ Modified:   14.12.24, 14:47
  */
 
 package dev.bittim.valolink.core.ui.util

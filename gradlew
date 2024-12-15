@@ -9,7 +9,7 @@
 # File:       gradlew
 # Module:     Valolink
 # Author:     Tim Anhalt (BitTim)
-# Modified:   14.12.24, 14:30
+# Modified:   14.12.24, 14:48
 #
 
 ##############################################################################

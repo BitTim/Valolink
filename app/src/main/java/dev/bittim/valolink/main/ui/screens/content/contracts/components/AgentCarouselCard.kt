@@ -7,7 +7,7 @@
  File:       AgentCarouselCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:29
+ Modified:   14.12.24, 14:51
  */
 
 @file:Suppress("SpellCheckingInspection")

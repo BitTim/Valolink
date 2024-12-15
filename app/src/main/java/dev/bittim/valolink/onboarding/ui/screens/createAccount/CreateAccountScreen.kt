@@ -7,7 +7,7 @@
  File:       CreateAccountScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:30
+ Modified:   15.12.24, 17:06
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount

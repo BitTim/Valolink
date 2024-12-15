@@ -7,7 +7,7 @@
  File:       OnboardingHeader.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:30
+ Modified:   14.12.24, 14:48
  */
 
 package dev.bittim.valolink.onboarding.ui.components
@@ -47,7 +47,7 @@ fun OnboardingHeader(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.displaySmall
+                style = MaterialTheme.typography.headlineLarge
             )
 
             CircularProgressIndicator(progress = { progress })

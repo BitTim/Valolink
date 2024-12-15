@@ -7,7 +7,7 @@
  File:       SigninNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:30
+ Modified:   15.12.24, 17:29
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.signin
@@ -23,6 +23,7 @@ object SigninNav
 
 fun NavGraphBuilder.signinScreen(
     onNavBack: () -> Unit,
+    onNavToPasswordForgot: () -> Unit,
     onNavToCreateAccount: () -> Unit,
 ) {
     composable<SigninNav> {
@@ -32,7 +33,7 @@ fun NavGraphBuilder.signinScreen(
         SigninScreen(
             state = state.value,
             validateEmail = viewModel::validateEmail,
-            onForgotPassword = { },
+            onForgotPassword = onNavToPasswordForgot,
             onCreateAccount = onNavToCreateAccount,
             onCancel = onNavBack,
             onContinue = { }

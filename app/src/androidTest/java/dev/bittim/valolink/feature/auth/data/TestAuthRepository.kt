@@ -7,7 +7,7 @@
  File:       TestAuthRepository.kt
  Module:     Valolink.app.androidTest
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:30
+ Modified:   14.12.24, 14:51
  */
 
 package dev.bittim.valolink.auth.data

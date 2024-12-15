@@ -8,7 +8,7 @@
  Module:     Valolink.app.main
  Author:     ujizin
  Source:     https://stackoverflow.com/a/69533584
- Modified:   14.12.24, 14:30
+ Modified:   14.12.24, 14:47
  */
 
 package dev.bittim.valolink.core.ui.util

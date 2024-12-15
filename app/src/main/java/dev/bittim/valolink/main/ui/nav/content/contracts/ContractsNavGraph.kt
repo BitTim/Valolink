@@ -7,7 +7,7 @@
  File:       ContractsNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:29
+ Modified:   14.12.24, 14:47
  */
 
 package dev.bittim.valolink.main.ui.nav.content.contracts
