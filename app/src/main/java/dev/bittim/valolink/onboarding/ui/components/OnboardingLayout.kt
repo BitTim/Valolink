@@ -12,6 +12,7 @@
 
 package dev.bittim.valolink.onboarding.ui.components
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,29 +36,21 @@ import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun OnboardingScreen(
+fun OnboardingLayout(
     modifier: Modifier = Modifier,
-    title: String,
-    progress: Float,
-    description: String,
     content: @Composable () -> Unit,
     form: @Composable () -> Unit
 ) {
     Column(
-        modifier = modifier
-            .safeContentPadding(),
+        modifier = modifier.safeContentPadding(),
         verticalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
-        OnboardingHeader(
-            modifier = Modifier.fillMaxWidth(),
-            title = title,
-            progress = progress,
-            description = description
-        )
-
         OrientableContainer(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .safeContentPadding(),
             portraitContainer = { containerModifier, containerContent ->
                 Column(
                     modifier = containerModifier,
@@ -90,16 +83,14 @@ fun OnboardingScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreviewAnnotations
 @Composable
 fun OnboardingScreenPreview() {
     ValolinkTheme {
         Surface {
-            OnboardingScreen(
+            OnboardingLayout(
                 modifier = Modifier.fillMaxSize(),
-                title = "Sample section",
-                progress = 0.37f,
-                description = "This is a sample section that is supposed to serve as a preview to this composable. If this text is visible, then this sample is working fine. If you see this in the finished app, something went wrong... Like really wrong",
                 content = {
                     Box(
                         Modifier
@@ -117,6 +108,8 @@ fun OnboardingScreenPreview() {
                     }
                 }
             )
+
+
         }
     }
 }

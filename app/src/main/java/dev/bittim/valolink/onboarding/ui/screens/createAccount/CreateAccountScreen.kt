@@ -12,6 +12,7 @@
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -44,16 +45,15 @@ import dev.bittim.valolink.core.ui.util.extensions.connectNode
 import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
-import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
+import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 
 data object CreateAccountScreen {
     const val SPRAY_UUID: String = "51dc5786-4f73-8a5b-fd04-8eb6e78b9d74"
-    const val PROGRESS: Float = 1f / 6f
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CreateAccountScreen(
+fun CreateAccount(
     state: CreateAccountState,
     validateEmail: (email: String) -> Unit,
     validatePassword: (password: String) -> Unit,
@@ -85,12 +85,8 @@ fun CreateAccountScreen(
             onFill = onPasswordChanged
         )
 
-    OnboardingScreen(
+    OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
-        title = UiText.StringResource(R.string.onboarding_createAccount_title).asString(),
-        progress = CreateAccountScreen.PROGRESS,
-        description = UiText.StringResource(R.string.onboarding_createAccount_description)
-            .asString(),
         content = {
             SimpleLoadingContainer(
                 modifier = Modifier
@@ -167,12 +163,13 @@ fun CreateAccountScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreviewAnnotations
 @Composable
 fun CreateAccountScreenPreview() {
     ValolinkTheme {
         Surface {
-            CreateAccountScreen(
+            CreateAccount(
                 state = CreateAccountState(),
                 validateEmail = {},
                 validatePassword = {},

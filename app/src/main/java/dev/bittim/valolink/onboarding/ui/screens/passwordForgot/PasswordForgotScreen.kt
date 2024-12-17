@@ -12,6 +12,7 @@
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -45,14 +46,13 @@ import dev.bittim.valolink.core.ui.util.extensions.connectNode
 import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
-import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
+import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 
 data object PasswordForgotScreen {
     const val SPRAY_UUID: String = "51dc5786-4f73-8a5b-fd04-8eb6e78b9d74"
-    const val PROGRESS: Float = 1f / 6f
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun PasswordForgotScreen(
     state: PasswordForgotState,
@@ -72,12 +72,8 @@ fun PasswordForgotScreen(
             onFill = onEmailChanged
         )
 
-    OnboardingScreen(
+    OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
-        title = UiText.StringResource(R.string.onboarding_passwordForgot_title).asString(),
-        progress = PasswordForgotScreen.PROGRESS,
-        description = UiText.StringResource(R.string.onboarding_passwordForgot_description)
-            .asString(),
         content = {
             SimpleLoadingContainer(
                 modifier = Modifier.fillMaxSize(),
@@ -134,6 +130,7 @@ fun PasswordForgotScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreviewAnnotations
 @Composable
 fun PasswordForgotScreenPreview() {

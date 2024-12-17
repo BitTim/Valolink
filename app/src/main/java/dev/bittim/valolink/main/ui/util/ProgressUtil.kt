@@ -27,7 +27,5 @@ fun getProgressPercent(
 ): Int {
     if (total == 0) return 100
 
-    return floor(
-        getProgressDecimal(collected, total) * 100
-    ).toInt()
+    return floor(getProgressDecimal(collected, total) * 100).toInt()
 }

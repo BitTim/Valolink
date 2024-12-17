@@ -28,7 +28,7 @@ fun NavGraphBuilder.createAccountScreen(
         val viewModel: CreateAccountViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()
 
-        CreateAccountScreen(
+        CreateAccount(
             state = state.value,
             validateEmail = viewModel::validateEmail,
             validatePassword = viewModel::validatePassword,

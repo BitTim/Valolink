@@ -12,6 +12,7 @@
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,12 +34,11 @@ import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
+import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.components.landing.OutlinedSocialButton
 
 data object LandingScreen {
     const val SPRAY_UUID: String = "40cc1645-43f4-4db3-ebb2-fdb46f8e9bf3"
-    const val PROGRESS: Float = 0f
 }
 
 @Composable
@@ -50,11 +50,8 @@ fun LandingScreen(
     onRiotClicked: () -> Unit,
     onEmailClicked: () -> Unit
 ) {
-    OnboardingScreen(
+    OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
-        title = UiText.StringResource(R.string.onboarding_landing_title).asString(),
-        progress = LandingScreen.PROGRESS,
-        description = UiText.StringResource(R.string.onboarding_landing_description).asString(),
         content = {
             SimpleLoadingContainer(
                 modifier = Modifier.fillMaxSize(),
@@ -128,6 +125,7 @@ fun LandingScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreviewAnnotations
 @Composable
 fun LandingScreenPreview() {

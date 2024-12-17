@@ -12,6 +12,7 @@
 
 package dev.bittim.valolink.onboarding.ui.screens.signin
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,12 +47,11 @@ import dev.bittim.valolink.core.ui.util.extensions.connectNode
 import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
-import dev.bittim.valolink.onboarding.ui.components.OnboardingScreen
+import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.components.signin.SigninButtons
 
 data object SigninScreen {
     const val SPRAY_UUID: String = "dc5edd15-455d-1782-7ee3-a294a6a3d293"
-    const val PROGRESS: Float = 1f / 6f
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -88,11 +88,8 @@ fun SigninScreen(
             onFill = onPasswordChanged
         )
 
-    OnboardingScreen(
+    OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
-        title = UiText.StringResource(R.string.onboarding_signin_title).asString(),
-        progress = SigninScreen.PROGRESS,
-        description = UiText.StringResource(R.string.onboarding_signin_description).asString(),
         content = {
             SimpleLoadingContainer(
                 modifier = Modifier.fillMaxSize(),
@@ -177,6 +174,7 @@ fun SigninScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreviewAnnotations
 @Composable
 fun SigninScreenPreview() {

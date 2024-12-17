@@ -12,12 +12,16 @@
 
 package dev.bittim.valolink.onboarding.ui.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,23 +49,37 @@ fun OnboardingHeader(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineLarge
-            )
+            AnimatedContent(
+                targetState = title, label = "Title content change",
+            ) {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.headlineLarge
+                )
+            }
 
-            CircularProgressIndicator(progress = { progress })
+            val animatedProgress = animateFloatAsState(
+                targetValue = progress,
+                animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                label = "Progress animation"
+            )
+            CircularProgressIndicator(progress = { animatedProgress.value })
         }
 
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyMedium,
-            minLines = minLines,
-            maxLines = maxLines
-        )
+        AnimatedContent(
+            targetState = description, label = "Description content change",
+        ) {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.bodyMedium,
+                minLines = minLines,
+                maxLines = maxLines
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @ComponentPreviewAnnotations
 @Composable
 fun OnboardingHeaderPreview() {
