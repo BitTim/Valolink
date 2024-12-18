@@ -7,7 +7,7 @@
  File:       MatchesNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   18.12.24, 02:29
  */
 
 package dev.bittim.valolink.main.ui.nav.content
@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.bittim.valolink.core.ui.theme.Transition
 import dev.bittim.valolink.main.ui.screens.content.matches.MatchesScreen
 import dev.bittim.valolink.main.ui.screens.content.matches.MatchesViewModel
 import kotlinx.serialization.Serializable
@@ -28,10 +27,7 @@ import kotlinx.serialization.Serializable
 object MatchesNav
 
 fun NavGraphBuilder.matchesScreen() {
-    composable<MatchesNav>(enterTransition = { Transition.topLevelEnter },
-                           exitTransition = { Transition.topLevelExit },
-                           popEnterTransition = { Transition.topLevelEnter },
-                           popExitTransition = { Transition.topLevelExit }) {
+    composable<MatchesNav> {
         val viewModel: MatchesViewModel = hiltViewModel()
         val matchesState by viewModel.matchesState.collectAsStateWithLifecycle()
 

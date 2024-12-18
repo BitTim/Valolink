@@ -4,10 +4,10 @@
  Project:    Valolink
  License:    GPLv3
  
- File:       OnboardingScreen.kt
+ File:       OnboardingLayout.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:10
+ Modified:   18.12.24, 02:25
  */
 
 package dev.bittim.valolink.onboarding.ui.components
@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
@@ -44,13 +43,11 @@ fun OnboardingLayout(
     form: @Composable () -> Unit
 ) {
     Column(
-        modifier = modifier.safeContentPadding(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
         OrientableContainer(
-            modifier = Modifier
-                .fillMaxSize()
-                .safeContentPadding(),
+            modifier = Modifier.fillMaxSize(),
             portraitContainer = { containerModifier, containerContent ->
                 Column(
                     modifier = containerModifier,

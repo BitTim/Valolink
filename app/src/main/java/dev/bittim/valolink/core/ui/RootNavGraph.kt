@@ -7,7 +7,7 @@
  File:       RootNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   18.12.24, 02:29
  */
 
 package dev.bittim.valolink.core.ui
@@ -31,10 +31,10 @@ fun RootNavGraph(
         modifier = modifier,
         navController = navController,
         startDestination = OnboardingContainerNav,
-        enterTransition = { Transition.topLevelEnter },
-        exitTransition = { Transition.topLevelExit },
-        popEnterTransition = { Transition.topLevelEnter },
-        popExitTransition = { Transition.topLevelExit }
+        enterTransition = { Transition.TopLevel.enter },
+        exitTransition = { Transition.TopLevel.exit },
+        popEnterTransition = { Transition.TopLevel.popEnter },
+        popExitTransition = { Transition.TopLevel.popExit }
     ) {
         onboarding(navController = navController)
         authNavGraph(navController = navController)

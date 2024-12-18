@@ -7,7 +7,7 @@
  File:       HomeNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   18.12.24, 02:29
  */
 
 package dev.bittim.valolink.main.ui.nav.content
@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import dev.bittim.valolink.core.ui.theme.Transition
 import dev.bittim.valolink.main.ui.screens.content.home.HomeScreen
 import dev.bittim.valolink.main.ui.screens.content.home.HomeViewModel
 import kotlinx.serialization.Serializable
@@ -30,10 +29,7 @@ object HomeNav
 fun NavGraphBuilder.homeScreen(
     onSignOutClicked: () -> Unit,
 ) {
-    composable<HomeNav>(enterTransition = { Transition.topLevelEnter },
-                        exitTransition = { Transition.topLevelExit },
-                        popEnterTransition = { Transition.topLevelEnter },
-                        popExitTransition = { Transition.topLevelExit }) {
+    composable<HomeNav> {
         val viewModel: HomeViewModel = hiltViewModel()
         val homeState by viewModel.state.collectAsStateWithLifecycle()
 

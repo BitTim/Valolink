@@ -7,7 +7,7 @@
  File:       AgentListNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   18.12.24, 02:29
  */
 
 package dev.bittim.valolink.main.ui.nav.content.contracts
@@ -30,8 +30,12 @@ fun NavGraphBuilder.contractsGearListScreen(
     onNavBack: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
 ) {
-    composable<AgentListNav>(enterTransition = { Transition.forward },
-                             popExitTransition = { Transition.backward }) {
+    composable<AgentListNav>(
+        enterTransition = { Transition.ForwardBackward.enter },
+        exitTransition = { Transition.ForwardBackward.exit },
+        popEnterTransition = { Transition.ForwardBackward.popEnter },
+        popExitTransition = { Transition.ForwardBackward.popExit },
+    ) {
         val viewModel: AgentListViewModel = hiltViewModel()
         val gearListState by viewModel.state.collectAsStateWithLifecycle()
 

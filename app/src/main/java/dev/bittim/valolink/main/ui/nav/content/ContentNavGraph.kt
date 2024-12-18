@@ -7,7 +7,7 @@
  File:       ContentNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   18.12.24, 02:29
  */
 
 package dev.bittim.valolink.main.ui.nav.content
@@ -25,13 +25,15 @@ fun ContentNavGraph(
     navController: NavHostController,
     onSignOutClicked: () -> Unit,
 ) {
-    NavHost(modifier = modifier,
-            navController = navController,
-            startDestination = HomeNav,
-            enterTransition = { Transition.topLevelEnter },
-            exitTransition = { Transition.topLevelExit },
-            popEnterTransition = { Transition.topLevelEnter },
-            popExitTransition = { Transition.topLevelExit }) {
+    NavHost(
+        modifier = modifier,
+        navController = navController,
+        startDestination = HomeNav,
+        enterTransition = { Transition.TopLevel.enter },
+        exitTransition = { Transition.TopLevel.exit },
+        popEnterTransition = { Transition.TopLevel.popEnter },
+        popExitTransition = { Transition.TopLevel.popExit }
+    ) {
         homeScreen(onSignOutClicked = onSignOutClicked)
         contractsNavGraph(navController)
         matchesScreen()

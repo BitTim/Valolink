@@ -7,7 +7,7 @@
  File:       LevelListNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   18.12.24, 02:29
  */
 
 package dev.bittim.valolink.main.ui.nav.content.contracts
@@ -34,8 +34,12 @@ fun NavGraphBuilder.contractsLevelListScreen(
     onNavToAgentDetails: (uuid: String) -> Unit,
     onNavToLevelDetails: (levelUuid: String, contractUuid: String) -> Unit,
 ) {
-    composable<LevelListNav>(enterTransition = { Transition.forward },
-                             popExitTransition = { Transition.backward }) {
+    composable<LevelListNav>(
+        enterTransition = { Transition.ForwardBackward.enter },
+        exitTransition = { Transition.ForwardBackward.exit },
+        popEnterTransition = { Transition.ForwardBackward.popEnter },
+        popExitTransition = { Transition.ForwardBackward.popExit },
+    ) {
         val viewModel: LevelListViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val args = it.toRoute<LevelListNav>()

@@ -7,7 +7,7 @@
  File:       AgentCarouselCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:51
+ Modified:   18.12.24, 02:29
  */
 
 @file:Suppress("SpellCheckingInspection")
@@ -158,8 +158,8 @@ fun AgentCarouselCard(
                     Crossfade(
                         targetState = isCompressed,
                         animationSpec = tween(
-                            durationMillis = Motion.Duration.LONG_1,
-                            easing = Motion.Easing.motionEasingStandard
+                            durationMillis = Motion.Duration.MEDIUM_1,
+                            easing = Motion.Easing.standard
                         ),
                         label = ""
                     ) {
