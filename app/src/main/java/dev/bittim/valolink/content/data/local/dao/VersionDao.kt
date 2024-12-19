@@ -31,6 +31,6 @@ interface VersionDao {
 	//  Query
 	// --------------------------------
 
-	@Query("SELECT * FROM Version WHERE id = 0 LIMIT 1")
+	@Query("SELECT * FROM Version WHERE uuid = 0 LIMIT 1")
 	fun get(): Flow<VersionEntity?>
 }

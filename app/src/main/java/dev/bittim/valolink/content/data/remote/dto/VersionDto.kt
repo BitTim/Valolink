@@ -26,7 +26,7 @@ data class VersionDto(
 ) {
 	fun toEntity(): VersionEntity {
 		return VersionEntity(
-			id = 0,
+            uuid = "",
 			manifestId = manifestId,
 			branch = branch,
 			version = version,

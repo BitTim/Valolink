@@ -34,7 +34,7 @@ import dev.bittim.valolink.content.domain.model.weapon.shopData.WeaponShopData
     )]
 )
 data class WeaponShopDataEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val weapon: String,
     val cost: Int,

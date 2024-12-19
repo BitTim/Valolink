@@ -29,6 +29,8 @@ data class WeaponSkinWithChromasAndLevels(
         parentColumn = "uuid", entityColumn = "weaponSkin"
     ) val levels: Set<WeaponSkinLevelEntity>,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = weaponSkin.uuid
     override val version: String
         get() = weaponSkin.version
 

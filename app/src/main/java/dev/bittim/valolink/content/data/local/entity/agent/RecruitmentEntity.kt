@@ -31,7 +31,7 @@ import java.time.Instant
     )]
 )
 data class RecruitmentEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val xp: Int,
     val useLevelVpCostOverride: Boolean,

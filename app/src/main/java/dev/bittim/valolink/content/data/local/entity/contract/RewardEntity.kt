@@ -34,7 +34,7 @@ import dev.bittim.valolink.content.domain.model.contract.reward.RewardRelation
     )]
 )
 data class RewardEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     val levelUuid: String,
     override val version: String,
     val rewardType: String,

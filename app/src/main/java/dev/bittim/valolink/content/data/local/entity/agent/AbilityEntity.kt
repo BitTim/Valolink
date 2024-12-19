@@ -27,13 +27,13 @@ import dev.bittim.valolink.content.domain.model.agent.Ability
         onUpdate = ForeignKey.CASCADE,
         onDelete = ForeignKey.CASCADE
     )], indices = [Index(
-        value = ["id"], unique = true
+        value = ["uuid"], unique = true
     ), Index(
         value = ["agentUuid"], unique = false
     )]
 )
 data class AbilityEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey override val uuid: String,
     val agentUuid: String,
     override val version: String,
     val slot: String,

@@ -13,5 +13,6 @@
 package dev.bittim.valolink.content.data.local.entity
 
 interface VersionedEntity {
+    val uuid: String
     val version: String
 }

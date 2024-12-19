@@ -21,13 +21,13 @@ import dev.bittim.valolink.content.domain.model.Version
     tableName = "Version",
     indices = [
         Index(
-            value = ["id"],
+            value = ["uuid"],
             unique = true
         )
     ]
 )
 data class VersionEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey override val uuid: String,
     val manifestId: String,
     val branch: String,
     override val version: String,

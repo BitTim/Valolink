@@ -24,7 +24,7 @@ import dev.bittim.valolink.content.domain.model.agent.Role
     )]
 )
 data class RoleEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val displayName: String,
     val description: String,

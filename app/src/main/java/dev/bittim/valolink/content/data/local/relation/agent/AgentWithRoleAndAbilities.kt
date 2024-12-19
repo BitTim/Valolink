@@ -29,6 +29,8 @@ data class AgentWithRoleAndAbilities(
         parentColumn = "uuid", entityColumn = "agentUuid"
     ) val abilities: Set<AbilityEntity>,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = agent.uuid
     override val version: String
         get() = agent.version
 

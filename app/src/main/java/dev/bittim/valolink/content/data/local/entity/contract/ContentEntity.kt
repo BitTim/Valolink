@@ -35,7 +35,7 @@ import dev.bittim.valolink.content.domain.model.contract.content.ContentRelation
     )]
 )
 data class ContentEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     val contractUuid: String,
     override val version: String,
     val relationType: String?,

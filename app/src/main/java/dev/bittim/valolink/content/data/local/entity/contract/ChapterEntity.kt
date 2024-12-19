@@ -39,7 +39,7 @@ import dev.bittim.valolink.content.domain.model.contract.chapter.Level
     ]
 )
 data class ChapterEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     val contentUuid: String,
     override val version: String,
     val isEpilogue: Boolean,

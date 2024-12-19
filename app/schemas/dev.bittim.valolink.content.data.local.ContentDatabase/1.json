@@ -2,16 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d428f28578ab63f82bcabba23dd3dfa1",
+    "identityHash": "f42e307107883cf559a54264e5e84ce3",
     "entities": [
       {
         "tableName": "Version",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `manifestId` TEXT NOT NULL, `branch` TEXT NOT NULL, `version` TEXT NOT NULL, `buildVersion` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `riotClientVersion` TEXT NOT NULL, `riotClientBuild` TEXT NOT NULL, `buildDate` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `manifestId` TEXT NOT NULL, `branch` TEXT NOT NULL, `version` TEXT NOT NULL, `buildVersion` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `riotClientVersion` TEXT NOT NULL, `riotClientBuild` TEXT NOT NULL, `buildDate` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -66,18 +66,18 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "uuid"
           ]
         },
         "indices": [
           {
-            "name": "index_Version_id",
+            "name": "index_Version_uuid",
             "unique": true,
             "columnNames": [
-              "id"
+              "uuid"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Version_id` ON `${TABLE_NAME}` (`id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Version_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
         ],
         "foreignKeys": []
@@ -959,11 +959,11 @@
       },
       {
         "tableName": "AgentAbilities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `agentUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `slot` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `displayIcon` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`agentUuid`) REFERENCES `Agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `agentUuid` TEXT NOT NULL, `version` TEXT NOT NULL, `slot` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `displayIcon` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`agentUuid`) REFERENCES `Agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "uuid",
+            "columnName": "uuid",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -1007,18 +1007,18 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "uuid"
           ]
         },
         "indices": [
           {
-            "name": "index_AgentAbilities_id",
+            "name": "index_AgentAbilities_uuid",
             "unique": true,
             "columnNames": [
-              "id"
+              "uuid"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_AgentAbilities_id` ON `${TABLE_NAME}` (`id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_AgentAbilities_uuid` ON `${TABLE_NAME}` (`uuid`)"
           },
           {
             "name": "index_AgentAbilities_agentUuid",
@@ -2473,7 +2473,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd428f28578ab63f82bcabba23dd3dfa1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f42e307107883cf559a54264e5e84ce3')"
     ]
   }
 }

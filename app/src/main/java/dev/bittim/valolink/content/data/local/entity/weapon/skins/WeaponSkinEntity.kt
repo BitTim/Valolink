@@ -35,7 +35,7 @@ import dev.bittim.valolink.content.domain.model.weapon.skins.WeaponSkinLevel
     )]
 )
 data class WeaponSkinEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val weapon: String,
     val displayName: String,

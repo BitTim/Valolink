@@ -34,7 +34,7 @@ import dev.bittim.valolink.content.domain.model.contract.reward.Reward
     )]
 )
 data class LevelEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     val chapterUuid: String,
     override val version: String,
     val dependency: String?,

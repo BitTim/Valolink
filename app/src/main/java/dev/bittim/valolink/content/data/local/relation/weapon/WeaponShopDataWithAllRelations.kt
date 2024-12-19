@@ -25,6 +25,8 @@ data class WeaponShopDataWithAllRelations(
         parentColumn = "uuid", entityColumn = "weaponShopData"
     ) val gridPosition: WeaponGridPositionEntity?,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = weaponShopData.uuid
     override val version: String
         get() = weaponShopData.version
 

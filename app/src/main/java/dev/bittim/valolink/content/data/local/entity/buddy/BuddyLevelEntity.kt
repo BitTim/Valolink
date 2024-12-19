@@ -33,7 +33,7 @@ import dev.bittim.valolink.content.domain.model.buddy.BuddyLevel
     )]
 )
 data class BuddyLevelEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val buddy: String,
     val hideIfNotOwned: Boolean,

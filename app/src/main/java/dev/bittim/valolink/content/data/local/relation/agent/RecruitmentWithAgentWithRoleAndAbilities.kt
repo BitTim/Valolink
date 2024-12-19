@@ -25,6 +25,8 @@ data class RecruitmentWithAgentWithRoleAndAbilities(
         entity = AgentEntity::class, parentColumn = "uuid", entityColumn = "recruitment"
     ) val agentEntity: AgentWithRoleAndAbilities,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = recruitment.uuid
     override val version: String
         get() = recruitment.version
 

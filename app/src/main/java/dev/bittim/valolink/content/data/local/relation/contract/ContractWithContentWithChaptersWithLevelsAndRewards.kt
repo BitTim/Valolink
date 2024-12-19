@@ -27,6 +27,8 @@ data class ContractWithContentWithChaptersWithLevelsAndRewards(
         entity = ContentEntity::class, parentColumn = "uuid", entityColumn = "contractUuid"
     ) val content: ContentWithChaptersWithLevelsAndRewards,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = contract.uuid
     override val version: String
         get() = contract.version
 

@@ -26,7 +26,7 @@ import java.time.Instant
     )]
 )
 data class EventEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val displayName: String,
     val shortDisplayName: String,

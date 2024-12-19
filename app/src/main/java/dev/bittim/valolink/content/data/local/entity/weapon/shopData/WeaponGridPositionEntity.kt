@@ -32,7 +32,7 @@ import dev.bittim.valolink.content.domain.model.weapon.shopData.WeaponGridPositi
     )]
 )
 data class WeaponGridPositionEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val weaponShopData: String,
     val row: Int,

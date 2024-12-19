@@ -32,7 +32,7 @@ import dev.bittim.valolink.content.domain.model.weapon.skins.WeaponSkinChroma
     )]
 )
 data class WeaponSkinChromaEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val weaponSkin: String,
     val chromaIndex: Int,

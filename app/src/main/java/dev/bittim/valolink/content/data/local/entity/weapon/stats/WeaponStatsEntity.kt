@@ -37,7 +37,7 @@ import dev.bittim.valolink.content.domain.model.weapon.stats.WeaponStats
     )]
 )
 data class WeaponStatsEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val weapon: String,
     val fireRate: Double,

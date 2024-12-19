@@ -37,6 +37,8 @@ data class WeaponStatsWithAllRelations(
         parentColumn = "uuid", entityColumn = "weaponStats"
     ) val weaponDamageRanges: Set<WeaponDamageRangeEntity>,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = weaponStats.uuid
     override val version: String
         get() = weaponStats.version
 

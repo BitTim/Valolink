@@ -74,14 +74,20 @@ class ContentSyncWorker @AssistedInject constructor(
 
         // Get versions of local cache
         val localVersions =
-            contentDatabase.getAllOfType(type).firstOrNull()?.map { it?.version }
+            contentDatabase.getAllOfType(type).firstOrNull()?.map {
+                if (it == null) null else it.uuid to it.version
+            }
 
         // Get remote version
         val remoteVersion = versionRepository.get().firstOrNull()?.version
         if (remoteVersion.isNullOrEmpty()) return Result.retry()
 
         // Fetch from API if remote version is different
-        if (localVersions.isNullOrEmpty() || localVersions.any { it != remoteVersion }) {
+        if (
+            localVersions.isNullOrEmpty() ||
+            (!uuid.isNullOrEmpty() && localVersions.all { it?.first != uuid }) ||
+            localVersions.any { it?.second != remoteVersion }
+        ) {
             if (uuid.isNullOrEmpty()) repository.fetchAll(remoteVersion)
             else repository.fetch(uuid, remoteVersion)
         }

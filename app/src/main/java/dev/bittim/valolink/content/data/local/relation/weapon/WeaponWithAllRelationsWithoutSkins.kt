@@ -30,6 +30,8 @@ data class WeaponWithAllRelationsWithoutSkins(
         entity = WeaponShopDataEntity::class, parentColumn = "uuid", entityColumn = "weapon"
     ) val shopData: WeaponShopDataWithAllRelations,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = weapon.uuid
     override val version: String
         get() = weapon.version
 

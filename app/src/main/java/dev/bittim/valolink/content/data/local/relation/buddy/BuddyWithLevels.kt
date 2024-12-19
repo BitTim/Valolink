@@ -25,6 +25,8 @@ data class BuddyWithLevels(
         parentColumn = "uuid", entityColumn = "buddy"
     ) val levels: List<BuddyLevelEntity>,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = buddy.uuid
     override val version: String
         get() = buddy.version
 

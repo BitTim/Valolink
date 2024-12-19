@@ -26,6 +26,8 @@ data class LevelWithRewards(
         parentColumn = "uuid", entityColumn = "levelUuid"
     ) val rewards: List<RewardEntity>,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = level.uuid
     override val version: String
         get() = level.version
 

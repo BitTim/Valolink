@@ -27,6 +27,8 @@ data class ContentWithChaptersWithLevelsAndRewards(
         entity = ChapterEntity::class, parentColumn = "uuid", entityColumn = "contentUuid"
     ) val chapters: List<ChapterWithLevelsAndRewards>,
 ) : VersionedEntity {
+    override val uuid: String
+        get() = content.uuid
     override val version: String
         get() = content.version
 

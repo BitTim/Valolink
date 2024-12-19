@@ -25,7 +25,7 @@ import dev.bittim.valolink.content.domain.model.PlayerCard
     )]
 )
 data class PlayerCardEntity(
-    @PrimaryKey val uuid: String,
+    @PrimaryKey override val uuid: String,
     override val version: String,
     val displayName: String,
     val isHiddenIfNotOwned: Boolean,
