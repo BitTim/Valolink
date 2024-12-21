@@ -4,10 +4,10 @@
  Project:    Valolink
  License:    GPLv3
  
- File:       OnboardingNav.kt
+ File:       OnboardingContainerNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.12.24, 21:00
+ Modified:   21.12.24, 01:19
  */
 
 package dev.bittim.valolink.onboarding.ui.container
@@ -15,6 +15,7 @@ package dev.bittim.valolink.onboarding.ui.container
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,10 +37,24 @@ fun NavGraphBuilder.onboarding(
             viewModel.onDestinationChanged(destination.route ?: "")
         }
 
-        OnboardingContainer(
+        val snackbarHostState = viewModel.snackbarHostState.collectAsStateWithLifecycle()
+
+        OnboardingContainerScreen(
             state = state.value,
             navController = subNavController,
-            onNavToMain = { navController.navToMainGraph() }
+            snackbarHostState = snackbarHostState.value,
+            navMain = { navController.navToMainGraph() },
         )
+    }
+}
+
+fun NavController.navToOnboarding() {
+    navigate(OnboardingContainerNav) {
+        popUpTo(graph.findStartDestination().id) {
+            inclusive = true
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
     }
 }

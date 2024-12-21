@@ -7,20 +7,24 @@
  File:       CreateAccountViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 16:58
+ Modified:   21.12.24, 01:36
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
 
+import android.content.Context
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
-import dev.bittim.valolink.user.domain.usecase.validator.EmailError
-import dev.bittim.valolink.user.domain.usecase.validator.PasswordError
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.domain.error.EmailError
+import dev.bittim.valolink.user.domain.error.PasswordError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import dev.bittim.valolink.user.domain.usecase.validator.ValidatePasswordUseCase
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +42,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateAccountViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
@@ -45,6 +51,7 @@ class CreateAccountViewModel @Inject constructor(
     private val _state = MutableStateFlow(CreateAccountState())
     val state = _state.asStateFlow()
 
+    private var snackbarHostState: SnackbarHostState? = null
     private var fetchJob: Job? = null
 
     init {
@@ -67,7 +74,7 @@ class CreateAccountViewModel @Inject constructor(
         }
     }
 
-    fun validateEmail(email: String) {
+    fun validateEmail(email: String): UiText? {
         val emailResult = validateEmailUseCase(email)
         val emailError = when (emailResult) {
             is Result.Success -> null
@@ -80,9 +87,10 @@ class CreateAccountViewModel @Inject constructor(
         }
 
         _state.update { it.copy(emailError = emailError) }
+        return emailError
     }
 
-    fun validatePassword(password: String) {
+    fun validatePassword(password: String): UiText? {
         val passwordResult = validatePasswordUseCase(password)
         val passwordError = when (passwordResult) {
             is Result.Success -> null
@@ -102,5 +110,28 @@ class CreateAccountViewModel @Inject constructor(
         }
 
         _state.update { it.copy(passwordError = passwordError) }
+        return passwordError
+    }
+
+    fun setSnackbarHostState(snackbarHostState: SnackbarHostState) {
+        this.snackbarHostState = snackbarHostState
+    }
+
+    fun createUser(email: String, password: String, successNav: () -> Unit) {
+        val emailResult = validateEmail(email)
+        val passwordResult = validatePassword(password)
+        if (emailResult != null || passwordResult != null) return
+
+        viewModelScope.launch {
+            val error = authRepository.createAccount(email, password)
+
+            withContext(Dispatchers.Main) {
+                if (error == null) {
+                    successNav()
+                } else {
+                    snackbarHostState?.showSnackbar(error.asString(context))
+                }
+            }
+        }
     }
 }

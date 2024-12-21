@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   15.12.24, 17:29
+  Modified:   21.12.24, 00:40
   -->
 
 <resources>
@@ -17,7 +17,8 @@
     <string name="button_back">Zurück</string>
     <string name="button_continue">Weiter</string>
 
-    <string name="error_empty">Darf nicht leer sin</string>
+    <string name="error_empty">Darf nicht leer sein</string>
+    <string name="error_unknown">Unbekannter Fehler ist aufgetreten</string>
 
     <string name="error_email_invalid">Ungültige E-Mail Adresse</string>
 

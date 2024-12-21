@@ -7,11 +7,12 @@
  File:       OnboardingContainerViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.12.24, 20:59
+ Modified:   21.12.24, 00:46
  */
 
 package dev.bittim.valolink.onboarding.ui.container
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.core.domain.usecase.progress.CalcProgressDecimalUseCase
@@ -26,6 +27,8 @@ class OnboardingContainerViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(OnboardingContainerState())
     val state = _state.asStateFlow()
+
+    val snackbarHostState = MutableStateFlow(SnackbarHostState())
 
     fun onDestinationChanged(route: String) {
         val screen = OnboardingScreen.entries.find { it.route == route }

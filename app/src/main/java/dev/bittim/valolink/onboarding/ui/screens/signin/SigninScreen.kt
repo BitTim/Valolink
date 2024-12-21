@@ -7,7 +7,7 @@
  File:       SigninScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:10
+ Modified:   21.12.24, 01:22
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.signin
@@ -62,7 +62,7 @@ fun SigninScreen(
     onForgotPassword: () -> Unit,
     onCreateAccount: () -> Unit,
     onCancel: () -> Unit,
-    onContinue: () -> Unit,
+    signin: (email: String, password: String) -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -151,7 +151,7 @@ fun SigninScreen(
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { onContinue() }
+                        onDone = { signin(email, password) }
                     )
                 )
 
@@ -166,7 +166,7 @@ fun SigninScreen(
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
-                    onContinue = onContinue,
+                    onContinue = { signin(email, password) },
                     dismissText = UiText.StringResource(R.string.button_cancel)
                 )
             }
@@ -186,7 +186,7 @@ fun SigninScreenPreview() {
                 onForgotPassword = {},
                 onCreateAccount = {},
                 onCancel = {},
-                onContinue = {},
+                signin = { _, _ -> },
             )
         }
     }

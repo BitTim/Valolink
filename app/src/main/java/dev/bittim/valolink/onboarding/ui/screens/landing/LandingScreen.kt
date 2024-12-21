@@ -7,7 +7,7 @@
  File:       LandingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:10
+ Modified:   21.12.24, 00:21
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -44,7 +44,6 @@ data object LandingScreen {
 @Composable
 fun LandingScreen(
     state: LandingState,
-    onLegacyClicked: () -> Unit, // TEMP
     onLocalClicked: () -> Unit,
     onGoogleClicked: () -> Unit,
     onRiotClicked: () -> Unit,
@@ -73,14 +72,6 @@ fun LandingScreen(
             Column(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                // TEMP
-                TextButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = onLegacyClicked
-                ) {
-                    Text("Use legacy login")
-                }
-
                 OutlinedSocialButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onGoogleClicked,
@@ -133,7 +124,6 @@ fun LandingScreenPreview() {
         Surface {
             LandingScreen(
                 state = LandingState(),
-                onLegacyClicked = {},
                 onLocalClicked = {},
                 onGoogleClicked = {},
                 onRiotClicked = {},

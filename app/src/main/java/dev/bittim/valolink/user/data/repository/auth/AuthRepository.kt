@@ -7,20 +7,21 @@
  File:       AuthRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   21.12.24, 01:24
  */
 
-package dev.bittim.valolink.auth.data.repository
+package dev.bittim.valolink.user.data.repository.auth
+
+import dev.bittim.valolink.core.ui.util.UiText
 
 interface AuthRepository {
     suspend fun signIn(
         email: String,
         password: String,
-    ): Boolean
+    ): UiText?
 
-    suspend fun signUp(
+    suspend fun createAccount(
         email: String,
-        username: String,
         password: String,
-    ): Boolean
+    ): UiText?
 }

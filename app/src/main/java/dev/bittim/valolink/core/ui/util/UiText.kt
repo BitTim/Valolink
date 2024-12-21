@@ -8,11 +8,12 @@
  Module:     Valolink.app.main
  Author:     Philipp Lackner
  Source:     https://www.youtube.com/watch?v=mB1Lej0aDus
- Modified:   14.12.24, 14:47
+ Modified:   21.12.24, 01:00
  */
 
 package dev.bittim.valolink.core.ui.util
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -29,6 +30,13 @@ sealed class UiText {
         return when (this) {
             is DynamicString -> value
             is StringResource -> stringResource(resId, *args)
+        }
+    }
+
+    fun asString(context: Context): String {
+        return when (this) {
+            is DynamicString -> value
+            is StringResource -> context.getString(resId, *args)
         }
     }
 }

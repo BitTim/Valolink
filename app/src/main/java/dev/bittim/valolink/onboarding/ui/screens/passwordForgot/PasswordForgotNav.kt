@@ -7,13 +7,16 @@
  File:       PasswordForgotNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:28
+ Modified:   21.12.24, 01:24
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
@@ -22,17 +25,31 @@ import kotlinx.serialization.Serializable
 object PasswordForgotNav
 
 fun NavGraphBuilder.passwordForgotScreen(
-    onNavBack: () -> Unit
+    navBack: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     composable<PasswordForgotNav> {
         val viewModel: PasswordForgotViewModel = hiltViewModel()
+        viewModel.setSnackbarHostState(snackbarHostState)
+
         val state = viewModel.state.collectAsStateWithLifecycle()
 
         PasswordForgotScreen(
             state = state.value,
             validateEmail = viewModel::validateEmail,
-            onCancel = onNavBack,
+            onCancel = navBack,
             onContinue = {}
         )
+    }
+}
+
+fun NavController.navOnboardingPasswordForgot() {
+    navigate(PasswordForgotNav) {
+        popUpTo(graph.findStartDestination().id) {
+            inclusive = true
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
     }
 }

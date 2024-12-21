@@ -7,7 +7,7 @@
  File:       CreateAccountScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:06
+ Modified:   21.12.24, 01:16
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -58,7 +58,7 @@ fun CreateAccount(
     validateEmail: (email: String) -> Unit,
     validatePassword: (password: String) -> Unit,
     onCancel: () -> Unit,
-    onCreateAccount: () -> Unit
+    createAccount: (email: String, password: String) -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -151,10 +151,9 @@ fun CreateAccount(
                 Spacer(modifier = Modifier.weight(1f))
 
                 OnboardingButtons(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
-                    onContinue = onCreateAccount,
+                    onContinue = { createAccount(email, password) },
                     dismissText = UiText.StringResource(R.string.button_cancel),
                     continueText = UiText.StringResource(R.string.onboarding_createAccount_button_createAccount)
                 )
@@ -174,7 +173,7 @@ fun CreateAccountScreenPreview() {
                 validateEmail = {},
                 validatePassword = {},
                 onCancel = {},
-                onCreateAccount = {}
+                createAccount = { _, _ -> }
             )
         }
     }

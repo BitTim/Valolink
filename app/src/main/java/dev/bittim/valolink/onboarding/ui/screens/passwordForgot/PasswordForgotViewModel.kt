@@ -7,19 +7,23 @@
  File:       PasswordForgotViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:28
+ Modified:   21.12.24, 01:07
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
 
+import android.content.Context
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
-import dev.bittim.valolink.user.domain.usecase.validator.EmailError
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.domain.error.EmailError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -36,12 +40,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PasswordForgotViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
     private val validateEmailUseCase: ValidateEmailUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(PasswordForgotState())
     val state = _state.asStateFlow()
 
+    private var snackbarHostState: SnackbarHostState? = null
     private var fetchJob: Job? = null
 
     init {
@@ -77,5 +84,13 @@ class PasswordForgotViewModel @Inject constructor(
         }
 
         _state.update { it.copy(emailError = emailError) }
+    }
+
+    fun setSnackbarHostState(snackbarHostState: SnackbarHostState) {
+        this.snackbarHostState = snackbarHostState
+    }
+
+    fun forgotPassword(email: String) {
+        // TODO
     }
 }
