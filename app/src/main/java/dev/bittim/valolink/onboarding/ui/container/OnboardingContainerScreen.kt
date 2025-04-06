@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:52
+ Modified:   05.04.25, 11:19
  */
 
 
@@ -38,6 +38,7 @@ import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.landingScreen
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.navOnboardingPasswordForgot
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.passwordForgotScreen
+import dev.bittim.valolink.onboarding.ui.screens.passwordReset.passwordResetScreen
 import dev.bittim.valolink.onboarding.ui.screens.signin.navOnboardingSignin
 import dev.bittim.valolink.onboarding.ui.screens.signin.signinScreen
 import kotlinx.serialization.InternalSerializationApi
@@ -93,6 +94,12 @@ fun OnboardingContainerScreen(
                 passwordForgotScreen(
                     navBack = { navController.navigateUp() },
                     snackbarHostState = snackbarHostState,
+                )
+
+                passwordResetScreen(
+                    navBack = { navController.navigateUp() },
+                    navMain = navMain,
+                    snackbarHostState = snackbarHostState
                 )
 
                 createAccountScreen(

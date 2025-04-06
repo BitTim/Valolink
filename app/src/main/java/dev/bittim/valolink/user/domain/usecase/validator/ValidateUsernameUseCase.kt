@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       ValidateUsernameUseCase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 00:34
+ Modified:   05.04.25, 11:06
  */
 
 package dev.bittim.valolink.user.domain.usecase.validator
@@ -19,13 +19,13 @@ import javax.inject.Inject
 class ValidateUsernameUseCase @Inject constructor() {
     operator fun invoke(username: String): Result<Unit, UsernameError> {
         if (username.isEmpty()) {
-            return Result.Failure(UsernameError.EMPTY)
+            return Result.Err(UsernameError.EMPTY)
         }
 
         if (username.length < 4) {
-            return Result.Failure(UsernameError.TOO_SHORT)
+            return Result.Err(UsernameError.TOO_SHORT)
         }
 
-        return Result.Success(Unit)
+        return Result.Ok(Unit)
     }
 }

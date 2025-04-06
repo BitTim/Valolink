@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       SupabaseAuthRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:12
+ Modified:   06.04.25, 11:30
  */
 
 package dev.bittim.valolink.user.data.repository.auth
@@ -52,6 +52,36 @@ class SupabaseAuthRepository @Inject constructor(
                 this.email = email
                 this.password = password
             }
+            null
+        } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+                null
+            }
+
+            if (e.localizedMessage.isNullOrEmpty()) UiText.StringResource(R.string.error_unknown)
+            else UiText.DynamicString(e.localizedMessage ?: "")
+        }
+    }
+
+    override suspend fun sendPasswordResetEmail(email: String): UiText? {
+        return try {
+            auth.resetPasswordForEmail(email)
+            null
+        } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+                null
+            }
+
+            if (e.localizedMessage.isNullOrEmpty()) UiText.StringResource(R.string.error_unknown)
+            else UiText.DynamicString(e.localizedMessage ?: "")
+        }
+    }
+
+    override suspend fun resetPassword(newPassword: String): UiText? {
+        return try {
+            auth.updateUser { password = newPassword }
             null
         } catch (e: Exception) {
             if (e is CancellationException) {

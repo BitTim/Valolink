@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       CreateSupabaseClientUseCase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   06.04.25, 11:23
  */
 
 package dev.bittim.valolink.core.domain.usecase.supabase
@@ -15,6 +15,7 @@ package dev.bittim.valolink.core.domain.usecase.supabase
 import dev.bittim.valolink.BuildConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.auth.ExternalAuthAction
 import io.github.jan.supabase.auth.FlowType
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.functions.Functions
@@ -33,6 +34,11 @@ class CreateSupabaseClientUseCase {
             }
             install(Auth) {
                 flowType = FlowType.PKCE
+
+                host = "www.valolink.app"
+                scheme = "https"
+
+                defaultExternalAuthAction = ExternalAuthAction.CustomTabs()
             }
             install(Realtime)
             install(Functions)

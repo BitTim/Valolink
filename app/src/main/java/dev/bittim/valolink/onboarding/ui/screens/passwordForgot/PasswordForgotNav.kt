@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       PasswordForgotNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:24
+ Modified:   01.04.25, 14:10
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
@@ -38,7 +38,9 @@ fun NavGraphBuilder.passwordForgotScreen(
             state = state.value,
             validateEmail = viewModel::validateEmail,
             onCancel = navBack,
-            onContinue = {}
+            onContinue = { email ->
+                viewModel.forgotPassword(email, navBack)
+            }
         )
     }
 }

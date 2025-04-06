@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       PasswordForgotViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:07
+ Modified:   05.04.25, 11:06
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
@@ -74,8 +74,8 @@ class PasswordForgotViewModel @Inject constructor(
     fun validateEmail(email: String) {
         val emailResult = validateEmailUseCase(email)
         val emailError = when (emailResult) {
-            is Result.Success -> null
-            is Result.Failure -> {
+            is Result.Ok -> null
+            is Result.Err -> {
                 when (emailResult.error) {
                     EmailError.EMPTY -> UiText.StringResource(R.string.error_empty)
                     EmailError.INVALID -> UiText.StringResource(R.string.error_email_invalid)
@@ -90,7 +90,17 @@ class PasswordForgotViewModel @Inject constructor(
         this.snackbarHostState = snackbarHostState
     }
 
-    fun forgotPassword(email: String) {
-        // TODO
+    fun forgotPassword(email: String, successNav: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val error = authRepository.sendPasswordResetEmail(email)
+
+            withContext(Dispatchers.Main) {
+                if (error == null) {
+                    successNav()
+                } else {
+                    snackbarHostState?.showSnackbar(error.asString(context))
+                }
+            }
+        }
     }
 }

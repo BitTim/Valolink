@@ -1,16 +1,16 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2025 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
 
- File:       CreateAccountViewModel.kt
+ File:       PasswordResetViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   05.04.25, 11:06
+ Modified:   05.04.25, 11:12
  */
 
-package dev.bittim.valolink.onboarding.ui.screens.createAccount
+package dev.bittim.valolink.onboarding.ui.screens.passwordReset
 
 import android.content.Context
 import androidx.compose.material3.SnackbarHostState
@@ -23,9 +23,7 @@ import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
-import dev.bittim.valolink.user.domain.error.EmailError
 import dev.bittim.valolink.user.domain.error.PasswordError
-import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import dev.bittim.valolink.user.domain.usecase.validator.ValidatePasswordUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,14 +39,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateAccountViewModel @Inject constructor(
+class PasswordResetViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
-    private val validateEmailUseCase: ValidateEmailUseCase,
-    private val validatePasswordUseCase: ValidatePasswordUseCase,
+    private val validatePasswordUseCase: ValidatePasswordUseCase
 ) : ViewModel() {
-    private val _state = MutableStateFlow(CreateAccountState())
+    private val _state = MutableStateFlow(PasswordResetState())
     val state = _state.asStateFlow()
 
     private var snackbarHostState: SnackbarHostState? = null
@@ -59,7 +56,7 @@ class CreateAccountViewModel @Inject constructor(
             fetchJob?.cancel()
             fetchJob = viewModelScope.launch {
                 withContext(Dispatchers.IO) {
-                    sprayRepository.getByUuid(CreateAccountScreen.SPRAY_UUID)
+                    sprayRepository.getByUuid(PasswordResetScreen.SPRAY_UUID)
                         .onStart { _state.update { it.copy(loading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { spray ->
@@ -74,56 +71,32 @@ class CreateAccountViewModel @Inject constructor(
         }
     }
 
-    fun validateEmail(email: String): UiText? {
-        val emailResult = validateEmailUseCase(email)
-        val emailError = when (emailResult) {
-            is Result.Ok -> null
-            is Result.Err -> {
-                when (emailResult.error) {
-                    EmailError.EMPTY -> UiText.StringResource(R.string.error_empty)
-                    EmailError.INVALID -> UiText.StringResource(R.string.error_email_invalid)
-                }
-            }
-        }
-
-        _state.update { it.copy(emailError = emailError) }
-        return emailError
-    }
-
-    fun validatePassword(password: String): UiText? {
+    fun validatePassword(password: String) {
         val passwordResult = validatePasswordUseCase(password)
         val passwordError = when (passwordResult) {
             is Result.Ok -> null
             is Result.Err -> {
                 when (passwordResult.error) {
                     PasswordError.EMPTY -> UiText.StringResource(R.string.error_empty)
+                    PasswordError.TOO_SHORT -> UiText.StringResource(R.string.error_password_tooShort)
                     PasswordError.NO_DIGIT -> UiText.StringResource(R.string.error_password_noDigit)
                     PasswordError.NO_LOWERCASE -> UiText.StringResource(R.string.error_password_noLowercase)
                     PasswordError.NO_UPPERCASE -> UiText.StringResource(R.string.error_password_noUppercase)
                     PasswordError.NO_SPECIAL_CHAR -> UiText.StringResource(R.string.error_password_noSpecialChar)
-                    PasswordError.TOO_SHORT -> UiText.StringResource(
-                        R.string.error_password_tooShort,
-                        ValidatePasswordUseCase.MIN_PASSWORD_LENGTH
-                    )
                 }
             }
         }
 
         _state.update { it.copy(passwordError = passwordError) }
-        return passwordError
     }
 
     fun setSnackbarHostState(snackbarHostState: SnackbarHostState) {
         this.snackbarHostState = snackbarHostState
     }
 
-    fun createUser(email: String, password: String, successNav: () -> Unit) {
-        val emailResult = validateEmail(email)
-        val passwordResult = validatePassword(password)
-        if (emailResult != null || passwordResult != null) return
-
-        viewModelScope.launch {
-            val error = authRepository.createAccount(email, password)
+    fun resetPassword(password: String, successNav: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val error = authRepository.resetPassword(password)
 
             withContext(Dispatchers.Main) {
                 if (error == null) {

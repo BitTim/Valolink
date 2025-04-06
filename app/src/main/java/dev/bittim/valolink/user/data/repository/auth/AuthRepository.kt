@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       AuthRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:24
+ Modified:   05.04.25, 11:08
  */
 
 package dev.bittim.valolink.user.data.repository.auth
@@ -24,4 +24,10 @@ interface AuthRepository {
         email: String,
         password: String,
     ): UiText?
+
+    suspend fun sendPasswordResetEmail(
+        email: String,
+    ): UiText?
+
+    suspend fun resetPassword(password: String): UiText?
 }

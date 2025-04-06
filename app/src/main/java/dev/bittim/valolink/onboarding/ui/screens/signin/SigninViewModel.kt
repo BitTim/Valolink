@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       SigninViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:36
+ Modified:   05.04.25, 11:06
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.signin
@@ -70,8 +70,8 @@ class SigninViewModel @Inject constructor(
     fun validateEmail(email: String): UiText? {
         val emailResult = validateEmailUseCase(email)
         val emailError = when (emailResult) {
-            is Result.Success -> null
-            is Result.Failure -> {
+            is Result.Ok -> null
+            is Result.Err -> {
                 when (emailResult.error) {
                     EmailError.EMPTY -> UiText.StringResource(R.string.error_empty)
                     EmailError.INVALID -> UiText.StringResource(R.string.error_email_invalid)

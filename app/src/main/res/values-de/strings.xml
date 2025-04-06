@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright (c) 2024 Tim Anhalt (BitTim)
-  
+  Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
   Project:    Valolink
   License:    GPLv3
-  
+
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   21.12.24, 00:40
+  Modified:   06.04.25, 12:19
   -->
 
 <resources>
@@ -51,5 +51,6 @@
 
     <string name="onboarding_passwordForgot_title">Passwort vergessen</string>
     <string name="onboarding_passwordForgot_description">Keine Sorge, das passiert den Besten von uns. Gib deine E-Mail Adresse ein und wir senden dir einen Link zum Zurücksetzen des Passworts</string>
-    <string name="onboarding_passwordForgot_button_send">Send reset link</string>
+    <string name="onboarding_passwordForgot_button_send">Reset-Link senden</string>
+    <string name="onboarding_passwordReset_button_send">Passwort zurücksetzen</string>
 </resources>

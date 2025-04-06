@@ -1,16 +1,16 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
- File:       PasswordForgotScreen.kt
+
+ File:       PasswordResetScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:27
+ Modified:   05.04.25, 11:14
  */
 
-package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
+package dev.bittim.valolink.onboarding.ui.screens.passwordReset
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
@@ -48,28 +48,28 @@ import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 
-data object PasswordForgotScreen {
+data object PasswordResetScreen {
     const val SPRAY_UUID: String = "51dc5786-4f73-8a5b-fd04-8eb6e78b9d74"
 }
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun PasswordForgotScreen(
-    state: PasswordForgotState,
-    validateEmail: (email: String) -> Unit,
+fun PasswordResetScreen(
+    state: PasswordResetState,
+    validatePassword: (password: String) -> Unit,
     onCancel: () -> Unit,
-    onContinue: (email: String) -> Unit,
+    onContinue: (password: String) -> Unit,
 ) {
-    var email by remember { mutableStateOf("") }
-    val onEmailChanged = { value: String ->
-        email = value
-        validateEmail(value)
+    var password by remember { mutableStateOf("") }
+    val onPasswordChanged = { value: String ->
+        password = value
+        validatePassword(value)
     }
 
-    val emailAutoFillHandler =
+    val passwordAutofillHandler =
         autofillRequestHandler(
-            autofillTypes = listOf(AutofillType.EmailAddress),
-            onFill = onEmailChanged
+            autofillTypes = listOf(AutofillType.NewPassword),
+            onFill = onPasswordChanged
         )
 
     OnboardingLayout(
@@ -100,18 +100,19 @@ fun PasswordForgotScreen(
                 OutlinedTextFieldWithError(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .connectNode(emailAutoFillHandler)
-                        .defaultFocusChangeAutoFill(emailAutoFillHandler),
-                    label = UiText.StringResource(R.string.onboarding_textField_label_email)
+                        .connectNode(passwordAutofillHandler)
+                        .defaultFocusChangeAutoFill(passwordAutofillHandler),
+                    label = UiText.StringResource(R.string.onboarding_textField_label_password)
                         .asString(),
-                    value = email,
-                    error = state.emailError,
+                    value = password,
+                    visibility = false,
+                    error = state.passwordError,
                     onValueChange = {
-                        if (it.isEmpty()) emailAutoFillHandler.requestVerifyManual()
-                        onEmailChanged(it)
+                        if (it.isEmpty()) passwordAutofillHandler.requestVerifyManual()
+                        onPasswordChanged(it)
                     },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
+                        keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Next
                     )
                 )
@@ -121,9 +122,9 @@ fun PasswordForgotScreen(
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
-                    onContinue = { onContinue(email) },
+                    onContinue = { onContinue(password) },
                     dismissText = UiText.StringResource(R.string.button_cancel),
-                    continueText = UiText.StringResource(R.string.onboarding_passwordForgot_button_send)
+                    continueText = UiText.StringResource(R.string.onboarding_passwordReset_button_send)
                 )
             }
         }
@@ -133,12 +134,12 @@ fun PasswordForgotScreen(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreviewAnnotations
 @Composable
-fun PasswordForgotScreenPreview() {
+fun PasswordResetScreenPreview() {
     ValolinkTheme {
         Surface {
-            PasswordForgotScreen(
-                state = PasswordForgotState(),
-                validateEmail = {},
+            PasswordResetScreen(
+                state = PasswordResetState(),
+                validatePassword = {},
                 onCancel = {},
                 onContinue = {},
             )

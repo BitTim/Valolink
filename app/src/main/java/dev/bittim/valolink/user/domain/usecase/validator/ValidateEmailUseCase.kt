@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       ValidateEmailUseCase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 00:33
+ Modified:   05.04.25, 11:06
  */
 
 package dev.bittim.valolink.user.domain.usecase.validator
@@ -23,13 +23,13 @@ class ValidateEmailUseCase @Inject constructor(
 ) {
     operator fun invoke(email: String): Result<Unit, EmailError> {
         if (email.isEmpty()) {
-            return Result.Failure(EmailError.EMPTY)
+            return Result.Err(EmailError.EMPTY)
         }
 
         if (!validator.isValid(email)) {
-            return Result.Failure(EmailError.INVALID)
+            return Result.Err(EmailError.INVALID)
         }
 
-        return Result.Success(Unit)
+        return Result.Ok(Unit)
     }
 }

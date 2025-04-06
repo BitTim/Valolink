@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright (c) 2024 Tim Anhalt (BitTim)
-  
+  Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
   Project:    Valolink
   License:    GPLv3
-  
+
   File:       AndroidManifest.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   14.12.24, 14:48
+  Modified:   06.04.25, 11:24
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -36,6 +36,17 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <data
+                        android:host="www.valolink.app"
+                        android:scheme="https" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
 
