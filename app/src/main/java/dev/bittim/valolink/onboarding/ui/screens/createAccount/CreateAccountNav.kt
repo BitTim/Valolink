@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       CreateAccountNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:32
+ Modified:   09.04.25, 01:06
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -26,7 +26,7 @@ object CreateAccountNav
 
 fun NavGraphBuilder.createAccountScreen(
     navBack: () -> Unit,
-    navMain: () -> Unit,
+    navProfileSetup: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     composable<CreateAccountNav> {
@@ -41,7 +41,7 @@ fun NavGraphBuilder.createAccountScreen(
             validatePassword = viewModel::validatePassword,
             onCancel = navBack,
             createAccount = { email, password ->
-                viewModel.createUser(email, password, navMain)
+                viewModel.createUser(email, password, navProfileSetup)
             }
         )
     }

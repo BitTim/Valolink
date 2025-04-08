@@ -4,13 +4,13 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       PasswordResetNav.kt
+ File:       ProfileSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:04
+ Modified:   09.04.25, 01:07
  */
 
-package dev.bittim.valolink.onboarding.ui.screens.passwordReset
+package dev.bittim.valolink.onboarding.ui.screens.profileSetup
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,44 +19,33 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
 
 @Serializable
-object PasswordResetNav
+object ProfileSetupNav
 
-
-fun NavGraphBuilder.passwordResetScreen(
+fun NavGraphBuilder.profileSetupScreen(
     navBack: () -> Unit,
-    navMain: () -> Unit,
+    navRankSetup: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    composable<PasswordResetNav>(
-        deepLinks = listOf(
-            // TODO: Does not work in nested NavHost
-            navDeepLink<PasswordResetNav>(
-                basePath = "https://www.valolink.app"
-            )
-        )
-    ) {
-        val viewModel: PasswordResetViewModel = hiltViewModel()
-        viewModel.setSnackbarHostState(snackbarHostState)
-
+    composable<ProfileSetupNav> {
+        val viewModel: ProfileSetupViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()
 
-        PasswordResetScreen(
+        ProfileSetupScreen(
             state = state.value,
-            validatePassword = viewModel::validatePassword,
-            onCancel = navBack,
-            onContinue = { email ->
-                viewModel.resetPassword(email, navMain)
+            viewModel::validateUsername,
+            onBack = navBack,
+            setProfile = { username, private ->
+                viewModel.setProfile(username, private, navRankSetup)
             }
         )
     }
 }
 
-fun NavController.navOnboardingPasswordReset() {
-    navigate(PasswordResetNav) {
+fun NavController.navOnboardingProfileSetup() {
+    navigate(ProfileSetupNav) {
         popUpTo(graph.findStartDestination().id) {
             inclusive = true
             saveState = true

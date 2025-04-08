@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       OnboardingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.12.24, 20:57
+ Modified:   09.04.25, 01:04
  */
 
 package dev.bittim.valolink.onboarding.ui.screens
@@ -17,6 +17,8 @@ import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.CreateAccountNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.PasswordForgotNav
+import dev.bittim.valolink.onboarding.ui.screens.passwordReset.PasswordResetNav
+import dev.bittim.valolink.onboarding.ui.screens.profileSetup.ProfileSetupNav
 import dev.bittim.valolink.onboarding.ui.screens.signin.SigninNav
 
 enum class OnboardingScreen(
@@ -50,6 +52,20 @@ enum class OnboardingScreen(
         route = PasswordForgotNav::class.java.name,
         title = UiText.StringResource(R.string.onboarding_passwordForgot_title),
         description = UiText.StringResource(R.string.onboarding_passwordForgot_description),
+        step = 1
+    ),
+
+    PasswordReset(
+        route = PasswordResetNav::class.java.name,
+        title = UiText.StringResource(R.string.onboarding_passwordReset_title),
+        description = UiText.StringResource(R.string.onboarding_passwordReset_description),
+        step = 1
+    ),
+
+    ProfileSetup(
+        route = ProfileSetupNav::class.java.name,
+        title = UiText.StringResource(R.string.onboarding_profileSetup_title),
+        description = UiText.StringResource(R.string.onboarding_profileSetup_description),
         step = 1
     );
 

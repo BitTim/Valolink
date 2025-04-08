@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   06.04.25, 12:19
+  Modified:   09.04.25, 01:04
   -->
 
 <resources>
@@ -53,4 +53,10 @@
     <string name="onboarding_passwordForgot_description">Keine Sorge, das passiert den Besten von uns. Gib deine E-Mail Adresse ein und wir senden dir einen Link zum Zurücksetzen des Passworts</string>
     <string name="onboarding_passwordForgot_button_send">Reset-Link senden</string>
     <string name="onboarding_passwordReset_button_send">Passwort zurücksetzen</string>
+    <string name="onboarding_passwordReset_title">Passwort zurücksetzen</string>
+    <string name="onboarding_passwordReset_description">Bitte gebe dein neues Passwort ein</string>
+    <string name="onboarding_profileSetup_title">Richte dein Profil ein</string>
+    <string name="onboarding_profileSetup_description">Du kannst hier dein Profil einrichten indem du dein Profilbild und Nutzernamen setzt. Diese sind für andere Nutzer sichtbar</string>
+    <string name="onboarding_textField_label_username">Nutzername</string>
+    <string name="error_username_tooShort">Nutzername muss mindestens 4 Zeichen lang sein</string>
 </resources>

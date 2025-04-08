@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   05.04.25, 11:02
+  Modified:   09.04.25, 01:04
   -->
 
 <resources>
@@ -52,4 +52,10 @@
     <string name="onboarding_passwordForgot_description">Don\'t worry, this happens to the best of us. Just enter your E-Mail address below and we will send you a reset link</string>
     <string name="onboarding_passwordForgot_button_send">Send reset link</string>
     <string name="onboarding_passwordReset_button_send">Reset Password</string>
+    <string name="onboarding_passwordReset_title">Reset Password</string>
+    <string name="onboarding_passwordReset_description">Please enter your new password below</string>
+    <string name="onboarding_profileSetup_title">Set up your profile</string>
+    <string name="onboarding_profileSetup_description">Set up your profile below by setting a profile picture and a username. These will be visible to other users</string>
+    <string name="onboarding_textField_label_username">Username</string>
+    <string name="error_username_tooShort">Username must be at least 4 characters long</string>
 </resources>
