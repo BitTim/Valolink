@@ -7,7 +7,7 @@
  File:       OnboardingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:04
+ Modified:   09.04.25, 15:50
  */
 
 package dev.bittim.valolink.onboarding.ui.screens
@@ -66,7 +66,7 @@ enum class OnboardingScreen(
         route = ProfileSetupNav::class.java.name,
         title = UiText.StringResource(R.string.onboarding_profileSetup_title),
         description = UiText.StringResource(R.string.onboarding_profileSetup_description),
-        step = 1
+        step = 2
     );
 
     companion object {

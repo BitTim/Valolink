@@ -7,7 +7,7 @@
  File:       ProfileSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:07
+ Modified:   09.04.25, 15:50
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -16,26 +16,29 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-object ProfileSetupNav
+data class ProfileSetupNav(val localMode: Boolean = false)
 
 fun NavGraphBuilder.profileSetupScreen(
     navBack: () -> Unit,
     navRankSetup: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
 ) {
-    composable<ProfileSetupNav> {
+    composable<ProfileSetupNav> { backStackEntry ->
+        val args: ProfileSetupNav = backStackEntry.toRoute()
+
         val viewModel: ProfileSetupViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()
 
         ProfileSetupScreen(
             state = state.value,
-            viewModel::validateUsername,
+            localMode = args.localMode,
+            validateUsername = viewModel::validateUsername,
             onBack = navBack,
             setProfile = { username, private ->
                 viewModel.setProfile(username, private, navRankSetup)
@@ -44,12 +47,8 @@ fun NavGraphBuilder.profileSetupScreen(
     }
 }
 
-fun NavController.navOnboardingProfileSetup() {
-    navigate(ProfileSetupNav) {
-        popUpTo(graph.findStartDestination().id) {
-            inclusive = true
-            saveState = true
-        }
+fun NavController.navOnboardingProfileSetup(localMode: Boolean = false) {
+    navigate(ProfileSetupNav(localMode = localMode)) {
         launchSingleTop = true
         restoreState = true
     }

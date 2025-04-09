@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   09.04.25, 01:04
+  Modified:   09.04.25, 15:50
   -->
 
 <resources>
@@ -58,4 +58,11 @@
     <string name="onboarding_profileSetup_description">Set up your profile below by setting a profile picture and a username. These will be visible to other users</string>
     <string name="onboarding_textField_label_username">Username</string>
     <string name="error_username_tooShort">Username must be at least 4 characters long</string>
+    <string name="onboarding_switch_label_private">Make account private</string>
+    <string name="onboarding_dialog_privateAccount_title">About private accounts</string>
+    <string name="button_ok">OK</string>
+    <string name="onboarding_dialog_privateAccount_content">A private account hides your profile from public discovery and excludes your data from global statistics. You are still able to sync data between your clients, connect with friends and interact with friends.\n\nNote: Your friends are still able to view your information.</string>
+    <string name="onboarding_dialog_localAccount_title">Use local account</string>
+    <string name="onboarding_dialog_localAccount_content">Your data stays only on this device with this option. Features like device sync, social features, and social statistics are not available.</string>
+    <string name="onboarding_dialog_localAccount_button_confirm">Use local account</string>
 </resources>

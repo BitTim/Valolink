@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       LandingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 00:21
+ Modified:   09.04.25, 15:50
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -23,6 +23,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -36,6 +40,7 @@ import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.components.landing.OutlinedSocialButton
+import dev.bittim.valolink.onboarding.ui.dialogs.landing.LocalAccountDialog
 
 data object LandingScreen {
     const val SPRAY_UUID: String = "40cc1645-43f4-4db3-ebb2-fdb46f8e9bf3"
@@ -44,11 +49,13 @@ data object LandingScreen {
 @Composable
 fun LandingScreen(
     state: LandingState,
-    onLocalClicked: () -> Unit,
+    onLocalMode: () -> Unit,
     onGoogleClicked: () -> Unit,
     onRiotClicked: () -> Unit,
     onEmailClicked: () -> Unit
 ) {
+    var showLocalAccountDialog by remember { mutableStateOf(false) }
+
     OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
         content = {
@@ -98,7 +105,7 @@ fun LandingScreen(
 
                 TextButton(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = onLocalClicked
+                    onClick = { showLocalAccountDialog = true }
                 ) {
                     Text(UiText.StringResource(R.string.onboarding_landing_button_local).asString())
                 }
@@ -114,6 +121,17 @@ fun LandingScreen(
             }
         }
     )
+
+    // ================================
+    //  Alerts
+    // ================================
+
+    if (showLocalAccountDialog) {
+        LocalAccountDialog(
+            onDismiss = { showLocalAccountDialog = false },
+            onConfirm = onLocalMode
+        )
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -124,7 +142,7 @@ fun LandingScreenPreview() {
         Surface {
             LandingScreen(
                 state = LandingState(),
-                onLocalClicked = {},
+                onLocalMode = {},
                 onGoogleClicked = {},
                 onRiotClicked = {},
                 onEmailClicked = {}

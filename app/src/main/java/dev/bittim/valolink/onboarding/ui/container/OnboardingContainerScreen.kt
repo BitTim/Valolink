@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:07
+ Modified:   09.04.25, 15:50
  */
 
 
@@ -82,7 +82,12 @@ fun OnboardingContainerScreen(
                 popExitTransition = { Transition.ForwardBackward.popExit }
             ) {
                 landingScreen(
-                    navSignin = { navController.navOnboardingSignin() },
+                    navSignin = {
+                        navController.navOnboardingSignin()
+                    },
+                    navLocalMode = {
+                        navController.navOnboardingProfileSetup(localMode = true)
+                    }
                 )
 
                 signinScreen(
@@ -113,7 +118,7 @@ fun OnboardingContainerScreen(
                 profileSetupScreen(
                     navBack = { navController.navigateUp() },
                     navRankSetup = { navMain() },
-                    snackbarHostState = snackbarHostState
+                    snackbarHostState = snackbarHostState,
                 )
             }
         }

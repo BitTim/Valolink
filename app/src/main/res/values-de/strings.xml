@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   09.04.25, 01:04
+  Modified:   09.04.25, 15:50
   -->
 
 <resources>
@@ -59,4 +59,11 @@
     <string name="onboarding_profileSetup_description">Du kannst hier dein Profil einrichten indem du dein Profilbild und Nutzernamen setzt. Diese sind für andere Nutzer sichtbar</string>
     <string name="onboarding_textField_label_username">Nutzername</string>
     <string name="error_username_tooShort">Nutzername muss mindestens 4 Zeichen lang sein</string>
+    <string name="onboarding_switch_label_private">Privates Konto verwenden</string>
+    <string name="onboarding_dialog_privateAccount_title">Über private Konten</string>
+    <string name="button_ok">OK</string>
+    <string name="onboarding_dialog_privateAccount_content">Ein privates Konto verbirgt dein Profil von der öffentlichen Suche und schließt deine Daten von der globalen Statistik aus. Du kannst immer noch deiner Daten zwischen Geräten synchronisieren, dich mit deinen Freunden verbinden und mit deinen Freunden interagieren.\n\nHinweis: Deine Freunde können deine Informationen weiterhin einsehen.</string>
+    <string name="onboarding_dialog_localAccount_title">Lokales Konto verwenden</string>
+    <string name="onboarding_dialog_localAccount_content">Deine Daten bleiben bei dieser Option nur auf diesem Gerät gespeichert. Funktionen wie Geräte-Sync, soziale Features und soziale Statistiken sind nicht verfügbar.</string>
+    <string name="onboarding_dialog_localAccount_button_confirm">Lokales Konto verwenden</string>
 </resources>

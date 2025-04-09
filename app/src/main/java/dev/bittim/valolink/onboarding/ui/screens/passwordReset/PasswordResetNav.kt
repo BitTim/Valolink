@@ -7,7 +7,7 @@
  File:       PasswordResetNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:04
+ Modified:   09.04.25, 15:50
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordReset
@@ -16,7 +16,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
@@ -57,7 +56,7 @@ fun NavGraphBuilder.passwordResetScreen(
 
 fun NavController.navOnboardingPasswordReset() {
     navigate(PasswordResetNav) {
-        popUpTo(graph.findStartDestination().id) {
+        popUpTo(PasswordResetNav) {
             inclusive = true
             saveState = true
         }

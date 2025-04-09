@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       OnboardingContainerViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 00:46
+ Modified:   09.04.25, 15:50
  */
 
 package dev.bittim.valolink.onboarding.ui.container
@@ -31,7 +31,7 @@ class OnboardingContainerViewModel @Inject constructor(
     val snackbarHostState = MutableStateFlow(SnackbarHostState())
 
     fun onDestinationChanged(route: String) {
-        val screen = OnboardingScreen.entries.find { it.route == route }
+        val screen = OnboardingScreen.entries.find { route.contains(it.route) }
         _state.value = OnboardingContainerState(
             title = screen?.title,
             description = screen?.description,

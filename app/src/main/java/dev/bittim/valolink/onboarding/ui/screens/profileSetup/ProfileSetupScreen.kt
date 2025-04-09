@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:04
+ Modified:   09.04.25, 15:50
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import dev.bittim.valolink.R
+import dev.bittim.valolink.core.ui.components.LabeledSwitch
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
@@ -34,10 +35,12 @@ import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
+import dev.bittim.valolink.onboarding.ui.dialogs.profileSetup.PrivateAccountInfoDialog
 
 @Composable
 fun ProfileSetupScreen(
     state: ProfileSetupState,
+    localMode: Boolean = false,
     validateUsername: (username: String) -> Unit,
     onBack: () -> Unit,
     setProfile: (username: String, private: Boolean) -> Unit
@@ -49,6 +52,8 @@ fun ProfileSetupScreen(
         username = value
         validateUsername(value)
     }
+
+    var showPrivateAccountInfoDialog by remember { mutableStateOf(false) }
 
     OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
@@ -70,7 +75,19 @@ fun ProfileSetupScreen(
                     )
                 )
 
-                // TODO: Insert switch for private variable
+                if (!localMode) {
+                    LabeledSwitch(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = UiText.StringResource(R.string.onboarding_switch_label_private)
+                            .asString(),
+                        value = private,
+                        onValueChange = { private = it },
+                        showTooltip = true,
+                        onTooltip = {
+                            showPrivateAccountInfoDialog = true
+                        }
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -84,6 +101,16 @@ fun ProfileSetupScreen(
             }
         }
     )
+
+    // ================================
+    //  Alerts
+    // ================================
+
+    if (showPrivateAccountInfoDialog) {
+        PrivateAccountInfoDialog(
+            onDismiss = { showPrivateAccountInfoDialog = false }
+        )
+    }
 }
 
 @ScreenPreviewAnnotations

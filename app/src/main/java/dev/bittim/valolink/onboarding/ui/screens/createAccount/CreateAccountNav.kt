@@ -7,7 +7,7 @@
  File:       CreateAccountNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:06
+ Modified:   09.04.25, 15:50
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -16,7 +16,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
@@ -49,10 +48,6 @@ fun NavGraphBuilder.createAccountScreen(
 
 fun NavController.navOnboardingCreateAccount() {
     navigate(CreateAccountNav) {
-        popUpTo(graph.findStartDestination().id) {
-            inclusive = true
-            saveState = true
-        }
         launchSingleTop = true
         restoreState = true
     }
