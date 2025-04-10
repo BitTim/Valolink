@@ -7,12 +7,13 @@
  File:       ProfileSetupState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   11.04.25, 00:25
+ Modified:   11.04.25, 01:52
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
 
 import android.graphics.Bitmap
+import android.net.Uri
 import dev.bittim.valolink.core.ui.util.UiText
 
 data class ProfileSetupState(
@@ -20,5 +21,6 @@ data class ProfileSetupState(
 
     val imageError: UiText? = null,
     val usernameError: UiText? = null,
-    val avatar: Bitmap? = null,
+    val generatedAvatar: Bitmap? = null,
+    val selectedAvatar: Uri? = null,
 )

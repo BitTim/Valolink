@@ -7,19 +7,30 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   11.04.25, 00:25
+ Modified:   11.04.25, 01:52
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,6 +61,8 @@ fun ProfileSetupScreen(
     state: ProfileSetupState,
     localMode: Boolean = false,
     validateUsername: (username: String) -> Unit,
+    generateProfilePicture: (username: String) -> Unit,
+    selectProfilePicture: (uri: Uri?) -> Unit,
     onBack: () -> Unit,
     setProfile: (username: String, private: Boolean) -> Unit
 ) {
@@ -63,26 +76,61 @@ fun ProfileSetupScreen(
 
     var showPrivateAccountInfoDialog by remember { mutableStateOf(false) }
 
+    val mediaPicker = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
+        if (uri != null) {
+            selectProfilePicture(uri)
+        }
+    }
+
     OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
         content = {
-            SimpleLoadingContainer(
+            Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                isLoading = state.loading,
-                label = "Spray image loading crossfade"
+                    .fillMaxSize()
             ) {
-                AsyncImage(
+                SimpleLoadingContainer(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(Spacing.l)
-                        .clip(CircleShape),
-                    model = state.avatar,
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    alignment = Alignment.TopCenter,
-                    placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_displayicon),
-                )
+                        .fillMaxSize(),
+                    isLoading = state.loading,
+                    label = "Spray image loading crossfade"
+                ) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .aspectRatio(1f)
+                            .clip(CircleShape),
+                        model = state.selectedAvatar ?: state.generatedAvatar,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center,
+                        placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_displayicon),
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        FilledTonalIconButton(
+                            onClick = {
+                                generateProfilePicture(username)
+                                selectProfilePicture(null)
+                            }
+                        ) {
+                            Icon(Icons.Default.RestartAlt, contentDescription = null)
+                        }
+
+                        FilledTonalIconButton(
+                            onClick = {
+                                mediaPicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+                            }
+                        ) {
+                            Icon(Icons.Default.AddAPhoto, contentDescription = null)
+                        }
+                    }
+                }
             }
         },
         form = {
@@ -122,7 +170,7 @@ fun ProfileSetupScreen(
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onBack,
-                    onContinue = { setProfile(username, private) }, // TODO: Include profile pic
+                    onContinue = { setProfile(username, private) },
                     dismissText = UiText.StringResource(R.string.button_cancel),
                     continueText = UiText.StringResource(R.string.button_continue)
                 )
@@ -150,7 +198,10 @@ fun ProfileSetupScreenPreview() {
                 state = ProfileSetupState(),
                 validateUsername = { },
                 onBack = { },
-                setProfile = { _, _ -> }
+                setProfile = { _, _ -> },
+                localMode = false,
+                generateProfilePicture = { },
+                selectProfilePicture = { }
             )
         }
     }

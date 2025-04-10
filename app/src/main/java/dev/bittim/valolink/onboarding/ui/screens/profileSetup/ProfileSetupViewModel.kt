@@ -7,11 +7,12 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   11.04.25, 00:25
+ Modified:   11.04.25, 01:52
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.R
@@ -34,8 +35,7 @@ class ProfileSetupViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        val avatar = generateProfilePictureUseCase("")
-        _state.update { it.copy(avatar = avatar) }
+        generateProfilePicture("")
     }
 
     fun validateUsername(username: String): UiText? {
@@ -48,15 +48,25 @@ class ProfileSetupViewModel @Inject constructor(
             }
         }
 
-        val avatar = generateProfilePictureUseCase(username)
-        _state.update { it.copy(usernameError = usernameError, avatar = avatar) }
+        generateProfilePicture(username)
+        _state.update { it.copy(usernameError = usernameError) }
         return usernameError
     }
 
+    fun generateProfilePicture(username: String) {
+        val avatar = generateProfilePictureUseCase(username)
+        _state.update { it.copy(generatedAvatar = avatar) }
+    }
+
+    fun selectProfilePicture(uri: Uri?) {
+        _state.update { it.copy(selectedAvatar = uri) }
+    }
+
     fun setProfile(
-        string: String,
-        bool: Boolean,
-        function: () -> Unit
+        username: String,
+        private: Boolean,
+        avatar: Uri?,
+        navRankSetup: () -> Unit
     ) {
         TODO()
     }
