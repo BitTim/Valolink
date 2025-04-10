@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 01:04
+ Modified:   11.04.25, 00:25
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -15,6 +15,7 @@ package dev.bittim.valolink.onboarding.ui.screens.profileSetup
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.R
+import dev.bittim.valolink.core.domain.usecase.profile.GenerateProfilePictureUseCase
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.user.domain.error.UsernameError
@@ -26,10 +27,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileSetupViewModel @Inject constructor(
-    private val validateUsernameUseCase: ValidateUsernameUseCase
+    private val validateUsernameUseCase: ValidateUsernameUseCase,
+    private val generateProfilePictureUseCase: GenerateProfilePictureUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProfileSetupState())
     val state = _state.asStateFlow()
+
+    init {
+        val avatar = generateProfilePictureUseCase("")
+        _state.update { it.copy(avatar = avatar) }
+    }
 
     fun validateUsername(username: String): UiText? {
         val usernameResult = validateUsernameUseCase(username)
@@ -41,7 +48,8 @@ class ProfileSetupViewModel @Inject constructor(
             }
         }
 
-        _state.update { it.copy(usernameError = usernameError) }
+        val avatar = generateProfilePictureUseCase(username)
+        _state.update { it.copy(usernameError = usernameError, avatar = avatar) }
         return usernameError
     }
 

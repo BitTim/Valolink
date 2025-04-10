@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   11.04.25, 00:25
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -24,15 +26,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
+import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.components.LabeledSwitch
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
+import dev.bittim.valolink.core.ui.components.SimpleLoadingContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
+import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.dialogs.profileSetup.PrivateAccountInfoDialog
@@ -57,14 +65,34 @@ fun ProfileSetupScreen(
 
     OnboardingLayout(
         modifier = Modifier.fillMaxSize(),
-        content = { },
+        content = {
+            SimpleLoadingContainer(
+                modifier = Modifier
+                    .fillMaxSize(),
+                isLoading = state.loading,
+                label = "Spray image loading crossfade"
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(Spacing.l)
+                        .clip(CircleShape),
+                    model = state.avatar,
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    alignment = Alignment.TopCenter,
+                    placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_displayicon),
+                )
+            }
+        },
         form = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
                 OutlinedTextFieldWithError(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     label = UiText.StringResource(R.string.onboarding_textField_label_username)
                         .asString(),
                     value = username,

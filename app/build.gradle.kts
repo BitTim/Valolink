@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       build.gradle.kts
  Module:     Valolink.app
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   11.04.25, 00:25
  */
 
 import java.io.FileInputStream
@@ -166,18 +166,11 @@ android {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-}
-
-composeCompiler {
-    enableStrongSkippingMode = true
 }
 
 dependencies {
