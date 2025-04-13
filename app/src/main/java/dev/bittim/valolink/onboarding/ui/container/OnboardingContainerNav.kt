@@ -7,7 +7,7 @@
  File:       OnboardingContainerNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   06.04.25, 12:05
+ Modified:   13.04.25, 17:26
  */
 
 package dev.bittim.valolink.onboarding.ui.container
@@ -19,14 +19,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.bittim.valolink.main.ui.nav.navToMainGraph
 import kotlinx.serialization.Serializable
 
 @Serializable
 object OnboardingContainerNav
 
 fun NavGraphBuilder.onboarding(
-    navController: NavController
+    navContent: () -> Unit
 ) {
     composable<OnboardingContainerNav> {
         val viewModel = hiltViewModel<OnboardingContainerViewModel>()
@@ -43,7 +42,7 @@ fun NavGraphBuilder.onboarding(
             state = state.value,
             navController = subNavController,
             snackbarHostState = snackbarHostState.value,
-            navMain = { navController.navToMainGraph() },
+            navContent = navContent,
         )
     }
 }

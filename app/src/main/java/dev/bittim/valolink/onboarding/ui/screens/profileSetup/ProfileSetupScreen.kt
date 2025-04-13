@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   13.04.25, 17:57
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -48,6 +48,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.core.ui.components.LabeledSwitch
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.components.SimpleLoadingContainer
@@ -55,7 +56,6 @@ import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
-import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.dialogs.profileSetup.PrivateAccountInfoDialog

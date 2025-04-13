@@ -12,7 +12,7 @@
 
 package dev.bittim.valolink.core.domain.usecase.progress
 
-import dev.bittim.valolink.main.ui.util.getProgressDecimal
+import dev.bittim.valolink.core.ui.util.getProgressDecimal
 import javax.inject.Inject
 import kotlin.math.floor
 

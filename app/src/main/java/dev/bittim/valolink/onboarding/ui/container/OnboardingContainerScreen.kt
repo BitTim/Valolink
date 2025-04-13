@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   13.04.25, 17:26
  */
 
 
@@ -51,7 +51,7 @@ fun OnboardingContainerScreen(
     state: OnboardingContainerState,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
-    navMain: () -> Unit,
+    navContent: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -92,7 +92,7 @@ fun OnboardingContainerScreen(
 
                 signinScreen(
                     navBack = { navController.navigateUp() },
-                    navMain = navMain,
+                    navMain = navContent,
                     navPasswordForgot = { navController.navOnboardingPasswordForgot() },
                     navCreateAccount = { navController.navOnboardingCreateAccount() },
                     snackbarHostState = snackbarHostState,
@@ -105,7 +105,7 @@ fun OnboardingContainerScreen(
 
                 passwordResetScreen(
                     navBack = { navController.navigateUp() },
-                    navMain = navMain,
+                    navMain = navContent,
                     snackbarHostState = snackbarHostState
                 )
 
@@ -117,7 +117,7 @@ fun OnboardingContainerScreen(
 
                 profileSetupScreen(
                     navBack = { navController.navigateUp() },
-                    navRankSetup = { navMain() },
+                    navRankSetup = { navContent() },
                     snackbarHostState = snackbarHostState,
                 )
             }

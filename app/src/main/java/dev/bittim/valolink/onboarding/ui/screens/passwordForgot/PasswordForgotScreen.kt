@@ -7,7 +7,7 @@
  File:       PasswordForgotScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   13.04.25, 17:57
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.components.SimpleLoadingContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
@@ -44,7 +45,6 @@ import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.core.ui.util.autofill.autofillRequestHandler
 import dev.bittim.valolink.core.ui.util.extensions.connectNode
 import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
-import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 

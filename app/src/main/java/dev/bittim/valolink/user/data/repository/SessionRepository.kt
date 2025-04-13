@@ -7,15 +7,14 @@
  File:       SessionRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   13.04.25, 17:08
  */
 
 package dev.bittim.valolink.user.data.repository
 
 import dev.bittim.valolink.user.data.local.entity.UserDataEntity
-import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.auth.user.UserInfo
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface SessionRepository {
 
@@ -23,7 +22,7 @@ interface SessionRepository {
     //  Session
     // ================================
 
-    fun getSessionStatus(): StateFlow<SessionStatus>
+    fun getAuthenticated(): Flow<Boolean>
     suspend fun signOut()
 
     // ================================

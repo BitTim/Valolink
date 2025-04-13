@@ -7,7 +7,7 @@
  File:       LandingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   13.04.25, 17:57
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -32,12 +32,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.core.ui.components.SimpleLoadingContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
-import dev.bittim.valolink.main.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.components.landing.OutlinedSocialButton
 import dev.bittim.valolink.onboarding.ui.dialogs.landing.LocalAccountDialog
