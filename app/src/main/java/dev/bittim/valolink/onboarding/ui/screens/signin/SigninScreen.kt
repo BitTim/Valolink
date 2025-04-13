@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       SigninScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:22
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.signin
@@ -167,6 +167,7 @@ fun SigninScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
                     onContinue = { signin(email, password) },
+                    disableContinueButton = state.emailError != null,
                     dismissText = UiText.StringResource(R.string.button_cancel)
                 )
             }

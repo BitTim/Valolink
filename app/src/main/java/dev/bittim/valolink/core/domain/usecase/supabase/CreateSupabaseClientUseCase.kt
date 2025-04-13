@@ -7,7 +7,7 @@
  File:       CreateSupabaseClientUseCase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   06.04.25, 11:23
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.core.domain.usecase.supabase
@@ -22,6 +22,7 @@ import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.PropertyConversionMethod
 import io.github.jan.supabase.realtime.Realtime
+import io.github.jan.supabase.storage.Storage
 
 class CreateSupabaseClientUseCase {
     operator fun invoke(): SupabaseClient {
@@ -40,6 +41,7 @@ class CreateSupabaseClientUseCase {
 
                 defaultExternalAuthAction = ExternalAuthAction.CustomTabs()
             }
+            install(Storage)
             install(Realtime)
             install(Functions)
         }

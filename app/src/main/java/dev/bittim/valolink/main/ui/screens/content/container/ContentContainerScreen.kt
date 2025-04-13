@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       ContentContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.main.ui.screens.content.container
@@ -31,11 +31,11 @@ fun ContentContainerScreen(
     state: ContentContainerState,
     navController: NavHostController,
     navToAuthGraph: () -> Unit,
-    navToOnboardingGraph: () -> Unit,
     onSignOutClicked: () -> Unit,
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(NavItem.Home) }
 
+    // TODO: Rework with local accounts
     if (state.isAuthenticated != null && !state.isAuthenticated) {
         LaunchedEffect(Unit) {
             navToAuthGraph()
@@ -43,25 +43,27 @@ fun ContentContainerScreen(
     } else {
         if (state.hasOnboarded != null && !state.hasOnboarded) {
             LaunchedEffect(Unit) {
-                navToOnboardingGraph()
+                navToAuthGraph()
             }
         }
     }
 
-    NavigationSuiteScaffold(modifier = Modifier.fillMaxSize(),
-                            navigationSuiteItems = {
-                                NavItem.entries.forEach {
-                                    val isSelected = it == currentDestination
+    NavigationSuiteScaffold(
+        modifier = Modifier.fillMaxSize(),
+        navigationSuiteItems = {
+            NavItem.entries.forEach {
+                val isSelected = it == currentDestination
 
-                                    item(icon = if (isSelected) it.activeIcon else it.inactiveIcon,
-                                         label = { Text(it.title) },
-                                         selected = isSelected,
-                                         onClick = {
-                                             currentDestination = it
-                                             it.navigation(navController)
-                                         })
-                                }
-                            }) {
+                item(
+                    icon = if (isSelected) it.activeIcon else it.inactiveIcon,
+                    label = { Text(it.title) },
+                    selected = isSelected,
+                    onClick = {
+                        currentDestination = it
+                        it.navigation(navController)
+                    })
+            }
+        }) {
         ContentNavGraph(
             modifier = Modifier.fillMaxSize(),
             navController = navController,

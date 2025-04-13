@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserDataEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -32,6 +32,8 @@ data class UserDataEntity(
     override val updatedAt: String,
     val isPrivate: Boolean,
     val username: String,
+    val onboardingStep: Int,
+    val avatar: String,
 ) : SyncedEntity {
     override fun getIdentifier(): String {
         return uuid
@@ -46,7 +48,7 @@ data class UserDataEntity(
         contracts: List<UserContract>,
     ): UserData {
         return UserData(
-            uuid, isPrivate, username, agents, contracts
+            uuid, isPrivate, username, onboardingStep, avatar, agents, contracts
         )
     }
 
@@ -58,7 +60,9 @@ data class UserDataEntity(
                 toDelete,
                 OffsetDateTime.now().toString(),
                 userData.isPrivate,
-                userData.username
+                userData.username,
+                userData.onboardingStep,
+                userData.avatar
             )
         }
     }

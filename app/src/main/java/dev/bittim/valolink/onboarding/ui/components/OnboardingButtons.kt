@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       OnboardingButtons.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.onboarding.ui.components
@@ -28,6 +28,7 @@ fun OnboardingButtons(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onContinue: () -> Unit,
+    disableContinueButton: Boolean,
     dismissText: UiText = UiText.StringResource(R.string.button_back),
     continueText: UiText = UiText.StringResource(R.string.button_continue)
 ) {
@@ -39,7 +40,7 @@ fun OnboardingButtons(
             Text(text = dismissText.asString())
         }
 
-        Button(onClick = onContinue) {
+        Button(onClick = onContinue, enabled = !disableContinueButton) {
             Text(text = continueText.asString())
         }
     }

@@ -7,11 +7,12 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   11.04.25, 01:52
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -41,7 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.components.LabeledSwitch
@@ -61,11 +65,12 @@ fun ProfileSetupScreen(
     state: ProfileSetupState,
     localMode: Boolean = false,
     validateUsername: (username: String) -> Unit,
-    generateProfilePicture: (username: String) -> Unit,
-    selectProfilePicture: (uri: Uri?) -> Unit,
+    selectAvatar: (username: String, context: Context?, uri: Uri?) -> Unit,
     onBack: () -> Unit,
     setProfile: (username: String, private: Boolean) -> Unit
 ) {
+    val context = LocalContext.current
+
     var username by remember { mutableStateOf("") }
     var private by remember { mutableStateOf(false) }
 
@@ -78,7 +83,7 @@ fun ProfileSetupScreen(
 
     val mediaPicker = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) {
-            selectProfilePicture(uri)
+            selectAvatar(username, context, uri)
         }
     }
 
@@ -100,7 +105,7 @@ fun ProfileSetupScreen(
                             .fillMaxSize()
                             .aspectRatio(1f)
                             .clip(CircleShape),
-                        model = state.selectedAvatar ?: state.generatedAvatar,
+                        model = state.avatar,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.Center,
@@ -114,15 +119,20 @@ fun ProfileSetupScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         FilledTonalIconButton(
+                            modifier = Modifier
+                                .width(48.dp)
+                                .aspectRatio(1f),
                             onClick = {
-                                generateProfilePicture(username)
-                                selectProfilePicture(null)
+                                selectAvatar(username, context, null)
                             }
                         ) {
                             Icon(Icons.Default.RestartAlt, contentDescription = null)
                         }
 
                         FilledTonalIconButton(
+                            modifier = Modifier
+                                .width(48.dp)
+                                .aspectRatio(1f),
                             onClick = {
                                 mediaPicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
                             }
@@ -171,6 +181,7 @@ fun ProfileSetupScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onBack,
                     onContinue = { setProfile(username, private) },
+                    disableContinueButton = state.loading || state.usernameError != null,
                     dismissText = UiText.StringResource(R.string.button_cancel),
                     continueText = UiText.StringResource(R.string.button_continue)
                 )
@@ -200,8 +211,7 @@ fun ProfileSetupScreenPreview() {
                 onBack = { },
                 setProfile = { _, _ -> },
                 localMode = false,
-                generateProfilePicture = { },
-                selectProfilePicture = { }
+                selectAvatar = { _, _, _ -> }
             )
         }
     }

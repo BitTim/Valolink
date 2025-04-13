@@ -1,20 +1,20 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       SessionRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.user.data.repository
 
+import dev.bittim.valolink.user.data.local.entity.UserDataEntity
 import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.auth.user.UserInfo
-import io.github.jan.supabase.auth.user.UserUpdateBuilder
 import kotlinx.coroutines.flow.StateFlow
 
 interface SessionRepository {
@@ -32,7 +32,16 @@ interface SessionRepository {
 
     suspend fun getUserInfo(): UserInfo?
     suspend fun getUid(): String?
-    suspend fun getHasOnboarded(): Boolean?
+    suspend fun getUserData(): UserDataEntity?
     suspend fun getUsernameFromMetadata(): String?
-    suspend fun updateUserInfo(userInfo: UserUpdateBuilder.() -> Unit)
+
+    suspend fun getOnboardingStep(): Int?
+    suspend fun getUsername(): String?
+    suspend fun getPrivate(): Boolean?
+    suspend fun getAvatar(): String?
+
+    suspend fun setOnboardingStep(onboardingStep: Int)
+    suspend fun setUsername(username: String)
+    suspend fun setPrivate(value: Boolean)
+    suspend fun setAvatar(avatar: ByteArray)
 }

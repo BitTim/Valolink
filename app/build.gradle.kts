@@ -7,7 +7,7 @@
  File:       build.gradle.kts
  Module:     Valolink.app
  Author:     Tim Anhalt (BitTim)
- Modified:   11.04.25, 00:25
+ Modified:   13.04.25, 14:44
  */
 
 import java.io.FileInputStream
@@ -230,6 +230,7 @@ dependencies {
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.auth.kt)
     implementation(libs.supabase.postgrest.kt)
+    implementation(libs.supabase.storage.kt)
     implementation(libs.supabase.realtime.kt)
     implementation(libs.supabase.functions.kt)
     implementation(libs.supabase.compose.auth)

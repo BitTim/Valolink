@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       PasswordForgotScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 17:27
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordForgot
@@ -122,6 +122,7 @@ fun PasswordForgotScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
                     onContinue = { onContinue(email) },
+                    disableContinueButton = state.emailError != null,
                     dismissText = UiText.StringResource(R.string.button_cancel),
                     continueText = UiText.StringResource(R.string.onboarding_passwordForgot_button_send)
                 )

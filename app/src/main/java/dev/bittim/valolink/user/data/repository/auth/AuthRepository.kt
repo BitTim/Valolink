@@ -7,7 +7,7 @@
  File:       AuthRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   05.04.25, 11:08
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.user.data.repository.auth
@@ -29,5 +29,7 @@ interface AuthRepository {
         email: String,
     ): UiText?
 
-    suspend fun resetPassword(password: String): UiText?
+    suspend fun resetPassword(
+        password: String
+    ): UiText?
 }

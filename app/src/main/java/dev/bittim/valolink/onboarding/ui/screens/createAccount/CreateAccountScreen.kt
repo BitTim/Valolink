@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       CreateAccountScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 01:16
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -154,6 +154,7 @@ fun CreateAccount(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
                     onContinue = { createAccount(email, password) },
+                    disableContinueButton = state.emailError != null || state.passwordError != null,
                     dismissText = UiText.StringResource(R.string.button_cancel),
                     continueText = UiText.StringResource(R.string.onboarding_createAccount_button_createAccount)
                 )

@@ -7,7 +7,7 @@
  File:       AppModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   11.04.25, 00:25
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.core.di
@@ -59,6 +59,8 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.realtime.realtime
+import io.github.jan.supabase.storage.Storage
+import io.github.jan.supabase.storage.storage
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -88,6 +90,12 @@ object AppModule {
     @Singleton
     fun provideSupabaseAuth(client: SupabaseClient): Auth {
         return client.auth
+    }
+
+    @Provides
+    @Singleton
+    fun provideSupabaseStorage(client: SupabaseClient): Storage {
+        return client.storage
     }
 
     @Provides

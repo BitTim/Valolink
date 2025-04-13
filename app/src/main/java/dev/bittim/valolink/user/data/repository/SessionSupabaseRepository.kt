@@ -1,31 +1,33 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       SessionSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.user.data.repository
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import dev.bittim.valolink.user.data.local.UserDatabase
+import dev.bittim.valolink.user.data.local.entity.UserDataEntity
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.auth.user.UserInfo
-import io.github.jan.supabase.auth.user.UserUpdateBuilder
+import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.json.booleanOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import javax.inject.Inject
 
 class SessionSupabaseRepository @Inject constructor(
     private val auth: Auth,
+    private val storage: Storage,
     private val userDatabase: UserDatabase,
 ) : SessionRepository, DefaultLifecycleObserver {
     // ================================
@@ -57,15 +59,54 @@ class SessionSupabaseRepository @Inject constructor(
         return getUserInfo()?.id
     }
 
-    override suspend fun getHasOnboarded(): Boolean? {
-        return getUserInfo()?.userMetadata?.get("hasOnboarded")?.jsonPrimitive?.booleanOrNull
+    override suspend fun getUserData(): UserDataEntity? {
+        return userDatabase.userDataDao.getByUuid(getUid() ?: return null).first()
     }
 
     override suspend fun getUsernameFromMetadata(): String? {
         return getUserInfo()?.userMetadata?.get("display_name")?.jsonPrimitive?.contentOrNull
     }
 
-    override suspend fun updateUserInfo(userInfo: UserUpdateBuilder.() -> Unit) {
-        auth.updateUser(config = userInfo)
+
+    override suspend fun getOnboardingStep(): Int? {
+        return getUserData()?.onboardingStep
+    }
+
+    override suspend fun getUsername(): String? {
+        return getUserData()?.username
+    }
+
+    override suspend fun getPrivate(): Boolean? {
+        return getUserData()?.isPrivate
+    }
+
+    override suspend fun getAvatar(): String? {
+        return getUserData()?.avatar
+    }
+
+
+    override suspend fun setOnboardingStep(onboardingStep: Int) {
+        val userData = getUserData() ?: return
+        userDatabase.userDataDao.upsert(userData.copy(onboardingStep = onboardingStep))
+    }
+
+    override suspend fun setUsername(username: String) {
+        val userData = getUserData() ?: return
+        userDatabase.userDataDao.upsert(userData.copy(username = username))
+    }
+
+    override suspend fun setPrivate(value: Boolean) {
+        val userData = getUserData() ?: return
+        userDatabase.userDataDao.upsert(userData.copy(isPrivate = value))
+    }
+
+    override suspend fun setAvatar(avatar: ByteArray) {
+        val userData = getUserData() ?: return
+
+        val bucket = storage.from("avatars")
+        val filename = getUid() + ".jpg"
+        bucket.update(filename, avatar) { upsert = true }
+
+        userDatabase.userDataDao.upsert(userData.copy(avatar = filename))
     }
 }

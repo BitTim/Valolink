@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       ContentContainerViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.main.ui.screens.content.container
@@ -59,10 +59,10 @@ class ContentContainerViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val hasOnboarded = sessionRepository.getHasOnboarded()
+            val onboardingStep = sessionRepository.getOnboardingStep()
             _state.update {
                 it.copy(
-                    hasOnboarded = hasOnboarded,
+                    hasOnboarded = onboardingStep == -1,
                 )
             }
         }

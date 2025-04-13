@@ -1,24 +1,38 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.12.24, 00:20
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.user.di
 
+import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.bittim.valolink.user.data.local.UserDatabase
+import dev.bittim.valolink.user.data.repository.SessionRepository
+import dev.bittim.valolink.user.data.repository.SessionSupabaseRepository
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
 import dev.bittim.valolink.user.data.repository.auth.SupabaseAuthRepository
+import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
+import dev.bittim.valolink.user.data.repository.data.UserAgentSupabaseRepository
+import dev.bittim.valolink.user.data.repository.data.UserContractRepository
+import dev.bittim.valolink.user.data.repository.data.UserContractSupabaseRepository
+import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserDataSupabaseRepository
+import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
+import dev.bittim.valolink.user.data.repository.data.UserLevelSupabaseRepository
 import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.storage.Storage
 import javax.inject.Singleton
 
 @Module
@@ -28,5 +42,76 @@ object UserModule {
     @Singleton
     fun provideAuthRepository(auth: Auth): AuthRepository {
         return SupabaseAuthRepository(auth)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSessionRepository(
+        auth: Auth,
+        storage: Storage,
+        userDatabase: UserDatabase,
+    ): SessionRepository {
+        return SessionSupabaseRepository(
+            auth, storage, userDatabase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserLevelRepository(
+        userDatabase: UserDatabase,
+        database: Postgrest,
+        workManager: WorkManager,
+    ): UserLevelRepository {
+        return UserLevelSupabaseRepository(
+            userDatabase, database, workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserContractRepository(
+        sessionRepository: SessionRepository,
+        userLevelRepository: UserLevelRepository,
+        userDatabase: UserDatabase,
+        database: Postgrest,
+        workManager: WorkManager,
+    ): UserContractRepository {
+        return UserContractSupabaseRepository(
+            sessionRepository, userLevelRepository, userDatabase, database, workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserAgentRepository(
+        sessionRepository: SessionRepository,
+        userDatabase: UserDatabase,
+        database: Postgrest,
+        workManager: WorkManager,
+    ): UserAgentRepository {
+        return UserAgentSupabaseRepository(
+            sessionRepository, userDatabase, database, workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        sessionRepository: SessionRepository,
+        userAgentRepository: UserAgentRepository,
+        userContractRepository: UserContractRepository,
+        userDatabase: UserDatabase,
+        database: Postgrest,
+        workManager: WorkManager,
+    ): UserDataRepository {
+        return UserDataSupabaseRepository(
+            sessionRepository,
+            userAgentRepository,
+            userContractRepository,
+            userDatabase,
+            database,
+            workManager
+        )
     }
 }

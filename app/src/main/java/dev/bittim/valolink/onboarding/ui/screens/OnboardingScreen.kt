@@ -7,7 +7,7 @@
  File:       OnboardingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens
@@ -70,6 +70,8 @@ enum class OnboardingScreen(
     );
 
     companion object {
+        const val stepOffset = 2
+
         fun getMaxStep(): Int {
             return entries.maxOf { it.step }
         }

@@ -4,10 +4,10 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       GenerateProfilePictureUseCase.kt
+ File:       GenerateAvatarUseCase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   11.04.25, 00:25
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.core.domain.usecase.profile
@@ -22,7 +22,7 @@ import java.security.MessageDigest
 import javax.inject.Inject
 import kotlin.random.Random
 
-class GenerateProfilePictureUseCase @Inject constructor() {
+class GenerateAvatarUseCase @Inject constructor() {
     private val width = 500
     private val height = 500
     private val fontSize = 300f

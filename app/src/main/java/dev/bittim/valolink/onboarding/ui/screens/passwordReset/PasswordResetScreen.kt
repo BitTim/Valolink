@@ -7,7 +7,7 @@
  File:       PasswordResetScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   05.04.25, 11:14
+ Modified:   13.04.25, 14:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordReset
@@ -123,6 +123,7 @@ fun PasswordResetScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
                     onContinue = { onContinue(password) },
+                    disableContinueButton = state.passwordError != null,
                     dismissText = UiText.StringResource(R.string.button_cancel),
                     continueText = UiText.StringResource(R.string.onboarding_passwordReset_button_send)
                 )

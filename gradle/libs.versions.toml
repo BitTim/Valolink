@@ -74,6 +74,7 @@ play-services-auth = { group = "com.google.android.gms", name = "play-services-a
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 supabase-auth-kt = { module = "io.github.jan-tennert.supabase:auth-kt" }
 supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+supabase-storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt" }
 supabase-realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 supabase-functions-kt = { module = "io.github.jan-tennert.supabase:functions-kt" }
 supabase-compose-auth = { module = "io.github.jan-tennert.supabase:compose-auth" }
