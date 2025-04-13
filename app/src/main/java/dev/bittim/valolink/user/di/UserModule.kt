@@ -7,7 +7,7 @@
  File:       UserModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   13.04.25, 18:08
  */
 
 package dev.bittim.valolink.user.di
@@ -17,6 +17,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.bittim.valolink.user.data.flags.UserFlags
 import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.SessionSupabaseRepository
@@ -49,10 +50,11 @@ object UserModule {
     fun provideSessionRepository(
         auth: Auth,
         storage: Storage,
+        userFlags: UserFlags,
         userDatabase: UserDatabase,
     ): SessionRepository {
         return SessionSupabaseRepository(
-            auth, storage, userDatabase
+            auth, storage, userFlags, userDatabase
         )
     }
 

@@ -7,7 +7,7 @@
  File:       AppModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   13.04.25, 18:15
  */
 
 package dev.bittim.valolink.core.di
@@ -49,6 +49,7 @@ import dev.bittim.valolink.content.data.repository.weapon.WeaponRepository
 import dev.bittim.valolink.content.domain.usecase.QueueFullSyncUseCase
 import dev.bittim.valolink.core.data.local.converter.StringListConverter
 import dev.bittim.valolink.core.domain.usecase.supabase.CreateSupabaseClientUseCase
+import dev.bittim.valolink.user.data.flags.UserFlags
 import dev.bittim.valolink.user.data.local.UserDatabase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
@@ -135,6 +136,14 @@ object AppModule {
         return Room.databaseBuilder(
             context, ContentDatabase::class.java, "game.db"
         ).addTypeConverter(StringListConverter(moshi)).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserFlags(
+        @ApplicationContext context: Context,
+    ): UserFlags {
+        return UserFlags(context)
     }
 
     @Provides
