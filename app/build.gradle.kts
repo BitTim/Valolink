@@ -7,7 +7,7 @@
  File:       build.gradle.kts
  Module:     Valolink.app
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   13.04.25, 16:46
  */
 
 import java.io.FileInputStream

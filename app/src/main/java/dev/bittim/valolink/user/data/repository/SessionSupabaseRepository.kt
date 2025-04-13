@@ -7,19 +7,21 @@
  File:       SessionSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   13.04.25, 17:07
  */
 
 package dev.bittim.valolink.user.data.repository
 
 import androidx.lifecycle.DefaultLifecycleObserver
+import dev.bittim.valolink.user.data.flags.UserFlags
 import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.local.entity.UserDataEntity
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.storage.Storage
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
@@ -28,14 +30,24 @@ import javax.inject.Inject
 class SessionSupabaseRepository @Inject constructor(
     private val auth: Auth,
     private val storage: Storage,
+    private val userFlags: UserFlags,
     private val userDatabase: UserDatabase,
 ) : SessionRepository, DefaultLifecycleObserver {
     // ================================
     //  Session
     // ================================
 
-    override fun getSessionStatus(): StateFlow<SessionStatus> {
-        return auth.sessionStatus
+    override fun getAuthenticated(): Flow<Boolean> {
+        val localFlow = userFlags.getLocal
+        auth.sessionStatus
+
+        return localFlow.combine(auth.sessionStatus) { isLocal, sessionStatus ->
+            if (isLocal) {
+                return@combine true
+            } else {
+                return@combine sessionStatus is SessionStatus.Authenticated
+            }
+        }
     }
 
     override suspend fun signOut() {

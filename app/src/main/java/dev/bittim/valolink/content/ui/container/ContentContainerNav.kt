@@ -4,14 +4,15 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       OnboardingContainerNav.kt
+ File:       ContentContainerNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:26
+ Modified:   13.04.25, 17:28
  */
 
-package dev.bittim.valolink.onboarding.ui.container
+package dev.bittim.valolink.content.ui.container
 
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -22,33 +23,28 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 
 @Serializable
-object OnboardingContainerNav
+object ContentContainerNav
 
-fun NavGraphBuilder.onboarding(
-    navContent: () -> Unit
+fun NavGraphBuilder.content(
+    navOnboarding: () -> Unit,
 ) {
-    composable<OnboardingContainerNav> {
-        val viewModel = hiltViewModel<OnboardingContainerViewModel>()
-        val state = viewModel.state.collectAsStateWithLifecycle()
+    composable<ContentContainerNav> {
+        val viewModel: ContentContainerViewModel = hiltViewModel()
+        val state by viewModel.state.collectAsStateWithLifecycle()
 
         val subNavController = rememberNavController()
-        subNavController.addOnDestinationChangedListener { _, destination, _ ->
-            viewModel.onDestinationChanged(destination.route ?: "")
-        }
 
-        val snackbarHostState = viewModel.snackbarHostState.collectAsStateWithLifecycle()
-
-        OnboardingContainerScreen(
-            state = state.value,
+        ContentContainerScreen(
+            state = state,
             navController = subNavController,
-            snackbarHostState = snackbarHostState.value,
-            navContent = navContent,
+            navOnboarding = navOnboarding,
+            onSignOutClicked = viewModel::onSignOutClicked
         )
     }
 }
 
-fun NavController.navToOnboarding() {
-    navigate(OnboardingContainerNav) {
+fun NavController.navToContent() {
+    navigate(ContentContainerNav) {
         popUpTo(graph.findStartDestination().id) {
             inclusive = true
             saveState = true
