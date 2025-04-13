@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       LandingViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   13.04.25, 19:43
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
+import dev.bittim.valolink.user.data.repository.SessionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LandingViewModel @Inject constructor(
+    private val sessionRepository: SessionRepository,
     private val sprayRepository: SprayRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(LandingState())
@@ -55,6 +57,12 @@ class LandingViewModel @Inject constructor(
                         }
                 }
             }
+        }
+    }
+
+    fun setLocal(value: Boolean) {
+        viewModelScope.launch {
+            sessionRepository.setLocal(value)
         }
     }
 }

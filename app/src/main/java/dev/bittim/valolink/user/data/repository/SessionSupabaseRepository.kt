@@ -7,7 +7,7 @@
  File:       SessionSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:07
+ Modified:   13.04.25, 19:45
  */
 
 package dev.bittim.valolink.user.data.repository
@@ -51,12 +51,24 @@ class SessionSupabaseRepository @Inject constructor(
     }
 
     override suspend fun signOut() {
+        // Reset local flag
+        userFlags.setLocal(false)
+
         // Delete all cached user data on sign out
         userDatabase.userDataDao.deleteAll()
         userDatabase.userContractDao.deleteAll()
 
         // Sign out
         auth.signOut()
+    }
+
+
+    override fun getLocal(): Flow<Boolean> {
+        return userFlags.getLocal
+    }
+
+    override suspend fun setLocal(value: Boolean) {
+        userFlags.setLocal(value)
     }
 
     // ================================

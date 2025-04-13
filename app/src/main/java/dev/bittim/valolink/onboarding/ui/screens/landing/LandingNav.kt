@@ -7,7 +7,7 @@
  File:       LandingNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   13.04.25, 19:43
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -32,7 +32,10 @@ fun NavGraphBuilder.landingScreen(
 
         LandingScreen(
             state = state.value,
-            onLocalMode = navLocalMode,
+            onLocalMode = {
+                viewModel.setLocal(true)
+                navLocalMode()
+            },
             onGoogleClicked = { },
             onRiotClicked = { },
             onEmailClicked = navSignin

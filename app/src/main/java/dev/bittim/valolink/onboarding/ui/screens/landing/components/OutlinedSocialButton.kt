@@ -1,16 +1,16 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       OutlinedSocialButton.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   13.04.25, 19:38
  */
 
-package dev.bittim.valolink.onboarding.ui.components.landing
+package dev.bittim.valolink.onboarding.ui.screens.landing.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer

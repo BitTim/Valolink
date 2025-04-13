@@ -7,7 +7,7 @@
  File:       ContentContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:54
+ Modified:   13.04.25, 19:51
  */
 
 package dev.bittim.valolink.content.ui.container
@@ -35,16 +35,9 @@ fun ContentContainerScreen(
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(NavItem.Home) }
 
-    // TODO: Rework with local accounts
-    if (state.isAuthenticated != null && !state.isAuthenticated) {
+    if ((state.isAuthenticated != null && !state.isAuthenticated) || (state.hasOnboarded != null && !state.hasOnboarded)) {
         LaunchedEffect(Unit) {
             navOnboarding()
-        }
-    } else {
-        if (state.hasOnboarded != null && !state.hasOnboarded) {
-            LaunchedEffect(Unit) {
-                navOnboarding()
-            }
         }
     }
 

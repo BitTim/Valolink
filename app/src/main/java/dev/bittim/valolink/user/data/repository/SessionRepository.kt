@@ -7,7 +7,7 @@
  File:       SessionRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:08
+ Modified:   13.04.25, 19:41
  */
 
 package dev.bittim.valolink.user.data.repository
@@ -24,6 +24,9 @@ interface SessionRepository {
 
     fun getAuthenticated(): Flow<Boolean>
     suspend fun signOut()
+
+    fun getLocal(): Flow<Boolean>
+    suspend fun setLocal(value: Boolean)
 
     // ================================
     //  User Metadata

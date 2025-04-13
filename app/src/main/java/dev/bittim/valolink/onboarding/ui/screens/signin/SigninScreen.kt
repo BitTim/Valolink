@@ -48,7 +48,7 @@ import dev.bittim.valolink.core.ui.util.extensions.connectNode
 import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
-import dev.bittim.valolink.onboarding.ui.components.signin.SigninButtons
+import dev.bittim.valolink.onboarding.ui.screens.signin.components.SigninButtons
 
 data object SigninScreen {
     const val SPRAY_UUID: String = "dc5edd15-455d-1782-7ee3-a294a6a3d293"

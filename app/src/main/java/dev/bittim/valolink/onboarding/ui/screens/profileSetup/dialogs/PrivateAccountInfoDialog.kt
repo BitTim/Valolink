@@ -4,17 +4,17 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       LocalAccountDialog.kt
+ File:       PrivateAccountInfoDialog.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   13.04.25, 19:38
  */
 
-package dev.bittim.valolink.onboarding.ui.dialogs.landing
+package dev.bittim.valolink.onboarding.ui.screens.profileSetup.dialogs
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PublicOff
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -28,46 +28,31 @@ import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 
 @Composable
-fun LocalAccountDialog(
+fun PrivateAccountInfoDialog(
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
 ) {
     AlertDialog(
         icon = {
             Icon(
-                imageVector = Icons.Default.PublicOff,
+                imageVector = Icons.AutoMirrored.Default.HelpOutline,
                 contentDescription = null
             )
         },
         title = {
             Text(
-                UiText.StringResource(R.string.onboarding_dialog_localAccount_title).asString()
+                UiText.StringResource(R.string.onboarding_dialog_privateAccount_title).asString()
             )
         },
         text = {
             Text(
-                UiText.StringResource(R.string.onboarding_dialog_localAccount_content).asString()
+                UiText.StringResource(R.string.onboarding_dialog_privateAccount_content).asString()
             )
         },
         onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm()
-                    onDismiss()
-                }
-            ) {
-                Text(
-                    UiText.StringResource(R.string.onboarding_dialog_localAccount_button_confirm)
-                        .asString()
-                )
-            }
-        },
+        confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(
-                    UiText.StringResource(R.string.button_cancel).asString()
-                )
+                Text(text = UiText.StringResource(R.string.button_ok).asString())
             }
         }
     )
@@ -75,13 +60,12 @@ fun LocalAccountDialog(
 
 @ScreenPreviewAnnotations
 @Composable
-fun LocalAccountDialogPreview() {
+fun PrivateAccountInfoDialogPreview() {
     ValolinkTheme {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            LocalAccountDialog(
-                onConfirm = {},
+            PrivateAccountInfoDialog(
                 onDismiss = {}
             )
         }

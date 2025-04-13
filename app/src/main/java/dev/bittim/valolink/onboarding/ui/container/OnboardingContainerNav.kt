@@ -7,7 +7,7 @@
  File:       OnboardingContainerNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:26
+ Modified:   13.04.25, 20:36
  */
 
 package dev.bittim.valolink.onboarding.ui.container

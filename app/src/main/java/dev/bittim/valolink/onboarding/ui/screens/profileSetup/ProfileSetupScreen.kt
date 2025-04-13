@@ -58,7 +58,7 @@ import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
-import dev.bittim.valolink.onboarding.ui.dialogs.profileSetup.PrivateAccountInfoDialog
+import dev.bittim.valolink.onboarding.ui.screens.profileSetup.dialogs.PrivateAccountInfoDialog
 
 @Composable
 fun ProfileSetupScreen(

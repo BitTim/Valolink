@@ -7,7 +7,7 @@
  File:       LandingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:57
+ Modified:   13.04.25, 19:37
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -39,8 +39,8 @@ import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
-import dev.bittim.valolink.onboarding.ui.components.landing.OutlinedSocialButton
-import dev.bittim.valolink.onboarding.ui.dialogs.landing.LocalAccountDialog
+import dev.bittim.valolink.onboarding.ui.screens.landing.components.OutlinedSocialButton
+import dev.bittim.valolink.onboarding.ui.screens.landing.dialogs.LocalAccountDialog
 
 data object LandingScreen {
     const val SPRAY_UUID: String = "40cc1645-43f4-4db3-ebb2-fdb46f8e9bf3"
