@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:57
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -63,7 +63,6 @@ import dev.bittim.valolink.onboarding.ui.screens.profileSetup.dialogs.PrivateAcc
 @Composable
 fun ProfileSetupScreen(
     state: ProfileSetupState,
-    localMode: Boolean = false,
     validateUsername: (username: String) -> Unit,
     selectAvatar: (username: String, context: Context?, uri: Uri?) -> Unit,
     onBack: () -> Unit,
@@ -161,7 +160,7 @@ fun ProfileSetupScreen(
                     )
                 )
 
-                if (!localMode) {
+                if (!state.isLocal) {
                     LabeledSwitch(
                         modifier = Modifier.fillMaxWidth(),
                         label = UiText.StringResource(R.string.onboarding_switch_label_private)
@@ -181,7 +180,7 @@ fun ProfileSetupScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onBack,
                     onContinue = { setProfile(username, private) },
-                    disableContinueButton = state.loading || state.usernameError != null,
+                    disableContinueButton = state.loading || state.usernameError != null || username.isEmpty(),
                     dismissText = UiText.StringResource(R.string.button_cancel),
                     continueText = UiText.StringResource(R.string.button_continue)
                 )
@@ -210,7 +209,6 @@ fun ProfileSetupScreenPreview() {
                 validateUsername = { },
                 onBack = { },
                 setProfile = { _, _ -> },
-                localMode = false,
                 selectAvatar = { _, _, _ -> }
             )
         }

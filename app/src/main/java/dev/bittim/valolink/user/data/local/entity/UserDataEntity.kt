@@ -7,7 +7,7 @@
  File:       UserDataEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -33,7 +33,7 @@ data class UserDataEntity(
     val isPrivate: Boolean,
     val username: String,
     val onboardingStep: Int,
-    val avatar: String,
+    val avatar: String?,
 ) : SyncedEntity {
     override fun getIdentifier(): String {
         return uuid
@@ -53,7 +53,11 @@ data class UserDataEntity(
     }
 
     companion object {
-        fun fromType(userData: UserData, isSynced: Boolean, toDelete: Boolean): UserDataEntity {
+        fun fromType(
+            userData: UserData,
+            isSynced: Boolean,
+            toDelete: Boolean
+        ): UserDataEntity {
             return UserDataEntity(
                 userData.uuid,
                 isSynced,

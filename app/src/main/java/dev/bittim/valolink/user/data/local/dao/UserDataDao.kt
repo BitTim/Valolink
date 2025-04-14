@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserDataDao.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.user.data.local.dao
@@ -17,6 +17,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.local.entity.UserDataEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -40,8 +41,8 @@ interface UserDataDao {
     @Query("SELECT updatedAt FROM Users WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
-    @Query("SELECT * FROM Users WHERE isSynced = false ORDER BY updatedAt ASC")
-    fun getSyncQueue(): Flow<List<UserDataEntity?>>
+    @Query("SELECT * FROM Users WHERE isSynced = false AND uuid != :localUser ORDER BY updatedAt ASC")
+    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserDataEntity?>>
 
     // --------------------------------
     //  Delete

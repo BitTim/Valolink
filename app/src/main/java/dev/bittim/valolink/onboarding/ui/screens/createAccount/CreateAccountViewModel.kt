@@ -7,7 +7,7 @@
  File:       CreateAccountViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   05.04.25, 11:06
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -22,6 +22,7 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
+import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
 import dev.bittim.valolink.user.domain.error.EmailError
 import dev.bittim.valolink.user.domain.error.PasswordError
@@ -45,6 +46,7 @@ class CreateAccountViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
+    private val sessionRepository: SessionRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
 ) : ViewModel() {
@@ -127,6 +129,8 @@ class CreateAccountViewModel @Inject constructor(
 
             withContext(Dispatchers.Main) {
                 if (error == null) {
+                    sessionRepository.createUser()
+
                     successNav()
                 } else {
                     snackbarHostState?.showSnackbar(error.asString(context))

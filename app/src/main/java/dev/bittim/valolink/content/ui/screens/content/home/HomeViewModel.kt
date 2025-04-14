@@ -7,7 +7,7 @@
  File:       HomeViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.content.ui.screens.content.home

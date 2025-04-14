@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserDatabase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.user.data.local
@@ -31,6 +31,10 @@ import kotlinx.coroutines.flow.map
     version = 1
 )
 abstract class UserDatabase : RoomDatabase() {
+    companion object {
+        const val LOCAL_UUID = "00000000-0000-0000-0000-000000000000"
+    }
+
     abstract val userDataDao: UserDataDao
     abstract val userAgentDao: UserAgentDao
     abstract val userContractDao: UserContractDao

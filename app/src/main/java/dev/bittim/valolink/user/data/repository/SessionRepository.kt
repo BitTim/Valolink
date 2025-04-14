@@ -7,7 +7,7 @@
  File:       SessionRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 19:41
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.user.data.repository
@@ -25,8 +25,9 @@ interface SessionRepository {
     fun getAuthenticated(): Flow<Boolean>
     suspend fun signOut()
 
-    fun getLocal(): Flow<Boolean>
-    suspend fun setLocal(value: Boolean)
+    suspend fun isLocal(): Flow<Boolean>
+    suspend fun createLocalUser()
+    suspend fun createUser()
 
     // ================================
     //  User Metadata
@@ -34,13 +35,13 @@ interface SessionRepository {
 
     suspend fun getUserInfo(): UserInfo?
     suspend fun getUid(): String?
-    suspend fun getUserData(): UserDataEntity?
+    suspend fun getUserData(): Flow<UserDataEntity?>
     suspend fun getUsernameFromMetadata(): String?
 
-    suspend fun getOnboardingStep(): Int?
-    suspend fun getUsername(): String?
-    suspend fun getPrivate(): Boolean?
-    suspend fun getAvatar(): String?
+    suspend fun getOnboardingStep(): Flow<Int?>
+    suspend fun getUsername(): Flow<String?>
+    suspend fun getPrivate(): Flow<Boolean?>
+    suspend fun getAvatar(): Flow<String?>
 
     suspend fun setOnboardingStep(onboardingStep: Int)
     suspend fun setUsername(username: String)

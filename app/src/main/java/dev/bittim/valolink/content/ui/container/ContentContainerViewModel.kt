@@ -7,7 +7,7 @@
  File:       ContentContainerViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:17
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.content.ui.container
@@ -44,11 +44,10 @@ class ContentContainerViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val onboardingStep = sessionRepository.getOnboardingStep()
-            _state.update {
-                it.copy(
-                    hasOnboarded = onboardingStep == -1,
-                )
+            val onboardingStep = sessionRepository.getOnboardingStep().collect { step ->
+                _state.update {
+                    it.copy(hasOnboarded = step == -1)
+                }
             }
         }
     }

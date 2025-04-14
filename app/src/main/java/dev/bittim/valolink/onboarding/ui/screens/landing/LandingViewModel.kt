@@ -7,7 +7,7 @@
  File:       LandingViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 19:43
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -62,7 +62,7 @@ class LandingViewModel @Inject constructor(
 
     fun setLocal(value: Boolean) {
         viewModelScope.launch {
-            sessionRepository.setLocal(value)
+            sessionRepository.createLocalUser()
         }
     }
 }

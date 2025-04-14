@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:26
+ Modified:   14.04.25, 02:40
  */
 
 
@@ -32,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.Transition
 import dev.bittim.valolink.onboarding.ui.components.OnboardingHeader
+import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.createAccountScreen
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.navOnboardingCreateAccount
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
@@ -53,6 +54,18 @@ fun OnboardingContainerScreen(
     snackbarHostState: SnackbarHostState,
     navContent: () -> Unit,
 ) {
+    if (state.isAuthenticated) {
+        val step = state.onboardingStep + OnboardingScreen.stepOffset
+        val route = OnboardingScreen.entries.find { e -> e.step == step }?.route
+
+        if (route != null) {
+            navController.navigate(route) {
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.safeContent,
@@ -86,7 +99,7 @@ fun OnboardingContainerScreen(
                         navController.navOnboardingSignin()
                     },
                     navLocalMode = {
-                        navController.navOnboardingProfileSetup(localMode = true)
+                        navController.navOnboardingProfileSetup()
                     }
                 )
 

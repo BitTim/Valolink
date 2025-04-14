@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "437b7fb639cc241322763997d1dca217",
+    "identityHash": "741928ebd6792bac038eaa6921c085cf",
     "entities": [
       {
         "tableName": "Users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `toDelete` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `isPrivate` INTEGER NOT NULL, `username` TEXT NOT NULL, `onboardingStep` INTEGER NOT NULL, `avatar` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `toDelete` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `isPrivate` INTEGER NOT NULL, `username` TEXT NOT NULL, `onboardingStep` INTEGER NOT NULL, `avatar` TEXT, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -53,8 +53,7 @@
           {
             "fieldPath": "avatar",
             "columnName": "avatar",
-            "affinity": "TEXT",
-            "notNull": true
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -330,7 +329,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '437b7fb639cc241322763997d1dca217')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '741928ebd6792bac038eaa6921c085cf')"
     ]
   }
 }

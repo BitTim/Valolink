@@ -7,7 +7,7 @@
  File:       ProfileSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -18,11 +18,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProfileSetupNav(val localMode: Boolean = false)
+object ProfileSetupNav
 
 fun NavGraphBuilder.profileSetupScreen(
     navBack: () -> Unit,
@@ -30,16 +29,16 @@ fun NavGraphBuilder.profileSetupScreen(
     snackbarHostState: SnackbarHostState,
 ) {
     composable<ProfileSetupNav> { backStackEntry ->
-        val args: ProfileSetupNav = backStackEntry.toRoute()
-
         val viewModel: ProfileSetupViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()
 
         ProfileSetupScreen(
             state = state.value,
-            localMode = args.localMode,
             validateUsername = viewModel::validateUsername,
-            onBack = navBack,
+            onBack = {
+                viewModel.signOut()
+                navBack()
+            },
             setProfile = { username, private ->
                 viewModel.setProfile(username, private, state.value.avatar, navRankSetup)
             },
@@ -48,8 +47,8 @@ fun NavGraphBuilder.profileSetupScreen(
     }
 }
 
-fun NavController.navOnboardingProfileSetup(localMode: Boolean = false) {
-    navigate(ProfileSetupNav(localMode = localMode)) {
+fun NavController.navOnboardingProfileSetup() {
+    navigate(ProfileSetupNav) {
         launchSingleTop = true
         restoreState = true
     }

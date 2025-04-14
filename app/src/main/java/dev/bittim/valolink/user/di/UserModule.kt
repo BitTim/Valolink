@@ -7,15 +7,17 @@
  File:       UserModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 18:08
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.user.di
 
+import android.content.Context
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.bittim.valolink.user.data.flags.UserFlags
 import dev.bittim.valolink.user.data.local.UserDatabase
@@ -48,13 +50,15 @@ object UserModule {
     @Provides
     @Singleton
     fun provideSessionRepository(
+        @ApplicationContext
+        context: Context,
         auth: Auth,
         storage: Storage,
         userFlags: UserFlags,
         userDatabase: UserDatabase,
     ): SessionRepository {
         return SessionSupabaseRepository(
-            auth, storage, userFlags, userDatabase
+            context, auth, storage, userFlags, userDatabase
         )
     }
 

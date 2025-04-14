@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -20,15 +20,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.data.repository.agent.AgentRepository
+import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.core.domain.usecase.profile.GenerateAvatarUseCase
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.user.data.repository.SessionRepository
+import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
+import dev.bittim.valolink.user.data.repository.data.UserContractRepository
 import dev.bittim.valolink.user.domain.error.UsernameError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateUsernameUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,6 +42,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileSetupViewModel @Inject constructor(
+    private val agentRepository: AgentRepository,
+    private val userAgentRepository: UserAgentRepository,
+    private val contractRepository: ContractRepository,
+    private val userContractRepository: UserContractRepository,
     private val sessionRepository: SessionRepository,
     private val validateUsernameUseCase: ValidateUsernameUseCase,
     private val generateAvatarUseCase: GenerateAvatarUseCase,
@@ -45,6 +54,12 @@ class ProfileSetupViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            sessionRepository.isLocal().collect {
+                _state.update { it.copy(isLocal = it.isLocal) }
+            }
+        }
+
         selectAvatar("")
     }
 
@@ -63,6 +78,12 @@ class ProfileSetupViewModel @Inject constructor(
         return usernameError
     }
 
+    fun signOut() {
+        viewModelScope.launch {
+            sessionRepository.signOut()
+        }
+    }
+
     fun selectAvatar(
         username: String,
         context: Context? = null,
@@ -71,8 +92,11 @@ class ProfileSetupViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 if (uri == null || context == null) {
+                    if (state.value.avatar != null && state.value.isAvatarCustom) return@withContext
+
                     _state.update {
                         it.copy(
+                            isAvatarCustom = false,
                             avatarError = null,
                             avatar = generateAvatarUseCase(username)
                         )
@@ -96,7 +120,13 @@ class ProfileSetupViewModel @Inject constructor(
                     return@withContext
                 }
 
-                _state.update { it.copy(avatarError = null, avatar = bitmap) }
+                _state.update {
+                    it.copy(
+                        isAvatarCustom = true,
+                        avatarError = null,
+                        avatar = bitmap
+                    )
+                }
             }
         }
     }
@@ -116,7 +146,26 @@ class ProfileSetupViewModel @Inject constructor(
             sessionRepository.setUsername(username)
             sessionRepository.setPrivate(private)
             sessionRepository.setAvatar(avatarOutputStream.toByteArray())
-            sessionRepository.setOnboardingStep((sessionRepository.getOnboardingStep() ?: 0) + 1)
+            //sessionRepository.setOnboardingStep(OnboardingScreen.ProfileSetup.step + 1)
+            sessionRepository.setOnboardingStep(-1)
+
+            val baseAgents = agentRepository.getAllBaseAgentUuids().first()
+            for (agentUuid in baseAgents) {
+                val agent = agentRepository.getByUuid(agentUuid).first()
+                val uid = sessionRepository.getUid()
+                if (agent != null && uid != null) userAgentRepository.set(
+                    agent.toUserObj(uid)
+                )
+            }
+
+            val contracts = contractRepository.getAll().first()
+            for (contract in contracts) {
+                val uid = sessionRepository.getUid()
+                if (uid != null) userContractRepository.set(
+                    contract.toUserObj(uid)
+                )
+            }
+
             navRankSetup()
         }
     }

@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserAgentEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -54,7 +54,11 @@ data class UserAgentEntity(
     }
 
     companion object {
-        fun fromType(userAgent: UserAgent, isSynced: Boolean, toDelete: Boolean): UserAgentEntity {
+        fun fromType(
+            userAgent: UserAgent,
+            isSynced: Boolean,
+            toDelete: Boolean
+        ): UserAgentEntity {
             return UserAgentEntity(
                 userAgent.uuid,
                 isSynced,

@@ -7,7 +7,7 @@
  File:       UserDataDto.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 14:44
+ Modified:   14.04.25, 02:40
  */
 
 package dev.bittim.valolink.user.data.remote.dto
@@ -22,7 +22,7 @@ data class UserDataDto(
     val isPrivate: Boolean,
     val username: String,
     val onboardingStep: Int,
-    val avatar: String,
+    val avatar: String?,
 ) : SyncedDto<UserDataEntity>() {
     override fun getIdentifier(): String {
         return uuid
