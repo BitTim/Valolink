@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   09.04.25, 15:50
+  Modified:   16.04.25, 19:18
   -->
 
 <resources>
@@ -65,4 +65,5 @@
     <string name="onboarding_dialog_localAccount_title">Use local account</string>
     <string name="onboarding_dialog_localAccount_content">Your data stays only on this device with this option. Features like device sync, social features, and social statistics are not available.</string>
     <string name="onboarding_dialog_localAccount_button_confirm">Use local account</string>
+    <string name="onboarding_profileSetup_button_signout">Sign out</string>
 </resources>

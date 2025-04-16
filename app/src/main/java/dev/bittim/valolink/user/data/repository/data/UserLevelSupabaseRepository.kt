@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserLevelSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -45,11 +45,13 @@ class UserLevelSupabaseRepository @Inject constructor(
     //  Get
     // ================================
 
-    override suspend fun getAll(uid: String): Flow<List<UserLevel>> {
+    override fun getAll(uid: String): Flow<List<UserLevel>> {
         return try {
             // Get from local database
             val levelsFlow = userDatabase.userLevelDao.getByContract(uid).distinctUntilChanged()
-                .map { levels -> levels.map { it.toType() } }
+                .map { levels ->
+                    levels.map { it.toType() }
+                }
 
             // Queue worker to sync with Supabase
             queueWorker(uid)
@@ -63,7 +65,7 @@ class UserLevelSupabaseRepository @Inject constructor(
         }
     }
 
-    override suspend fun get(uid: String, uuid: String): Flow<UserLevel?> {
+    override fun get(uid: String, uuid: String): Flow<UserLevel?> {
         return try {
             // Get from local database
             val levelFlow = userDatabase.userLevelDao.getByContractAndLevel(

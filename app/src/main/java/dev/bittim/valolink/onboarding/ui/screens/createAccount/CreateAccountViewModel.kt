@@ -7,7 +7,7 @@
  File:       CreateAccountViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -24,6 +24,7 @@ import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.domain.error.EmailError
 import dev.bittim.valolink.user.domain.error.PasswordError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
@@ -47,6 +48,7 @@ class CreateAccountViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
     private val sessionRepository: SessionRepository,
+    private val userDataRepository: UserDataRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
 ) : ViewModel() {
@@ -119,7 +121,7 @@ class CreateAccountViewModel @Inject constructor(
         this.snackbarHostState = snackbarHostState
     }
 
-    fun createUser(email: String, password: String, successNav: () -> Unit) {
+    fun createUser(email: String, password: String) {
         val emailResult = validateEmail(email)
         val passwordResult = validatePassword(password)
         if (emailResult != null || passwordResult != null) return
@@ -127,14 +129,11 @@ class CreateAccountViewModel @Inject constructor(
         viewModelScope.launch {
             val error = authRepository.createAccount(email, password)
 
-            withContext(Dispatchers.Main) {
-                if (error == null) {
-                    sessionRepository.createUser()
-
-                    successNav()
-                } else {
-                    snackbarHostState?.showSnackbar(error.asString(context))
-                }
+            if (error == null) {
+                sessionRepository.setLocal(false)
+                userDataRepository.createEmptyForCurrentUser()
+            } else {
+                snackbarHostState?.showSnackbar(error.asString(context))
             }
         }
     }

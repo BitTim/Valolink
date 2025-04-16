@@ -7,7 +7,7 @@
  File:       OnboardingContainerNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 20:36
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.onboarding.ui.container
@@ -42,7 +42,9 @@ fun NavGraphBuilder.onboarding(
             state = state.value,
             navController = subNavController,
             snackbarHostState = snackbarHostState.value,
-            navContent = navContent,
+            navContent = {
+                navContent()
+            },
         )
     }
 }
@@ -51,9 +53,9 @@ fun NavController.navToOnboarding() {
     navigate(OnboardingContainerNav) {
         popUpTo(graph.findStartDestination().id) {
             inclusive = true
-            saveState = true
+            saveState = false
         }
         launchSingleTop = true
-        restoreState = true
+        restoreState = false
     }
 }

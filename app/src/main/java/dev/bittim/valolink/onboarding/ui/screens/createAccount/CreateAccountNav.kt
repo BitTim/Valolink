@@ -7,7 +7,7 @@
  File:       CreateAccountNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -25,7 +25,6 @@ object CreateAccountNav
 
 fun NavGraphBuilder.createAccountScreen(
     navBack: () -> Unit,
-    navProfileSetup: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     composable<CreateAccountNav> {
@@ -40,7 +39,7 @@ fun NavGraphBuilder.createAccountScreen(
             validatePassword = viewModel::validatePassword,
             onCancel = navBack,
             createAccount = { email, password ->
-                viewModel.createUser(email, password, navProfileSetup)
+                viewModel.createUser(email, password)
             }
         )
     }

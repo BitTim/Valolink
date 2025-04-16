@@ -7,7 +7,7 @@
  File:       HomeViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.home
@@ -15,6 +15,7 @@ package dev.bittim.valolink.content.ui.screens.content.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,6 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
+    private val sessionRepository: SessionRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()

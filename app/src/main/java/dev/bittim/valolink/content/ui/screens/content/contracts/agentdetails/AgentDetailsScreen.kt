@@ -7,7 +7,7 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails

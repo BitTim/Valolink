@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserDataRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -21,16 +21,26 @@ interface UserDataRepository : UserRepository<UserData, UserDataDto> {
     //  Get User Data
     // ================================
 
-    suspend fun getWithCurrentUser(): Flow<UserData?>
-    suspend fun get(uid: String): Flow<UserData?>
+    fun getWithCurrentUser(): Flow<UserData?>
+    fun get(uid: String): Flow<UserData?>
+
+    fun hasOnboardedWithCurrentUser(): Flow<Boolean?>
+    fun hasOnboarded(uid: String): Flow<Boolean?>
 
     // ================================
     //  Set User Data
     // ================================
 
-    suspend fun setWithCurrentUser(userData: UserData): Boolean
-
+    suspend fun createEmptyForCurrentUser(): Boolean
+    suspend fun setWithCurrentUser(userData: UserData, toDelete: Boolean): Boolean
     suspend fun set(uid: String, userData: UserData, toDelete: Boolean): Boolean
+
+    suspend fun setWithCurrentUser(userData: UserData): Boolean
     suspend fun set(uid: String, userData: UserData): Boolean
+
+    suspend fun deleteWithCurrentUser(userData: UserData): Boolean
     suspend fun delete(uid: String, userData: UserData): Boolean
+
+    suspend fun setAvatarWithCurrentUser(avatar: ByteArray): Boolean
+    suspend fun setAvatar(uid: String, avatar: ByteArray): Boolean
 }

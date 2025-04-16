@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   09.04.25, 15:50
+  Modified:   16.04.25, 19:18
   -->
 
 <resources>
@@ -66,4 +66,5 @@
     <string name="onboarding_dialog_localAccount_title">Lokales Konto verwenden</string>
     <string name="onboarding_dialog_localAccount_content">Deine Daten bleiben bei dieser Option nur auf diesem Gerät gespeichert. Funktionen wie Geräte-Sync, soziale Features und soziale Statistiken sind nicht verfügbar.</string>
     <string name="onboarding_dialog_localAccount_button_confirm">Lokales Konto verwenden</string>
+    <string name="onboarding_profileSetup_button_signout">Abmelden</string>
 </resources>

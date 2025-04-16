@@ -7,7 +7,7 @@
  File:       ProfileSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
@@ -24,8 +25,6 @@ import kotlinx.serialization.Serializable
 object ProfileSetupNav
 
 fun NavGraphBuilder.profileSetupScreen(
-    navBack: () -> Unit,
-    navRankSetup: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     composable<ProfileSetupNav> { backStackEntry ->
@@ -35,12 +34,11 @@ fun NavGraphBuilder.profileSetupScreen(
         ProfileSetupScreen(
             state = state.value,
             validateUsername = viewModel::validateUsername,
-            onBack = {
+            navLanding = {
                 viewModel.signOut()
-                navBack()
             },
             setProfile = { username, private ->
-                viewModel.setProfile(username, private, state.value.avatar, navRankSetup)
+                viewModel.setProfile(username, private, state.value.avatar)
             },
             selectAvatar = viewModel::selectAvatar,
         )
@@ -49,6 +47,10 @@ fun NavGraphBuilder.profileSetupScreen(
 
 fun NavController.navOnboardingProfileSetup() {
     navigate(ProfileSetupNav) {
+        popUpTo(graph.findStartDestination().id) {
+            inclusive = true
+            saveState = true
+        }
         launchSingleTop = true
         restoreState = true
     }

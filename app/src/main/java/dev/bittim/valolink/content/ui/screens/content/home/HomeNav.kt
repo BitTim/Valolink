@@ -7,7 +7,7 @@
  File:       HomeNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:25
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.home
@@ -25,7 +25,7 @@ import kotlinx.serialization.Serializable
 object HomeNav
 
 fun NavGraphBuilder.homeScreen(
-    onSignOutClicked: () -> Unit,
+    signOut: () -> Unit,
 ) {
     composable<HomeNav> {
         val viewModel: HomeViewModel = hiltViewModel()
@@ -33,7 +33,7 @@ fun NavGraphBuilder.homeScreen(
 
         HomeScreen(
             state = homeState,
-            onSignOutClicked = onSignOutClicked
+            signOut = signOut
         )
     }
 }

@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserContractSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -51,24 +51,32 @@ class UserContractSupabaseRepository @Inject constructor(
     //  Get
     // ================================
 
-    override suspend fun getAllWithCurrentUser(): Flow<List<UserContract>> {
-        val uid = sessionRepository.getUid() ?: return flow { }
-        return getAll(uid)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getAllWithCurrentUser(): Flow<List<UserContract>> {
+        return sessionRepository.getUid().flatMapLatest { uid ->
+            if (uid == null) flow { } else getAll(uid)
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getAll(uid: String): Flow<List<UserContract>> {
+    override fun getAll(uid: String): Flow<List<UserContract>> {
         return try {
             // Get from local database
             val contractsFlow = userDatabase.userContractDao.getByUser(uid).distinctUntilChanged()
                 .flatMapLatest { contracts ->
-                    combine(contracts.map { contract ->
-                        combine(
-                            flowOf(contract), userLevelRepository.getAll(contract.uuid)
-                        ) { c, levels ->
-                            c.toType(levels)
+                    if (contracts.isEmpty()) {
+                        flow { emit(emptyList()) }
+                    } else {
+                        combine(contracts.map { contract ->
+                            combine(
+                                flowOf(contract), userLevelRepository.getAll(contract.uuid)
+                            ) { c, levels ->
+                                c.toType(levels)
+                            }
+                        }) {
+                            it.toList()
                         }
-                    }) { it.toList() }
+                    }
                 }
 
             // Queue worker to sync with Supabase
@@ -83,12 +91,14 @@ class UserContractSupabaseRepository @Inject constructor(
         }
     }
 
-    override suspend fun getWithCurrentUser(uuid: String): Flow<UserContract?> {
-        val uid = sessionRepository.getUid() ?: return flow { }
-        return get(uid, uuid)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getWithCurrentUser(uuid: String): Flow<UserContract?> {
+        return sessionRepository.getUid().flatMapLatest { uid ->
+            if (uid == null) flow { } else get(uid, uuid)
+        }
     }
 
-    override suspend fun get(
+    override fun get(
         uid: String,
         uuid: String,
     ): Flow<UserContract?> {

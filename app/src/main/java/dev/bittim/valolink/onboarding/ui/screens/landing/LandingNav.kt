@@ -7,7 +7,7 @@
  File:       LandingNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 19:43
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -15,6 +15,7 @@ package dev.bittim.valolink.onboarding.ui.screens.landing
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
@@ -24,7 +25,6 @@ object LandingNav
 
 fun NavGraphBuilder.landingScreen(
     navSignin: () -> Unit,
-    navLocalMode: () -> Unit
 ) {
     composable<LandingNav> {
         val viewModel: LandingViewModel = hiltViewModel()
@@ -32,10 +32,7 @@ fun NavGraphBuilder.landingScreen(
 
         LandingScreen(
             state = state.value,
-            onLocalMode = {
-                viewModel.setLocal(true)
-                navLocalMode()
-            },
+            onLocalMode = viewModel::setLocal,
             onGoogleClicked = { },
             onRiotClicked = { },
             onEmailClicked = navSignin
@@ -45,11 +42,11 @@ fun NavGraphBuilder.landingScreen(
 
 fun NavController.navToOnboardingLanding() {
     navigate(LandingNav) {
-        popUpTo(LandingNav) {
+        popUpTo(graph.findStartDestination().id) {
             inclusive = true
-            saveState = true
+            saveState = false
         }
         launchSingleTop = true
-        restoreState = true
+        restoreState = false
     }
 }

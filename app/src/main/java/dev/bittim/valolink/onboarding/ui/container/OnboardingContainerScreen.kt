@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 
@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -37,10 +38,10 @@ import dev.bittim.valolink.onboarding.ui.screens.createAccount.createAccountScre
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.navOnboardingCreateAccount
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.landingScreen
+import dev.bittim.valolink.onboarding.ui.screens.landing.navToOnboardingLanding
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.navOnboardingPasswordForgot
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.passwordForgotScreen
 import dev.bittim.valolink.onboarding.ui.screens.passwordReset.passwordResetScreen
-import dev.bittim.valolink.onboarding.ui.screens.profileSetup.navOnboardingProfileSetup
 import dev.bittim.valolink.onboarding.ui.screens.profileSetup.profileSetupScreen
 import dev.bittim.valolink.onboarding.ui.screens.signin.navOnboardingSignin
 import dev.bittim.valolink.onboarding.ui.screens.signin.signinScreen
@@ -54,15 +55,27 @@ fun OnboardingContainerScreen(
     snackbarHostState: SnackbarHostState,
     navContent: () -> Unit,
 ) {
-    if (state.isAuthenticated) {
-        val step = state.onboardingStep + OnboardingScreen.stepOffset
-        val route = OnboardingScreen.entries.find { e -> e.step == step }?.route
-
-        if (route != null) {
-            navController.navigate(route) {
-                launchSingleTop = true
-                restoreState = true
+    LaunchedEffect(state.isAuthenticated, state.userData?.onboardingStep, state.route) {
+        if (state.isAuthenticated == true && state.userData != null) {
+            val step = state.userData.onboardingStep + OnboardingScreen.stepOffset
+            if (step > OnboardingScreen.getMaxStep()) {
+                navContent()
+                return@LaunchedEffect
             }
+
+            val route = OnboardingScreen.entries.find { e -> e.step == step }?.route
+
+            if (route != null) {
+                navController.navigate(route) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
+
+        if (state.isAuthenticated == false && !OnboardingScreen.entries.filter { it.step < OnboardingScreen.stepOffset }
+                .map { it.route }.contains(state.route)) {
+            navController.navToOnboardingLanding()
         }
     }
 
@@ -98,9 +111,6 @@ fun OnboardingContainerScreen(
                     navSignin = {
                         navController.navOnboardingSignin()
                     },
-                    navLocalMode = {
-                        navController.navOnboardingProfileSetup()
-                    }
                 )
 
                 signinScreen(
@@ -124,13 +134,10 @@ fun OnboardingContainerScreen(
 
                 createAccountScreen(
                     navBack = { navController.navigateUp() },
-                    navProfileSetup = { navController.navOnboardingProfileSetup() },
                     snackbarHostState = snackbarHostState,
                 )
 
                 profileSetupScreen(
-                    navBack = { navController.navigateUp() },
-                    navRankSetup = { navContent() },
                     snackbarHostState = snackbarHostState,
                 )
             }

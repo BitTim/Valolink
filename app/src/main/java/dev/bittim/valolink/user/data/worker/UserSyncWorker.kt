@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       UserSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.data.worker
@@ -20,6 +20,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dev.bittim.valolink.user.data.local.UserDatabase
+import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
 import dev.bittim.valolink.user.data.repository.data.UserDataRepository
@@ -37,10 +38,17 @@ class UserSyncWorker @AssistedInject constructor(
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
     private val userLevelRepository: UserLevelRepository,
+    private val sessionRepository: SessionRepository,
 ) : CoroutineWorker(
     context, params
 ) {
     override suspend fun doWork(): Result {
+        // Check if user is authenticated
+        if (sessionRepository.isAuthenticated().firstOrNull() != true) return Result.failure()
+
+        // Check if user is in local mode
+        if (sessionRepository.isLocal().firstOrNull() == true) return Result.success()
+
         // Retrieve contract uuid from input data
         val type = inputData.getString(KEY_TYPE) ?: return Result.failure()
         val relation = inputData.getString(KEY_RELATION) ?: return Result.failure()
@@ -60,19 +68,15 @@ class UserSyncWorker @AssistedInject constructor(
 
         // Clean up local database by deleting non existing remote entries
         dirtyLocalData?.forEach { local ->
-            val obj = remoteData.find { it.getIdentifier() == local.getIdentifier() }
+            val remote = remoteData.find {
+                it.getIdentifier() == local.getIdentifier()
+            }
 
-            if (obj == null) {
+            if (remote == null) {
                 if (local.isSynced) userDatabase.deleteByUuid(type, local.uuid)
             } else {
                 userDatabase.withTransaction {
-                    if (local.uuid != obj.uuid) userDatabase.deleteByUuid(type, local.uuid)
-                    // Keep toDelete of local entry and only set isSynced to true if entry is not marked for deletion
-                    userDatabase.upsert(
-                        type, obj.toEntity(
-                            !local.toDelete && local.isSynced, local.toDelete
-                        )
-                    )
+                    if (local.uuid != remote.uuid) userDatabase.deleteByUuid(type, local.uuid)
                 }
             }
         }
@@ -83,7 +87,9 @@ class UserSyncWorker @AssistedInject constructor(
         // Upsert Supabase data only, if it is more recent
         try {
             remoteData.forEach { remote ->
-                val local = localData?.find { it.getIdentifier() == remote.getIdentifier() }
+                val local = localData?.find {
+                    it.getIdentifier() == remote.getIdentifier()
+                }
 
                 if (local == null || OffsetDateTime.parse(local.updatedAt)
                         .isBefore(OffsetDateTime.parse(remote.updatedAt))

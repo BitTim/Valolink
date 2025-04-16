@@ -7,7 +7,7 @@
  File:       UserAgentSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -25,9 +25,11 @@ import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.worker.UserSyncWorker
 import dev.bittim.valolink.user.domain.model.UserAgent
 import io.github.jan.supabase.postgrest.Postgrest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -47,16 +49,20 @@ class UserAgentSupabaseRepository @Inject constructor(
     //  Get
     // ================================
 
-    override suspend fun getAllWithCurrentUser(): Flow<List<UserAgent>> {
-        val uid = sessionRepository.getUid() ?: return flow { }
-        return getAll(uid)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getAllWithCurrentUser(): Flow<List<UserAgent>> {
+        return sessionRepository.getUid().flatMapLatest { uid ->
+            if (uid == null) flow { } else getAll(uid)
+        }
     }
 
-    override suspend fun getAll(uid: String): Flow<List<UserAgent>> {
+    override fun getAll(uid: String): Flow<List<UserAgent>> {
         return try {
             // Get from local database
             val agentsFlow = userDatabase.userAgentDao.getByUser(uid).distinctUntilChanged()
-                .map { agents -> agents.map { it.toType() } }
+                .map { agents ->
+                    agents.map { it.toType() }
+                }
 
             // Queue worker to sync with Supabase
             queueWorker(uid)
@@ -70,12 +76,14 @@ class UserAgentSupabaseRepository @Inject constructor(
         }
     }
 
-    override suspend fun getWithCurrentUser(uuid: String): Flow<UserAgent?> {
-        val uid = sessionRepository.getUid() ?: return flow { }
-        return get(uid, uuid)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getWithCurrentUser(uuid: String): Flow<UserAgent?> {
+        return sessionRepository.getUid().flatMapLatest { uid ->
+            if (uid == null) flow { } else get(uid, uuid)
+        }
     }
 
-    override suspend fun get(
+    override fun get(
         uid: String,
         uuid: String,
     ): Flow<UserAgent?> {

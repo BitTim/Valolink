@@ -7,17 +7,19 @@
  File:       UserDataSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.data.repository.data
 
+import android.content.Context
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.local.entity.UserDataEntity
 import dev.bittim.valolink.user.data.remote.dto.UserDataDto
@@ -25,20 +27,29 @@ import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.worker.UserSyncWorker
 import dev.bittim.valolink.user.domain.model.UserData
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 class UserDataSupabaseRepository @Inject constructor(
+    private val context: Context,
     private val sessionRepository: SessionRepository,
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
     private val userDatabase: UserDatabase,
     private val database: Postgrest,
+    private val storage: Storage,
     private val workManager: WorkManager,
 ) : UserDataRepository {
     companion object {
@@ -49,12 +60,16 @@ class UserDataSupabaseRepository @Inject constructor(
     //  Get User Data
     // ================================
 
-    override suspend fun getWithCurrentUser(): Flow<UserData?> {
-        val uid = sessionRepository.getUid() ?: return flow { }
-        return get(uid)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getWithCurrentUser(): Flow<UserData?> {
+        return sessionRepository.getUid().flatMapLatest { uid ->
+            if (uid == null) {
+                flowOf(null)
+            } else get(uid)
+        }
     }
 
-    override suspend fun get(uid: String): Flow<UserData?> {
+    override fun get(uid: String): Flow<UserData?> {
         return try {
             // Get from local database
             val userFlow = userDatabase.userDataDao.getByUuid(uid).distinctUntilChanged()
@@ -75,19 +90,51 @@ class UserDataSupabaseRepository @Inject constructor(
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             e.printStackTrace()
-            return flow { }
+            return flow { emit(null) }
         }
     }
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun hasOnboardedWithCurrentUser(): Flow<Boolean?> {
+        return sessionRepository.getUid().flatMapLatest { uid ->
+            if (uid == null) {
+                flow {
+                    emit(null)
+                }
+            } else hasOnboarded(uid)
+        }
+    }
+
+    override fun hasOnboarded(uid: String): Flow<Boolean?> {
+        return get(uid).map { data ->
+            data?.let { it.onboardingStep + OnboardingScreen.stepOffset > OnboardingScreen.getMaxStep() }
+        }
+    }
+
 
     // ================================
     //  Set User Data
     // ================================
 
-    override suspend fun setWithCurrentUser(userData: UserData): Boolean {
-        val uid = sessionRepository.getUid() ?: return false
-        return set(
-            uid, userData
+    override suspend fun createEmptyForCurrentUser(): Boolean {
+        val uid = sessionRepository.getUid().firstOrNull() ?: return false
+        val data = UserData(
+            uuid = uid,
+            isPrivate = true,
+            username = "",
+            onboardingStep = 0,
+            avatar = null,
+            agents = emptyList(),
+            contracts = emptyList()
         )
+
+        return set(uid, data)
+    }
+
+    override suspend fun setWithCurrentUser(userData: UserData, toDelete: Boolean): Boolean {
+        val uid = sessionRepository.getUid().firstOrNull() ?: return false
+        return set(uid, userData, toDelete)
     }
 
     override suspend fun set(
@@ -115,12 +162,47 @@ class UserDataSupabaseRepository @Inject constructor(
         }
     }
 
+    override suspend fun setWithCurrentUser(userData: UserData): Boolean {
+        val uid = sessionRepository.getUid().firstOrNull() ?: return false
+        return set(uid, userData)
+    }
+
     override suspend fun set(uid: String, userData: UserData): Boolean {
         return set(uid, userData, false)
     }
 
+    override suspend fun deleteWithCurrentUser(userData: UserData): Boolean {
+        val uid = sessionRepository.getUid().firstOrNull() ?: return false
+        return delete(uid, userData)
+    }
+
     override suspend fun delete(uid: String, userData: UserData): Boolean {
         return set(uid, userData, true)
+    }
+
+    override suspend fun setAvatarWithCurrentUser(avatar: ByteArray): Boolean {
+        val uid = sessionRepository.getUid().firstOrNull() ?: return false
+        return setAvatar(uid, avatar)
+    }
+
+    override suspend fun setAvatar(uid: String, avatar: ByteArray): Boolean {
+        val userData = get(uid).firstOrNull() ?: return false
+        val isLocal = sessionRepository.isLocal().firstOrNull() ?: return false
+
+        val location = if (isLocal) {
+            val filename = context.filesDir.resolve(File(SessionRepository.LOCAL_AVATAR_FILENAME))
+            val file = FileOutputStream(filename)
+            file.write(avatar)
+            file.close()
+            filename.toString()
+        } else {
+            val bucket = storage.from("avatars")
+            val filename = "$uid.jpg"
+            bucket.update(filename, avatar) { upsert = true }
+            filename
+        }
+
+        return set(uid, userData.copy(avatar = location))
     }
 
     // ================================

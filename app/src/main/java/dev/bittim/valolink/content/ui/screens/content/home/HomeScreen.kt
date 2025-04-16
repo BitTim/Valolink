@@ -7,7 +7,7 @@
  File:       HomeScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.home
@@ -38,7 +38,7 @@ import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 @Composable
 fun HomeScreen(
     state: HomeState,
-    onSignOutClicked: () -> Unit,
+    signOut: () -> Unit,
 ) {
     val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -73,7 +73,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.padding(8.dp))
 
-            Button(onClick = onSignOutClicked) {
+            Button(onClick = signOut) {
                 Text(text = "Sign out")
             }
         }

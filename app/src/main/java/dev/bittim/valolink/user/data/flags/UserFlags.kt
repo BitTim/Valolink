@@ -7,7 +7,7 @@
  File:       UserFlags.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.data.flags
@@ -28,8 +28,9 @@ class UserFlags(private val context: Context) {
     }
 
     fun getLocal(): Flow<Boolean> {
-        val preferences = context.dataStore.data
-        return preferences.map { preferences -> preferences[LOCAL] == true }
+        return context.dataStore.data.map { preferences ->
+            preferences[LOCAL] == true
+        }
     }
 
     suspend fun setLocal(isLocal: Boolean) {
@@ -37,5 +38,4 @@ class UserFlags(private val context: Context) {
             preferences[LOCAL] = isLocal
         }
     }
-
 }

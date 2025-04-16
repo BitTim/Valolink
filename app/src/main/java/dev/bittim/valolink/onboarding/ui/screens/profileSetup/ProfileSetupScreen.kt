@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -35,6 +35,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,10 +66,14 @@ fun ProfileSetupScreen(
     state: ProfileSetupState,
     validateUsername: (username: String) -> Unit,
     selectAvatar: (username: String, context: Context?, uri: Uri?) -> Unit,
-    onBack: () -> Unit,
+    navLanding: () -> Unit,
     setProfile: (username: String, private: Boolean) -> Unit
 ) {
     val context = LocalContext.current
+
+    LaunchedEffect(state.isAuthenticated) {
+        if (state.isAuthenticated == false) navLanding()
+    }
 
     var username by remember { mutableStateOf("") }
     var private by remember { mutableStateOf(false) }
@@ -96,8 +101,8 @@ fun ProfileSetupScreen(
                 SimpleLoadingContainer(
                     modifier = Modifier
                         .fillMaxSize(),
-                    isLoading = state.loading,
-                    label = "Spray image loading crossfade"
+                    isLoading = state.avatar == null || state.isAuthenticated == null || state.isLocal == null,
+                    label = "Avatar loading crossfade"
                 ) {
                     AsyncImage(
                         modifier = Modifier
@@ -160,7 +165,7 @@ fun ProfileSetupScreen(
                     )
                 )
 
-                if (!state.isLocal) {
+                if (state.isLocal != true) {
                     LabeledSwitch(
                         modifier = Modifier.fillMaxWidth(),
                         label = UiText.StringResource(R.string.onboarding_switch_label_private)
@@ -178,10 +183,10 @@ fun ProfileSetupScreen(
 
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
-                    onDismiss = onBack,
+                    onDismiss = navLanding,
                     onContinue = { setProfile(username, private) },
-                    disableContinueButton = state.loading || state.usernameError != null || username.isEmpty(),
-                    dismissText = UiText.StringResource(R.string.button_cancel),
+                    disableContinueButton = state.isAuthenticated != true || state.avatar == null || state.avatarError != null || state.usernameError != null || username.isEmpty(),
+                    dismissText = UiText.StringResource(R.string.onboarding_profileSetup_button_signout),
                     continueText = UiText.StringResource(R.string.button_continue)
                 )
             }
@@ -207,7 +212,7 @@ fun ProfileSetupScreenPreview() {
             ProfileSetupScreen(
                 state = ProfileSetupState(),
                 validateUsername = { },
-                onBack = { },
+                navLanding = { },
                 setProfile = { _, _ -> },
                 selectAvatar = { _, _, _ -> }
             )

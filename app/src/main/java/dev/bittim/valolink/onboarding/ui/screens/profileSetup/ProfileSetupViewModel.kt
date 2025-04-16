@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -21,19 +21,22 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.agent.AgentRepository
-import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.core.domain.usecase.profile.GenerateAvatarUseCase
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
+import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
-import dev.bittim.valolink.user.data.repository.data.UserContractRepository
+import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.domain.error.UsernameError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateUsernameUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,9 +47,8 @@ import javax.inject.Inject
 class ProfileSetupViewModel @Inject constructor(
     private val agentRepository: AgentRepository,
     private val userAgentRepository: UserAgentRepository,
-    private val contractRepository: ContractRepository,
-    private val userContractRepository: UserContractRepository,
     private val sessionRepository: SessionRepository,
+    private val userDataRepository: UserDataRepository,
     private val validateUsernameUseCase: ValidateUsernameUseCase,
     private val generateAvatarUseCase: GenerateAvatarUseCase,
 ) : ViewModel() {
@@ -55,9 +57,17 @@ class ProfileSetupViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            sessionRepository.isLocal().collect {
-                _state.update { it.copy(isLocal = it.isLocal) }
-            }
+            sessionRepository.isAuthenticated().stateIn(viewModelScope, WhileSubscribed(5000), null)
+                .collectLatest { isAuthenticated ->
+                    _state.update { it.copy(isAuthenticated = isAuthenticated) }
+                }
+        }
+
+        viewModelScope.launch {
+            sessionRepository.isLocal().stateIn(viewModelScope, WhileSubscribed(5000), null)
+                .collectLatest { isLocal ->
+                    _state.update { it.copy(isLocal = isLocal) }
+                }
         }
 
         selectAvatar("")
@@ -135,7 +145,6 @@ class ProfileSetupViewModel @Inject constructor(
         username: String,
         private: Boolean,
         avatar: Bitmap?,
-        navRankSetup: () -> Unit
     ) {
         if (avatar == null) return
 
@@ -143,30 +152,28 @@ class ProfileSetupViewModel @Inject constructor(
             val avatarOutputStream = ByteArrayOutputStream()
             avatar.compress(Bitmap.CompressFormat.JPEG, 90, avatarOutputStream)
 
-            sessionRepository.setUsername(username)
-            sessionRepository.setPrivate(private)
-            sessionRepository.setAvatar(avatarOutputStream.toByteArray())
-            //sessionRepository.setOnboardingStep(OnboardingScreen.ProfileSetup.step + 1)
-            sessionRepository.setOnboardingStep(-1)
-
-            val baseAgents = agentRepository.getAllBaseAgentUuids().first()
-            for (agentUuid in baseAgents) {
-                val agent = agentRepository.getByUuid(agentUuid).first()
-                val uid = sessionRepository.getUid()
-                if (agent != null && uid != null) userAgentRepository.set(
-                    agent.toUserObj(uid)
-                )
+            val baseAgents = agentRepository.getAllBaseAgentUuids().firstOrNull()
+            if (baseAgents != null) {
+                for (agentUuid in baseAgents) {
+                    val agent = agentRepository.getByUuid(agentUuid).firstOrNull()
+                    val uid = sessionRepository.getUid().firstOrNull()
+                    if (agent != null && uid != null) userAgentRepository.set(
+                        agent.toUserObj(uid)
+                    )
+                }
             }
 
-            val contracts = contractRepository.getAll().first()
-            for (contract in contracts) {
-                val uid = sessionRepository.getUid()
-                if (uid != null) userContractRepository.set(
-                    contract.toUserObj(uid)
-                )
-            }
+            val userData = userDataRepository.getWithCurrentUser().firstOrNull()
+            if (userData == null) return@launch
 
-            navRankSetup()
+            userDataRepository.setWithCurrentUser(
+                userData.copy(
+                    username = username,
+                    isPrivate = private,
+                    onboardingStep = OnboardingScreen.ProfileSetup.step - OnboardingScreen.stepOffset + 1
+                )
+            )
+            userDataRepository.setAvatarWithCurrentUser(avatarOutputStream.toByteArray())
         }
     }
 }

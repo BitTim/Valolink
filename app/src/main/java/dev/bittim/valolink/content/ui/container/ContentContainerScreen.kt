@@ -7,12 +7,17 @@
  File:       ContentContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 19:51
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.content.ui.container
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
@@ -21,24 +26,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import dev.bittim.valolink.content.ui.container.components.navbar.NavItem
 import dev.bittim.valolink.content.ui.screens.content.ContentNavGraph
+import dev.bittim.valolink.core.ui.theme.Spacing
 
 @Composable
 fun ContentContainerScreen(
     state: ContentContainerState,
     navController: NavHostController,
     navOnboarding: () -> Unit,
-    onSignOutClicked: () -> Unit,
+    signOut: () -> Unit,
 ) {
     var currentDestination by rememberSaveable { mutableStateOf(NavItem.Home) }
 
-    if ((state.isAuthenticated != null && !state.isAuthenticated) || (state.hasOnboarded != null && !state.hasOnboarded)) {
-        LaunchedEffect(Unit) {
+    LaunchedEffect(state.isAuthenticated, state.hasOnboarded) {
+        if (state.isAuthenticated == false || (state.hasOnboarded != null && !state.hasOnboarded)) {
             navOnboarding()
         }
+    }
+
+    if (state.isAuthenticated == null || state.hasOnboarded == null) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(Spacing.m))
+            Text("Loading...")
+        }
+        return
     }
 
     NavigationSuiteScaffold(
@@ -60,7 +80,7 @@ fun ContentContainerScreen(
         ContentNavGraph(
             modifier = Modifier.fillMaxSize(),
             navController = navController,
-            onSignOutClicked = onSignOutClicked
+            signOut = signOut
         )
     }
 }

@@ -7,7 +7,7 @@
  File:       UserModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.user.di
@@ -58,7 +58,7 @@ object UserModule {
         userDatabase: UserDatabase,
     ): SessionRepository {
         return SessionSupabaseRepository(
-            context, auth, storage, userFlags, userDatabase
+            context, auth, userFlags, userDatabase
         )
     }
 
@@ -104,19 +104,24 @@ object UserModule {
     @Provides
     @Singleton
     fun provideUserRepository(
+        @ApplicationContext
+        context: Context,
         sessionRepository: SessionRepository,
         userAgentRepository: UserAgentRepository,
         userContractRepository: UserContractRepository,
         userDatabase: UserDatabase,
         database: Postgrest,
+        storage: Storage,
         workManager: WorkManager,
     ): UserDataRepository {
         return UserDataSupabaseRepository(
+            context,
             sessionRepository,
             userAgentRepository,
             userContractRepository,
             userDatabase,
             database,
+            storage,
             workManager
         )
     }

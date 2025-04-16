@@ -7,7 +7,7 @@
  File:       ContentContainerNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:28
+ Modified:   16.04.25, 19:18
  */
 
 package dev.bittim.valolink.content.ui.container
@@ -38,7 +38,7 @@ fun NavGraphBuilder.content(
             state = state,
             navController = subNavController,
             navOnboarding = navOnboarding,
-            onSignOutClicked = viewModel::onSignOutClicked
+            signOut = viewModel::signOut
         )
     }
 }
