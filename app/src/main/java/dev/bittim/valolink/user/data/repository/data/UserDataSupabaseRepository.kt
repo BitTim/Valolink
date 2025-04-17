@@ -7,7 +7,7 @@
  File:       UserDataSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   17.04.25, 03:37
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -108,7 +108,7 @@ class UserDataSupabaseRepository @Inject constructor(
 
     override fun hasOnboarded(uid: String): Flow<Boolean?> {
         return get(uid).map { data ->
-            data?.let { it.onboardingStep + OnboardingScreen.stepOffset > OnboardingScreen.getMaxStep() }
+            data?.let { it.onboardingStep + OnboardingScreen.STEP_OFFSET > OnboardingScreen.getMaxStep() }
         }
     }
 

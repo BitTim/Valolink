@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   17.04.25, 03:37
  */
 
 
@@ -43,6 +43,7 @@ import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.navOnboardingPas
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.passwordForgotScreen
 import dev.bittim.valolink.onboarding.ui.screens.passwordReset.passwordResetScreen
 import dev.bittim.valolink.onboarding.ui.screens.profileSetup.profileSetupScreen
+import dev.bittim.valolink.onboarding.ui.screens.rankSetup.rankSetupScreen
 import dev.bittim.valolink.onboarding.ui.screens.signin.navOnboardingSignin
 import dev.bittim.valolink.onboarding.ui.screens.signin.signinScreen
 import kotlinx.serialization.InternalSerializationApi
@@ -57,7 +58,7 @@ fun OnboardingContainerScreen(
 ) {
     LaunchedEffect(state.isAuthenticated, state.userData?.onboardingStep, state.route) {
         if (state.isAuthenticated == true && state.userData != null) {
-            val step = state.userData.onboardingStep + OnboardingScreen.stepOffset
+            val step = state.userData.onboardingStep + OnboardingScreen.STEP_OFFSET
             if (step > OnboardingScreen.getMaxStep()) {
                 navContent()
                 return@LaunchedEffect
@@ -73,7 +74,7 @@ fun OnboardingContainerScreen(
             }
         }
 
-        if (state.isAuthenticated == false && !OnboardingScreen.entries.filter { it.step < OnboardingScreen.stepOffset }
+        if (state.isAuthenticated == false && !OnboardingScreen.entries.filter { it.step < OnboardingScreen.STEP_OFFSET }
                 .map { it.route }.contains(state.route)) {
             navController.navToOnboardingLanding()
         }
@@ -139,6 +140,10 @@ fun OnboardingContainerScreen(
 
                 profileSetupScreen(
                     snackbarHostState = snackbarHostState,
+                )
+
+                rankSetupScreen(
+                    navBack = { navController.navigateUp() }
                 )
             }
         }

@@ -7,7 +7,7 @@
  File:       OnboardingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 19:55
+ Modified:   17.04.25, 03:37
  */
 
 package dev.bittim.valolink.onboarding.ui.screens
@@ -19,6 +19,7 @@ import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.PasswordForgotNav
 import dev.bittim.valolink.onboarding.ui.screens.passwordReset.PasswordResetNav
 import dev.bittim.valolink.onboarding.ui.screens.profileSetup.ProfileSetupNav
+import dev.bittim.valolink.onboarding.ui.screens.rankSetup.RankSetupNav
 import dev.bittim.valolink.onboarding.ui.screens.signin.SigninNav
 
 enum class OnboardingScreen(
@@ -67,10 +68,17 @@ enum class OnboardingScreen(
         title = UiText.StringResource(R.string.onboarding_profileSetup_title),
         description = UiText.StringResource(R.string.onboarding_profileSetup_description),
         step = 2
+    ),
+
+    RankSetup(
+        route = RankSetupNav::class.java.name,
+        title = UiText.StringResource(R.string.onboarding_rankSetup_title),
+        description = UiText.StringResource(R.string.onboarding_rankSetup_description),
+        step = 3
     );
 
     companion object {
-        const val stepOffset = 2
+        const val STEP_OFFSET = 2
 
         fun getMaxStep(): Int {
             return entries.maxOf { it.step }

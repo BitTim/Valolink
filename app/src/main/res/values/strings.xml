@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   16.04.25, 19:18
+  Modified:   17.04.25, 03:37
   -->
 
 <resources>
@@ -66,4 +66,8 @@
     <string name="onboarding_dialog_localAccount_content">Your data stays only on this device with this option. Features like device sync, social features, and social statistics are not available.</string>
     <string name="onboarding_dialog_localAccount_button_confirm">Use local account</string>
     <string name="onboarding_profileSetup_button_signout">Sign out</string>
+    <string name="onboarding_rankSetup_slider_currentRank_label">Current Rank</string>
+    <string name="onboarding_rankSetup_slider_currentRR_label">Current RR</string>
+    <string name="onboarding_rankSetup_title">Set up your rank</string>
+    <string name="onboarding_rankSetup_description">Select your current rank and RR to have a starting point for rank tracking with your competitive journey in Valolink</string>
 </resources>
