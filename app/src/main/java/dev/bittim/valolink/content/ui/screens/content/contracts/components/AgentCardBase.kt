@@ -7,7 +7,7 @@
  File:       AgentCardBase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   17.04.25, 14:53
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.components
@@ -25,36 +25,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.core.ui.components.ShaderGradientBackdrop
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.color.ShaderGradient
 
 @Composable
 fun AgentCardBase(
     modifier: Modifier = Modifier,
-    backgroundGradientColors: List<String>,
+    gradient: ShaderGradient?,
     backgroundImage: String?,
     isDisabled: Boolean = false,
     content: @Composable (Boolean) -> Unit,
 ) {
-    val useGradient = backgroundGradientColors.isNotEmpty() && backgroundGradientColors.count() >= 4
-
     Card(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        colors = if (useGradient) CardDefaults
+        colors = if (gradient != null) CardDefaults
             .cardColors()
             .copy(contentColor = Color.White) else CardDefaults.cardColors()
     ) {
-        AgentBackdrop(
+        ShaderGradientBackdrop(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min),
-            useGradient = useGradient,
             isDisabled = isDisabled,
-            backgroundGradientColors = backgroundGradientColors,
+            gradient = gradient,
             backgroundImage = backgroundImage
         ) {
-            content(useGradient)
+            content(it)
         }
     }
 }
@@ -64,7 +63,7 @@ fun AgentCardBase(
 fun AgentCardBaseHorizontalPreview() {
     ValolinkTheme {
         AgentCardBase(
-            backgroundGradientColors = listOf(
+            gradient = ShaderGradient(
                 "f17cadff",
                 "062261ff",
                 "c347c7ff",
@@ -83,7 +82,7 @@ fun AgentCardBaseVerticalPreview() {
     ValolinkTheme {
         AgentCardBase(
             Modifier.width(100.dp),
-            backgroundGradientColors = listOf(
+            gradient = ShaderGradient(
                 "f17cadff",
                 "062261ff",
                 "c347c7ff",
@@ -101,7 +100,7 @@ fun AgentCardBaseVerticalPreview() {
 fun DisabledAgentCardBaseHorizontalPreview() {
     ValolinkTheme {
         AgentCardBase(
-            backgroundGradientColors = listOf(
+            gradient = ShaderGradient(
                 "f17cadff",
                 "062261ff",
                 "c347c7ff",
@@ -121,7 +120,7 @@ fun DisabledAgentCardBaseVerticalPreview() {
     ValolinkTheme {
         AgentCardBase(
             Modifier.width(100.dp),
-            backgroundGradientColors = listOf(
+            gradient = ShaderGradient(
                 "f17cadff",
                 "062261ff",
                 "c347c7ff",

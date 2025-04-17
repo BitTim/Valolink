@@ -7,7 +7,7 @@
  File:       OnboardingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 03:37
+ Modified:   17.04.25, 14:53
  */
 
 package dev.bittim.valolink.onboarding.ui.screens

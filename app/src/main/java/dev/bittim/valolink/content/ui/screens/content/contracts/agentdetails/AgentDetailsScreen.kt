@@ -7,7 +7,7 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   17.04.25, 14:53
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -69,7 +69,8 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.com
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.ContractResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelUnlockAlertDialog
-import dev.bittim.valolink.content.ui.screens.content.contracts.components.AgentBackdrop
+import dev.bittim.valolink.core.ui.components.ShaderGradientBackdrop
+import dev.bittim.valolink.core.ui.util.color.ShaderGradient
 import dev.bittim.valolink.core.ui.util.getProgressPercent
 import java.util.UUID
 import kotlin.math.ceil
@@ -144,10 +145,9 @@ fun AgentDetailsScreen(
 
         cardBackground = {
             if (agent != null) {
-                AgentBackdrop(
+                ShaderGradientBackdrop(
                     modifier = Modifier.fillMaxSize(),
-                    useGradient = true,
-                    backgroundGradientColors = agent.backgroundGradientColors,
+                    gradient = ShaderGradient.fromList(agent.backgroundGradientColors),
                     backgroundImage = agent.background,
                     isDisabled = isLocked
                 ) {}

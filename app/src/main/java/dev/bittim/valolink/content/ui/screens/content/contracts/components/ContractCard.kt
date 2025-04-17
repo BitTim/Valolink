@@ -7,7 +7,7 @@
  File:       ContractCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   17.04.25, 14:53
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.components
@@ -47,6 +47,7 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.color.ShaderGradient
 import java.util.UUID
 
 @Immutable
@@ -72,7 +73,7 @@ fun ContractCard(
         modifier = modifier.clickable {
             if (data != null) onNavToContractDetails(data.contractUuid)
         },
-        backgroundGradientColors = data?.backgroundGradientColors ?: emptyList(),
+        gradient = ShaderGradient.fromList(data?.backgroundGradientColors ?: emptyList()),
         backgroundImage = data?.backgroundImage
     ) { useGradient ->
         Row(

@@ -7,7 +7,7 @@
  File:       AgentCarouselCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   17.04.25, 14:53
  */
 
 @file:Suppress("SpellCheckingInspection")
@@ -63,6 +63,7 @@ import dev.bittim.valolink.content.ui.components.conditional
 import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.core.ui.theme.Motion
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.color.ShaderGradient
 import java.util.UUID
 
 data object AgentCarouselCard {
@@ -110,7 +111,7 @@ fun AgentCarouselCard(
             .clickable {
                 if (data != null) onNavToAgentDetails(data.contractUuid)
             },
-        backgroundGradientColors = data?.backgroundGradientColors ?: emptyList(),
+        gradient = ShaderGradient.fromList(data?.backgroundGradientColors ?: emptyList()),
         backgroundImage = data?.backgroundImage,
         isDisabled = data?.isLocked != false
     ) {
