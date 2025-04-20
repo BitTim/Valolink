@@ -7,7 +7,7 @@
  File:       AppModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   20.04.25, 04:05
  */
 
 package dev.bittim.valolink.core.di
@@ -257,6 +257,7 @@ object AppModule {
         seasonRepository: SeasonRepository,
         eventRepository: EventRepository,
         agentRepository: AgentRepository,
+        flexRepository: FlexRepository,
         currencyRepository: CurrencyRepository,
         sprayRepository: SprayRepository,
         playerTitleRepository: PlayerTitleRepository,
@@ -271,6 +272,7 @@ object AppModule {
             seasonRepository,
             eventRepository,
             agentRepository,
+            flexRepository,
             currencyRepository,
             sprayRepository,
             playerTitleRepository,

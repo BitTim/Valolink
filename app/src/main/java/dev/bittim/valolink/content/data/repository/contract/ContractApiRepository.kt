@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       ContractApiRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:50
+ Modified:   20.04.25, 04:05
  */
 
 package dev.bittim.valolink.content.data.repository.contract
@@ -27,6 +27,7 @@ import dev.bittim.valolink.content.data.repository.agent.AgentRepository
 import dev.bittim.valolink.content.data.repository.buddy.BuddyRepository
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.data.repository.event.EventRepository
+import dev.bittim.valolink.content.data.repository.flex.FlexRepository
 import dev.bittim.valolink.content.data.repository.playerCard.PlayerCardRepository
 import dev.bittim.valolink.content.data.repository.playerTitle.PlayerTitleRepository
 import dev.bittim.valolink.content.data.repository.season.SeasonRepository
@@ -59,7 +60,7 @@ class ContractApiRepository @Inject constructor(
     private val seasonRepository: SeasonRepository,
     private val eventRepository: EventRepository,
     private val agentRepository: AgentRepository,
-
+    private val flexRepository: FlexRepository,
     private val currencyRepository: CurrencyRepository,
     private val sprayRepository: SprayRepository,
     private val playerTitleRepository: PlayerTitleRepository,
@@ -502,8 +503,8 @@ class ContractApiRepository @Inject constructor(
         }
 
         return when (reward.rewardType) {
-            RewardType.TITLE.internalName -> playerTitleRepository
-                .getByUuid(reward.rewardUuid).map { it?.asRewardRelation(reward.amount) }
+            RewardType.TITLE.internalName -> playerTitleRepository.getByUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount) }
 
             RewardType.PLAYER_CARD.internalName -> playerCardRepository.getByUuid(reward.rewardUuid)
                 .map { it?.asRewardRelation(reward.amount) }
@@ -517,9 +518,11 @@ class ContractApiRepository @Inject constructor(
             RewardType.SPRAY.internalName -> sprayRepository.getByUuid(reward.rewardUuid)
                 .map { it?.asRewardRelation(reward.amount) }
 
-            RewardType.WEAPON_SKIN.internalName -> weaponRepository
-                .getSkinByLevelUuid(reward.rewardUuid)
+            RewardType.WEAPON_SKIN.internalName -> weaponRepository.getSkinByLevelUuid(reward.rewardUuid)
                 .map { it?.asRewardRelation(reward.amount, reward.rewardUuid) }
+
+            RewardType.FLEX.internalName -> flexRepository.getByUuid(reward.rewardUuid)
+                .map { it?.asRewardRelation(reward.amount) }
 
             else -> flow { emit(null) }
         }

@@ -7,7 +7,7 @@
  File:       AgentRewardListCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:25
+ Modified:   20.04.25, 04:05
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -137,7 +137,10 @@ fun AgentRewardListCard(
 
                         val imagePadding = when (it.type) {
                             RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(Spacing.l)
-                            RewardType.PLAYER_CARD, RewardType.SPRAY -> PaddingValues(0.dp)
+                            RewardType.PLAYER_CARD, RewardType.SPRAY, RewardType.AGENT, RewardType.FLEX -> PaddingValues(
+                                0.dp
+                            )
+
                             else -> PaddingValues(Spacing.s)
                         }
 

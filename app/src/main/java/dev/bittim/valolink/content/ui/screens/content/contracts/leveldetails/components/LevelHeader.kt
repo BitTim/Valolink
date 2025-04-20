@@ -7,7 +7,7 @@
  File:       LevelHeader.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   20.04.25, 04:05
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -102,7 +102,7 @@ fun LevelHeader(
                         AsyncImage(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .conditional(it.type != RewardType.PLAYER_CARD && it.type != RewardType.SPRAY) {
+                                .conditional(it.type != RewardType.PLAYER_CARD && it.type != RewardType.SPRAY && it.type != RewardType.FLEX) {
                                     padding(8.dp)
                                 },
                             model = it.displayIcon,
