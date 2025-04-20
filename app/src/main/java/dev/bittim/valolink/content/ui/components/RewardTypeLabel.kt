@@ -7,7 +7,7 @@
  File:       RewardTypeLabel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   20.04.25, 03:25
  */
 
 package dev.bittim.valolink.content.ui.components
@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
 enum class RewardTypeLabelStyle {
     DEFAULT,
@@ -49,8 +48,8 @@ fun RewardTypeLabel(
     rewardType: RewardType?,
     style: RewardTypeLabelStyle,
 ) {
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
+    LocalConfiguration.current
+    LocalDensity.current
 
     val textStyle = when (style) {
         RewardTypeLabelStyle.DEFAULT -> MaterialTheme.typography.titleMedium
@@ -71,7 +70,7 @@ fun RewardTypeLabel(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(getScaledLineHeightFromFontStyle(density, configuration, textStyle))
+                    .height(iconSize)
                     .clip(MaterialTheme.shapes.small)
                     .pulseAnimation()
             )

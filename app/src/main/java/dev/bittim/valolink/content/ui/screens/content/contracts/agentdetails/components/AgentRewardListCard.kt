@@ -7,7 +7,7 @@
  File:       AgentRewardListCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:40
+ Modified:   20.04.25, 03:25
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -74,6 +74,7 @@ import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.content.ui.components.conditional
 import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.LevelBackdrop
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
@@ -135,9 +136,9 @@ fun AgentRewardListCard(
                         }
 
                         val imagePadding = when (it.type) {
-                            RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(16.dp)
+                            RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(Spacing.l)
                             RewardType.PLAYER_CARD, RewardType.SPRAY -> PaddingValues(0.dp)
-                            else -> PaddingValues(8.dp)
+                            else -> PaddingValues(Spacing.s)
                         }
 
                         AsyncImage(
@@ -225,16 +226,16 @@ fun AgentRewardListCard(
                 }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(Spacing.l))
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(
-                        top = 16.dp,
-                        bottom = 16.dp,
-                        end = 16.dp
+                        top = Spacing.l,
+                        bottom = Spacing.l,
+                        end = Spacing.l
                     ),
                 verticalArrangement = Arrangement.Top
             ) {
@@ -297,7 +298,7 @@ fun AgentRewardListCard(
                     }
                 }
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(Spacing.s))
 
                 RewardTypeLabel(
                     modifier = Modifier.fillMaxWidth(),
@@ -317,7 +318,7 @@ fun AgentRewardListCard(
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 IconButton(
-                                    modifier = Modifier.padding(top = 8.dp, end = 8.dp),
+                                    modifier = Modifier.padding(top = Spacing.s, end = Spacing.s),
                                     onClick = { isMenuExpanded = true },
                                 ) {
                                     Icon(
@@ -340,6 +341,8 @@ fun AgentRewardListCard(
                                     )
                                 }
                             }
+                        } else {
+                            Spacer(Modifier.height(56.dp))
                         }
                     }
                 } else {
@@ -347,18 +350,18 @@ fun AgentRewardListCard(
                 }
 
                 Crossfade(
-                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+                    modifier = Modifier.padding(bottom = Spacing.l, end = Spacing.l),
                     targetState = data?.rewardCount,
                     label = "Reward count badge Loading"
                 ) { count ->
                     if (count == null || count < 2) {
-                        Spacer(modifier = Modifier.height(MaterialTheme.typography.titleSmall.lineHeight.value.dp * configuration.fontScale + 16.dp))
+                        Spacer(modifier = Modifier.height(MaterialTheme.typography.titleSmall.lineHeight.value.dp * configuration.fontScale + Spacing.l))
                     } else {
                         Box(
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.secondary)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(horizontal = Spacing.l, vertical = Spacing.s)
                         ) {
                             Text(
                                 text = "+${count - 1}",
