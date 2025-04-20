@@ -7,7 +7,7 @@
  File:       ContractDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   20.04.25, 03:43
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.contractdetails
@@ -132,23 +132,23 @@ fun ContractDetailsScreen(
                             itemContent = { level ->
                                 val reward = level.rewards.find { !it.isFreeReward }?.relation
 
-                                if (reward != null) {
-                                    AgentRewardCard(
-                                        data = AgentRewardCardData(
-                                            name = reward.displayName,
-                                            levelUuid = level.uuid, // TODO: Replace with uuid to agent gear for recruitments
-                                            type = reward.type,
-                                            levelName = level.name,
-                                            contractName = state.contract.displayName,
-                                            rewardCount = level.rewards.count(),
-                                            previewIcon = reward.previewImages.first().first
-                                                ?: "",
-                                            background = reward.background,
-                                            price = level.vpCost,
-                                            amount = reward.amount,
-                                            currencyIcon = state.vp?.displayIcon ?: ""
-                                        ),
-                                        onNavToLevelDetails = { levelUuid ->
+                                AgentRewardCard(
+                                    data = if (reward == null) null else AgentRewardCardData(
+                                        name = reward.displayName,
+                                        levelUuid = level.uuid, // TODO: Replace with uuid to agent gear for recruitments
+                                        type = reward.type,
+                                        levelName = level.name,
+                                        contractName = state.contract.displayName,
+                                        rewardCount = level.rewards.count(),
+                                        previewIcon = reward.previewImages.first().first
+                                            ?: "",
+                                        background = reward.background,
+                                        price = level.vpCost,
+                                        amount = reward.amount,
+                                        currencyIcon = state.vp?.displayIcon ?: ""
+                                    ),
+                                    onNavToLevelDetails = { levelUuid ->
+                                        if (reward != null) {
                                             if (reward.type == RewardType.AGENT) {
                                                 onNavToAgentDetails(reward.uuid)
                                             } else {
@@ -157,9 +157,9 @@ fun ContractDetailsScreen(
                                                     state.contract.uuid
                                                 )
                                             }
-                                        },
-                                    )
-                                }
+                                        }
+                                    },
+                                )
                             }
                         )
                     }

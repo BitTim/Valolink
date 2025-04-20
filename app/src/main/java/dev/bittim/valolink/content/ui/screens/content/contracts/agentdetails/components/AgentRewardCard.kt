@@ -7,7 +7,7 @@
  File:       AgentRewardCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:40
+ Modified:   20.04.25, 03:43
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -75,6 +75,7 @@ import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.content.ui.components.conditional
 import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.LevelBackdrop
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
@@ -141,7 +142,7 @@ fun AgentRewardCard(
                     val imagePadding = when (it.type) {
                         RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
                         RewardType.PLAYER_CARD -> PaddingValues(0.dp)
-                        else -> PaddingValues(16.dp)
+                        else -> PaddingValues(Spacing.l)
                     }
 
                     AsyncImage(
@@ -187,10 +188,13 @@ fun AgentRewardCard(
                                     } else {
                                         Box(
                                             modifier = Modifier
-                                                .padding(12.dp)
+                                                .padding(Spacing.m)
                                                 .clip(CircleShape)
                                                 .background(MaterialTheme.colorScheme.secondary)
-                                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                                .padding(
+                                                    horizontal = Spacing.l,
+                                                    vertical = Spacing.s
+                                                )
                                         ) {
                                             Text(
                                                 text = "+${count - 1}",
@@ -203,7 +207,7 @@ fun AgentRewardCard(
 
                                 Box {
                                     FilledTonalIconButton(
-                                        modifier = Modifier.padding(8.dp),
+                                        modifier = Modifier.padding(Spacing.s),
                                         onClick = { isMenuExpanded = true },
                                     ) {
                                         Icon(
@@ -286,14 +290,14 @@ fun AgentRewardCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.l))
 
         Column(
             modifier = Modifier
                 .padding(
-                    start = 16.dp,
-                    bottom = 16.dp,
-                    end = 16.dp
+                    start = Spacing.l,
+                    bottom = Spacing.l,
+                    end = Spacing.l
                 ),
             verticalArrangement = Arrangement.Top
         ) {
@@ -326,7 +330,7 @@ fun AgentRewardCard(
                 }
             }
 
-            Spacer(Modifier.height(2.dp))
+            Spacer(Modifier.height(Spacing.xxs))
 
             Crossfade(
                 targetState = data,
@@ -356,7 +360,7 @@ fun AgentRewardCard(
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Spacing.s))
 
             RewardTypeLabel(
                 modifier = Modifier.fillMaxWidth(),
@@ -364,7 +368,7 @@ fun AgentRewardCard(
                 style = RewardTypeLabelStyle.SMALL
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(Spacing.s))
 
             Crossfade(
                 targetState = data,
@@ -374,8 +378,8 @@ fun AgentRewardCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(ButtonDefaults.MinHeight * configuration.fontScale)
-                            .padding(1.dp)
+                            .padding(vertical = Spacing.xs)
+                            .height(40.dp)
                             .clip(ButtonDefaults.shape)
                             .pulseAnimation()
                     )
