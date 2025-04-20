@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       PlayerCardApiRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.content.data.repository.playerCard
@@ -68,9 +68,8 @@ class PlayerCardApiRepository @Inject constructor(
         return try {
             // Get from local database
             val local =
-                contentDatabase.playerCardDao.getAll().distinctUntilChanged().map { entities ->
-                    entities.map { it.toType() }
-                }
+                contentDatabase.playerCardDao.getAll().distinctUntilChanged()
+                    .map { entities -> entities.map { it.toType() } }
 
             // Queue worker to fetch newest data from API
             //  -> Worker will check if fetch is needed itself

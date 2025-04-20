@@ -7,7 +7,7 @@
  File:       AppModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 18:15
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.core.di
@@ -34,10 +34,14 @@ import dev.bittim.valolink.content.data.repository.currency.CurrencyApiRepositor
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.data.repository.event.EventApiRepository
 import dev.bittim.valolink.content.data.repository.event.EventRepository
+import dev.bittim.valolink.content.data.repository.flex.FlexApiRepository
+import dev.bittim.valolink.content.data.repository.flex.FlexRepository
 import dev.bittim.valolink.content.data.repository.playerCard.PlayerCardApiRepository
 import dev.bittim.valolink.content.data.repository.playerCard.PlayerCardRepository
 import dev.bittim.valolink.content.data.repository.playerTitle.PlayerTitleApiRepository
 import dev.bittim.valolink.content.data.repository.playerTitle.PlayerTitleRepository
+import dev.bittim.valolink.content.data.repository.rank.RankApiRepository
+import dev.bittim.valolink.content.data.repository.rank.RankRepository
 import dev.bittim.valolink.content.data.repository.season.SeasonApiRepository
 import dev.bittim.valolink.content.data.repository.season.SeasonRepository
 import dev.bittim.valolink.content.data.repository.spray.SprayApiRepository
@@ -348,6 +352,31 @@ object AppModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun providesFlexRepository(
+        contentDatabase: ContentDatabase,
+        contentApi: ContentApi,
+        workManager: WorkManager,
+    ): FlexRepository {
+        return FlexApiRepository(
+            contentDatabase, contentApi, workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesRankRepository(
+        contentDatabase: ContentDatabase,
+        contentApi: ContentApi,
+        workManager: WorkManager,
+    ): RankRepository {
+        return RankApiRepository(
+            contentDatabase, contentApi, workManager
+        )
+    }
+
+
     // --------------------------------
     //  Use Cases
     // --------------------------------
@@ -366,8 +395,10 @@ object AppModule {
         contractRepository: ContractRepository,
         currencyRepository: CurrencyRepository,
         eventRepository: EventRepository,
+        flexRepository: FlexRepository,
         playerCardRepository: PlayerCardRepository,
         playerTitleRepository: PlayerTitleRepository,
+        rankRepository: RankRepository,
         seasonRepository: SeasonRepository,
         sprayRepository: SprayRepository,
         weaponRepository: WeaponRepository,
@@ -378,8 +409,10 @@ object AppModule {
             contractRepository,
             currencyRepository,
             eventRepository,
+            flexRepository,
             playerCardRepository,
             playerTitleRepository,
+            rankRepository,
             seasonRepository,
             sprayRepository,
             weaponRepository

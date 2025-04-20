@@ -7,7 +7,7 @@
  File:       UserDataEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -18,6 +18,7 @@ import androidx.room.PrimaryKey
 import dev.bittim.valolink.user.domain.model.UserAgent
 import dev.bittim.valolink.user.domain.model.UserContract
 import dev.bittim.valolink.user.domain.model.UserData
+import dev.bittim.valolink.user.domain.model.UserRank
 import java.time.OffsetDateTime
 
 @Entity(
@@ -46,9 +47,17 @@ data class UserDataEntity(
     fun toType(
         agents: List<UserAgent>,
         contracts: List<UserContract>,
+        rank: UserRank?
     ): UserData {
         return UserData(
-            uuid, isPrivate, username, onboardingStep, avatar, agents, contracts
+            uuid,
+            isPrivate,
+            username,
+            onboardingStep,
+            avatar,
+            agents,
+            contracts,
+            rank
         )
     }
 

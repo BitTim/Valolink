@@ -7,7 +7,7 @@
  File:       LabeledSlider.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 03:37
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -56,7 +56,7 @@ fun LabeledSlider(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.m)
         ) {
             if (showLimitLabels) {
                 Text(
@@ -69,7 +69,7 @@ fun LabeledSlider(
                 modifier = Modifier.weight(1f),
                 value = value,
                 valueRange = valueRange,
-                steps = if (!isStepped) 0 else valueRange.endInclusive.roundToInt() - valueRange.start.roundToInt() - 1,
+                steps = if (!isStepped) 0 else valueRange.endInclusive.toInt() - valueRange.start.toInt() - 1,
                 onValueChange = {
                     value = it
                     onValueChange(it)

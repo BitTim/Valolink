@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       RewardType.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.content.domain.model.contract.reward
@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Loyalty
 import androidx.compose.material.icons.filled.MilitaryTech
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Toys
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class RewardType(
@@ -33,5 +34,6 @@ enum class RewardType(
     TITLE("Title", "Title", Icons.Filled.MilitaryTech),
     SPRAY("Spray", "Spray", Icons.Filled.FormatPaint),
     WEAPON_SKIN("Weapon Skin", "EquippableSkinLevel", Icons.Filled.Palette),
-    AGENT("Agent", "Agent", Icons.Filled.EmojiPeople)
+    AGENT("Agent", "Agent", Icons.Filled.EmojiPeople),
+    FLEX("Flex", "Totem", Icons.Filled.Toys)
 }

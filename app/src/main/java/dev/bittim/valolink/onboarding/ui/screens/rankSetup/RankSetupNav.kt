@@ -7,7 +7,7 @@
  File:       RankSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 03:37
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -31,7 +31,8 @@ fun NavGraphBuilder.rankSetupScreen(
 
         RankSetupScreen(
             state = state.value,
-            navBack = navBack
+            signOut = viewModel::signOut,
+            setRank = viewModel::setRank
         )
     }
 }

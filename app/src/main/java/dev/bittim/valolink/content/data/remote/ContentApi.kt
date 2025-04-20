@@ -1,19 +1,20 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       ContentApi.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.content.data.remote
 
 import dev.bittim.valolink.content.data.remote.dto.CurrencyDto
 import dev.bittim.valolink.content.data.remote.dto.EventDto
+import dev.bittim.valolink.content.data.remote.dto.FlexDto
 import dev.bittim.valolink.content.data.remote.dto.PlayerCardDto
 import dev.bittim.valolink.content.data.remote.dto.PlayerTitleDto
 import dev.bittim.valolink.content.data.remote.dto.SeasonDto
@@ -22,122 +23,141 @@ import dev.bittim.valolink.content.data.remote.dto.VersionDto
 import dev.bittim.valolink.content.data.remote.dto.agents.AgentDto
 import dev.bittim.valolink.content.data.remote.dto.buddy.BuddyDto
 import dev.bittim.valolink.content.data.remote.dto.contract.ContractDto
+import dev.bittim.valolink.content.data.remote.dto.rank.RankTableDto
 import dev.bittim.valolink.content.data.remote.dto.weapon.WeaponDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ContentApi {
-	// --------------------------------
-	//  Version
-	// --------------------------------
+    companion object {
+        const val BASE_URL = "https://valorant-api.com/v1/"
+    }
 
-	@GET("version")
-	suspend fun getVersion(): Response<ContentApiResponse<VersionDto>>
+    // --------------------------------
+    //  Version
+    // --------------------------------
 
-	// --------------------------------
-	//  Seasons
-	// --------------------------------
+    @GET("version")
+    suspend fun getVersion(): Response<ContentApiResponse<VersionDto>>
 
-	@GET("seasons/{uuid}")
-	suspend fun getSeason(@Path("uuid") uuid: String): Response<ContentApiResponse<SeasonDto>>
+    // --------------------------------
+    //  Seasons
+    // --------------------------------
 
-	@GET("seasons")
-	suspend fun getAllSeasons(): Response<ContentApiResponse<List<SeasonDto>>>
+    @GET("seasons/{uuid}")
+    suspend fun getSeason(@Path("uuid") uuid: String): Response<ContentApiResponse<SeasonDto>>
 
-	// --------------------------------
-	//  Events
-	// --------------------------------
+    @GET("seasons")
+    suspend fun getAllSeasons(): Response<ContentApiResponse<List<SeasonDto>>>
 
-	@GET("events/{uuid}")
-	suspend fun getEvent(@Path("uuid") uuid: String): Response<ContentApiResponse<EventDto>>
+    // --------------------------------
+    //  Events
+    // --------------------------------
 
-	@GET("events")
-	suspend fun getAllEvents(): Response<ContentApiResponse<List<EventDto>>>
+    @GET("events/{uuid}")
+    suspend fun getEvent(@Path("uuid") uuid: String): Response<ContentApiResponse<EventDto>>
 
-	// --------------------------------
-	//  Contracts
-	// --------------------------------
+    @GET("events")
+    suspend fun getAllEvents(): Response<ContentApiResponse<List<EventDto>>>
 
-	@GET("contract/{uuid}")
-	suspend fun getContract(@Path("uuid") uuid: String): Response<ContentApiResponse<ContractDto>>
+    // --------------------------------
+    //  Contracts
+    // --------------------------------
 
-	@GET("contracts")
-	suspend fun getAllContracts(): Response<ContentApiResponse<List<ContractDto>>>
+    @GET("contract/{uuid}")
+    suspend fun getContract(@Path("uuid") uuid: String): Response<ContentApiResponse<ContractDto>>
 
-	// --------------------------------
-	//  Agents
-	// --------------------------------
+    @GET("contracts")
+    suspend fun getAllContracts(): Response<ContentApiResponse<List<ContractDto>>>
 
-	@GET("agents/{uuid}")
-	suspend fun getAgent(@Path("uuid") uuid: String): Response<ContentApiResponse<AgentDto>>
+    // --------------------------------
+    //  Agents
+    // --------------------------------
 
-	@GET("agents?isPlayableCharacter=true")
-	suspend fun getAllAgents(): Response<ContentApiResponse<List<AgentDto>>>
+    @GET("agents/{uuid}")
+    suspend fun getAgent(@Path("uuid") uuid: String): Response<ContentApiResponse<AgentDto>>
 
-	// --------------------------------
-	//  Currencies
-	// --------------------------------
+    @GET("agents?isPlayableCharacter=true")
+    suspend fun getAllAgents(): Response<ContentApiResponse<List<AgentDto>>>
 
-	@GET("currencies/{uuid}")
-	suspend fun getCurrency(@Path("uuid") uuid: String): Response<ContentApiResponse<CurrencyDto>>
+    // --------------------------------
+    //  Currencies
+    // --------------------------------
 
-	@GET("currencies")
-	suspend fun getAllCurrencies(): Response<ContentApiResponse<List<CurrencyDto>>>
+    @GET("currencies/{uuid}")
+    suspend fun getCurrency(@Path("uuid") uuid: String): Response<ContentApiResponse<CurrencyDto>>
 
-	// --------------------------------
-	//  Sprays
-	// --------------------------------
+    @GET("currencies")
+    suspend fun getAllCurrencies(): Response<ContentApiResponse<List<CurrencyDto>>>
 
-	@GET("sprays/{uuid}")
-	suspend fun getSpray(@Path("uuid") uuid: String): Response<ContentApiResponse<SprayDto>>
+    // --------------------------------
+    //  Sprays
+    // --------------------------------
 
-	@GET("sprays")
-	suspend fun getAllSprays(): Response<ContentApiResponse<List<SprayDto>>>
+    @GET("sprays/{uuid}")
+    suspend fun getSpray(@Path("uuid") uuid: String): Response<ContentApiResponse<SprayDto>>
 
-	// --------------------------------
-	//  Weapons
-	// --------------------------------
+    @GET("sprays")
+    suspend fun getAllSprays(): Response<ContentApiResponse<List<SprayDto>>>
 
-	@GET("weapons")
-	suspend fun getAllWeapons(): Response<ContentApiResponse<List<WeaponDto>>>
+    // --------------------------------
+    //  Weapons
+    // --------------------------------
 
-	@GET("weapons/{uuid}")
-	suspend fun getWeapon(@Path("uuid") uuid: String): Response<ContentApiResponse<WeaponDto>>
+    @GET("weapons")
+    suspend fun getAllWeapons(): Response<ContentApiResponse<List<WeaponDto>>>
 
-	// --------------------------------
-	//  Player Cards
-	// --------------------------------
+    @GET("weapons/{uuid}")
+    suspend fun getWeapon(@Path("uuid") uuid: String): Response<ContentApiResponse<WeaponDto>>
 
-	@GET("playercards/{uuid}")
-	suspend fun getPlayerCard(@Path("uuid") uuid: String): Response<ContentApiResponse<PlayerCardDto>>
+    // --------------------------------
+    //  Player Cards
+    // --------------------------------
 
-	@GET("playercards")
-	suspend fun getAllPlayerCards(): Response<ContentApiResponse<List<PlayerCardDto>>>
+    @GET("playercards/{uuid}")
+    suspend fun getPlayerCard(@Path("uuid") uuid: String): Response<ContentApiResponse<PlayerCardDto>>
 
-	// --------------------------------
-	//  Buddies
-	// --------------------------------
+    @GET("playercards")
+    suspend fun getAllPlayerCards(): Response<ContentApiResponse<List<PlayerCardDto>>>
 
-	@GET("buddies")
-	suspend fun getAllBuddies(): Response<ContentApiResponse<List<BuddyDto>>>
+    // --------------------------------
+    //  Buddies
+    // --------------------------------
 
-	@GET("buddies/{uuid}")
-	suspend fun getBuddy(@Path("uuid") uuid: String): Response<ContentApiResponse<BuddyDto>>
+    @GET("buddies")
+    suspend fun getAllBuddies(): Response<ContentApiResponse<List<BuddyDto>>>
 
-	// --------------------------------
-	//  Player Titles
-	// --------------------------------
+    @GET("buddies/{uuid}")
+    suspend fun getBuddy(@Path("uuid") uuid: String): Response<ContentApiResponse<BuddyDto>>
 
-	@GET("playertitles/{uuid}")
-	suspend fun getPlayerTitle(@Path("uuid") uuid: String): Response<ContentApiResponse<PlayerTitleDto>>
+    // --------------------------------
+    //  Player Titles
+    // --------------------------------
 
-	@GET("playertitles")
-	suspend fun getAllPlayerTitles(): Response<ContentApiResponse<List<PlayerTitleDto>>>
+    @GET("playertitles/{uuid}")
+    suspend fun getPlayerTitle(@Path("uuid") uuid: String): Response<ContentApiResponse<PlayerTitleDto>>
 
+    @GET("playertitles")
+    suspend fun getAllPlayerTitles(): Response<ContentApiResponse<List<PlayerTitleDto>>>
 
+    // --------------------------------
+    //  Flexes
+    // --------------------------------
 
-	companion object {
-		const val BASE_URL = "https://valorant-api.com/v1/"
-	}
+    @GET("flex/{uuid}")
+    suspend fun getFlex(@Path("uuid") uuid: String): Response<ContentApiResponse<FlexDto>>
+
+    @GET("flex")
+    suspend fun getAllFlexes(): Response<ContentApiResponse<List<FlexDto>>>
+
+    // --------------------------------
+    //  Ranks
+    // --------------------------------
+
+    @GET("competitivetiers/{uuid}")
+    suspend fun getRankTable(@Path("uuid") uuid: String): Response<ContentApiResponse<RankTableDto>>
+
+    @GET("competitivetiers")
+    suspend fun getAllRankTables(): Response<ContentApiResponse<List<RankTableDto>>>
 }

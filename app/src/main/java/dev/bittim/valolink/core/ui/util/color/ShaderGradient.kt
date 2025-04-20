@@ -7,7 +7,7 @@
  File:       ShaderGradient.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 14:53
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.core.ui.util.color
@@ -28,7 +28,7 @@ val GRADIENT_SHADER = """
 
     half4 main(in float2 fragCoord) {
         float2 uv = fragCoord/resolution.xy;
-        return mix(mix(mix(colorTopLeft, colorBottomLeft, uv.y),  mix(colorTopRight, colorBottomRight, uv.y), uv.x), half4(0, 0, 0, 1), 0.15);
+        return mix(mix(mix(colorTopLeft, colorBottomLeft, uv.y),  mix(colorTopRight, colorBottomRight, uv.y), uv.x), half4(0, 0, 0, 1), 0.3);
     }
 """.trimIndent()
 

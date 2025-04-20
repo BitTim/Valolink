@@ -7,7 +7,7 @@
  File:       SessionSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:11
+ Modified:   20.04.25, 02:55
  */
 
 package dev.bittim.valolink.user.data.repository
@@ -56,6 +56,7 @@ class SessionSupabaseRepository @Inject constructor(
         userDatabase.userAgentDao.deleteAll()
         userDatabase.userContractDao.deleteAll()
         userDatabase.userLevelDao.deleteAll()
+        userDatabase.userRankDao.deleteAll()
 
         // Delete local avatar if present
         val localAvatarPath =

@@ -7,7 +7,7 @@
  File:       UserDataRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -41,6 +41,6 @@ interface UserDataRepository : UserRepository<UserData, UserDataDto> {
     suspend fun deleteWithCurrentUser(userData: UserData): Boolean
     suspend fun delete(uid: String, userData: UserData): Boolean
 
-    suspend fun setAvatarWithCurrentUser(avatar: ByteArray): Boolean
-    suspend fun setAvatar(uid: String, avatar: ByteArray): Boolean
+    suspend fun uploadAvatarWithCurrentUser(avatar: ByteArray): String?
+    suspend fun uploadAvatar(uid: String, avatar: ByteArray): String?
 }

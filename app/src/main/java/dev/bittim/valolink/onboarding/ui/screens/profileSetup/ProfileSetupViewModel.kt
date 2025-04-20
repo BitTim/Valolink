@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 03:37
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -166,14 +166,16 @@ class ProfileSetupViewModel @Inject constructor(
             val userData = userDataRepository.getWithCurrentUser().firstOrNull()
             if (userData == null) return@launch
 
+            val avatarLocation =
+                userDataRepository.uploadAvatarWithCurrentUser(avatarOutputStream.toByteArray())
             userDataRepository.setWithCurrentUser(
                 userData.copy(
                     username = username,
                     isPrivate = private,
-                    onboardingStep = OnboardingScreen.ProfileSetup.step - OnboardingScreen.STEP_OFFSET + 1
+                    onboardingStep = OnboardingScreen.ProfileSetup.step - OnboardingScreen.STEP_OFFSET + 1,
+                    avatar = avatarLocation
                 )
             )
-            userDataRepository.setAvatarWithCurrentUser(avatarOutputStream.toByteArray())
         }
     }
 }

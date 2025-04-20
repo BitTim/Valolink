@@ -7,7 +7,7 @@
  File:       UserDatabase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.user.data.local
@@ -18,16 +18,18 @@ import dev.bittim.valolink.user.data.local.dao.UserAgentDao
 import dev.bittim.valolink.user.data.local.dao.UserContractDao
 import dev.bittim.valolink.user.data.local.dao.UserDataDao
 import dev.bittim.valolink.user.data.local.dao.UserLevelDao
+import dev.bittim.valolink.user.data.local.dao.UserRankDao
 import dev.bittim.valolink.user.data.local.entity.SyncedEntity
 import dev.bittim.valolink.user.data.local.entity.UserAgentEntity
 import dev.bittim.valolink.user.data.local.entity.UserContractEntity
 import dev.bittim.valolink.user.data.local.entity.UserDataEntity
 import dev.bittim.valolink.user.data.local.entity.UserLevelEntity
+import dev.bittim.valolink.user.data.local.entity.UserRankEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 @Database(
-    entities = [UserDataEntity::class, UserAgentEntity::class, UserContractEntity::class, UserLevelEntity::class],
+    entities = [UserDataEntity::class, UserAgentEntity::class, UserContractEntity::class, UserLevelEntity::class, UserRankEntity::class],
     version = 1
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -39,6 +41,7 @@ abstract class UserDatabase : RoomDatabase() {
     abstract val userAgentDao: UserAgentDao
     abstract val userContractDao: UserContractDao
     abstract val userLevelDao: UserLevelDao
+    abstract val userRankDao: UserRankDao
 
     fun getByRelation(type: String?, relation: String): Flow<List<SyncedEntity>> {
         return when (type) {
@@ -46,6 +49,7 @@ abstract class UserDatabase : RoomDatabase() {
             "UserAgent" -> userAgentDao.getByUser(relation)
             "UserContract" -> userContractDao.getByUser(relation)
             "UserLevel" -> userLevelDao.getByContract(relation)
+            "UserRank" -> userRankDao.getByUser(relation).map { listOfNotNull(it) }
 
             else -> throw IllegalArgumentException("Unknown type: $type")
         }
@@ -57,6 +61,7 @@ abstract class UserDatabase : RoomDatabase() {
             "UserAgent" -> userAgentDao.getSyncQueue()
             "UserContract" -> userContractDao.getSyncQueue()
             "UserLevel" -> userLevelDao.getSyncQueue()
+            "UserRank" -> userRankDao.getSyncQueue()
 
             else -> throw IllegalArgumentException("Unknown type: $type")
         }
@@ -68,6 +73,7 @@ abstract class UserDatabase : RoomDatabase() {
             "UserAgent" -> userAgentDao.upsert(entity as UserAgentEntity)
             "UserContract" -> userContractDao.upsert(entity as UserContractEntity)
             "UserLevel" -> userLevelDao.upsert(entity as UserLevelEntity)
+            "UserRank" -> userRankDao.upsert(entity as UserRankEntity)
 
             else -> throw IllegalArgumentException("Unknown type: $type")
         }
@@ -79,6 +85,7 @@ abstract class UserDatabase : RoomDatabase() {
             "UserAgent" -> userAgentDao.deleteByUuid(uuid)
             "UserContract" -> userContractDao.deleteByUuid(uuid)
             "UserLevel" -> userLevelDao.deleteByUuid(uuid)
+            "UserRank" -> userRankDao.deleteByUuid(uuid)
 
             else -> throw IllegalArgumentException("Unknown type: $type")
         }

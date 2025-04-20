@@ -7,7 +7,7 @@
  File:       UserDataSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 03:37
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -47,6 +47,7 @@ class UserDataSupabaseRepository @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
+    private val userRankRepository: UserRankRepository,
     private val userDatabase: UserDatabase,
     private val database: Postgrest,
     private val storage: Storage,
@@ -75,11 +76,12 @@ class UserDataSupabaseRepository @Inject constructor(
             val userFlow = userDatabase.userDataDao.getByUuid(uid).distinctUntilChanged()
             val agentsFlow = userAgentRepository.getAll(uid)
             val contractsFlow = userContractRepository.getAll(uid)
+            val rankFlow = userRankRepository.get(uid)
 
             val combinedFlow = combine(
-                userFlow, agentsFlow, contractsFlow
-            ) { user, agents, contracts ->
-                user?.toType(agents, contracts)
+                userFlow, agentsFlow, contractsFlow, rankFlow
+            ) { user, agents, contracts, rank ->
+                user?.toType(agents, contracts, rank)
             }
 
             // Queue worker to sync with Supabase
@@ -119,15 +121,7 @@ class UserDataSupabaseRepository @Inject constructor(
 
     override suspend fun createEmptyForCurrentUser(): Boolean {
         val uid = sessionRepository.getUid().firstOrNull() ?: return false
-        val data = UserData(
-            uuid = uid,
-            isPrivate = true,
-            username = "",
-            onboardingStep = 0,
-            avatar = null,
-            agents = emptyList(),
-            contracts = emptyList()
-        )
+        val data = UserData.empty(uid)
 
         return set(uid, data)
     }
@@ -149,6 +143,7 @@ class UserDataSupabaseRepository @Inject constructor(
             )
             userData.agents.forEach { userAgentRepository.set(it, toDelete) }
             userData.contracts.forEach { userContractRepository.set(it, toDelete) }
+            if (userData.rank != null) userRankRepository.set(userData.rank, toDelete)
 
             // Queue worker to sync with Supabase
             queueWorker(uid)
@@ -180,14 +175,13 @@ class UserDataSupabaseRepository @Inject constructor(
         return set(uid, userData, true)
     }
 
-    override suspend fun setAvatarWithCurrentUser(avatar: ByteArray): Boolean {
-        val uid = sessionRepository.getUid().firstOrNull() ?: return false
-        return setAvatar(uid, avatar)
+    override suspend fun uploadAvatarWithCurrentUser(avatar: ByteArray): String? {
+        val uid = sessionRepository.getUid().firstOrNull() ?: return null
+        return uploadAvatar(uid, avatar)
     }
 
-    override suspend fun setAvatar(uid: String, avatar: ByteArray): Boolean {
-        val userData = get(uid).firstOrNull() ?: return false
-        val isLocal = sessionRepository.isLocal().firstOrNull() ?: return false
+    override suspend fun uploadAvatar(uid: String, avatar: ByteArray): String? {
+        val isLocal = sessionRepository.isLocal().firstOrNull() ?: return null
 
         val location = if (isLocal) {
             val filename = context.filesDir.resolve(File(SessionRepository.LOCAL_AVATAR_FILENAME))
@@ -202,7 +196,7 @@ class UserDataSupabaseRepository @Inject constructor(
             filename
         }
 
-        return set(uid, userData.copy(avatar = location))
+        return location
     }
 
     // ================================

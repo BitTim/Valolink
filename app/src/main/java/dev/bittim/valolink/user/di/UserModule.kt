@@ -7,7 +7,7 @@
  File:       UserModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.user.di
@@ -33,6 +33,8 @@ import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.data.repository.data.UserDataSupabaseRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelSupabaseRepository
+import dev.bittim.valolink.user.data.repository.data.UserRankRepository
+import dev.bittim.valolink.user.data.repository.data.UserRankSupabaseRepository
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
@@ -59,6 +61,18 @@ object UserModule {
     ): SessionRepository {
         return SessionSupabaseRepository(
             context, auth, userFlags, userDatabase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRankRepository(
+        userDatabase: UserDatabase,
+        database: Postgrest,
+        workManager: WorkManager,
+    ): UserRankRepository {
+        return UserRankSupabaseRepository(
+            userDatabase, database, workManager
         )
     }
 
@@ -109,6 +123,7 @@ object UserModule {
         sessionRepository: SessionRepository,
         userAgentRepository: UserAgentRepository,
         userContractRepository: UserContractRepository,
+        userRankRepository: UserRankRepository,
         userDatabase: UserDatabase,
         database: Postgrest,
         storage: Storage,
@@ -119,6 +134,7 @@ object UserModule {
             sessionRepository,
             userAgentRepository,
             userContractRepository,
+            userRankRepository,
             userDatabase,
             database,
             storage,

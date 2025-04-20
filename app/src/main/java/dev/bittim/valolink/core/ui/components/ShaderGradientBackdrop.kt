@@ -7,7 +7,7 @@
  File:       ShaderGradientBackdrop.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 14:53
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -43,7 +43,7 @@ fun ShaderGradientBackdrop(
     modifier: Modifier = Modifier,
     isDisabled: Boolean,
     gradient: ShaderGradient?,
-    backgroundImage: String?,
+    backgroundImage: String? = null,
     content: @Composable (Boolean) -> Unit,
 ) {
     Box(
@@ -53,20 +53,18 @@ fun ShaderGradientBackdrop(
                 drawShaderGradient(gradient!!, isDisabled)
             }
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (backgroundImage != null) {
-                AsyncImage(
-                    modifier = Modifier
-                        .alpha(0.15f)
-                        .fillMaxSize()
-                        .blur(4.dp),
-                    model = backgroundImage,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.Center,
-                    placeholder = coilDebugPlaceholder(R.drawable.debug_agent_background_image)
-                )
-            }
+        if (backgroundImage != null) {
+            AsyncImage(
+                modifier = Modifier
+                    .alpha(0.15f)
+                    .fillMaxSize()
+                    .blur(4.dp),
+                model = backgroundImage,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center,
+                placeholder = coilDebugPlaceholder(R.drawable.debug_agent_background_image)
+            )
         }
 
         content(gradient != null)

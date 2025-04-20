@@ -7,7 +7,7 @@
  File:       ProgressCluster.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.content.ui.components
@@ -29,13 +29,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.getProgressPercent
 
@@ -60,10 +60,7 @@ fun ProgressCluster(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(
-            8.dp,
-            Alignment.Bottom
-        )
+        verticalArrangement = Arrangement.spacedBy(Spacing.s)
     ) {
         LinearProgressIndicator(
             modifier = Modifier.fillMaxWidth(),

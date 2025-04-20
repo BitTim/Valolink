@@ -7,7 +7,7 @@
  File:       UserSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.user.data.worker
@@ -25,6 +25,7 @@ import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
 import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
+import dev.bittim.valolink.user.data.repository.data.UserRankRepository
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.OffsetDateTime
 import kotlin.coroutines.cancellation.CancellationException
@@ -38,6 +39,7 @@ class UserSyncWorker @AssistedInject constructor(
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
     private val userLevelRepository: UserLevelRepository,
+    private val userRankRepository: UserRankRepository,
     private val sessionRepository: SessionRepository,
 ) : CoroutineWorker(
     context, params
@@ -59,6 +61,7 @@ class UserSyncWorker @AssistedInject constructor(
             "UserAgent" -> userAgentRepository
             "UserContract" -> userContractRepository
             "UserLevel" -> userLevelRepository
+            "UserRank" -> userRankRepository
             else -> return Result.failure()
         }
 

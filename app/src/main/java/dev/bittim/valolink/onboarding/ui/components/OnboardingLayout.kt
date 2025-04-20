@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       OnboardingLayout.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   18.12.24, 02:25
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.onboarding.ui.components

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f42e307107883cf559a54264e5e84ce3",
+    "identityHash": "d2d6b4f95ef64b40d24671a3e9f4cef6",
     "entities": [
       {
         "tableName": "Version",
@@ -79,8 +79,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Version_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "Seasons",
@@ -107,8 +106,7 @@
           {
             "fieldPath": "type",
             "columnName": "type",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "startTime",
@@ -125,8 +123,7 @@
           {
             "fieldPath": "parentUuid",
             "columnName": "parentUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -145,8 +142,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Seasons_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "Events",
@@ -211,8 +207,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Events_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "Contracts",
@@ -239,8 +234,7 @@
           {
             "fieldPath": "displayIcon",
             "columnName": "displayIcon",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "shipIt",
@@ -289,8 +283,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Contracts_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "ContractContents",
@@ -317,20 +310,17 @@
           {
             "fieldPath": "relationType",
             "columnName": "relationType",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "relationUuid",
             "columnName": "relationUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "premiumRewardScheduleUuid",
             "columnName": "premiumRewardScheduleUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "premiumVPCost",
@@ -473,8 +463,7 @@
           {
             "fieldPath": "dependency",
             "columnName": "dependency",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "xp",
@@ -767,8 +756,7 @@
           {
             "fieldPath": "recruitment",
             "columnName": "recruitment",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -894,8 +882,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_AgentRecruitments_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "AgentRoles",
@@ -954,8 +941,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_AgentRoles_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "AgentAbilities",
@@ -1000,8 +986,7 @@
           {
             "fieldPath": "displayIcon",
             "columnName": "displayIcon",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -1101,8 +1086,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Currencies_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "Sprays",
@@ -1129,8 +1113,7 @@
           {
             "fieldPath": "themeUuid",
             "columnName": "themeUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "hideIfNotOwned",
@@ -1147,26 +1130,22 @@
           {
             "fieldPath": "fullIcon",
             "columnName": "fullIcon",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "fullTransparentIcon",
             "columnName": "fullTransparentIcon",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "animationPng",
             "columnName": "animationPng",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "animationGif",
             "columnName": "animationGif",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -1185,8 +1164,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Sprays_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "PlayerTitles",
@@ -1207,14 +1185,12 @@
           {
             "fieldPath": "displayName",
             "columnName": "displayName",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "titleText",
             "columnName": "titleText",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "isHiddenIfNotOwned",
@@ -1239,8 +1215,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PlayerTitles_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "PlayerCards",
@@ -1273,8 +1248,7 @@
           {
             "fieldPath": "themeUuid",
             "columnName": "themeUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "displayIcon",
@@ -1297,8 +1271,7 @@
           {
             "fieldPath": "largeArt",
             "columnName": "largeArt",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -1317,8 +1290,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PlayerCards_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "Buddies",
@@ -1351,8 +1323,7 @@
           {
             "fieldPath": "themeUuid",
             "columnName": "themeUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "displayIcon",
@@ -1383,8 +1354,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Buddies_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "BuddyLevels",
@@ -1530,8 +1500,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Weapons_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "WeaponStats",
@@ -1606,20 +1575,17 @@
           {
             "fieldPath": "feature",
             "columnName": "feature",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "fireMode",
             "columnName": "fireMode",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "altFireType",
             "columnName": "altFireType",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -2053,8 +2019,7 @@
           {
             "fieldPath": "image",
             "columnName": "image",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "newImage",
@@ -2065,8 +2030,7 @@
           {
             "fieldPath": "newImage2",
             "columnName": "newImage2",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -2221,20 +2185,17 @@
           {
             "fieldPath": "contentTierUuid",
             "columnName": "contentTierUuid",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "displayIcon",
             "columnName": "displayIcon",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "wallpaper",
             "columnName": "wallpaper",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -2314,8 +2275,7 @@
           {
             "fieldPath": "displayIcon",
             "columnName": "displayIcon",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "fullRender",
@@ -2326,14 +2286,12 @@
           {
             "fieldPath": "swatch",
             "columnName": "swatch",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "streamedVideo",
             "columnName": "streamedVideo",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -2413,20 +2371,17 @@
           {
             "fieldPath": "levelItem",
             "columnName": "levelItem",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "displayIcon",
             "columnName": "displayIcon",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "streamedVideo",
             "columnName": "streamedVideo",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -2468,12 +2423,198 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "Flexes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Flexes_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Flexes_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "Ranks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `rankTable` TEXT NOT NULL, `tier` INTEGER NOT NULL, `name` TEXT NOT NULL, `divisionName` TEXT NOT NULL, `color` TEXT NOT NULL, `backgroundColor` TEXT NOT NULL, `icon` TEXT, `triangleDownIcon` TEXT, `triangleUpIcon` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`rankTable`) REFERENCES `RankTables`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rankTable",
+            "columnName": "rankTable",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tier",
+            "columnName": "tier",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "divisionName",
+            "columnName": "divisionName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "backgroundColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "triangleDownIcon",
+            "columnName": "triangleDownIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "triangleUpIcon",
+            "columnName": "triangleUpIcon",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Ranks_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Ranks_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "RankTables",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "rankTable"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "RankTables",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `iteration` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iteration",
+            "columnName": "iteration",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_RankTables_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_RankTables_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ]
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f42e307107883cf559a54264e5e84ce3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd2d6b4f95ef64b40d24671a3e9f4cef6')"
     ]
   }
 }

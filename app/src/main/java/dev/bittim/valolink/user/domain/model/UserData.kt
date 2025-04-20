@@ -7,7 +7,7 @@
  File:       UserData.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   20.04.25, 03:29
  */
 
 package dev.bittim.valolink.user.domain.model
@@ -20,4 +20,20 @@ data class UserData(
     val avatar: String?,
     val agents: List<UserAgent>,
     val contracts: List<UserContract>,
-)
+    val rank: UserRank?,
+) {
+    companion object {
+        fun empty(uid: String): UserData {
+            return UserData(
+                uuid = uid,
+                isPrivate = true,
+                username = "",
+                onboardingStep = 0,
+                avatar = null,
+                agents = emptyList(),
+                contracts = emptyList(),
+                rank = null,
+            )
+        }
+    }
+}
