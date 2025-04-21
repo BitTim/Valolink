@@ -7,7 +7,7 @@
  File:       ContractCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 14:53
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.components
@@ -45,9 +45,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import java.util.UUID
 
 @Immutable

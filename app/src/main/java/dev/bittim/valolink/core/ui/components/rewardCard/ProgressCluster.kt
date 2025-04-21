@@ -7,10 +7,10 @@
  File:       ProgressCluster.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   21.04.25, 17:15
  */
 
-package dev.bittim.valolink.content.ui.components
+package dev.bittim.valolink.core.ui.components.rewardCard
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
@@ -29,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -60,7 +61,7 @@ fun ProgressCluster(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Spacing.s)
+        verticalArrangement = Arrangement.spacedBy(Spacing.s, Alignment.CenterVertically)
     ) {
         LinearProgressIndicator(
             modifier = Modifier.fillMaxWidth(),

@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   20.04.25, 03:29
+  Modified:   21.04.25, 16:22
   -->
 
 <resources>
@@ -69,8 +69,11 @@
     <string name="onboarding_rankSetup_slider_currentRR_label">Current RR</string>
     <string name="onboarding_rankSetup_title">Set up your rank</string>
     <string name="onboarding_rankSetup_description">Select your current rank and RR to have a starting point for rank tracking with your competitive journey in Valolink</string>
-    <string name="label_rr">RR</string>
+    <string name="unit_rr">RR</string>
     <string name="onboarding_rankSetup_slider_matchesPlayed_label">Matches played</string>
     <string name="onboarding_rankSetup_slider_matchesNeeded_label">Matches required</string>
-    <string name="label_matches">Matches</string>
+    <string name="unit_match_plural">Matches</string>
+    <string name="onboarding_contractSetup_title">Your starting point</string>
+    <string name="onboarding_contractSetup_description">Specify your current battlepass level and your progress within it so we can accurately track your XP\n\nNote: please select a premium level even if you didn\'t purchase the battlepass. This is necessary for the accuracy of XP calculations</string>
+    <string name="unit_xp">XP</string>
 </resources>

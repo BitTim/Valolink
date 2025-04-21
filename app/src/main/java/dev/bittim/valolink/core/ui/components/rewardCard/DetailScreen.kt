@@ -7,10 +7,10 @@
  File:       DetailScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   21.04.25, 17:15
  */
 
-package dev.bittim.valolink.content.ui.components
+package dev.bittim.valolink.core.ui.components.rewardCard
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.zIndex
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 data object BaseDetailsScreen {
     const val MAX_CARD_HEIGHT_FRACTION: Float = 0.6f

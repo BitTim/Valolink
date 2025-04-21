@@ -7,7 +7,7 @@
  File:       RankCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup.components
@@ -35,12 +35,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.core.ui.components.ShaderGradientBackdrop
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.annotations.ComponentPreviewAnnotations
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 data object RankCard {
     val height = 102.dp

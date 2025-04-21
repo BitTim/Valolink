@@ -7,7 +7,7 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 14:53
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -59,18 +59,19 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.domain.model.contract.chapter.Level
-import dev.bittim.valolink.content.ui.components.DetailScreen
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.conditional
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AbilitySection
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentDetailsSection
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.ContractResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelUnlockAlertDialog
 import dev.bittim.valolink.core.ui.components.ShaderGradientBackdrop
+import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardCard
+import dev.bittim.valolink.core.ui.components.rewardCard.DetailScreen
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardCardData
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient
+import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
 import dev.bittim.valolink.core.ui.util.getProgressPercent
 import java.util.UUID
 import kotlin.math.ceil
@@ -352,7 +353,7 @@ fun AgentDetailsScreen(
                         val rewardCardData = if (level == null || reward == null) {
                             null
                         } else {
-                            AgentRewardCardData(
+                            RewardCardData(
                                 name = reward.displayName,
                                 levelUuid = level.uuid,
                                 type = reward.type,
@@ -361,6 +362,7 @@ fun AgentDetailsScreen(
                                 rewardCount = level.rewards.count(),
                                 previewIcon = reward.previewImages.first().first ?: "",
                                 background = reward.background,
+                                useXP = false,
                                 price = level.doughCost,
                                 amount = reward.amount,
                                 currencyIcon = state.dough?.displayIcon ?: "",
@@ -369,14 +371,14 @@ fun AgentDetailsScreen(
                             )
                         }
 
-                        AgentRewardCard(
+                        RewardCard(
                             data = rewardCardData,
                             unlockReward = {
                                 if (userContract?.levels?.lastOrNull()?.level == level?.dependency) {
                                     // Unlock just one
                                     unlockLevel(level?.uuid)
                                 } else {
-                                    if (level == null) return@AgentRewardCard
+                                    if (level == null) return@RewardCard
 
                                     // Unlock multiple at the same time
                                     targetLevelUuid = level.uuid
@@ -384,7 +386,7 @@ fun AgentDetailsScreen(
                                 }
                             },
                             resetReward = {
-                                if (level == null) return@AgentRewardCard
+                                if (level == null) return@RewardCard
 
                                 targetLevelUuid = level.uuid
                                 isRewardResetAlertShown = true

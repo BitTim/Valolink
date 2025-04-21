@@ -4,15 +4,14 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       AgentRewardCard.kt
+ File:       RewardCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 04:05
+ Modified:   21.04.25, 17:03
  */
 
-package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
+package dev.bittim.valolink.core.ui.components.rewardCard
 
-import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -62,21 +60,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.content.ui.components.RewardTypeLabel
-import dev.bittim.valolink.content.ui.components.RewardTypeLabelStyle
 import dev.bittim.valolink.content.ui.components.UnlockButton
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.conditional
-import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.LevelBackdrop
+import dev.bittim.valolink.core.ui.components.OrientableContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.UiText
+import dev.bittim.valolink.core.ui.util.annotations.ComponentPreviewAnnotations
+import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
 data object AgentRewardCard {
@@ -84,13 +82,16 @@ data object AgentRewardCard {
 }
 
 @Immutable
-data class AgentRewardCardData(
+data class RewardCardData(
     val name: String,
     val levelUuid: String,
     val type: RewardType,
     val levelName: String,
     val contractName: String,
     val rewardCount: Int,
+    val useXP: Boolean,
+    val xpTotal: Int = -1,
+    val xpCollected: Int = -1,
     val price: Int,
     val amount: Int,
     val previewIcon: String,
@@ -101,9 +102,9 @@ data class AgentRewardCardData(
 )
 
 @Composable
-fun AgentRewardCard(
+fun RewardCard(
     modifier: Modifier = Modifier,
-    data: AgentRewardCardData?,
+    data: RewardCardData?,
     unlockReward: () -> Unit = {},
     resetReward: () -> Unit = {},
     onNavToLevelDetails: (levelUuid: String) -> Unit,
@@ -388,14 +389,26 @@ fun AgentRewardCard(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        UnlockButton(
-                            currencyIcon = it.currencyIcon,
-                            price = it.price,
-                            isPrimary = true,
-                            isLocked = it.isLocked,
-                            isOwned = it.isOwned,
-                            onClick = unlockReward
-                        )
+                        if (it.useXP) {
+                            ProgressCluster(
+                                modifier = Modifier
+                                    .padding(vertical = Spacing.xs)
+                                    .height(40.dp),
+                                total = it.xpTotal,
+                                progress = it.xpCollected,
+                                unit = UiText.StringResource(R.string.unit_xp).asString(),
+                                isMonochrome = false,
+                            )
+                        } else {
+                            UnlockButton(
+                                currencyIcon = it.currencyIcon,
+                                price = it.price,
+                                isPrimary = true,
+                                isLocked = it.isLocked,
+                                isOwned = it.isOwned,
+                                onClick = unlockReward
+                            )
+                        }
                     }
                 }
             }
@@ -403,161 +416,228 @@ fun AgentRewardCard(
     }
 }
 
-@Preview(
-    name = "Light Mode",
-    showBackground = true
-)
-@Preview(
-    name = "Dark Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
-)
+@ComponentPreviewAnnotations
 @Composable
-fun AgentRewardCardPreview() {
+fun RewardCardPreview() {
     ValolinkTheme {
-        Column(
-            modifier = Modifier.wrapContentSize()
-        ) {
-            AgentRewardCard(
-                data = AgentRewardCardData(
-                    name = "Metamorphosis Card",
-                    levelUuid = "",
-                    type = RewardType.PLAYER_CARD,
-                    levelName = "Level 9",
-                    contractName = "Clove Contract",
-                    rewardCount = 3,
-                    price = 2000,
-                    amount = 1,
-                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png"
-                ),
-                onNavToLevelDetails = {}
-            )
+        Surface {
+            OrientableContainer(
+                portraitContainer = { modifier, content ->
+                    Column(
+                        modifier = modifier,
+                        verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                    ) { content() }
+                },
+                landscapeContainer = { modifier, content ->
+                    Row(
+                        modifier = modifier,
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.s)
+                    ) { content() }
+                }
+            ) {
+                RewardCard(
+                    data = RewardCardData(
+                        name = "Metamorphosis Card",
+                        levelUuid = "",
+                        type = RewardType.PLAYER_CARD,
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        rewardCount = 3,
+                        useXP = false,
+                        xpTotal = 0,
+                        xpCollected = 0,
+                        price = 2000,
+                        amount = 1,
+                        previewIcon = "",
+                        currencyIcon = "",
+                        background = "",
+                        isLocked = false,
+                        isOwned = false,
+                    ),
+                    unlockReward = {},
+                    resetReward = {},
+                    onNavToLevelDetails = {}
+                )
+
+                RewardCard(
+                    data = RewardCardData(
+                        name = "Metamorphosis Card",
+                        levelUuid = "",
+                        type = RewardType.PLAYER_CARD,
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        rewardCount = 3,
+                        useXP = true,
+                        xpTotal = 10000,
+                        xpCollected = 3000,
+                        price = 2000,
+                        amount = 1,
+                        previewIcon = "",
+                        currencyIcon = "",
+                        background = "",
+                        isLocked = false,
+                        isOwned = false,
+                    ),
+                    unlockReward = {},
+                    resetReward = {},
+                    onNavToLevelDetails = {}
+                )
+            }
         }
     }
 }
 
-@Preview(
-    name = "Light Mode",
-    showBackground = true
-)
-@Preview(
-    name = "Dark Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
-)
+@ComponentPreviewAnnotations
 @Composable
-fun LongNameAgentRewardCardPreview() {
+fun LockedRewardCardPreview() {
     ValolinkTheme {
-        Column(
-            modifier = Modifier.wrapContentSize()
-        ) {
-            AgentRewardCard(
-                data = AgentRewardCardData(
-                    name = "Epilogue: Build Your Own Vandal Card",
-                    levelUuid = "",
-                    type = RewardType.PLAYER_CARD,
-                    levelName = "Level 9",
-                    contractName = "Clove Contract",
-                    rewardCount = 1,
-                    price = 2000,
-                    amount = 1,
-                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png"
-                ),
-                onNavToLevelDetails = {}
-            )
+        Surface {
+            OrientableContainer(
+                portraitContainer = { modifier, content ->
+                    Column(
+                        modifier = modifier,
+                        verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                    ) { content() }
+                },
+                landscapeContainer = { modifier, content ->
+                    Row(
+                        modifier = modifier,
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.s)
+                    ) { content() }
+                }
+            ) {
+                RewardCard(
+                    data = RewardCardData(
+                        name = "Metamorphosis Card",
+                        levelUuid = "",
+                        type = RewardType.PLAYER_CARD,
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        rewardCount = 3,
+                        useXP = false,
+                        xpTotal = 0,
+                        xpCollected = 0,
+                        price = 2000,
+                        amount = 1,
+                        previewIcon = "",
+                        currencyIcon = "",
+                        background = "",
+                        isLocked = true,
+                        isOwned = false,
+                    ),
+                    unlockReward = {},
+                    resetReward = {},
+                    onNavToLevelDetails = {}
+                )
+
+                RewardCard(
+                    data = RewardCardData(
+                        name = "Metamorphosis Card",
+                        levelUuid = "",
+                        type = RewardType.PLAYER_CARD,
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        rewardCount = 3,
+                        useXP = true,
+                        xpTotal = 10000,
+                        xpCollected = 3000,
+                        price = 2000,
+                        amount = 1,
+                        previewIcon = "",
+                        currencyIcon = "",
+                        background = "",
+                        isLocked = true,
+                        isOwned = false,
+                    ),
+                    unlockReward = {},
+                    resetReward = {},
+                    onNavToLevelDetails = {}
+                )
+            }
         }
     }
 }
 
-@Preview(
-    name = "Light Mode",
-    showBackground = true
-)
-@Preview(
-    name = "Dark Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
-)
+@ComponentPreviewAnnotations
 @Composable
-fun LockedAgentRewardCardPreview() {
+fun OwnedRewardCardPreview() {
     ValolinkTheme {
-        Column(
-            modifier = Modifier.wrapContentSize()
-        ) {
-            AgentRewardCard(
-                data = AgentRewardCardData(
-                    name = "Metamorphosis Card",
-                    levelUuid = "",
-                    type = RewardType.PLAYER_CARD,
-                    levelName = "Level 9",
-                    contractName = "Clove Contract",
-                    rewardCount = 1,
-                    price = 2000,
-                    amount = 1,
-                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
-                    isLocked = true
-                ),
-                onNavToLevelDetails = {}
-            )
+        Surface {
+            OrientableContainer(
+                portraitContainer = { modifier, content ->
+                    Column(
+                        modifier = modifier,
+                        verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                    ) { content() }
+                },
+                landscapeContainer = { modifier, content ->
+                    Row(
+                        modifier = modifier,
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.s)
+                    ) { content() }
+                }
+            ) {
+                RewardCard(
+                    data = RewardCardData(
+                        name = "Metamorphosis Card",
+                        levelUuid = "",
+                        type = RewardType.PLAYER_CARD,
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        rewardCount = 3,
+                        useXP = false,
+                        xpTotal = 0,
+                        xpCollected = 0,
+                        price = 2000,
+                        amount = 1,
+                        previewIcon = "",
+                        currencyIcon = "",
+                        background = "",
+                        isLocked = false,
+                        isOwned = true,
+                    ),
+                    unlockReward = {},
+                    resetReward = {},
+                    onNavToLevelDetails = {}
+                )
+
+                RewardCard(
+                    data = RewardCardData(
+                        name = "Metamorphosis Card",
+                        levelUuid = "",
+                        type = RewardType.PLAYER_CARD,
+                        levelName = "Level 9",
+                        contractName = "Clove Contract",
+                        rewardCount = 3,
+                        useXP = true,
+                        xpTotal = 10000,
+                        xpCollected = 3000,
+                        price = 2000,
+                        amount = 1,
+                        previewIcon = "",
+                        currencyIcon = "",
+                        background = "",
+                        isLocked = false,
+                        isOwned = true,
+                    ),
+                    unlockReward = {},
+                    resetReward = {},
+                    onNavToLevelDetails = {}
+                )
+            }
         }
     }
 }
 
-@Preview(
-    name = "Light Mode",
-    showBackground = true
-)
-@Preview(
-    name = "Dark Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
-)
+@ComponentPreviewAnnotations
 @Composable
-fun OwnedAgentRewardCardPreview() {
+fun LoadingRewardCardPreview() {
     ValolinkTheme {
-        Column(
-            modifier = Modifier.wrapContentSize()
-        ) {
-            AgentRewardCard(
-                data = AgentRewardCardData(
-                    name = "Metamorphosis Card",
-                    levelUuid = "",
-                    type = RewardType.PLAYER_CARD,
-                    levelName = "Level 9",
-                    contractName = "Clove Contract",
-                    rewardCount = 1,
-                    price = 2000,
-                    amount = 1,
-                    previewIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                    currencyIcon = "https://media.valorant-api.com/currencies/85ca954a-41f2-ce94-9b45-8ca3dd39a00d/displayicon.png",
-                    isOwned = true
-                ),
-                onNavToLevelDetails = {}
-            )
-        }
-    }
-}
-
-@Preview(
-    name = "Light Mode",
-    showBackground = true
-)
-@Preview(
-    name = "Dark Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
-)
-@Composable
-fun LoadingAgentRewardCardPreview() {
-    ValolinkTheme {
-        Column(
-            modifier = Modifier.wrapContentSize()
-        ) {
-            AgentRewardCard(
+        Surface {
+            RewardCard(
                 data = null,
+                unlockReward = {},
+                resetReward = {},
                 onNavToLevelDetails = {}
             )
         }

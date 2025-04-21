@@ -7,13 +7,14 @@
  File:       OnboardingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 14:53
+ Modified:   20.04.25, 17:27
  */
 
 package dev.bittim.valolink.onboarding.ui.screens
 
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.util.UiText
+import dev.bittim.valolink.onboarding.ui.screens.contractSetup.ContractSetupNav
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.CreateAccountNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.PasswordForgotNav
@@ -75,6 +76,13 @@ enum class OnboardingScreen(
         title = UiText.StringResource(R.string.onboarding_rankSetup_title),
         description = UiText.StringResource(R.string.onboarding_rankSetup_description),
         step = 3
+    ),
+
+    ContractSetup(
+        route = ContractSetupNav::class.java.name,
+        title = UiText.StringResource(R.string.onboarding_contractSetup_title),
+        description = UiText.StringResource(R.string.onboarding_contractSetup_description),
+        step = 4
     );
 
     companion object {

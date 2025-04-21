@@ -7,7 +7,7 @@
  File:       LevelHeader.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 04:05
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -44,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.content.ui.components.RewardTypeLabel
-import dev.bittim.valolink.content.ui.components.RewardTypeLabelStyle
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.conditional
-import dev.bittim.valolink.content.ui.components.pulseAnimation
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardTypeLabel
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardTypeLabelStyle
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
 @Immutable

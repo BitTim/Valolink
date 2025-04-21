@@ -7,7 +7,7 @@
  File:       AbilitySection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -46,8 +46,8 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.agent.Ability
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 @Composable
 fun AbilitySection(

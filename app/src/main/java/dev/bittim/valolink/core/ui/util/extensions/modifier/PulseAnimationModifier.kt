@@ -4,13 +4,13 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       ModifierExtension.kt
+ File:       PulseAnimationModifier.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   21.04.25, 16:09
  */
 
-package dev.bittim.valolink.content.ui.components
+package dev.bittim.valolink.core.ui.util.extensions.modifier
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColor
@@ -33,17 +33,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
-
-fun Modifier.conditional(
-    condition: Boolean,
-    modifier: Modifier.() -> Modifier,
-): Modifier {
-    return if (condition) {
-        then(modifier(Modifier))
-    } else {
-        this
-    }
-}
 
 fun Modifier.pulseAnimation(): Modifier = composed {
     val transition = rememberInfiniteTransition(label = "Loading pulse")

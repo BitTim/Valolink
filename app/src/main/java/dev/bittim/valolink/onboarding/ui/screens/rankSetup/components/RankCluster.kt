@@ -7,7 +7,7 @@
  File:       RankCluster.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   21.04.25, 16:22
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup.components
@@ -90,9 +90,9 @@ fun RankCluster(
         ) {
             Text(
                 text = if (!isUnranked) {
-                    "$rr " + UiText.StringResource(R.string.label_rr).asString()
+                    "$rr " + UiText.StringResource(R.string.unit_rr).asString()
                 } else {
-                    "$matchesPlayed / $matchesNeeded " + UiText.StringResource(R.string.label_matches)
+                    "$matchesPlayed / $matchesNeeded " + UiText.StringResource(R.string.unit_match_plural)
                         .asString()
                 },
                 style = MaterialTheme.typography.bodyMedium,

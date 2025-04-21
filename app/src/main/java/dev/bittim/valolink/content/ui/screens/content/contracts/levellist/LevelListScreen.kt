@@ -7,7 +7,7 @@
  File:       LevelListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.levellist
@@ -49,10 +49,10 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.domain.model.contract.chapter.Level
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardListCard
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardListCardData
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.ContractResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
+import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCard
+import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCardData
 import java.time.Instant
 import java.util.UUID
 

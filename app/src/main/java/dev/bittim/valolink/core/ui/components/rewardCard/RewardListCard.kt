@@ -4,13 +4,13 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       AgentRewardListCard.kt
+ File:       RewardListCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 04:05
+ Modified:   21.04.25, 17:30
  */
 
-package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
+package dev.bittim.valolink.core.ui.components.rewardCard
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
@@ -68,14 +68,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.content.ui.components.RewardTypeLabel
-import dev.bittim.valolink.content.ui.components.RewardTypeLabelStyle
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.conditional
-import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.LevelBackdrop
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
 @Immutable

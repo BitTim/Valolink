@@ -7,7 +7,7 @@
  File:       ShaderGradientBackdrop.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -31,12 +31,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.conditional
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.annotations.ComponentPreviewAnnotations
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient
 import dev.bittim.valolink.core.ui.util.color.drawShaderGradient
+import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
 
 @Composable
 fun ShaderGradientBackdrop(

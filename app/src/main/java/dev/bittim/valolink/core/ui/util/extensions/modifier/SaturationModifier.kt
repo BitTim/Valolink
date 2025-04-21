@@ -4,13 +4,13 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       DesaturateModifier.kt
+ File:       SaturationModifier.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   21.04.25, 16:07
  */
 
-package dev.bittim.valolink.core.ui.util.extensions
+package dev.bittim.valolink.core.ui.util.extensions.modifier
 
 import android.graphics.RenderEffect
 import androidx.compose.ui.Modifier

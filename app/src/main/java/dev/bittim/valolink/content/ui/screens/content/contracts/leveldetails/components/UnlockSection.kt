@@ -7,7 +7,7 @@
  File:       UnlockSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -32,9 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import dev.bittim.valolink.content.ui.components.ProgressCluster
 import dev.bittim.valolink.content.ui.components.UnlockButton
-import dev.bittim.valolink.content.ui.components.pulseAnimation
+import dev.bittim.valolink.core.ui.components.rewardCard.ProgressCluster
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 @Immutable
 data class UnlockSectionData(

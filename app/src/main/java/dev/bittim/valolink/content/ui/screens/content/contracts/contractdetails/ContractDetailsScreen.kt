@@ -7,7 +7,7 @@
  File:       ContractDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:43
+ Modified:   21.04.25, 16:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.contractdetails
@@ -43,8 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardCard
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardCardData
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardCardData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -132,8 +132,8 @@ fun ContractDetailsScreen(
                             itemContent = { level ->
                                 val reward = level.rewards.find { !it.isFreeReward }?.relation
 
-                                AgentRewardCard(
-                                    data = if (reward == null) null else AgentRewardCardData(
+                                RewardCard(
+                                    data = if (reward == null) null else RewardCardData(
                                         name = reward.displayName,
                                         levelUuid = level.uuid, // TODO: Replace with uuid to agent gear for recruitments
                                         type = reward.type,
@@ -143,6 +143,9 @@ fun ContractDetailsScreen(
                                         previewIcon = reward.previewImages.first().first
                                             ?: "",
                                         background = reward.background,
+                                        useXP = true,
+                                        xpTotal = level.xp,
+                                        xpCollected = 0, // TODO: Pull from user data / from match history
                                         price = level.vpCost,
                                         amount = reward.amount,
                                         currencyIcon = state.vp?.displayIcon ?: ""

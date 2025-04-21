@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   21.04.25, 17:24
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -51,8 +51,8 @@ import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ComponentPreviewAnnotations
-import dev.bittim.valolink.core.ui.util.extensions.SATURATION_DESATURATED
-import dev.bittim.valolink.core.ui.util.extensions.saturation
+import dev.bittim.valolink.core.ui.util.extensions.modifier.SATURATION_DESATURATED
+import dev.bittim.valolink.core.ui.util.extensions.modifier.saturation
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.screens.rankSetup.components.RankCard
@@ -66,8 +66,8 @@ fun RankSetupScreen(
     setRank: (tier: Int, rr: Int, matchesPlayed: Int, matchesNeeded: Int) -> Unit,
 ) {
     var rr by remember { mutableIntStateOf(50) }
-    var matchesPlayed by remember { mutableStateOf(0) }
-    var matchesNeeded by remember { mutableStateOf(5) }
+    var matchesPlayed by remember { mutableIntStateOf(0) }
+    var matchesNeeded by remember { mutableIntStateOf(5) }
 
     val pagerState = rememberPagerState(pageCount = { state.ranks?.count() ?: 0 })
     var clickedPage by remember { mutableIntStateOf(0) }
@@ -154,7 +154,7 @@ fun RankSetupScreen(
                             },
                         data = rankCardData,
                         isUnranked = rank?.tier == 0,
-                        rr = rr,
+                        rr = if (it < page) 99 else if (it == page) rr else 0,
                         deltaRR = 0,
                         matchesPlayed = matchesPlayed,
                         matchesNeeded = matchesNeeded

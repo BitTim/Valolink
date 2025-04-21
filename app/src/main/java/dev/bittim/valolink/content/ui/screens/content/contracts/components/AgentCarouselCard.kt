@@ -7,7 +7,7 @@
  File:       AgentCarouselCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 14:53
+ Modified:   21.04.25, 17:30
  */
 
 @file:Suppress("SpellCheckingInspection")
@@ -59,11 +59,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.conditional
-import dev.bittim.valolink.content.ui.components.pulseAnimation
 import dev.bittim.valolink.core.ui.theme.Motion
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient
+import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import java.util.UUID
 
 data object AgentCarouselCard {

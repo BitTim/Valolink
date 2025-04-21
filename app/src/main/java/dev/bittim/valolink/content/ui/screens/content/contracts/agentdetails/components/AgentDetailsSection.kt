@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.components.pulseAnimation
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 @Composable
 fun AgentDetailsSection(agent: Agent?) {

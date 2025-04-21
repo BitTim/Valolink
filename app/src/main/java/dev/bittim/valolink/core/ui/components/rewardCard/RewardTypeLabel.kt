@@ -7,10 +7,10 @@
  File:       RewardTypeLabel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:25
+ Modified:   21.04.25, 17:15
  */
 
-package dev.bittim.valolink.content.ui.components
+package dev.bittim.valolink.core.ui.components.rewardCard
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 enum class RewardTypeLabelStyle {
     DEFAULT,

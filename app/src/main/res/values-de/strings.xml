@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   20.04.25, 03:29
+  Modified:   21.04.25, 16:22
   -->
 
 <resources>
@@ -70,8 +70,11 @@
     <string name="onboarding_rankSetup_slider_currentRR_label">Aktuelle RW</string>
     <string name="onboarding_rankSetup_title">Richte deinen Rang ein</string>
     <string name="onboarding_rankSetup_description">Wähle deinen aktuellen Rang und aktuelle RW aus um einen Anhaltspunkt für Rang-Tracking mit deiner kompetitiven Laufbahn in Valolink zu haben</string>
-    <string name="label_rr">RW</string>
+    <string name="unit_rr">RW</string>
     <string name="onboarding_rankSetup_slider_matchesPlayed_label">Gespielte Matches</string>
     <string name="onboarding_rankSetup_slider_matchesNeeded_label">Benötigte Matches</string>
-    <string name="label_matches">Matches</string>
+    <string name="unit_match_plural">Matches</string>
+    <string name="onboarding_contractSetup_title">Dein Startpunkt</string>
+    <string name="onboarding_contractSetup_description">Gib dein aktuelles Level im Battlepass und deinen Fortschritt innerhalb dieses Levels an, damit wir deine EP genau verfolgen können.\n\nHinweis: Bitte wähle ein Premium-Level aus, auch wenn du den Battlepass nicht gekauft hast. Dies ist für die Genauigkeit der EP-Berechnungen notwendig.</string>
+    <string name="unit_xp">EP</string>
 </resources>

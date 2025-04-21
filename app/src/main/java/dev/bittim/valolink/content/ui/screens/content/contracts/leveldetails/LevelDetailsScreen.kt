@@ -7,7 +7,7 @@
  File:       LevelDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:40
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
@@ -47,9 +47,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.chapter.Level
-import dev.bittim.valolink.content.ui.components.DetailScreen
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardListCardData
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelUnlockAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.LevelBackdrop
@@ -61,6 +59,8 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.com
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.UnlockSection
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.UnlockSectionData
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
+import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCardData
+import dev.bittim.valolink.core.ui.components.rewardCard.DetailScreen
 
 @Composable
 fun LevelDetailsScreen(

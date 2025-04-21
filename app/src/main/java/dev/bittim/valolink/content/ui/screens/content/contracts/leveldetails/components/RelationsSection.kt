@@ -7,7 +7,7 @@
  File:       RelationsSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:40
+ Modified:   21.04.25, 17:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -53,10 +53,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.content.ui.components.pulseAnimation
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardListCard
-import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.AgentRewardListCardData
+import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCard
+import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCardData
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 import javax.annotation.concurrent.Immutable
 
