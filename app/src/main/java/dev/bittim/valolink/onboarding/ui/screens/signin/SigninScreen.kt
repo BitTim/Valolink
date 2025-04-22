@@ -7,7 +7,7 @@
  File:       SigninScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 20:11
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.signin
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -90,11 +91,12 @@ fun SigninScreen(
 
     OnboardingLayout(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = Spacing.l),
+            .fillMaxSize(),
         content = {
             SimpleLoadingContainer(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Spacing.l),
                 isLoading = state.loading,
                 label = "Spray image loading crossfade"
             ) {
@@ -112,7 +114,9 @@ fun SigninScreen(
         },
         form = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.l),
                 verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
                 OutlinedTextFieldWithError(
@@ -163,7 +167,7 @@ fun SigninScreen(
                     onCreateAccount = onCreateAccount
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(Spacing.xl))
 
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),

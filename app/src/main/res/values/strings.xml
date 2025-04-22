@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   21.04.25, 16:22
+  Modified:   22.04.25, 15:02
   -->
 
 <resources>
@@ -76,4 +76,7 @@
     <string name="onboarding_contractSetup_title">Your starting point</string>
     <string name="onboarding_contractSetup_description">Specify your current battlepass level and your progress within it so we can accurately track your XP\n\nNote: please select a premium level even if you didn\'t purchase the battlepass. This is necessary for the accuracy of XP calculations</string>
     <string name="unit_xp">XP</string>
+    <string name="onboarding_contractSetup_xpCollected_label">Collected XP</string>
+    <string name="error_numberFormat">Value must be a valid number</string>
+    <string name="onboarding_contractSetup_xpCollected_error">Collected XP cannot be higher than the total</string>
 </resources>

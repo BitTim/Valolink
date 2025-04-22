@@ -7,10 +7,10 @@
  File:       UnlockButton.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   22.04.25, 18:51
  */
 
-package dev.bittim.valolink.content.ui.components
+package dev.bittim.valolink.core.ui.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
+import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 
 @Composable
 fun UnlockButton(

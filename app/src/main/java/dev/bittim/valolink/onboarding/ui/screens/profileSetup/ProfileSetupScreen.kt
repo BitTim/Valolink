@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 19:02
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -23,8 +23,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -67,6 +69,7 @@ fun ProfileSetupScreen(
     state: ProfileSetupState,
     validateUsername: (username: String) -> Unit,
     selectAvatar: (username: String, context: Context?, uri: Uri?) -> Unit,
+    resetAvatar: (username: String, context: Context?) -> Unit,
     navLanding: () -> Unit,
     setProfile: (username: String, private: Boolean) -> Unit
 ) {
@@ -94,24 +97,27 @@ fun ProfileSetupScreen(
 
     OnboardingLayout(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = Spacing.l),
+            .fillMaxSize(),
         content = {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = Spacing.l)
             ) {
                 SimpleLoadingContainer(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(vertical = Spacing.l),
                     isLoading = state.avatar == null || state.isAuthenticated == null || state.isLocal == null,
                     label = "Avatar loading crossfade"
                 ) {
                     AsyncImage(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxHeight()
                             .aspectRatio(1f)
-                            .clip(CircleShape),
+                            .padding(Spacing.xxl)
+                            .clip(CircleShape)
+                            .align(Alignment.Center),
                         model = state.avatar,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
@@ -130,7 +136,7 @@ fun ProfileSetupScreen(
                                 .width(48.dp)
                                 .aspectRatio(1f),
                             onClick = {
-                                selectAvatar(username, context, null)
+                                resetAvatar(username, context)
                             }
                         ) {
                             Icon(Icons.Default.RestartAlt, contentDescription = null)
@@ -152,7 +158,9 @@ fun ProfileSetupScreen(
         },
         form = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.l),
                 verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
                 OutlinedTextFieldWithError(
@@ -182,7 +190,7 @@ fun ProfileSetupScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(Spacing.xl))
 
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
@@ -217,7 +225,8 @@ fun ProfileSetupScreenPreview() {
                 validateUsername = { },
                 navLanding = { },
                 setProfile = { _, _ -> },
-                selectAvatar = { _, _, _ -> }
+                selectAvatar = { _, _, _ -> },
+                resetAvatar = { _, _ -> }
             )
         }
     }

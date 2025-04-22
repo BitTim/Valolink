@@ -7,7 +7,7 @@
  File:       LabeledSlider.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   22.04.25, 18:41
  */
 
 package dev.bittim.valolink.core.ui.components

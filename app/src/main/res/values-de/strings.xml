@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   21.04.25, 16:22
+  Modified:   22.04.25, 14:57
   -->
 
 <resources>
@@ -77,4 +77,5 @@
     <string name="onboarding_contractSetup_title">Dein Startpunkt</string>
     <string name="onboarding_contractSetup_description">Gib dein aktuelles Level im Battlepass und deinen Fortschritt innerhalb dieses Levels an, damit wir deine EP genau verfolgen können.\n\nHinweis: Bitte wähle ein Premium-Level aus, auch wenn du den Battlepass nicht gekauft hast. Dies ist für die Genauigkeit der EP-Berechnungen notwendig.</string>
     <string name="unit_xp">EP</string>
+    <string name="onboarding_contractSetup_xpCollected_label">Gesammelte EP</string>
 </resources>

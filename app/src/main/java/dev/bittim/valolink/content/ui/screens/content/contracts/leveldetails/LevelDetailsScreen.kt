@@ -7,7 +7,7 @@
  File:       LevelDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 18:51
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
@@ -61,7 +61,7 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.com
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.UnlockSection
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.UnlockSectionData
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
-import dev.bittim.valolink.core.ui.components.rewardCard.DetailScreen
+import dev.bittim.valolink.core.ui.components.DetailScreen
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
 
 @Composable

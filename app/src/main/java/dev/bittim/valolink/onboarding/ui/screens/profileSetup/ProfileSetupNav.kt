@@ -7,7 +7,7 @@
  File:       ProfileSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 18:20
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -38,6 +38,7 @@ fun NavGraphBuilder.profileSetupScreen() {
                 viewModel.setProfile(username, private, state.value.avatar)
             },
             selectAvatar = viewModel::selectAvatar,
+            resetAvatar = viewModel::resetAvatar
         )
     }
 }

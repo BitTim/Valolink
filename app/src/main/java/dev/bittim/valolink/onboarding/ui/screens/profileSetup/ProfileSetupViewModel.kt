@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   22.04.25, 18:20
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -92,6 +92,20 @@ class ProfileSetupViewModel @Inject constructor(
         viewModelScope.launch {
             sessionRepository.signOut()
         }
+    }
+
+    fun resetAvatar(
+        username: String,
+        context: Context? = null,
+    ) {
+        _state.update {
+            it.copy(
+                isAvatarCustom = false,
+                avatarError = null,
+            )
+        }
+
+        selectAvatar(username, context, null)
     }
 
     fun selectAvatar(

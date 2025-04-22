@@ -7,7 +7,7 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 20:11
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -65,8 +65,8 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.com
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.ContractResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelUnlockAlertDialog
+import dev.bittim.valolink.core.ui.components.DetailScreen
 import dev.bittim.valolink.core.ui.components.ShaderGradientBackdrop
-import dev.bittim.valolink.core.ui.components.rewardCard.DetailScreen
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCardData
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient

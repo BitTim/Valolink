@@ -7,7 +7,7 @@
  File:       OnboardingLayout.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   22.04.25, 19:53
  */
 
 package dev.bittim.valolink.onboarding.ui.components
@@ -18,18 +18,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.core.ui.components.OrientableContainer
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
@@ -40,7 +43,7 @@ import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 fun OnboardingLayout(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
-    form: @Composable () -> Unit
+    form: @Composable () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -64,18 +67,28 @@ fun OnboardingLayout(
             }
         ) {
             Box(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f),
                 contentAlignment = Alignment.BottomStart
             ) { content() }
 
-            Spacer(
-                modifier = Modifier.size(Spacing.m)
-            )
-
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.BottomStart
-            ) { form() }
+            Surface(
+                modifier = Modifier
+                    .clip(
+                        MaterialTheme.shapes.extraLarge.copy(
+                            bottomStart = CornerSize(0.dp),
+                            bottomEnd = CornerSize(0.dp)
+                        )
+                    ),
+                tonalElevation = 3.dp
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = Spacing.l)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.BottomStart
+                ) { form() }
+            }
         }
     }
 }

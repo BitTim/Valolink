@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 19:09
  */
 
 
@@ -25,9 +25,11 @@ import androidx.compose.foundation.layout.safeContent
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import dev.bittim.valolink.core.ui.theme.Spacing
@@ -89,7 +91,7 @@ fun OnboardingContainerScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())
+                .padding(top = it.calculateTopPadding())
         ) {
             OnboardingHeader(
                 modifier = Modifier
@@ -103,7 +105,7 @@ fun OnboardingContainerScreen(
             Spacer(modifier = Modifier.height(Spacing.m))
 
             NavHost(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.weight(1f),
                 navController = navController,
                 startDestination = LandingNav,
                 enterTransition = { Transition.ForwardBackward.enter },
@@ -144,6 +146,16 @@ fun OnboardingContainerScreen(
                 profileSetupScreen()
                 rankSetupScreen()
                 contractSetupScreen()
+            }
+
+            Surface(
+                tonalElevation = 3.dp
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .height(it.calculateBottomPadding())
+                        .fillMaxWidth()
+                )
             }
         }
     }

@@ -7,11 +7,12 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 19:57
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
@@ -101,21 +103,26 @@ fun RankSetupScreen(
 
     OnboardingLayout(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = Spacing.l),
+            .fillMaxSize(),
         content = {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Spacing.l),
                 contentAlignment = Alignment.Center
             ) {
+                val pageSize = RankCard.height + (Spacing.xs * 2)
+
                 VerticalPager(
-                    modifier = Modifier.height(RankCard.height * 3),
+                    modifier = Modifier
+                        .height(pageSize * 5)
+                        .align(Alignment.Center),
                     state = pagerState,
-                    pageSize = PageSize.Fixed(RankCard.height),
-                    contentPadding = PaddingValues(vertical = RankCard.height),
+                    pageSize = PageSize.Fixed(pageSize),
+                    contentPadding = PaddingValues(vertical = pageSize * 2),
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
-                        pagerSnapDistance = PagerSnapDistance.atMost(10)
+                        pagerSnapDistance = PagerSnapDistance.atMost(pagerState.pageCount)
                     ),
                 ) {
                     val rank = state.ranks?.get(it)
@@ -131,9 +138,13 @@ fun RankSetupScreen(
                     }
 
                     val pageOffset = pagerState.getOffsetDistanceInPages(it).absoluteValue
-                    val horizontalPadding = (32f * pageOffset).dp
+                    val horizontalPadding = (32f * minOf(pageOffset, 1f)).dp
                     val blur =
-                        lerp(start = 0f, stop = 4f, fraction = pageOffset.coerceIn(0f, 1f)).dp
+                        lerp(
+                            start = 0f,
+                            stop = 4f,
+                            fraction = minOf(pageOffset, 1f).coerceIn(0f, 1f)
+                        ).dp
                     val saturation = lerp(
                         start = SATURATION_DESATURATED,
                         stop = 1f,
@@ -167,77 +178,96 @@ fun RankSetupScreen(
         },
         form = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.l),
                 verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
-                if (isUnranked) {
-                    LabeledSlider(
-                        label = UiText.StringResource(R.string.onboarding_rankSetup_slider_matchesPlayed_label)
-                            .asString(),
-                        initialValue = matchesPlayed.toFloat(),
-                        valueRange = 0f..matchesNeeded.toFloat(),
-                        isStepped = false,
-                        showLimitLabels = true,
-                        onValueChange = {
-                            matchesPlayed = it.toInt()
-                        }
-                    )
-
-                    LabeledSlider(
-                        label = UiText.StringResource(R.string.onboarding_rankSetup_slider_matchesNeeded_label)
-                            .asString(),
-                        initialValue = matchesNeeded.toFloat(),
-                        valueRange = 1f..5f,
-                        isStepped = false,
-                        showLimitLabels = true,
-                        onValueChange = {
-                            matchesNeeded = it.toInt()
-                            if (matchesPlayed > matchesNeeded) {
-                                matchesPlayed = matchesNeeded
-                            }
-                        }
-                    )
-                } else {
-                    if (!isHighest) {
-                        LabeledSlider(
-                            label = UiText.StringResource(R.string.onboarding_rankSetup_slider_currentRR_label)
-                                .asString(),
-                            initialValue = rr.toFloat(),
-                            valueRange = 0f..99f,
-                            isStepped = false,
-                            showLimitLabels = true,
-                            onValueChange = {
-                                rr = it.toInt()
-                            }
-                        )
-                    } else {
-                        OutlinedTextFieldWithError(
+                AnimatedContent(
+                    modifier = Modifier.wrapContentHeight(),
+                    targetState = isUnranked,
+                    label = "Unranked crossfade"
+                ) { isUnranked ->
+                    if (isUnranked) {
+                        Column(
                             modifier = Modifier.fillMaxWidth(),
-                            label = UiText.StringResource(R.string.onboarding_rankSetup_slider_currentRR_label)
-                                .asString(),
-                            value = rrString,
-                            error = rrError,
-                            onValueChange = {
-                                rrString = it
-
-                                try {
-                                    rr = rrString.toInt()
-                                    rrError = null
-                                } catch (e: NumberFormatException) {
-                                    rrError = UiText.DynamicString(
-                                        e.localizedMessage ?: e.message ?: "Invalid number"
-                                    )
+                            verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                        ) {
+                            LabeledSlider(
+                                label = UiText.StringResource(R.string.onboarding_rankSetup_slider_matchesPlayed_label)
+                                    .asString(),
+                                initialValue = matchesPlayed.toFloat(),
+                                valueRange = 0f..matchesNeeded.toFloat(),
+                                isStepped = false,
+                                showLimitLabels = true,
+                                onValueChange = {
+                                    matchesPlayed = it.toInt()
                                 }
-                            },
-                            visibility = true,
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number
-                            ),
-                        )
+                            )
+
+                            LabeledSlider(
+                                label = UiText.StringResource(R.string.onboarding_rankSetup_slider_matchesNeeded_label)
+                                    .asString(),
+                                initialValue = matchesNeeded.toFloat(),
+                                valueRange = 1f..5f,
+                                isStepped = false,
+                                showLimitLabels = true,
+                                onValueChange = {
+                                    matchesNeeded = it.toInt()
+                                    if (matchesPlayed > matchesNeeded) {
+                                        matchesPlayed = matchesNeeded
+                                    }
+                                }
+                            )
+                        }
+                    } else {
+                        AnimatedContent(
+                            modifier = Modifier.wrapContentHeight(),
+                            targetState = isHighest,
+                            label = "Is Highest crossfade"
+                        ) { isHighest ->
+                            if (!isHighest) {
+                                LabeledSlider(
+                                    label = UiText.StringResource(R.string.onboarding_rankSetup_slider_currentRR_label)
+                                        .asString(),
+                                    initialValue = rr.toFloat(),
+                                    valueRange = 0f..99f,
+                                    isStepped = false,
+                                    showLimitLabels = true,
+                                    onValueChange = {
+                                        rr = it.toInt()
+                                    }
+                                )
+                            } else {
+                                OutlinedTextFieldWithError(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    label = UiText.StringResource(R.string.onboarding_rankSetup_slider_currentRR_label)
+                                        .asString(),
+                                    value = rrString,
+                                    error = rrError,
+                                    onValueChange = {
+                                        rrString = it
+
+                                        try {
+                                            rr = rrString.toInt()
+                                            rrError = null
+                                        } catch (e: NumberFormatException) {
+                                            rrError = UiText.DynamicString(
+                                                e.localizedMessage ?: e.message ?: "Invalid number"
+                                            )
+                                        }
+                                    },
+                                    visibility = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                )
+                            }
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(Spacing.xl))
 
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),

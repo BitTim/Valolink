@@ -7,7 +7,7 @@
  File:       RewardCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 19:47
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -62,10 +63,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.content.ui.components.UnlockButton
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.LevelBackdrop
 import dev.bittim.valolink.core.ui.components.OrientableContainer
+import dev.bittim.valolink.core.ui.components.UnlockButton
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
@@ -76,6 +77,8 @@ import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
 data object RewardCard {
     val width: Dp = 256.dp
+    val minHeight: Dp = 118.dp
+    val maxHeight: Dp = 308.dp
 }
 
 @Immutable
@@ -117,54 +120,64 @@ fun RewardCard(
     Card(
         modifier = modifier
             .width(RewardCard.width)
-            .clickable { if (data?.levelUuid != null) onNavToLevelDetails(data.levelUuid) }
+            .heightIn(RewardCard.minHeight, RewardCard.maxHeight)
+            .clickable { if (data?.levelUuid != null) onNavToLevelDetails(data.levelUuid) },
     ) {
         Surface(
             modifier = Modifier
-                .aspectRatio(4f / 3f)
+                .weight(1f)
                 .clip(MaterialTheme.shapes.medium),
             tonalElevation = 3.dp
         ) {
-            Crossfade(targetState = data, label = "Image Loading") {
-                if (it == null) {
+            Crossfade(targetState = data, label = "Image Loading") { data ->
+                if (data == null) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .pulseAnimation()
                     )
                 } else {
-                    if (it.type != RewardType.PLAYER_CARD) {
+                    if (data.type != RewardType.PLAYER_CARD) {
                         LevelBackdrop(
                             isDisabled = isLocked,
-                            backgroundImage = it.background
+                            backgroundImage = data.background
                         ) {}
                     }
 
-                    val imagePadding = when (it.type) {
+                    val imagePadding = when (data.type) {
                         RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
                         RewardType.PLAYER_CARD, RewardType.FLEX -> PaddingValues(0.dp)
                         else -> PaddingValues(Spacing.l)
                     }
 
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(imagePadding)
-                            .conditional(isLocked || isOwned) {
-                                blur(
-                                    4.dp,
-                                    BlurredEdgeTreatment.Rectangle
+                    Crossfade(
+                        targetState = isLocked || isOwned,
+                        label = "Locked overlay Loading"
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(imagePadding)
+                                .conditional(it) {
+                                    Modifier.blur(
+                                        4.dp,
+                                        BlurredEdgeTreatment.Rectangle
+                                    )
+                                },
+                            model = data.previewIcon,
+                            contentDescription = null,
+                            colorFilter = if (data.type == RewardType.CURRENCY || data.type == RewardType.TITLE) ColorFilter.tint(
+                                MaterialTheme.colorScheme.onSurface
+                            ) else ColorFilter.colorMatrix(ColorMatrix().apply {
+                                setToSaturation(
+                                    if (isLocked) 0.3f else 1f
                                 )
-                            },
-                        model = it.previewIcon,
-                        contentDescription = null,
-                        colorFilter = if (it.type == RewardType.CURRENCY || it.type == RewardType.TITLE) ColorFilter.tint(
-                            MaterialTheme.colorScheme.onSurface
-                        ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (isLocked) 0.3f else 1f) }),
-                        contentScale = if (it.type == RewardType.PLAYER_CARD) ContentScale.FillWidth else ContentScale.Fit,
-                        alignment = if (it.type == RewardType.PLAYER_CARD) Alignment.TopCenter else Alignment.Center,
-                        placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_largeart)
-                    )
+                            }),
+                            contentScale = if (data.type == RewardType.PLAYER_CARD) ContentScale.FillWidth else ContentScale.Fit,
+                            alignment = if (data.type == RewardType.PLAYER_CARD) Alignment.TopCenter else Alignment.Center,
+                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_largeart)
+                        )
+                    }
 
 
 
@@ -172,6 +185,70 @@ fun RewardCard(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
+                        Crossfade(
+                            targetState = isLocked,
+                            label = "Locked overlay Loading"
+                        ) {
+                            if (it) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(88.dp)
+                                        .aspectRatio(1f)
+                                        .clip(CircleShape)
+                                        .background(
+                                            Brush.radialGradient(
+                                                listOf(
+                                                    MaterialTheme.colorScheme.surfaceContainer,
+                                                    Color.Transparent
+                                                )
+                                            )
+                                        ),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .height(64.dp)
+                                            .aspectRatio(1f),
+                                        imageVector = Icons.Default.Lock,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+
+                        Crossfade(
+                            targetState = isOwned && !isLocked,
+                            label = "Owned overlay Loading"
+                        ) {
+                            if (it) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(88.dp)
+                                        .aspectRatio(1f)
+                                        .clip(CircleShape)
+                                        .background(
+                                            Brush.radialGradient(
+                                                listOf(
+                                                    MaterialTheme.colorScheme.surfaceContainer,
+                                                    Color.Transparent
+                                                )
+                                            )
+                                        ),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .height(64.dp)
+                                            .aspectRatio(1f),
+                                        imageVector = Icons.Default.CheckCircle,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.TopStart
@@ -222,61 +299,6 @@ fun RewardCard(
                                         color = MaterialTheme.colorScheme.onSecondary
                                     )
                                 }
-                            }
-                        }
-
-                        if (isLocked) {
-                            Box(
-                                modifier = Modifier
-                                    .height(88.dp)
-                                    .aspectRatio(1f)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.radialGradient(
-                                            listOf(
-                                                MaterialTheme.colorScheme.surfaceContainer,
-                                                Color.Transparent
-                                            )
-                                        )
-                                    ),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .height(64.dp)
-                                        .aspectRatio(1f),
-                                    imageVector = Icons.Default.Lock,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-
-
-                        if (!isLocked && isOwned) {
-                            Box(
-                                modifier = Modifier
-                                    .height(88.dp)
-                                    .aspectRatio(1f)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.radialGradient(
-                                            listOf(
-                                                MaterialTheme.colorScheme.surfaceContainer,
-                                                Color.Transparent
-                                            )
-                                        )
-                                    ),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .height(64.dp)
-                                        .aspectRatio(1f),
-                                    imageVector = Icons.Default.CheckCircle,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
                             }
                         }
                     }

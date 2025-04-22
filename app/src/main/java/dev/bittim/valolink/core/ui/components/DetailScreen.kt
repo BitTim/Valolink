@@ -7,10 +7,10 @@
  File:       DetailScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:15
+ Modified:   22.04.25, 18:52
  */
 
-package dev.bittim.valolink.core.ui.components.rewardCard
+package dev.bittim.valolink.core.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade

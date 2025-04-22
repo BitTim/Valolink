@@ -7,7 +7,7 @@
  File:       LandingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 19:01
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -58,11 +58,12 @@ fun LandingScreen(
 
     OnboardingLayout(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = Spacing.l),
+            .fillMaxSize(),
         content = {
             SimpleLoadingContainer(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Spacing.l),
                 isLoading = state.loading,
                 label = "Spray image loading crossfade"
             ) {
@@ -79,7 +80,9 @@ fun LandingScreen(
         },
         form = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.l),
             ) {
                 OutlinedSocialButton(
                     modifier = Modifier.fillMaxWidth(),

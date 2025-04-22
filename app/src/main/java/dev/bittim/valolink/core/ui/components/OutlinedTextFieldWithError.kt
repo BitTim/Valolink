@@ -1,17 +1,18 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       OutlinedTextFieldWithError.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.12.24, 16:56
+ Modified:   22.04.25, 19:30
  */
 
 package dev.bittim.valolink.core.ui.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -94,13 +95,18 @@ fun OutlinedTextFieldWithError(
             }
         )
 
-        if (error != null) {
-            Text(
-                modifier = Modifier.padding(top = Spacing.s),
-                text = error.asString(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error
-            )
+        AnimatedContent(
+            targetState = error,
+            label = "Animate error visibility"
+        ) {
+            if (it != null) {
+                Text(
+                    modifier = Modifier.padding(top = Spacing.s),
+                    text = it.asString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
