@@ -7,7 +7,7 @@
  File:       RankSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 22:59
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -29,8 +29,19 @@ fun NavGraphBuilder.rankSetupScreen() {
 
         RankSetupScreen(
             state = state.value,
-            signOut = viewModel::signOut,
-            setRank = viewModel::setRank
+            navBack = viewModel::navBack,
+            setRank = {
+                viewModel.setRank(
+                    state.value.tier,
+                    state.value.rr,
+                    state.value.matchesPlayed,
+                    state.value.matchesNeeded
+                )
+            },
+            onTierChanged = viewModel::onTierChanged,
+            onRRChanged = viewModel::onRRChanged,
+            onMatchesPlayedChanged = viewModel::onMatchesPlayedChanged,
+            onMatchesNeededChanged = viewModel::onMatchesNeededChanged
         )
     }
 }

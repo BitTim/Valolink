@@ -7,7 +7,7 @@
  File:       UserRankEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   23.04.25, 00:08
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -23,7 +23,7 @@ import java.time.OffsetDateTime
     tableName = "UserRanks", foreignKeys = [ForeignKey(
         entity = UserDataEntity::class,
         parentColumns = ["uuid"],
-        childColumns = ["user"],
+        childColumns = ["uuid"],
         onDelete = ForeignKey.CASCADE
     )], indices = [Index(
         value = ["uuid"], unique = true
@@ -34,14 +34,13 @@ data class UserRankEntity(
     override val isSynced: Boolean,
     override val toDelete: Boolean,
     override val updatedAt: String,
-    val user: String,
     val tier: Int,
     val rr: Int,
     val matchesPlayed: Int,
     val matchesNeeded: Int,
 ) : SyncedEntity {
     override fun getIdentifier(): String {
-        return user
+        return uuid
     }
 
     override fun withIsSynced(isSynced: Boolean): SyncedEntity {
@@ -50,7 +49,7 @@ data class UserRankEntity(
 
     fun toType(): UserRank {
         return UserRank(
-            uuid, user, tier, rr, matchesPlayed, matchesNeeded
+            uuid, tier, rr, matchesPlayed, matchesNeeded
         )
     }
 
@@ -65,7 +64,6 @@ data class UserRankEntity(
                 isSynced,
                 toDelete,
                 OffsetDateTime.now().toString(),
-                userRank.user,
                 userRank.tier,
                 userRank.rr,
                 userRank.matchesPlayed,

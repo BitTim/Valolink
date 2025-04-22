@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 19:02
+ Modified:   22.04.25, 20:29
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -67,11 +67,12 @@ import dev.bittim.valolink.onboarding.ui.screens.profileSetup.dialogs.PrivateAcc
 @Composable
 fun ProfileSetupScreen(
     state: ProfileSetupState,
-    validateUsername: (username: String) -> Unit,
+    onUsernameChanged: (value: String) -> Unit,
+    onPrivateChanged: (value: Boolean) -> Unit,
     selectAvatar: (username: String, context: Context?, uri: Uri?) -> Unit,
     resetAvatar: (username: String, context: Context?) -> Unit,
     navLanding: () -> Unit,
-    setProfile: (username: String, private: Boolean) -> Unit
+    setProfile: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -79,19 +80,11 @@ fun ProfileSetupScreen(
         if (state.isAuthenticated == false) navLanding()
     }
 
-    var username by remember { mutableStateOf("") }
-    var private by remember { mutableStateOf(false) }
-
-    val onUsernameChanged = { value: String ->
-        username = value
-        validateUsername(value)
-    }
-
     var showPrivateAccountInfoDialog by remember { mutableStateOf(false) }
 
     val mediaPicker = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) {
-            selectAvatar(username, context, uri)
+            selectAvatar(state.username, context, uri)
         }
     }
 
@@ -136,7 +129,7 @@ fun ProfileSetupScreen(
                                 .width(48.dp)
                                 .aspectRatio(1f),
                             onClick = {
-                                resetAvatar(username, context)
+                                resetAvatar(state.username, context)
                             }
                         ) {
                             Icon(Icons.Default.RestartAlt, contentDescription = null)
@@ -168,7 +161,7 @@ fun ProfileSetupScreen(
                         .fillMaxWidth(),
                     label = UiText.StringResource(R.string.onboarding_textField_label_username)
                         .asString(),
-                    value = username,
+                    value = state.username,
                     error = state.usernameError,
                     onValueChange = onUsernameChanged,
                     keyboardOptions = KeyboardOptions(
@@ -181,8 +174,8 @@ fun ProfileSetupScreen(
                         modifier = Modifier.fillMaxWidth(),
                         label = UiText.StringResource(R.string.onboarding_switch_label_private)
                             .asString(),
-                        value = private,
-                        onValueChange = { private = it },
+                        value = state.private,
+                        onValueChange = onPrivateChanged,
                         showTooltip = true,
                         onTooltip = {
                             showPrivateAccountInfoDialog = true
@@ -195,8 +188,8 @@ fun ProfileSetupScreen(
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = navLanding,
-                    onContinue = { setProfile(username, private) },
-                    disableContinueButton = state.isAuthenticated != true || state.avatar == null || state.avatarError != null || state.usernameError != null || username.isEmpty(),
+                    onContinue = setProfile,
+                    disableContinueButton = state.isAuthenticated != true || state.avatar == null || state.avatarError != null || state.usernameError != null || state.username.isEmpty(),
                     dismissText = UiText.StringResource(R.string.onboarding_profileSetup_button_signout),
                     continueText = UiText.StringResource(R.string.button_continue)
                 )
@@ -222,9 +215,10 @@ fun ProfileSetupScreenPreview() {
         Surface {
             ProfileSetupScreen(
                 state = ProfileSetupState(),
-                validateUsername = { },
+                onUsernameChanged = { },
+                onPrivateChanged = { },
                 navLanding = { },
-                setProfile = { _, _ -> },
+                setProfile = { },
                 selectAvatar = { _, _, _ -> },
                 resetAvatar = { _, _ -> }
             )

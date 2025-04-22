@@ -7,7 +7,7 @@
  File:       UserDataSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   22.04.25, 20:46
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -111,6 +112,28 @@ class UserDataSupabaseRepository @Inject constructor(
     override fun hasOnboarded(uid: String): Flow<Boolean?> {
         return get(uid).map { data ->
             data?.let { it.onboardingStep + OnboardingScreen.STEP_OFFSET > OnboardingScreen.getMaxStep() }
+        }
+    }
+
+    override suspend fun downloadAvatarWithCurrentUser(): ByteArray? {
+        val uid = sessionRepository.getUid().firstOrNull() ?: return null
+        return downloadAvatar(uid)
+    }
+
+    override suspend fun downloadAvatar(uid: String): ByteArray? {
+        val isLocal = sessionRepository.isLocal().firstOrNull() ?: return null
+        val avatar = get(uid).firstOrNull()?.avatar ?: return null
+
+        return if (isLocal) {
+            val filename = avatar
+            val file = FileInputStream(filename)
+            val bytes = file.readAllBytes()
+            file.close()
+
+            bytes
+        } else {
+            val bucket = storage.from("avatars")
+            bucket.downloadAuthenticated(avatar)
         }
     }
 

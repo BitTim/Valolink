@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d0f18b4dedcb19952e5412c133016b06",
+    "identityHash": "385e1241c03cfede024ca6f7d9305986",
     "entities": [
       {
         "tableName": "Users",
@@ -328,7 +328,7 @@
       },
       {
         "tableName": "UserRanks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `toDelete` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `user` TEXT NOT NULL, `tier` INTEGER NOT NULL, `rr` INTEGER NOT NULL, `matchesPlayed` INTEGER NOT NULL, `matchesNeeded` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`user`) REFERENCES `Users`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `toDelete` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `tier` INTEGER NOT NULL, `rr` INTEGER NOT NULL, `matchesPlayed` INTEGER NOT NULL, `matchesNeeded` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`uuid`) REFERENCES `Users`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -351,12 +351,6 @@
           {
             "fieldPath": "updatedAt",
             "columnName": "updatedAt",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "user",
-            "columnName": "user",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -408,7 +402,7 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "user"
+              "uuid"
             ],
             "referencedColumns": [
               "uuid"
@@ -419,7 +413,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd0f18b4dedcb19952e5412c133016b06')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '385e1241c03cfede024ca6f7d9305986')"
     ]
   }
 }

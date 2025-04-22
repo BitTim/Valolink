@@ -7,7 +7,7 @@
  File:       RankSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   23.04.25, 00:34
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -27,9 +27,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,11 +51,56 @@ class RankSetupViewModel @Inject constructor(
                     }
             }
         }
+
+        viewModelScope.launch {
+            val userRank =
+                userDataRepository.getWithCurrentUser().firstOrNull()?.rank ?: return@launch
+
+            _state.update {
+                it.copy(
+                    tier = userRank.tier,
+                    rr = userRank.rr,
+                    matchesPlayed = userRank.matchesPlayed,
+                    matchesNeeded = userRank.matchesNeeded
+                )
+            }
+        }
     }
 
-    fun signOut() {
+    fun navBack() {
         viewModelScope.launch {
-            sessionRepository.signOut()
+            val userData = userDataRepository.getWithCurrentUser().firstOrNull() ?: return@launch
+            userDataRepository.setWithCurrentUser(
+                userData.copy(
+                    onboardingStep = OnboardingScreen.RankSetup.step - OnboardingScreen.STEP_OFFSET - 1
+                )
+            )
+        }
+    }
+
+    fun onTierChanged(value: Int) {
+        _state.update {
+            it.copy(tier = value)
+        }
+    }
+
+    fun onRRChanged(value: Int) {
+        _state.update {
+            it.copy(rr = value)
+        }
+    }
+
+    fun onMatchesPlayedChanged(value: Int) {
+        _state.update {
+            it.copy(matchesPlayed = value)
+        }
+    }
+
+    fun onMatchesNeededChanged(value: Int) {
+        if (_state.value.matchesPlayed > value) {
+            _state.update { it.copy(matchesPlayed = value, matchesNeeded = value) }
+        } else {
+            _state.update { it.copy(matchesNeeded = value) }
         }
     }
 
@@ -69,8 +114,7 @@ class RankSetupViewModel @Inject constructor(
             userDataRepository.setWithCurrentUser(
                 userData.copy(
                     rank = UserRank(
-                        uuid = UUID.randomUUID().toString(),
-                        user = uid,
+                        uuid = uid,
                         tier = tier,
                         rr = rr,
                         matchesPlayed = actualPlayed,

@@ -7,7 +7,7 @@
  File:       UserRankDto.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   23.04.25, 00:09
  */
 
 package dev.bittim.valolink.user.data.remote.dto
@@ -19,14 +19,13 @@ import kotlinx.serialization.Serializable
 data class UserRankDto(
     override val uuid: String,
     override val updatedAt: String,
-    val user: String,
     val tier: Int,
     val rr: Int,
     val matchesPlayed: Int,
     val matchesNeeded: Int,
 ) : SyncedDto<UserRankEntity>() {
     override fun getIdentifier(): String {
-        return user
+        return uuid
     }
 
     override fun toEntity(isSynced: Boolean, toDelete: Boolean): UserRankEntity {
@@ -35,7 +34,6 @@ data class UserRankDto(
             isSynced,
             toDelete,
             updatedAt,
-            user,
             tier,
             rr,
             matchesPlayed,
@@ -48,7 +46,6 @@ data class UserRankDto(
             return UserRankDto(
                 entity.uuid,
                 entity.updatedAt,
-                entity.user,
                 entity.tier,
                 entity.rr,
                 entity.matchesPlayed,

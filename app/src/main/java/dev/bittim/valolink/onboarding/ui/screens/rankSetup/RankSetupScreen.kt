@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 19:57
+ Modified:   22.04.25, 23:47
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -38,7 +38,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -61,40 +60,47 @@ import dev.bittim.valolink.onboarding.ui.screens.rankSetup.components.RankCard
 import dev.bittim.valolink.onboarding.ui.screens.rankSetup.components.RankCardData
 import kotlin.math.absoluteValue
 
+const val MAX_RR = 99
+
 @Composable
 fun RankSetupScreen(
     state: RankSetupState,
-    signOut: () -> Unit,
-    setRank: (tier: Int, rr: Int, matchesPlayed: Int, matchesNeeded: Int) -> Unit,
+    navBack: () -> Unit,
+    onTierChanged: (tier: Int) -> Unit,
+    onRRChanged: (tier: Int) -> Unit,
+    onMatchesPlayedChanged: (tier: Int) -> Unit,
+    onMatchesNeededChanged: (tier: Int) -> Unit,
+    setRank: () -> Unit,
 ) {
-    var rr by remember { mutableIntStateOf(50) }
-    var matchesPlayed by remember { mutableIntStateOf(0) }
-    var matchesNeeded by remember { mutableIntStateOf(5) }
-
-    val pagerState = rememberPagerState(pageCount = { state.ranks?.count() ?: 0 })
     var clickedPage by remember { mutableIntStateOf(0) }
+    var pagerState = rememberPagerState(pageCount = { state.ranks?.count() ?: 0 })
 
     var isUnranked by remember { mutableStateOf(true) }
     var isHighest by remember { mutableStateOf(false) }
-    var page by remember { mutableIntStateOf(0) }
 
-    var rrString by remember { mutableStateOf(rr.toString()) }
-    var rrError by remember { mutableStateOf<UiText?>(null) }
+    var rrString by remember { mutableStateOf(state.rr.toString()) }
+    var rrError: UiText? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(pagerState.currentPage) {
-        snapshotFlow { pagerState.currentPage }.collect {
-            isUnranked = (state.ranks?.get(it)?.tier ?: 0) == 0
-            isHighest = it == state.ranks?.lastIndex
-            page = it
-
-            if (!isHighest && rr > 99) {
-                rr = 99
-            }
+    LaunchedEffect(pagerState.currentPage, pagerState.targetPage) {
+        if (pagerState.currentPage == pagerState.targetPage) {
+            onTierChanged(state.ranks?.get(pagerState.currentPage)?.tier ?: 0)
         }
     }
 
-    LaunchedEffect(rr) {
-        rrString = rr.toString()
+    LaunchedEffect(state.tier) {
+        val newPage = state.ranks?.indexOfFirst { it.tier == state.tier } ?: 0
+        pagerState.animateScrollToPage(newPage)
+
+        isUnranked = state.tier == 0
+        isHighest = state.tier == state.ranks?.last()?.tier
+
+        if (!isHighest && state.rr > MAX_RR) {
+            onRRChanged(MAX_RR)
+        }
+    }
+
+    LaunchedEffect(state.rr) {
+        rrString = state.rr.toString()
     }
 
     LaunchedEffect(clickedPage) {
@@ -164,14 +170,16 @@ fun RankSetupScreen(
                                 )
                             }
                             .clickable {
-                                clickedPage = it
+                                if (pageOffset <= 1) clickedPage = it
                             },
                         data = rankCardData,
                         isUnranked = rank?.tier == 0,
-                        rr = if (it < page) 99 else if (it == page) rr else 0,
+                        rr = if ((rank?.tier
+                                ?: 0) < state.tier
+                        ) MAX_RR else if (rank?.tier == state.tier) state.rr else 0,
                         deltaRR = 0,
-                        matchesPlayed = matchesPlayed,
-                        matchesNeeded = matchesNeeded
+                        matchesPlayed = state.matchesPlayed,
+                        matchesNeeded = state.matchesNeeded
                     )
                 }
             }
@@ -196,27 +204,24 @@ fun RankSetupScreen(
                             LabeledSlider(
                                 label = UiText.StringResource(R.string.onboarding_rankSetup_slider_matchesPlayed_label)
                                     .asString(),
-                                initialValue = matchesPlayed.toFloat(),
-                                valueRange = 0f..matchesNeeded.toFloat(),
+                                initialValue = state.matchesPlayed.toFloat(),
+                                valueRange = 0f..state.matchesNeeded.toFloat(),
                                 isStepped = false,
                                 showLimitLabels = true,
                                 onValueChange = {
-                                    matchesPlayed = it.toInt()
+                                    onMatchesPlayedChanged(it.toInt())
                                 }
                             )
 
                             LabeledSlider(
                                 label = UiText.StringResource(R.string.onboarding_rankSetup_slider_matchesNeeded_label)
                                     .asString(),
-                                initialValue = matchesNeeded.toFloat(),
+                                initialValue = state.matchesNeeded.toFloat(),
                                 valueRange = 1f..5f,
                                 isStepped = false,
                                 showLimitLabels = true,
                                 onValueChange = {
-                                    matchesNeeded = it.toInt()
-                                    if (matchesPlayed > matchesNeeded) {
-                                        matchesPlayed = matchesNeeded
-                                    }
+                                    onMatchesNeededChanged(it.toInt())
                                 }
                             )
                         }
@@ -230,12 +235,12 @@ fun RankSetupScreen(
                                 LabeledSlider(
                                     label = UiText.StringResource(R.string.onboarding_rankSetup_slider_currentRR_label)
                                         .asString(),
-                                    initialValue = rr.toFloat(),
-                                    valueRange = 0f..99f,
+                                    initialValue = state.rr.toFloat(),
+                                    valueRange = 0f..MAX_RR.toFloat(),
                                     isStepped = false,
                                     showLimitLabels = true,
                                     onValueChange = {
-                                        rr = it.toInt()
+                                        onRRChanged(it.toInt())
                                     }
                                 )
                             } else {
@@ -249,15 +254,12 @@ fun RankSetupScreen(
                                         rrString = it
 
                                         try {
-                                            rr = rrString.toInt()
-                                            rrError = null
-                                        } catch (e: NumberFormatException) {
-                                            rrError = UiText.DynamicString(
-                                                e.localizedMessage ?: e.message ?: "Invalid number"
-                                            )
+                                            onRRChanged(rrString.toInt())
+                                        } catch (_: NumberFormatException) {
+                                            rrError =
+                                                UiText.StringResource(R.string.error_numberFormat)
                                         }
                                     },
-                                    visibility = true,
                                     keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Number
                                     ),
@@ -271,17 +273,10 @@ fun RankSetupScreen(
 
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
-                    onDismiss = signOut,
-                    onContinue = {
-                        setRank(
-                            state.ranks!![page].tier,
-                            rr,
-                            matchesPlayed,
-                            matchesNeeded
-                        )
-                    },
+                    onDismiss = navBack,
+                    onContinue = setRank,
                     disableContinueButton = state.ranks == null,
-                    dismissText = UiText.StringResource(R.string.button_cancel),
+                    dismissText = UiText.StringResource(R.string.button_back),
                     continueText = UiText.StringResource(R.string.button_continue)
                 )
             }
@@ -296,8 +291,12 @@ fun RankSetupScreenPreview() {
         Surface {
             RankSetupScreen(
                 RankSetupState(),
-                signOut = {},
-                setRank = { _, _, _, _ -> }
+                navBack = {},
+                setRank = {},
+                onTierChanged = {},
+                onRRChanged = {},
+                onMatchesPlayedChanged = {},
+                onMatchesNeededChanged = {}
             )
         }
     }

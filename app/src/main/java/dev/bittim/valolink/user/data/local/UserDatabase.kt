@@ -7,7 +7,7 @@
  File:       UserDatabase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   23.04.25, 00:35
  */
 
 package dev.bittim.valolink.user.data.local
@@ -49,7 +49,7 @@ abstract class UserDatabase : RoomDatabase() {
             "UserAgent" -> userAgentDao.getByUser(relation)
             "UserContract" -> userContractDao.getByUser(relation)
             "UserLevel" -> userLevelDao.getByContract(relation)
-            "UserRank" -> userRankDao.getByUser(relation).map { listOfNotNull(it) }
+            "UserRank" -> userRankDao.getByUuid(relation).map { listOfNotNull(it) }
 
             else -> throw IllegalArgumentException("Unknown type: $type")
         }

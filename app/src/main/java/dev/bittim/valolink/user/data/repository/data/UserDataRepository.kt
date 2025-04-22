@@ -7,7 +7,7 @@
  File:       UserDataRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   22.04.25, 20:39
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -26,6 +26,9 @@ interface UserDataRepository : UserRepository<UserData, UserDataDto> {
 
     fun hasOnboardedWithCurrentUser(): Flow<Boolean?>
     fun hasOnboarded(uid: String): Flow<Boolean?>
+
+    suspend fun downloadAvatarWithCurrentUser(): ByteArray?
+    suspend fun downloadAvatar(uid: String): ByteArray?
 
     // ================================
     //  Set User Data

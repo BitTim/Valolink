@@ -7,7 +7,7 @@
  File:       UserRankSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   23.04.25, 00:12
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -51,7 +51,7 @@ class UserRankSupabaseRepository @Inject constructor(
         return try {
             // Get from local database
             val rankFlow =
-                userDatabase.userRankDao.getByUser(uid).distinctUntilChanged()
+                userDatabase.userRankDao.getByUuid(uid).distinctUntilChanged()
                     .map { it?.toType() }
 
             // Queue worker to sync with Supabase
@@ -81,7 +81,7 @@ class UserRankSupabaseRepository @Inject constructor(
             )
 
             // Queue worker to sync with Supabase
-            queueWorker(obj.user)
+            queueWorker(obj.uuid)
 
             // Return
             true
@@ -107,7 +107,7 @@ class UserRankSupabaseRepository @Inject constructor(
     override suspend fun remoteQuery(relation: String): List<UserRankDto>? {
         try {
             return database.from(TABLE_NAME).select {
-                filter { UserRankDto::user eq relation }
+                filter { UserRankDto::uuid eq relation }
             }.decodeList<UserRankDto>()
         } catch (e: Exception) {
             if (e is CancellationException) throw e

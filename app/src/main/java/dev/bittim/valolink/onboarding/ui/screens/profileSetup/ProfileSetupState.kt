@@ -7,7 +7,7 @@
  File:       ProfileSetupState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   22.04.25, 20:26
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -21,8 +21,11 @@ data class ProfileSetupState(
     val isAuthenticated: Boolean? = null,
     val isLocal: Boolean? = null,
 
+    val username: String = "",
+    val private: Boolean = false,
+    val avatar: Bitmap? = null,
+
     val imageError: UiText? = null,
     val usernameError: UiText? = null,
-    val avatar: Bitmap? = null,
     val avatarError: UiText? = null,
 )

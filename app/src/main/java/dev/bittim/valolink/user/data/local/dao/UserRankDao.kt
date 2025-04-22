@@ -7,7 +7,7 @@
  File:       UserRankDao.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   23.04.25, 00:34
  */
 
 package dev.bittim.valolink.user.data.local.dao
@@ -41,16 +41,10 @@ interface UserRankDao {
     @Query("SELECT * FROM UserRanks WHERE uuid = :uuid LIMIT 1")
     fun getByUuid(uuid: String): Flow<UserRankEntity?>
 
-    @Query("SELECT * FROM UserRanks WHERE user = :uid LIMIT 1")
-    fun getByUser(uid: String): Flow<UserRankEntity?>
-
     @Query("SELECT updatedAt FROM UserRanks WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
-    @Query("SELECT updatedAt FROM UserRanks WHERE user = :uid LIMIT 1")
-    fun getUpdatedAtByUser(uid: String): Flow<String?>
-
-    @Query("SELECT * FROM UserRanks WHERE isSynced = false AND user != :localUser ORDER BY updatedAt ASC")
+    @Query("SELECT * FROM UserRanks WHERE isSynced = false AND uuid != :localUser ORDER BY updatedAt ASC")
     fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserRankEntity?>>
 
     // --------------------------------
@@ -62,9 +56,6 @@ interface UserRankDao {
 
     @Query("DELETE FROM UserRanks WHERE uuid = :uuid")
     suspend fun deleteByUuid(uuid: String)
-
-    @Query("DELETE FROM UserRanks WHERE user = :uid")
-    suspend fun deleteByUser(uid: String)
 
     @Query("DELETE FROM UserRanks")
     suspend fun deleteAll()

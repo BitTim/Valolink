@@ -7,7 +7,7 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 19:57
+ Modified:   22.04.25, 20:35
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -60,7 +60,8 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun ContractSetupScreen(
-    state: ContractSetupState
+    state: ContractSetupState,
+    navBack: () -> Unit,
 ) {
     val levels = state.contract?.content?.chapters?.flatMap { it.levels }?.drop(1)
     val pagerState = rememberPagerState(pageCount = { levels?.count() ?: 0 })
@@ -206,11 +207,11 @@ fun ContractSetupScreen(
 
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
-                    onDismiss = {},
+                    onDismiss = navBack,
                     onContinue = { },
                     disableContinueButton = xpCollectedError != null || levels != null,
-                    dismissText = UiText.StringResource(R.string.button_cancel),
-                    continueText = UiText.StringResource(R.string.onboarding_createAccount_button_createAccount)
+                    dismissText = UiText.StringResource(R.string.button_back),
+                    continueText = UiText.StringResource(R.string.button_continue)
                 )
             }
         }
@@ -222,7 +223,7 @@ fun ContractSetupScreen(
 fun ContractSetupScreenPreview() {
     ValolinkTheme {
         Surface {
-            ContractSetupScreen(state = ContractSetupState())
+            ContractSetupScreen(state = ContractSetupState(), navBack = {})
         }
     }
 }

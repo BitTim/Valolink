@@ -7,7 +7,7 @@
  File:       ContractSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   22.04.25, 20:35
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -28,7 +28,8 @@ fun NavGraphBuilder.contractSetupScreen() {
         val state = viewModel.state.collectAsStateWithLifecycle()
 
         ContractSetupScreen(
-            state = state.value
+            state = state.value,
+            navBack = viewModel::navBack
         )
     }
 }

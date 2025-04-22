@@ -7,16 +7,13 @@
  File:       UserRank.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   23.04.25, 00:08
  */
 
 package dev.bittim.valolink.user.domain.model
 
-import java.util.UUID
-
 data class UserRank(
     val uuid: String,
-    val user: String,
     val tier: Int,
     val rr: Int,
     val matchesPlayed: Int,
@@ -25,8 +22,7 @@ data class UserRank(
     companion object {
         fun empty(uid: String): UserRank {
             return UserRank(
-                uuid = UUID.randomUUID().toString(),
-                user = uid,
+                uuid = uid,
                 tier = 0,
                 rr = 0,
                 matchesPlayed = 0,
