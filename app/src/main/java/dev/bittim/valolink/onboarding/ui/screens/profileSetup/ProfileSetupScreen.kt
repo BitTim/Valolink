@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -92,7 +93,9 @@ fun ProfileSetupScreen(
     }
 
     OnboardingLayout(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Spacing.l),
         content = {
             Box(
                 modifier = Modifier

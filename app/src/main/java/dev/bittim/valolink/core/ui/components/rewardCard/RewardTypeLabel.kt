@@ -7,7 +7,7 @@
  File:       RewardTypeLabel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:15
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +49,7 @@ fun RewardTypeLabel(
     modifier: Modifier = Modifier,
     rewardType: RewardType?,
     style: RewardTypeLabelStyle,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     LocalConfiguration.current
     LocalDensity.current
@@ -85,13 +87,13 @@ fun RewardTypeLabel(
                     modifier = Modifier.size(iconSize),
                     imageVector = it.icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = color
                 )
 
                 Text(
                     text = it.displayName,
                     style = textStyle,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = color
                 )
             }
         }

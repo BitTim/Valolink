@@ -7,7 +7,7 @@
  File:       RankSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -22,9 +22,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 object RankSetupNav
 
-fun NavGraphBuilder.rankSetupScreen(
-    navBack: () -> Unit
-) {
+fun NavGraphBuilder.rankSetupScreen() {
     composable<RankSetupNav> {
         val viewModel: RankSetupViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()

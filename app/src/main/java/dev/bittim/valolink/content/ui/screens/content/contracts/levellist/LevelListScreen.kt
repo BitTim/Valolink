@@ -7,7 +7,7 @@
  File:       LevelListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.levellist
@@ -51,8 +51,8 @@ import dev.bittim.valolink.content.domain.model.contract.chapter.Level
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.ContractResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
-import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCard
-import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCardData
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCard
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
 import java.time.Instant
 import java.util.UUID
 
@@ -198,7 +198,7 @@ fun LevelListScreen(
                     val rewardCardData = if (level == null || reward == null) {
                         null
                     } else {
-                        AgentRewardListCardData(
+                        RewardListCardData(
                             name = reward.displayName,
                             levelUuid = level.uuid,
                             type = reward.type,
@@ -206,21 +206,18 @@ fun LevelListScreen(
                             contractName = state.contract?.displayName ?: "",
                             rewardCount = level.rewards.count(),
                             amount = reward.amount,
+                            useXP = true,
+                            xpTotal = level.xp,
                             displayIcon = reward.displayIcon,
                             background = reward.background,
-                            isLocked = isLocked,
-                            isOwned = userContract?.levels?.any { it.level == level.uuid } == true,
                         )
                     }
 
-                    AgentRewardListCard(
+                    RewardListCard(
                         data = rewardCardData,
-                        resetReward = {
-                            if (level == null) return@AgentRewardListCard
-
-                            targetLevelUuid = level.uuid
-                            isLevelResetAlertShown = true
-                        },
+                        xpCollected = 0, // TODO: Replace with actual user data
+                        isLocked = isLocked,
+                        isOwned = userContract?.levels?.any { it.level == level?.uuid } == true,
                         onNavToLevelDetails = { levelUuid ->
                             if (reward?.type == RewardType.AGENT) {
                                 onNavToAgentDetails(reward.uuid)

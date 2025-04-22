@@ -7,7 +7,7 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -66,7 +66,6 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dia
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelUnlockAlertDialog
 import dev.bittim.valolink.core.ui.components.ShaderGradientBackdrop
-import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardCard
 import dev.bittim.valolink.core.ui.components.rewardCard.DetailScreen
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCardData
@@ -102,7 +101,7 @@ fun AgentDetailsScreen(
     // --------------------------------
 
     val numRewardsVisible =
-        ceil(LocalConfiguration.current.screenWidthDp / AgentRewardCard.width.value).toInt()
+        ceil(LocalConfiguration.current.screenWidthDp / RewardCard.width.value).toInt()
 
     val agent = state.agentGear?.content?.relation as? Agent?
     val isLocked = state.userData?.agents?.any { it.agent == agent?.uuid } != true
@@ -366,13 +365,13 @@ fun AgentDetailsScreen(
                                 price = level.doughCost,
                                 amount = reward.amount,
                                 currencyIcon = state.dough?.displayIcon ?: "",
-                                isLocked = isLocked,
-                                isOwned = userContract?.levels?.any { it.level == level.uuid } == true,
                             )
                         }
 
                         RewardCard(
                             data = rewardCardData,
+                            isLocked = isLocked,
+                            isOwned = userContract?.levels?.any { it.level == level?.uuid } == true,
                             unlockReward = {
                                 if (userContract?.levels?.lastOrNull()?.level == level?.dependency) {
                                     // Unlock just one
@@ -384,12 +383,6 @@ fun AgentDetailsScreen(
                                     targetLevelUuid = level.uuid
                                     isRewardUnlockAlertShown = true
                                 }
-                            },
-                            resetReward = {
-                                if (level == null) return@RewardCard
-
-                                targetLevelUuid = level.uuid
-                                isRewardResetAlertShown = true
                             },
                             onNavToLevelDetails = { levelUuid ->
                                 onNavLevelDetails(

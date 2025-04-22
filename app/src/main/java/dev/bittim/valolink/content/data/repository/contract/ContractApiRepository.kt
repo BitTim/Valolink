@@ -7,7 +7,7 @@
  File:       ContractApiRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 04:05
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.data.repository.contract
@@ -163,7 +163,7 @@ class ContractApiRepository @Inject constructor(
     }
 
 
-    override suspend fun getActiveContracts(): Flow<List<Contract>> {
+    override suspend fun getActiveContracts(withRewards: Boolean): Flow<List<Contract>> {
         return try {
             // Get current time
             val currentIsoTime = Instant.now().toString()
@@ -172,7 +172,7 @@ class ContractApiRepository @Inject constructor(
             val localContracts =
                 contentDatabase.contractsDao.getActiveByTime(currentIsoTime).distinctUntilChanged()
                     .flatMapLatest {
-                        withRelation(it, false)
+                        withRelation(it, withRewards)
                     }
 
             // Get recruitments from local database
@@ -201,12 +201,12 @@ class ContractApiRepository @Inject constructor(
         }
     }
 
-    override suspend fun getAgentGears(): Flow<List<Contract>> {
+    override suspend fun getAgentGears(withRewards: Boolean): Flow<List<Contract>> {
         return try {
             // Get from local database
             val local =
                 contentDatabase.contractsDao.getAllGears().distinctUntilChanged().flatMapLatest {
-                    withRelation(it, false)
+                    withRelation(it, withRewards)
                 }
 
             // Queue worker to fetch newest data from API
@@ -224,6 +224,7 @@ class ContractApiRepository @Inject constructor(
 
     override suspend fun getInactiveContracts(
         contentType: ContentType,
+        withRewards: Boolean
     ): Flow<List<Contract>> {
         return try {
             // Get current time
@@ -234,14 +235,14 @@ class ContractApiRepository @Inject constructor(
                 ContentType.SEASON -> {
                     contentDatabase.contractsDao.getInactiveSeasonsByTime(currentIsoTime)
                         .distinctUntilChanged().flatMapLatest {
-                            withRelation(it, false)
+                            withRelation(it, withRewards)
                         }
                 }
 
                 ContentType.EVENT -> {
                     contentDatabase.contractsDao.getInactiveEventsByTime(currentIsoTime)
                         .distinctUntilChanged().flatMapLatest {
-                            withRelation(it, false)
+                            withRelation(it, withRewards)
                         }
                 }
 

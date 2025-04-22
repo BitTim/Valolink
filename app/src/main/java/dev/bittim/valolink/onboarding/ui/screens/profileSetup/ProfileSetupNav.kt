@@ -7,12 +7,11 @@
  File:       ProfileSetupNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -24,9 +23,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 object ProfileSetupNav
 
-fun NavGraphBuilder.profileSetupScreen(
-    snackbarHostState: SnackbarHostState,
-) {
+fun NavGraphBuilder.profileSetupScreen() {
     composable<ProfileSetupNav> { backStackEntry ->
         val viewModel: ProfileSetupViewModel = hiltViewModel()
         val state = viewModel.state.collectAsStateWithLifecycle()

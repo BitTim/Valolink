@@ -7,7 +7,7 @@
  File:       ContractDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 16:32
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.contractdetails
@@ -145,11 +145,11 @@ fun ContractDetailsScreen(
                                         background = reward.background,
                                         useXP = true,
                                         xpTotal = level.xp,
-                                        xpCollected = 0, // TODO: Pull from user data / from match history
                                         price = level.vpCost,
                                         amount = reward.amount,
                                         currencyIcon = state.vp?.displayIcon ?: ""
                                     ),
+                                    xpCollected = 0, // TODO: Pull from user data / from match history
                                     onNavToLevelDetails = { levelUuid ->
                                         if (reward != null) {
                                             if (reward.type == RewardType.AGENT) {

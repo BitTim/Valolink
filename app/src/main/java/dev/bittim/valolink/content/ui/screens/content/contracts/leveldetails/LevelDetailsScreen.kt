@@ -7,7 +7,7 @@
  File:       LevelDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
@@ -54,13 +54,15 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.components.Level
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.HeaderSection
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.LevelHeaderData
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.RelationsSection
-import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.RelationsSectionData
+import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.RelationsSectionContentData
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.RelationsSectionRelation
+import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.RelationsSectionState
+import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.RelationsSectionUserData
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.UnlockSection
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.UnlockSectionData
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
-import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCardData
 import dev.bittim.valolink.core.ui.components.rewardCard.DetailScreen
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
 
 @Composable
 fun LevelDetailsScreen(
@@ -240,11 +242,11 @@ fun LevelDetailsScreen(
                 val nextLevelReward = nextLevel?.rewards?.find { !it.isFreeReward }?.relation
                 val isNextLevelOwned = userContract?.levels?.any { it.level == nextLevel?.uuid }
 
-                val relationsSectionData =
-                    if (state.isLevelRelationsLoading || state.contract == null) null else RelationsSectionData(
+                val relationsSectionContentData =
+                    if (state.isLevelRelationsLoading || state.contract == null) null else RelationsSectionContentData(
                         relations = listOfNotNull(
                             if (prevLevel == null || prevLevelReward == null || isPrevLevelOwned == null) null else RelationsSectionRelation(
-                                level = AgentRewardListCardData(
+                                level = RewardListCardData(
                                     name = prevLevelReward.displayName,
                                     levelUuid = prevLevel.uuid,
                                     type = prevLevelReward.type,
@@ -252,16 +254,16 @@ fun LevelDetailsScreen(
                                     contractName = state.contract.displayName,
                                     rewardCount = prevLevel.rewards.count(),
                                     amount = prevLevelReward.amount,
+                                    useXP = true,
+                                    xpTotal = prevLevel.xp,
                                     displayIcon = prevLevelReward.displayIcon,
                                     background = prevLevelReward.background,
-                                    isLocked = false, // TODO: Replace with proper isLocked state
-                                    isOwned = isPrevLevelOwned,
                                 ),
                                 name = "Previous",
                                 icon = Icons.AutoMirrored.Default.Undo
                             ),
                             if (nextLevel == null || nextLevelReward == null || isNextLevelOwned == null) null else RelationsSectionRelation(
-                                level = AgentRewardListCardData(
+                                level = RewardListCardData(
                                     name = nextLevelReward.displayName,
                                     levelUuid = nextLevel.uuid,
                                     type = nextLevelReward.type,
@@ -269,10 +271,10 @@ fun LevelDetailsScreen(
                                     contractName = state.contract.displayName,
                                     rewardCount = nextLevel.rewards.count(),
                                     amount = nextLevelReward.amount,
+                                    useXP = true,
+                                    xpTotal = nextLevel.xp,
                                     displayIcon = nextLevelReward.displayIcon,
                                     background = nextLevelReward.background,
-                                    isLocked = false, // TODO: Replace with proper isLocked state
-                                    isOwned = isNextLevelOwned,
                                 ),
                                 name = "Next",
                                 icon = Icons.AutoMirrored.Default.Redo
@@ -280,8 +282,25 @@ fun LevelDetailsScreen(
                         )
                     )
 
+                val relationsSectionUserData =
+                    if (state.isLevelRelationsLoading || state.contract == null) null else RelationsSectionUserData(
+                        relations = listOfNotNull(
+                            if (prevLevel == null || prevLevelReward == null || isPrevLevelOwned == null) null else RelationsSectionState(
+                                xpCollected = 0, // TODO: Replace with actual user values
+                                isLocked = false, // TODO: Replace with proper isLocked state
+                                isOwned = isPrevLevelOwned,
+                            ),
+                            if (nextLevel == null || nextLevelReward == null || isNextLevelOwned == null) null else RelationsSectionState(
+                                xpCollected = 0, // TODO: Replace with actual user values
+                                isLocked = false, // TODO: Replace with proper isLocked state
+                                isOwned = isNextLevelOwned,
+                            )
+                        )
+                    )
+
                 RelationsSection(
-                    data = relationsSectionData,
+                    contentData = relationsSectionContentData,
+                    userData = relationsSectionUserData,
                     onNavToLevelDetails = { levelUuid ->
                         onNavToLevelDetails(
                             levelUuid,

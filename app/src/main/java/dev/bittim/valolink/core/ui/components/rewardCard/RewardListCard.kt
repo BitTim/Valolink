@@ -7,7 +7,7 @@
  File:       RewardListCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -29,23 +29,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,12 +70,13 @@ import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.LevelBackdrop
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
 @Immutable
-data class AgentRewardListCardData(
+data class RewardListCardData(
     val name: String,
     val levelUuid: String,
     val type: RewardType,
@@ -85,22 +84,29 @@ data class AgentRewardListCardData(
     val contractName: String,
     val rewardCount: Int,
     val amount: Int,
+    val useXP: Boolean,
+    val xpTotal: Int = 0,
     val displayIcon: String,
     val background: String? = null,
-    val isLocked: Boolean = false,
-    val isOwned: Boolean = false,
 )
 
 @Composable
-fun AgentRewardListCard(
+fun RewardListCard(
     modifier: Modifier = Modifier,
-    data: AgentRewardListCardData?,
-    showMenuButton: Boolean = true,
-    resetReward: () -> Unit = {},
+    data: RewardListCardData?,
+    xpCollected: Int = 0,
+    isLocked: Boolean = false,
+    isOwned: Boolean = false,
     onNavToLevelDetails: (levelUuid: String) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
+
+    var isOwned by remember { mutableStateOf(isOwned) }
+
+    LaunchedEffect(xpCollected) {
+        isOwned = data?.useXP == true && xpCollected >= data.xpTotal
+    }
 
     Card(
         modifier = modifier
@@ -109,8 +115,6 @@ fun AgentRewardListCard(
                 if (data?.levelUuid != null) onNavToLevelDetails(data.levelUuid)
             }
     ) {
-        var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
-
         Row {
             Surface(
                 modifier = Modifier
@@ -128,7 +132,7 @@ fun AgentRewardListCard(
                     } else {
                         if (it.type != RewardType.PLAYER_CARD) {
                             LevelBackdrop(
-                                isDisabled = it.isLocked,
+                                isDisabled = isLocked,
                                 backgroundImage = it.background
                             ) {}
                         }
@@ -146,7 +150,7 @@ fun AgentRewardListCard(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(imagePadding)
-                                .conditional(it.isLocked || it.isOwned) {
+                                .conditional(isLocked || isOwned) {
                                     blur(
                                         4.dp,
                                         BlurredEdgeTreatment.Rectangle
@@ -156,7 +160,7 @@ fun AgentRewardListCard(
                             contentDescription = null,
                             colorFilter = if (it.type == RewardType.CURRENCY || it.type == RewardType.TITLE) ColorFilter.tint(
                                 MaterialTheme.colorScheme.onSurface
-                            ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (it.isLocked) 0.3f else 1f) }),
+                            ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (isLocked) 0.3f else 1f) }),
                             contentScale = if (it.type == RewardType.PLAYER_CARD) ContentScale.FillWidth else ContentScale.Fit,
                             alignment = if (it.type == RewardType.PLAYER_CARD) Alignment.TopCenter else Alignment.Center,
                             placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_displayicon)
@@ -168,7 +172,7 @@ fun AgentRewardListCard(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (it.isLocked) {
+                            if (isLocked) {
                                 Box(
                                     modifier = Modifier
                                         .height(66.dp)
@@ -196,7 +200,7 @@ fun AgentRewardListCard(
                             }
 
 
-                            if (!it.isLocked && it.isOwned) {
+                            if (!isLocked && isOwned) {
                                 Box(
                                     modifier = Modifier
                                         .height(66.dp)
@@ -310,48 +314,11 @@ fun AgentRewardListCard(
 
             Column(
                 modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.End
             ) {
-                if (showMenuButton) {
-                    Crossfade(targetState = data, label = "Menu Button Loading") {
-                        if (it != null) {
-                            Box(
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                IconButton(
-                                    modifier = Modifier.padding(top = Spacing.s, end = Spacing.s),
-                                    onClick = { isMenuExpanded = true },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.MoreVert,
-                                        contentDescription = null
-                                    )
-                                }
-
-                                DropdownMenu(
-                                    expanded = isMenuExpanded,
-                                    onDismissRequest = { isMenuExpanded = false }
-                                ) {
-                                    DropdownMenuItem(
-                                        enabled = data?.isLocked == false && data.isOwned,
-                                        text = { Text(text = "Reset") },
-                                        onClick = {
-                                            resetReward()
-                                            isMenuExpanded = false
-                                        }
-                                    )
-                                }
-                            }
-                        } else {
-                            Spacer(Modifier.height(56.dp))
-                        }
-                    }
-                } else {
-                    Spacer(Modifier.height(56.dp))
-                }
-
                 Crossfade(
-                    modifier = Modifier.padding(bottom = Spacing.l, end = Spacing.l),
+                    modifier = Modifier.padding(top = Spacing.s, end = Spacing.s),
                     targetState = data?.rewardCount,
                     label = "Reward count badge Loading"
                 ) { count ->
@@ -370,6 +337,25 @@ fun AgentRewardListCard(
                                 color = MaterialTheme.colorScheme.onSecondary
                             )
                         }
+                    }
+                }
+
+                Crossfade(
+                    modifier = Modifier.padding(bottom = Spacing.s, end = Spacing.s),
+                    targetState = data,
+                    label = "XP Progress Loading"
+                ) { checkedData ->
+                    if (checkedData != null && checkedData.useXP == true) {
+                        ProgressCluster(
+                            modifier = Modifier.size(Spacing.xxl),
+                            progress = xpCollected,
+                            total = checkedData.xpTotal,
+                            unit = UiText.StringResource(R.string.unit_xp).asString(),
+                            isMonochrome = false,
+                            isCompact = true
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(1.dp))
                     }
                 }
             }
@@ -392,10 +378,9 @@ fun AgentRewardListCardPreview() {
         Column(
             modifier = Modifier.wrapContentSize()
         ) {
-            AgentRewardListCard(
+            RewardListCard(
                 modifier = Modifier.fillMaxWidth(),
-                showMenuButton = false,
-                data = AgentRewardListCardData(
+                data = RewardListCardData(
                     name = "Metamorphosis Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
@@ -403,8 +388,11 @@ fun AgentRewardListCardPreview() {
                     contractName = "Clove Contract",
                     rewardCount = 3,
                     amount = 1,
+                    useXP = true,
+                    xpTotal = 10000,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 ),
+                xpCollected = 3000,
                 onNavToLevelDetails = {}
             )
         }
@@ -426,9 +414,9 @@ fun LongNameAgentRewardListCardPreview() {
         Column(
             modifier = Modifier.wrapContentSize()
         ) {
-            AgentRewardListCard(
+            RewardListCard(
                 modifier = Modifier.fillMaxWidth(),
-                data = AgentRewardListCardData(
+                data = RewardListCardData(
                     name = "Epilogue: Build Your Own Vandal Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
@@ -436,6 +424,7 @@ fun LongNameAgentRewardListCardPreview() {
                     contractName = "Clove Contract",
                     rewardCount = 3,
                     amount = 1,
+                    useXP = false,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                 ),
                 onNavToLevelDetails = {}
@@ -459,9 +448,9 @@ fun LockedAgentRewardListCardPreview() {
         Column(
             modifier = Modifier.wrapContentSize()
         ) {
-            AgentRewardListCard(
+            RewardListCard(
                 modifier = Modifier.fillMaxWidth(),
-                data = AgentRewardListCardData(
+                data = RewardListCardData(
                     name = "Metamorphosis Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
@@ -469,9 +458,12 @@ fun LockedAgentRewardListCardPreview() {
                     contractName = "Clove Contract",
                     rewardCount = 1,
                     amount = 1,
+                    useXP = true,
+                    xpTotal = 10000,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                    isLocked = true
                 ),
+                xpCollected = 3000,
+                isLocked = true,
                 onNavToLevelDetails = {}
             )
         }
@@ -493,9 +485,9 @@ fun OwnedAgentRewardListCardPreview() {
         Column(
             modifier = Modifier.wrapContentSize()
         ) {
-            AgentRewardListCard(
+            RewardListCard(
                 modifier = Modifier.fillMaxWidth(),
-                data = AgentRewardListCardData(
+                data = RewardListCardData(
                     name = "Metamorphosis Card",
                     levelUuid = "",
                     type = RewardType.PLAYER_CARD,
@@ -503,9 +495,10 @@ fun OwnedAgentRewardListCardPreview() {
                     contractName = "Clove Contract",
                     rewardCount = 1,
                     amount = 1,
+                    useXP = false,
                     displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
-                    isOwned = true
                 ),
+                isOwned = true,
                 onNavToLevelDetails = {}
             )
         }
@@ -527,7 +520,7 @@ fun LoadingAgentRewardListCardPreview() {
         Column(
             modifier = Modifier.wrapContentSize()
         ) {
-            AgentRewardListCard(
+            RewardListCard(
                 modifier = Modifier.fillMaxWidth(),
                 data = null,
                 onNavToLevelDetails = {}

@@ -7,7 +7,7 @@
  File:       RewardCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:03
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -31,18 +31,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,7 +74,7 @@ import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 
-data object AgentRewardCard {
+data object RewardCard {
     val width: Dp = 256.dp
 }
 
@@ -90,35 +87,38 @@ data class RewardCardData(
     val contractName: String,
     val rewardCount: Int,
     val useXP: Boolean,
-    val xpTotal: Int = -1,
-    val xpCollected: Int = -1,
+    val xpTotal: Int = 0,
     val price: Int,
     val amount: Int,
     val previewIcon: String,
     val currencyIcon: String,
     val background: String? = null,
-    val isLocked: Boolean = false,
-    val isOwned: Boolean = false,
 )
 
 @Composable
 fun RewardCard(
     modifier: Modifier = Modifier,
     data: RewardCardData?,
+    xpCollected: Int = 0,
+    isLocked: Boolean = false,
+    isOwned: Boolean = false,
     unlockReward: () -> Unit = {},
-    resetReward: () -> Unit = {},
     onNavToLevelDetails: (levelUuid: String) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
 
+    var isOwned by remember { mutableStateOf(isOwned) }
+
+    LaunchedEffect(xpCollected) {
+        isOwned = data?.useXP == true && xpCollected >= data.xpTotal
+    }
+
     Card(
         modifier = modifier
-            .width(AgentRewardCard.width)
+            .width(RewardCard.width)
             .clickable { if (data?.levelUuid != null) onNavToLevelDetails(data.levelUuid) }
     ) {
-        var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
-
         Surface(
             modifier = Modifier
                 .aspectRatio(4f / 3f)
@@ -135,7 +135,7 @@ fun RewardCard(
                 } else {
                     if (it.type != RewardType.PLAYER_CARD) {
                         LevelBackdrop(
-                            isDisabled = it.isLocked,
+                            isDisabled = isLocked,
                             backgroundImage = it.background
                         ) {}
                     }
@@ -150,7 +150,7 @@ fun RewardCard(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(imagePadding)
-                            .conditional(it.isLocked || it.isOwned) {
+                            .conditional(isLocked || isOwned) {
                                 blur(
                                     4.dp,
                                     BlurredEdgeTreatment.Rectangle
@@ -160,7 +160,7 @@ fun RewardCard(
                         contentDescription = null,
                         colorFilter = if (it.type == RewardType.CURRENCY || it.type == RewardType.TITLE) ColorFilter.tint(
                             MaterialTheme.colorScheme.onSurface
-                        ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (it.isLocked) 0.3f else 1f) }),
+                        ) else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(if (isLocked) 0.3f else 1f) }),
                         contentScale = if (it.type == RewardType.PLAYER_CARD) ContentScale.FillWidth else ContentScale.Fit,
                         alignment = if (it.type == RewardType.PLAYER_CARD) Alignment.TopCenter else Alignment.Center,
                         placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_agent_reward_card_largeart)
@@ -206,33 +206,26 @@ fun RewardCard(
                                     }
                                 }
 
-                                Box {
-                                    FilledTonalIconButton(
-                                        modifier = Modifier.padding(Spacing.s),
-                                        onClick = { isMenuExpanded = true },
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.MoreVert,
-                                            contentDescription = null
+                                Box(
+                                    modifier = Modifier
+                                        .padding(Spacing.m)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.secondary)
+                                        .padding(
+                                            horizontal = Spacing.l,
+                                            vertical = Spacing.s
                                         )
-                                    }
-
-                                    DropdownMenu(
-                                        expanded = isMenuExpanded,
-                                        onDismissRequest = { isMenuExpanded = false }) {
-                                        DropdownMenuItem(
-                                            enabled = data?.isLocked == false && data.isOwned,
-                                            text = { Text(text = "Reset") },
-                                            onClick = {
-                                                resetReward()
-                                                isMenuExpanded = false
-                                            })
-                                    }
+                                ) {
+                                    RewardTypeLabel(
+                                        rewardType = data?.type,
+                                        style = RewardTypeLabelStyle.SMALL,
+                                        color = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 }
                             }
                         }
 
-                        if (it.isLocked) {
+                        if (isLocked) {
                             Box(
                                 modifier = Modifier
                                     .height(88.dp)
@@ -260,7 +253,7 @@ fun RewardCard(
                         }
 
 
-                        if (!it.isLocked && it.isOwned) {
+                        if (!isLocked && isOwned) {
                             Box(
                                 modifier = Modifier
                                     .height(88.dp)
@@ -363,14 +356,6 @@ fun RewardCard(
 
             Spacer(Modifier.height(Spacing.s))
 
-            RewardTypeLabel(
-                modifier = Modifier.fillMaxWidth(),
-                rewardType = data?.type,
-                style = RewardTypeLabelStyle.SMALL
-            )
-
-            Spacer(Modifier.height(Spacing.s))
-
             Crossfade(
                 targetState = data,
                 label = "Unlock button Loading"
@@ -395,17 +380,18 @@ fun RewardCard(
                                     .padding(vertical = Spacing.xs)
                                     .height(40.dp),
                                 total = it.xpTotal,
-                                progress = it.xpCollected,
+                                progress = xpCollected,
                                 unit = UiText.StringResource(R.string.unit_xp).asString(),
                                 isMonochrome = false,
+                                isCompact = false
                             )
                         } else {
                             UnlockButton(
                                 currencyIcon = it.currencyIcon,
                                 price = it.price,
                                 isPrimary = true,
-                                isLocked = it.isLocked,
-                                isOwned = it.isOwned,
+                                isLocked = isLocked,
+                                isOwned = isOwned,
                                 onClick = unlockReward
                             )
                         }
@@ -444,18 +430,13 @@ fun RewardCardPreview() {
                         contractName = "Clove Contract",
                         rewardCount = 3,
                         useXP = false,
-                        xpTotal = 0,
-                        xpCollected = 0,
                         price = 2000,
                         amount = 1,
                         previewIcon = "",
                         currencyIcon = "",
                         background = "",
-                        isLocked = false,
-                        isOwned = false,
                     ),
                     unlockReward = {},
-                    resetReward = {},
                     onNavToLevelDetails = {}
                 )
 
@@ -469,17 +450,14 @@ fun RewardCardPreview() {
                         rewardCount = 3,
                         useXP = true,
                         xpTotal = 10000,
-                        xpCollected = 3000,
                         price = 2000,
                         amount = 1,
                         previewIcon = "",
                         currencyIcon = "",
                         background = "",
-                        isLocked = false,
-                        isOwned = false,
                     ),
+                    xpCollected = 3000,
                     unlockReward = {},
-                    resetReward = {},
                     onNavToLevelDetails = {}
                 )
             }
@@ -516,17 +494,14 @@ fun LockedRewardCardPreview() {
                         rewardCount = 3,
                         useXP = false,
                         xpTotal = 0,
-                        xpCollected = 0,
                         price = 2000,
                         amount = 1,
                         previewIcon = "",
                         currencyIcon = "",
                         background = "",
-                        isLocked = true,
-                        isOwned = false,
                     ),
+                    isLocked = true,
                     unlockReward = {},
-                    resetReward = {},
                     onNavToLevelDetails = {}
                 )
 
@@ -540,17 +515,15 @@ fun LockedRewardCardPreview() {
                         rewardCount = 3,
                         useXP = true,
                         xpTotal = 10000,
-                        xpCollected = 3000,
                         price = 2000,
                         amount = 1,
                         previewIcon = "",
                         currencyIcon = "",
                         background = "",
-                        isLocked = true,
-                        isOwned = false,
                     ),
+                    xpCollected = 3000,
+                    isLocked = true,
                     unlockReward = {},
-                    resetReward = {},
                     onNavToLevelDetails = {}
                 )
             }
@@ -587,17 +560,14 @@ fun OwnedRewardCardPreview() {
                         rewardCount = 3,
                         useXP = false,
                         xpTotal = 0,
-                        xpCollected = 0,
                         price = 2000,
                         amount = 1,
                         previewIcon = "",
                         currencyIcon = "",
                         background = "",
-                        isLocked = false,
-                        isOwned = true,
                     ),
+                    isOwned = true,
                     unlockReward = {},
-                    resetReward = {},
                     onNavToLevelDetails = {}
                 )
 
@@ -611,17 +581,15 @@ fun OwnedRewardCardPreview() {
                         rewardCount = 3,
                         useXP = true,
                         xpTotal = 10000,
-                        xpCollected = 3000,
                         price = 2000,
                         amount = 1,
                         previewIcon = "",
                         currencyIcon = "",
                         background = "",
-                        isLocked = false,
-                        isOwned = true,
                     ),
+                    xpCollected = 3000,
+                    isOwned = true,
                     unlockReward = {},
-                    resetReward = {},
                     onNavToLevelDetails = {}
                 )
             }
@@ -637,7 +605,6 @@ fun LoadingRewardCardPreview() {
             RewardCard(
                 data = null,
                 unlockReward = {},
-                resetReward = {},
                 onNavToLevelDetails = {}
             )
         }

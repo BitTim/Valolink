@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 03:37
+ Modified:   22.04.25, 03:44
  */
 
 
@@ -34,6 +34,7 @@ import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.Transition
 import dev.bittim.valolink.onboarding.ui.components.OnboardingHeader
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
+import dev.bittim.valolink.onboarding.ui.screens.contractSetup.contractSetupScreen
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.createAccountScreen
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.navOnboardingCreateAccount
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
@@ -88,10 +89,12 @@ fun OnboardingContainerScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())
         ) {
             OnboardingHeader(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.l),
                 title = state.title?.asString() ?: "",
                 progress = state.progress ?: 0f,
                 description = state.description?.asString() ?: "",
@@ -138,13 +141,9 @@ fun OnboardingContainerScreen(
                     snackbarHostState = snackbarHostState,
                 )
 
-                profileSetupScreen(
-                    snackbarHostState = snackbarHostState,
-                )
-
-                rankSetupScreen(
-                    navBack = { navController.navigateUp() }
-                )
+                profileSetupScreen()
+                rankSetupScreen()
+                contractSetupScreen()
             }
         }
     }

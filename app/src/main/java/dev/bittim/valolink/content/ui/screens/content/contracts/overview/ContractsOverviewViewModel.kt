@@ -7,7 +7,7 @@
  File:       ContractsOverviewViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -72,7 +72,7 @@ class ContractsOverviewViewModel @Inject constructor(
 
             launch {
                 withContext(Dispatchers.IO) {
-                    contractRepository.getActiveContracts()
+                    contractRepository.getActiveContracts(false)
                         .onStart { _state.update { it.copy(isActiveContractsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
                         .collectLatest { contracts ->
@@ -88,7 +88,7 @@ class ContractsOverviewViewModel @Inject constructor(
 
             launch {
                 withContext(Dispatchers.IO) {
-                    contractRepository.getAgentGears()
+                    contractRepository.getAgentGears(false)
                         .onStart { _state.update { it.copy(isAgentGearsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
                         .collectLatest { gears ->
@@ -105,7 +105,7 @@ class ContractsOverviewViewModel @Inject constructor(
             launch {
                 withContext(Dispatchers.IO) {
                     _filterState.flatMapLatest {
-                        contractRepository.getInactiveContracts(it)
+                        contractRepository.getInactiveContracts(it, false)
                     }.onStart { _state.update { it.copy(isInactiveContractsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), emptyList())
                         .collectLatest { contracts ->

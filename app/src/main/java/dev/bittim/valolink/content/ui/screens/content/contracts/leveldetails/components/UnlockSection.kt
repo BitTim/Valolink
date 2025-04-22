@@ -7,7 +7,7 @@
  File:       UnlockSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -88,7 +88,8 @@ fun UnlockSection(
                             progress = it.xpProgress,
                             total = it.xpTotal,
                             unit = "XP",
-                            isMonochrome = false
+                            isMonochrome = false,
+                            isCompact = false
                         )
 
                         Spacer(modifier = Modifier.width(24.dp))

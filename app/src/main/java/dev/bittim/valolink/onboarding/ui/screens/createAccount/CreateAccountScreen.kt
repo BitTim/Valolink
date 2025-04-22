@@ -7,7 +7,7 @@
  File:       CreateAccountScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:57
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -86,7 +87,9 @@ fun CreateAccount(
         )
 
     OnboardingLayout(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Spacing.l),
         content = {
             SimpleLoadingContainer(
                 modifier = Modifier

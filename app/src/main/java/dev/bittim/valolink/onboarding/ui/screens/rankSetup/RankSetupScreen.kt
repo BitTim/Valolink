@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:24
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -100,6 +100,9 @@ fun RankSetupScreen(
     }
 
     OnboardingLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Spacing.l),
         content = {
             Box(
                 modifier = Modifier.fillMaxSize(),

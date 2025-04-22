@@ -7,7 +7,7 @@
  File:       AgentListViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentlist
@@ -62,7 +62,7 @@ class AgentListViewModel @Inject constructor(
 
             launch {
                 withContext(Dispatchers.IO) {
-                    contractRepository.getAgentGears()
+                    contractRepository.getAgentGears(false)
                         .onStart { _state.update { it.copy(isGearsLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
                         .collectLatest { gears ->

@@ -7,7 +7,7 @@
  File:       PasswordResetNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.04.25, 15:50
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordReset

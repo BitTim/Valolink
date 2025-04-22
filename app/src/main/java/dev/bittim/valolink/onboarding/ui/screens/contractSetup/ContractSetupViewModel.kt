@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 19:18
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -36,7 +36,7 @@ class ContractSetupViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            contractRepository.getActiveContracts()
+            contractRepository.getActiveContracts(true)
                 .map { it.firstOrNull { it.content.relation is Season } }
                 .filterNotNull()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null).collectLatest {

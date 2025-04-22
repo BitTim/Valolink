@@ -7,7 +7,7 @@
  File:       SigninScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:57
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.signin
@@ -89,7 +89,9 @@ fun SigninScreen(
         )
 
     OnboardingLayout(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Spacing.l),
         content = {
             SimpleLoadingContainer(
                 modifier = Modifier.fillMaxSize(),

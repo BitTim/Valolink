@@ -7,16 +7,19 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:24
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -31,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
@@ -47,11 +51,10 @@ import kotlin.math.absoluteValue
 fun ContractSetupScreen(
     state: ContractSetupState
 ) {
-    val levels = state.contract?.content?.chapters?.flatMap { it.levels }
+    val levels = state.contract?.content?.chapters?.flatMap { it.levels }?.drop(1)
     val pagerState = rememberPagerState(pageCount = { levels?.count() ?: 0 })
     var clickedPage by remember { mutableIntStateOf(0) }
     var page by remember { mutableIntStateOf(0) }
-    var isHighest by remember { mutableStateOf(false) }
 
     var xpTotal by remember { mutableIntStateOf(0) }
     var xpCollected by remember { mutableIntStateOf(0) }
@@ -61,11 +64,6 @@ fun ContractSetupScreen(
         snapshotFlow { pagerState.currentPage }.collect {
             page = it
             xpTotal = levels?.get(page)?.xp ?: 0
-            isHighest = it == levels?.lastIndex
-
-            if (!isHighest && xpCollected > xpTotal) {
-                xpCollected = xpTotal
-            }
         }
     }
 
@@ -78,18 +76,28 @@ fun ContractSetupScreen(
     }
 
     OnboardingLayout(
+        modifier = Modifier.fillMaxSize(),
         content = {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
+                val contentPadding =
+                    (LocalConfiguration.current.screenWidthDp.dp - RewardCard.width) / 2
+
                 HorizontalPager(
-                    state = pagerState
-                ) {
-                    val level = levels?.get(it)
+                    state = pagerState,
+                    pageSize = PageSize.Fixed(RewardCard.width),
+                    contentPadding = PaddingValues(horizontal = contentPadding),
+                    flingBehavior = PagerDefaults.flingBehavior(
+                        state = pagerState,
+                        pagerSnapDistance = PagerSnapDistance.atMost(10)
+                    ),
+                ) { thisPage ->
+                    val level = levels?.get(thisPage)
                     val reward = level?.rewards?.find { !it.isFreeReward }?.relation
 
-                    val pageOffset = pagerState.getOffsetDistanceInPages(it).absoluteValue
+                    val pageOffset = pagerState.getOffsetDistanceInPages(thisPage).absoluteValue
                     val verticalPadding = (32f * pageOffset).dp
                     val blur =
                         lerp(start = 0f, stop = 4f, fraction = pageOffset.coerceIn(0f, 1f)).dp
@@ -99,11 +107,15 @@ fun ContractSetupScreen(
                         fraction = 1f - pageOffset.coerceIn(0f, 1f)
                     )
 
-
                     RewardCard(
                         modifier = Modifier
                             .blur(blur)
-                            .padding(Spacing.xs, verticalPadding)
+                            .padding(
+                                start = Spacing.xs,
+                                end = Spacing.xs,
+                                top = verticalPadding,
+                                bottom = Spacing.xs
+                            )
                             .saturation(saturation)
                             .graphicsLayer {
                                 alpha = lerp(
@@ -111,9 +123,6 @@ fun ContractSetupScreen(
                                     stop = 1f,
                                     fraction = 2f - pageOffset.coerceIn(0f, 2f)
                                 )
-                            }
-                            .clickable {
-                                clickedPage = it
                             },
                         data = if (reward == null) null else RewardCardData(
                             name = reward.displayName,
@@ -125,19 +134,30 @@ fun ContractSetupScreen(
                             previewIcon = reward.previewImages.first().first ?: "",
                             background = reward.background,
                             useXP = true,
-                            xpTotal = xpTotal,
-                            xpCollected = if (it < page) level.xp else if (it == page) xpCollected else 0,
+                            xpTotal = level.xp,
                             price = level.vpCost,
                             amount = reward.amount,
                             currencyIcon = "",
-                            isOwned = it < page
                         ),
-                        onNavToLevelDetails = { },
+                        xpCollected = if (thisPage < page) level?.xp
+                            ?: 0 else if (thisPage == page) xpCollected else 0,
+                        isOwned = thisPage < page,
+                        onNavToLevelDetails = {
+                            clickedPage = thisPage
+                        },
                     )
                 }
             }
         },
-        form = { }
+        form = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Spacing.l)
+            ) {
+
+            }
+        }
     )
 }
 

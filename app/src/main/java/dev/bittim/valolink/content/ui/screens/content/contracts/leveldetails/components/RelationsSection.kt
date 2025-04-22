@@ -7,7 +7,7 @@
  File:       RelationsSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   22.04.25, 03:44
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -53,8 +53,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
-import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCard
-import dev.bittim.valolink.core.ui.components.rewardCard.AgentRewardListCardData
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCard
+import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
@@ -62,20 +62,33 @@ import javax.annotation.concurrent.Immutable
 
 @Immutable
 data class RelationsSectionRelation(
-    val level: AgentRewardListCardData?,
+    val level: RewardListCardData?,
     val name: String,
     val icon: ImageVector,
 )
 
 @Immutable
-data class RelationsSectionData(
+data class RelationsSectionContentData(
     val relations: List<RelationsSectionRelation>,
+)
+
+@Immutable
+data class RelationsSectionState(
+    val xpCollected: Int,
+    val isLocked: Boolean,
+    val isOwned: Boolean,
+)
+
+@Immutable
+data class RelationsSectionUserData(
+    val relations: List<RelationsSectionState>,
 )
 
 @Composable
 fun RelationsSection(
     modifier: Modifier = Modifier,
-    data: RelationsSectionData?,
+    contentData: RelationsSectionContentData?,
+    userData: RelationsSectionUserData?,
     onNavToLevelDetails: (String) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
@@ -83,7 +96,7 @@ fun RelationsSection(
 
     var selectedRelation by remember { mutableIntStateOf(0) }
     val pagerState = rememberPagerState {
-        data?.relations?.count() ?: 1
+        contentData?.relations?.count() ?: 1
     }
 
     LaunchedEffect(selectedRelation) {
@@ -116,7 +129,7 @@ fun RelationsSection(
 
                 Crossfade(
                     modifier = Modifier.animateContentSize(),
-                    targetState = data,
+                    targetState = contentData,
                     label = "Relation name Loading"
                 ) {
                     if (it == null) {
@@ -147,7 +160,7 @@ fun RelationsSection(
 
             AnimatedContent(
                 modifier = Modifier.wrapContentWidth(Alignment.End),
-                targetState = data,
+                targetState = contentData,
                 label = "Relation buttons Loading",
             ) { checkedData ->
                 if (checkedData == null) {
@@ -191,10 +204,12 @@ fun RelationsSection(
             verticalAlignment = Alignment.Top,
             state = pagerState
         ) { index ->
-            AgentRewardListCard(
+            RewardListCard(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                data = data?.relations?.get(index)?.level,
-                showMenuButton = false,
+                data = contentData?.relations?.get(index)?.level,
+                xpCollected = userData?.relations?.get(index)?.xpCollected ?: 0,
+                isLocked = userData?.relations?.get(index)?.isLocked == true,
+                isOwned = userData?.relations?.get(index)?.isOwned == true,
                 onNavToLevelDetails = onNavToLevelDetails
             )
         }
@@ -210,10 +225,10 @@ fun RelationsSectionPreview() {
     ValolinkTheme {
         Surface {
             RelationsSection(
-                data = RelationsSectionData(
+                contentData = RelationsSectionContentData(
                     relations = listOf(
                         RelationsSectionRelation(
-                            level = AgentRewardListCardData(
+                            level = RewardListCardData(
                                 name = "Previous Card",
                                 levelUuid = "",
                                 type = RewardType.PLAYER_CARD,
@@ -221,6 +236,8 @@ fun RelationsSectionPreview() {
                                 contractName = "Clove Contract",
                                 rewardCount = 1,
                                 amount = 1,
+                                useXP = true,
+                                xpTotal = 10000,
                                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                                 background = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/background.png"
                             ),
@@ -228,7 +245,7 @@ fun RelationsSectionPreview() {
                             icon = Icons.AutoMirrored.Default.Undo
                         ),
                         RelationsSectionRelation(
-                            level = AgentRewardListCardData(
+                            level = RewardListCardData(
                                 name = "Next Card",
                                 levelUuid = "",
                                 type = RewardType.PLAYER_CARD,
@@ -236,11 +253,27 @@ fun RelationsSectionPreview() {
                                 contractName = "Clove Contract",
                                 rewardCount = 1,
                                 amount = 1,
+                                useXP = true,
+                                xpTotal = 10000,
                                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                                 background = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/background.png"
                             ),
                             name = "Next",
                             icon = Icons.AutoMirrored.Default.Redo
+                        ),
+                    )
+                ),
+                userData = RelationsSectionUserData(
+                    relations = listOf(
+                        RelationsSectionState(
+                            xpCollected = 0,
+                            isLocked = false,
+                            isOwned = true
+                        ),
+                        RelationsSectionState(
+                            xpCollected = 0,
+                            isLocked = false,
+                            isOwned = true
                         ),
                     )
                 ),
@@ -257,7 +290,8 @@ fun LoadingRelationsSectionPreview() {
     ValolinkTheme {
         Surface {
             RelationsSection(
-                data = null,
+                contentData = null,
+                userData = null,
                 onNavToLevelDetails = {}
             )
         }
