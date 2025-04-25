@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "55ec617c7606a72afa06a0dd4d6db32d",
+    "identityHash": "21c9a50b03e39991b682f7352e7b91bd",
     "entities": [
       {
         "tableName": "Users",
@@ -158,7 +158,7 @@
       },
       {
         "tableName": "UserContracts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `toDelete` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `user` TEXT NOT NULL, `contract` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`user`) REFERENCES `Users`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `isSynced` INTEGER NOT NULL, `toDelete` INTEGER NOT NULL, `updatedAt` TEXT NOT NULL, `user` TEXT NOT NULL, `contract` TEXT NOT NULL, `freeOnly` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`user`) REFERENCES `Users`(`uuid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -194,6 +194,12 @@
             "fieldPath": "contract",
             "columnName": "contract",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "freeOnly",
+            "columnName": "freeOnly",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -418,7 +424,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '55ec617c7606a72afa06a0dd4d6db32d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '21c9a50b03e39991b682f7352e7b91bd')"
     ]
   }
 }

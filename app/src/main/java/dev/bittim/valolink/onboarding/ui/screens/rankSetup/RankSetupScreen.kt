@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 04:25
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -81,10 +82,12 @@ fun RankSetupScreen(
     var rrString by remember { mutableStateOf(state.rr.toString()) }
     var rrError: UiText? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(pagerState.currentPage, pagerState.targetPage) {
-        if (pagerState.currentPage == pagerState.targetPage) {
-            val newTier = state.ranks?.get(pagerState.currentPage)?.tier ?: 0
-            if (newTier != state.tier) onTierChanged(newTier)
+    LaunchedEffect(Unit) {
+        snapshotFlow { pagerState }.collect {
+            if (it.currentPage == it.targetPage) {
+                val newTier = state.ranks?.get(pagerState.currentPage)?.tier ?: 0
+                if (newTier != state.tier) onTierChanged(newTier)
+            }
         }
     }
 
@@ -101,7 +104,10 @@ fun RankSetupScreen(
     }
 
     LaunchedEffect(state.rr) {
-        rrString = state.rr.toString()
+        val newRRString = state.rr.toString()
+        if (newRRString != rrString) {
+            rrString = newRRString
+        }
     }
 
     LaunchedEffect(clickedPage) {

@@ -7,11 +7,12 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 04:25
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -60,34 +62,52 @@ import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.screens.contractSetup.dialogs.FreeOnlyInfoDialog
 import kotlin.math.absoluteValue
 
+const val PAGE_OFFSET = 1
+
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun ContractSetupScreen(
     state: ContractSetupState,
     navBack: () -> Unit,
+    onLevelChanged: (level: Int) -> Unit,
+    onXpChanged: (xp: Int) -> Unit,
+    onFreeOnlyChanged: (freeOnly: Boolean) -> Unit,
+    setContractProgress: () -> Unit,
 ) {
-    val levels = state.contract?.content?.chapters?.flatMap { it.levels }?.drop(1)
+    val levels by remember {
+        derivedStateOf {
+            state.contract?.content?.chapters?.flatMap { it.levels }?.drop(PAGE_OFFSET)
+        }
+    }
     val pagerState = rememberPagerState(pageCount = { levels?.count() ?: 0 })
+
     var clickedPage by remember { mutableIntStateOf(0) }
-    var page by remember { mutableIntStateOf(0) }
     var isHighest by remember { mutableStateOf(false) }
 
     var xpTotal by remember { mutableIntStateOf(0) }
-    var xpCollected by remember { mutableIntStateOf(0) }
-    var xpCollectedString by remember { mutableStateOf(xpCollected.toString()) }
+    var xpCollectedString by remember { mutableStateOf(state.xp.toString()) }
     var xpCollectedError by remember { mutableStateOf<UiText?>(null) }
 
-    var freeOnly by remember { mutableStateOf(false) }
     var showFreeOnlyTooltip by remember { mutableStateOf(false) }
 
-    LaunchedEffect(pagerState.currentPage) {
-        snapshotFlow { pagerState.currentPage }.collect {
-            page = it
-            isHighest = it == levels?.lastIndex
-            xpTotal = levels?.get(page)?.xp ?: 0
-
-            if (!isHighest && xpCollected > xpTotal) {
-                xpCollectedString = xpTotal.toString()
+    LaunchedEffect(Unit) {
+        snapshotFlow { pagerState }.collect {
+            if (it.currentPage != it.targetPage) {
+                val newLevel = it.currentPage + PAGE_OFFSET
+                if (newLevel != state.level) onLevelChanged(newLevel)
             }
+        }
+    }
+
+    LaunchedEffect(state.level) {
+        val newPage = state.level - PAGE_OFFSET
+        pagerState.animateScrollToPage(newPage)
+
+        isHighest = levels?.lastIndex == newPage
+        xpTotal = levels?.get(newPage)?.xp ?: 0
+
+        if (!isHighest && state.xp > xpTotal) {
+            xpCollectedString = xpTotal.toString()
         }
     }
 
@@ -95,16 +115,23 @@ fun ContractSetupScreen(
         try {
             val uncheckedXpCollected = xpCollectedString.toInt()
             if (uncheckedXpCollected > xpTotal && !isHighest) {
-                xpCollected = xpTotal
+                onXpChanged(xpTotal)
                 xpCollectedError =
                     UiText.StringResource(R.string.onboarding_contractSetup_xpCollected_error)
             } else {
-                xpCollected = uncheckedXpCollected
+                onXpChanged(uncheckedXpCollected)
                 xpCollectedError = null
             }
         } catch (_: NumberFormatException) {
             xpCollectedError =
                 UiText.StringResource(R.string.error_numberFormat)
+        }
+    }
+
+    LaunchedEffect(state.xp) {
+        val newXpCollectedString = state.xp.toString()
+        if (xpCollectedString != newXpCollectedString) {
+            xpCollectedString = newXpCollectedString
         }
     }
 
@@ -162,7 +189,7 @@ fun ContractSetupScreen(
                                     fraction = 2f - pageOffset.coerceIn(0f, 2f)
                                 )
                             },
-                        data = if (reward == null) null else RewardCardData(
+                        data = if (reward == null || state.contract == null) null else RewardCardData(
                             name = reward.displayName,
                             levelUuid = level.uuid,
                             type = reward.type,
@@ -177,9 +204,9 @@ fun ContractSetupScreen(
                             amount = reward.amount,
                             currencyIcon = "",
                         ),
-                        xpCollected = if (thisPage < page) level?.xp
-                            ?: 0 else if (thisPage == page) xpCollected else 0,
-                        isOwned = thisPage < page,
+                        xpCollected = if (thisPage < state.level - PAGE_OFFSET) level?.xp
+                            ?: 0 else if (thisPage == state.level - PAGE_OFFSET) state.xp else 0,
+                        isOwned = thisPage < state.level - PAGE_OFFSET,
                         onNavToLevelDetails = {
                             clickedPage = thisPage
                         },
@@ -212,8 +239,8 @@ fun ContractSetupScreen(
                     modifier = Modifier.fillMaxWidth(),
                     label = UiText.StringResource(R.string.onboarding_contractSetup_freeOnly_label)
                         .asString(),
-                    value = freeOnly,
-                    onValueChange = { freeOnly = it },
+                    value = state.freeOnly,
+                    onValueChange = onFreeOnlyChanged,
                     showTooltip = true,
                     onTooltip = { showFreeOnlyTooltip = true },
                 )
@@ -223,7 +250,7 @@ fun ContractSetupScreen(
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = navBack,
-                    onContinue = { },
+                    onContinue = { setContractProgress() },
                     disableContinueButton = xpCollectedError != null || levels != null,
                     dismissText = UiText.StringResource(R.string.button_back),
                     continueText = UiText.StringResource(R.string.button_continue)
@@ -244,7 +271,14 @@ fun ContractSetupScreen(
 fun ContractSetupScreenPreview() {
     ValolinkTheme {
         Surface {
-            ContractSetupScreen(state = ContractSetupState(), navBack = {})
+            ContractSetupScreen(
+                state = ContractSetupState(),
+                navBack = {},
+                onLevelChanged = {},
+                onXpChanged = {},
+                onFreeOnlyChanged = {},
+                setContractProgress = {}
+            )
         }
     }
 }

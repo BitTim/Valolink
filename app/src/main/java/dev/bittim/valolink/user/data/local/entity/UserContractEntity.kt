@@ -7,7 +7,7 @@
  File:       UserContractEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -39,6 +39,7 @@ data class UserContractEntity(
     override val updatedAt: String,
     val user: String,
     val contract: String,
+    val freeOnly: Boolean,
 ) : SyncedEntity {
     override fun getIdentifier(): String {
         return contract
@@ -52,7 +53,7 @@ data class UserContractEntity(
         levels: List<UserLevel>,
     ): UserContract {
         return UserContract(
-            uuid, user, contract, levels
+            uuid, user, contract, levels, freeOnly
         )
     }
 
@@ -69,6 +70,7 @@ data class UserContractEntity(
                 OffsetDateTime.now().toString(),
                 userContract.user,
                 userContract.contract,
+                userContract.freeOnly
             )
         }
     }

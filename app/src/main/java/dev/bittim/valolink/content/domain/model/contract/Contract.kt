@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       Contract.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.content.domain.model.contract
@@ -44,12 +44,13 @@ data class Contract(
         return random.nextInt(calcTotalXp())
     }
 
-    fun toUserObj(uid: String): UserContract {
+    fun toUserObj(uid: String, freeOnly: Boolean): UserContract {
         return UserContract(
             UUID.randomUUID().toString(),
             uid,
             uuid,
-            emptyList()
+            emptyList(),
+            freeOnly
         )
     }
 }

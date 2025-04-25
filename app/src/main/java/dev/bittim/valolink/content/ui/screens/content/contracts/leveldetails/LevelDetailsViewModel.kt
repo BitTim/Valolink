@@ -7,7 +7,7 @@
  File:       LevelDetailsViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
@@ -162,7 +162,7 @@ class LevelDetailsViewModel @Inject constructor(
                 val contract = state.value.contract ?: return@withContext
                 val userData = state.value.userData ?: return@withContext
 
-                userContractRepository.set(contract.toUserObj(userData.uuid))
+                userContractRepository.set(contract.toUserObj(userData.uuid, freeOnly = true))
             }
         }
     }

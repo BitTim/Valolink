@@ -7,7 +7,7 @@
  File:       ContractsOverviewViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -135,7 +135,7 @@ class ContractsOverviewViewModel @Inject constructor(
                     state.value.agentGears?.find { it.uuid == uuid } ?: return@withContext
                 val userData = state.value.userData ?: return@withContext
 
-                userContractRepository.set(contract.toUserObj(userData.uuid))
+                userContractRepository.set(contract.toUserObj(userData.uuid, freeOnly = true))
             }
         }
     }

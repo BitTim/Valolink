@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:35
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,6 +48,24 @@ class ContractSetupViewModel @Inject constructor(
                     _state.value = _state.value.copy(contract = it)
                 }
         }
+
+        viewModelScope.launch {
+            val activeContract = contractRepository.getActiveContracts(false)
+                .map { it.firstOrNull { it.content.relation is Season } }
+                .firstOrNull()
+            val userContract =
+                userDataRepository.getWithCurrentUser()
+                    .map { it?.contracts?.find { it.contract == activeContract?.uuid } }
+                    .firstOrNull() ?: return@launch
+
+            _state.update {
+                it.copy(
+                    level = userContract.levels.count(),
+                    xp = userContract.levels.last().xpOffset ?: 0,
+                    freeOnly = userContract.freeOnly
+                )
+            }
+        }
     }
 
     fun navBack() {
@@ -58,5 +77,21 @@ class ContractSetupViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun onLevelChanged(level: Int) {
+        _state.update { it.copy(level = level) }
+    }
+
+    fun onXpChanged(xp: Int) {
+        _state.update { it.copy(xp = xp) }
+    }
+
+    fun onFreeOnlyChanged(freeOnly: Boolean) {
+        _state.update { it.copy(freeOnly = freeOnly) }
+    }
+
+    fun setContractProgress(level: Int, xp: Int, freeOnly: Boolean) {
+
     }
 }

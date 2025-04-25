@@ -7,7 +7,7 @@
  File:       ContractSetupState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 19:10
+ Modified:   25.04.25, 19:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -15,7 +15,9 @@ package dev.bittim.valolink.onboarding.ui.screens.contractSetup
 import dev.bittim.valolink.content.domain.model.contract.Contract
 
 data class ContractSetupState(
-    val isLoading: Boolean = false,
-
     val contract: Contract? = null,
+
+    val level: Int = PAGE_OFFSET,
+    val xp: Int = 0,
+    val freeOnly: Boolean = false
 )
