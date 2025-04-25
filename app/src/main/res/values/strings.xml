@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   22.04.25, 15:02
+  Modified:   25.04.25, 04:25
   -->
 
 <resources>
@@ -79,4 +79,7 @@
     <string name="onboarding_contractSetup_xpCollected_label">Collected XP</string>
     <string name="error_numberFormat">Value must be a valid number</string>
     <string name="onboarding_contractSetup_xpCollected_error">Collected XP cannot be higher than the total</string>
+    <string name="onboarding_contractSetup_freeOnly_label">Free rewards only</string>
+    <string name="onboarding_dialog_freeOnly_title">About free rewards only</string>
+    <string name="onboarding_dialog_freeOnly_content">Enabling this option will exclude premium rewards of the currently active season from appearing in statistics and will appear as locked. Their progress will still be tracked internally as this is necessary for the calculation of XP, which enables you to change this option at any time.\n\nNote: This option can be found on the details page of the respective season contract.</string>
 </resources>

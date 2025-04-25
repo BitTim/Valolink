@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       Level.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   25.04.25, 04:25
  */
 
 package dev.bittim.valolink.content.domain.model.contract.chapter
@@ -27,12 +27,13 @@ data class Level(
     val isPurchasableWithDough: Boolean,
     val rewards: List<Reward>,
 ) {
-    fun toUserObj(userContract: String, isPurchased: Boolean): UserLevel {
+    fun toUserObj(userContract: String, isPurchased: Boolean, xpOffset: Int? = null): UserLevel {
         return UserLevel(
             UUID.randomUUID().toString(),
             userContract,
             uuid,
-            isPurchased
+            isPurchased,
+            xpOffset,
         )
     }
 

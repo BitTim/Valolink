@@ -7,7 +7,7 @@
  File:       UserLevelEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   25.04.25, 04:25
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -39,6 +39,7 @@ data class UserLevelEntity(
     val userContract: String,
     val level: String,
     val isPurchased: Boolean,
+    val xpOffset: Int?,
 ) : SyncedEntity {
     override fun getIdentifier(): String {
         return level
@@ -50,7 +51,7 @@ data class UserLevelEntity(
 
     fun toType(): UserLevel {
         return UserLevel(
-            uuid, userContract, level, isPurchased
+            uuid, userContract, level, isPurchased, xpOffset
         )
     }
 
@@ -67,7 +68,8 @@ data class UserLevelEntity(
                 OffsetDateTime.now().toString(),
                 userLevel.userContract,
                 userLevel.level,
-                userLevel.isPurchased
+                userLevel.isPurchased,
+                userLevel.xpOffset
             )
         }
     }

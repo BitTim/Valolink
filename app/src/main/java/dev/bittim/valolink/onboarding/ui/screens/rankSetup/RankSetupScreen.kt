@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 23:47
+ Modified:   25.04.25, 04:25
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -83,7 +83,8 @@ fun RankSetupScreen(
 
     LaunchedEffect(pagerState.currentPage, pagerState.targetPage) {
         if (pagerState.currentPage == pagerState.targetPage) {
-            onTierChanged(state.ranks?.get(pagerState.currentPage)?.tier ?: 0)
+            val newTier = state.ranks?.get(pagerState.currentPage)?.tier ?: 0
+            if (newTier != state.tier) onTierChanged(newTier)
         }
     }
 

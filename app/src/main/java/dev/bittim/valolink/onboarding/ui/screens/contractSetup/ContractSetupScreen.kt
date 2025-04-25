@@ -7,7 +7,7 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:35
+ Modified:   25.04.25, 04:25
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import dev.bittim.valolink.R
+import dev.bittim.valolink.core.ui.components.LabeledSwitch
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCardData
@@ -56,6 +57,7 @@ import dev.bittim.valolink.core.ui.util.extensions.modifier.SATURATION_DESATURAT
 import dev.bittim.valolink.core.ui.util.extensions.modifier.saturation
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
+import dev.bittim.valolink.onboarding.ui.screens.contractSetup.dialogs.FreeOnlyInfoDialog
 import kotlin.math.absoluteValue
 
 @Composable
@@ -73,6 +75,9 @@ fun ContractSetupScreen(
     var xpCollected by remember { mutableIntStateOf(0) }
     var xpCollectedString by remember { mutableStateOf(xpCollected.toString()) }
     var xpCollectedError by remember { mutableStateOf<UiText?>(null) }
+
+    var freeOnly by remember { mutableStateOf(false) }
+    var showFreeOnlyTooltip by remember { mutableStateOf(false) }
 
     LaunchedEffect(pagerState.currentPage) {
         snapshotFlow { pagerState.currentPage }.collect {
@@ -97,7 +102,7 @@ fun ContractSetupScreen(
                 xpCollected = uncheckedXpCollected
                 xpCollectedError = null
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             xpCollectedError =
                 UiText.StringResource(R.string.error_numberFormat)
         }
@@ -203,6 +208,16 @@ fun ContractSetupScreen(
                     ),
                 )
 
+                LabeledSwitch(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = UiText.StringResource(R.string.onboarding_contractSetup_freeOnly_label)
+                        .asString(),
+                    value = freeOnly,
+                    onValueChange = { freeOnly = it },
+                    showTooltip = true,
+                    onTooltip = { showFreeOnlyTooltip = true },
+                )
+
                 Spacer(modifier = Modifier.height(Spacing.xl))
 
                 OnboardingButtons(
@@ -216,6 +231,12 @@ fun ContractSetupScreen(
             }
         }
     )
+
+    if (showFreeOnlyTooltip) {
+        FreeOnlyInfoDialog(
+            onDismiss = { showFreeOnlyTooltip = false },
+        )
+    }
 }
 
 @ScreenPreviewAnnotations

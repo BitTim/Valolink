@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   22.04.25, 14:57
+  Modified:   25.04.25, 04:25
   -->
 
 <resources>
@@ -78,4 +78,9 @@
     <string name="onboarding_contractSetup_description">Gib dein aktuelles Level im Battlepass und deinen Fortschritt innerhalb dieses Levels an, damit wir deine EP genau verfolgen können.\n\nHinweis: Bitte wähle ein Premium-Level aus, auch wenn du den Battlepass nicht gekauft hast. Dies ist für die Genauigkeit der EP-Berechnungen notwendig.</string>
     <string name="unit_xp">EP</string>
     <string name="onboarding_contractSetup_xpCollected_label">Gesammelte EP</string>
+    <string name="error_numberFormat">Wert muss einer gültigen Zahl entsprechen</string>
+    <string name="onboarding_contractSetup_xpCollected_error">Gesammelte EP darf nicht höher sein als die Gesamt EP</string>
+    <string name="onboarding_contractSetup_freeOnly_label">Nur kostenlose Belohnungen</string>
+    <string name="onboarding_dialog_freeOnly_title">Über nur kostenlose Belohnungen</string>
+    <string name="onboarding_dialog_freeOnly_content">Wenn diese Option aktiviert ist, werden Premium-Belohnungen der aktuellen Saison nicht in deinen Statistiken berücksichtigt und als gesperrt dargestellt. Dein Fortschritt bei ihnen wird weiterhin intern gespeichert, um die EP-Berechnung zu ermöglichen, was es dir erlaubt, diese Einstellung jederzeit zu ändern.\n\nHinweis: Du findest diese Einstellung auf der Detailseite des jeweiligen Saison-Fortschitts.</string>
 </resources>
