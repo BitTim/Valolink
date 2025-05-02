@@ -7,7 +7,7 @@
  File:       ContractSetupState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   02.05.25, 07:34
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup

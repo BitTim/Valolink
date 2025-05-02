@@ -7,7 +7,7 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   02.05.25, 07:52
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -37,7 +37,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -74,12 +73,14 @@ fun ContractSetupScreen(
     onFreeOnlyChanged: (freeOnly: Boolean) -> Unit,
     setContractProgress: () -> Unit,
 ) {
-    val levels by remember {
+    val levels by remember(state.contract) {
         derivedStateOf {
             state.contract?.content?.chapters?.flatMap { it.levels }?.drop(PAGE_OFFSET)
         }
     }
     val pagerState = rememberPagerState(pageCount = { levels?.count() ?: 0 })
+    val currentPage by remember { derivedStateOf { pagerState.currentPage } }
+    val targetPage by remember { derivedStateOf { pagerState.targetPage } }
 
     var clickedPage by remember { mutableIntStateOf(0) }
     var isHighest by remember { mutableStateOf(false) }
@@ -90,12 +91,10 @@ fun ContractSetupScreen(
 
     var showFreeOnlyTooltip by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { pagerState }.collect {
-            if (it.currentPage != it.targetPage) {
-                val newLevel = it.currentPage + PAGE_OFFSET
-                if (newLevel != state.level) onLevelChanged(newLevel)
-            }
+    LaunchedEffect(currentPage, targetPage) {
+        if (targetPage == currentPage) {
+            val newLevel = currentPage + PAGE_OFFSET
+            if (newLevel != state.level) onLevelChanged(newLevel)
         }
     }
 
@@ -104,7 +103,7 @@ fun ContractSetupScreen(
         pagerState.animateScrollToPage(newPage)
 
         isHighest = levels?.lastIndex == newPage
-        xpTotal = levels?.get(newPage)?.xp ?: 0
+        xpTotal = levels?.getOrNull(newPage)?.xp ?: 0
 
         if (!isHighest && state.xp > xpTotal) {
             xpCollectedString = xpTotal.toString()
@@ -158,7 +157,7 @@ fun ContractSetupScreen(
                         pagerSnapDistance = PagerSnapDistance.atMost(pagerState.pageCount)
                     ),
                 ) { thisPage ->
-                    val level = levels?.get(thisPage)
+                    val level = levels?.getOrNull(thisPage)
                     val reward = level?.rewards?.find { !it.isFreeReward }?.relation
 
                     val pageOffset = pagerState.getOffsetDistanceInPages(thisPage).absoluteValue
@@ -251,7 +250,7 @@ fun ContractSetupScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = navBack,
                     onContinue = { setContractProgress() },
-                    disableContinueButton = xpCollectedError != null || levels != null,
+                    disableContinueButton = xpCollectedError != null || levels == null,
                     dismissText = UiText.StringResource(R.string.button_back),
                     continueText = UiText.StringResource(R.string.button_continue)
                 )

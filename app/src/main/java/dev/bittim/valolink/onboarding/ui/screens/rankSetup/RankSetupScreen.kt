@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   25.04.25, 22:37
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -85,7 +85,7 @@ fun RankSetupScreen(
     LaunchedEffect(Unit) {
         snapshotFlow { pagerState }.collect {
             if (it.currentPage == it.targetPage) {
-                val newTier = state.ranks?.get(pagerState.currentPage)?.tier ?: 0
+                val newTier = state.ranks?.getOrNull(pagerState.currentPage)?.tier ?: 0
                 if (newTier != state.tier) onTierChanged(newTier)
             }
         }
@@ -138,7 +138,7 @@ fun RankSetupScreen(
                         pagerSnapDistance = PagerSnapDistance.atMost(pagerState.pageCount)
                     ),
                 ) {
-                    val rank = state.ranks?.get(it)
+                    val rank = state.ranks?.getOrNull(it)
                     val rankCardData = if (rank == null) null else {
                         RankCardData(
                             rankName = rank.name,

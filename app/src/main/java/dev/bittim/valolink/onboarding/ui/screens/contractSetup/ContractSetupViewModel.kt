@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   02.05.25, 08:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -18,7 +18,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.domain.model.Season
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
+import dev.bittim.valolink.user.data.repository.SessionRepository
+import dev.bittim.valolink.user.data.repository.data.UserContractRepository
 import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,7 +37,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ContractSetupViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
+    private val sessionRepository: SessionRepository,
     private val userDataRepository: UserDataRepository,
+    private val userContractRepository: UserContractRepository,
+    private val userLevelRepository: UserLevelRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(ContractSetupState())
     val state = _state.asStateFlow()
@@ -44,24 +50,23 @@ class ContractSetupViewModel @Inject constructor(
             contractRepository.getActiveContracts(true)
                 .map { it.firstOrNull { it.content.relation is Season } }
                 .filterNotNull()
-                .stateIn(viewModelScope, WhileSubscribed(5000), null).collectLatest {
-                    _state.value = _state.value.copy(contract = it)
+                .stateIn(viewModelScope, WhileSubscribed(5000), null).collectLatest { contract ->
+                    _state.update { it.copy(contract = contract) }
                 }
         }
 
         viewModelScope.launch {
             val activeContract = contractRepository.getActiveContracts(false)
                 .map { it.firstOrNull { it.content.relation is Season } }
-                .firstOrNull()
+                .firstOrNull() ?: return@launch
             val userContract =
-                userDataRepository.getWithCurrentUser()
-                    .map { it?.contracts?.find { it.contract == activeContract?.uuid } }
-                    .firstOrNull() ?: return@launch
+                userContractRepository.getWithCurrentUser(activeContract.uuid).firstOrNull()
+                    ?: return@launch
 
             _state.update {
                 it.copy(
                     level = userContract.levels.count(),
-                    xp = userContract.levels.last().xpOffset ?: 0,
+                    xp = userContract.levels.lastOrNull()?.xpOffset ?: 0,
                     freeOnly = userContract.freeOnly
                 )
             }
@@ -92,6 +97,35 @@ class ContractSetupViewModel @Inject constructor(
     }
 
     fun setContractProgress(level: Int, xp: Int, freeOnly: Boolean) {
+        viewModelScope.launch {
+            val uid = sessionRepository.getUid().firstOrNull() ?: return@launch
+            val contractUuid = state.value.contract?.uuid ?: return@launch
 
+            val oldUserContract = userContractRepository.get(uid, contractUuid).firstOrNull()
+            if (oldUserContract != null) userContractRepository.delete(oldUserContract)
+
+            val userContract = state.value.contract?.toUserObj(uid, freeOnly) ?: return@launch
+            userContractRepository.set(userContract)
+
+            val levels = state.value.contract?.content?.chapters?.flatMap { it.levels }
+                ?.take(level) ?: emptyList()
+            for (i in levels.indices) {
+                userLevelRepository.set(
+                    levels[i].toUserObj(
+                        userContract.uuid,
+                        false,
+                        if (i == levels.lastIndex) xp else levels[i].xp
+                    )
+                )
+            }
+
+            val userData = userDataRepository.get(uid).firstOrNull() ?: return@launch
+            userDataRepository.set(
+                uid,
+                userData.copy(
+                    onboardingStep = OnboardingScreen.ContractSetup.step - OnboardingScreen.STEP_OFFSET + 1
+                )
+            )
+        }
     }
 }

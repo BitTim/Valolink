@@ -7,13 +7,14 @@
  File:       Contract.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   02.05.25, 06:47
  */
 
 package dev.bittim.valolink.content.domain.model.contract
 
 import dev.bittim.valolink.content.domain.model.contract.content.Content
 import dev.bittim.valolink.user.domain.model.UserContract
+import dev.bittim.valolink.user.domain.model.UserLevel
 import java.util.Random
 import java.util.UUID
 
@@ -44,12 +45,16 @@ data class Contract(
         return random.nextInt(calcTotalXp())
     }
 
-    fun toUserObj(uid: String, freeOnly: Boolean): UserContract {
+    fun toUserObj(
+        uid: String,
+        freeOnly: Boolean,
+        levels: List<UserLevel> = emptyList()
+    ): UserContract {
         return UserContract(
             UUID.randomUUID().toString(),
             uid,
             uuid,
-            emptyList(),
+            levels,
             freeOnly
         )
     }

@@ -7,7 +7,7 @@
  File:       ContractDetailsViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   02.05.25, 08:10
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.contractdetails
@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.domain.model.Currency
+import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ import javax.inject.Inject
 class ContractDetailsViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
+    private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ContractDetailsState())
     val state = _state.asStateFlow()
@@ -72,6 +74,16 @@ class ContractDetailsViewModel @Inject constructor(
                                     isCurrencyLoading = false, vp = currency
                                 )
                             }
+                        }
+                }
+            }
+
+            launch {
+                withContext(Dispatchers.IO) {
+                    userDataRepository.getWithCurrentUser()
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { data ->
+                            _state.update { it.copy(userContract = data?.contracts?.find { it.contract == uuid }) }
                         }
                 }
             }
