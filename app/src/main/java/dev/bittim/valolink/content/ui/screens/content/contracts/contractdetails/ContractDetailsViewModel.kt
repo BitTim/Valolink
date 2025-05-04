@@ -7,7 +7,7 @@
  File:       ContractDetailsViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   02.05.25, 08:10
+ Modified:   04.05.25, 13:29
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.contractdetails
@@ -18,7 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.domain.model.Currency
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserContractRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +36,7 @@ import javax.inject.Inject
 class ContractDetailsViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
-    private val userDataRepository: UserDataRepository,
+    private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ContractDetailsState())
     val state = _state.asStateFlow()
@@ -80,10 +80,10 @@ class ContractDetailsViewModel @Inject constructor(
 
             launch {
                 withContext(Dispatchers.IO) {
-                    userDataRepository.getWithCurrentUser()
+                    userContractRepository.getWithCurrentUser(uuid)
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                        .collectLatest { data ->
-                            _state.update { it.copy(userContract = data?.contracts?.find { it.contract == uuid }) }
+                        .collectLatest { userContract ->
+                            _state.update { it.copy(userContract = userContract) }
                         }
                 }
             }

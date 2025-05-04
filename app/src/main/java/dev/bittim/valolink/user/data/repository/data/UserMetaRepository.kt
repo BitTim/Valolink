@@ -7,22 +7,22 @@
  File:       UserDataRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:39
+ Modified:   04.05.25, 10:54
  */
 
 package dev.bittim.valolink.user.data.repository.data
 
-import dev.bittim.valolink.user.data.remote.dto.UserDataDto
-import dev.bittim.valolink.user.domain.model.UserData
+import dev.bittim.valolink.user.data.remote.dto.UserMetaDto
+import dev.bittim.valolink.user.domain.model.UserMeta
 import kotlinx.coroutines.flow.Flow
 
-interface UserDataRepository : UserRepository<UserData, UserDataDto> {
+interface UserMetaRepository : UserRepository<UserMeta, UserMetaDto> {
     // ================================
     //  Get User Data
     // ================================
 
-    fun getWithCurrentUser(): Flow<UserData?>
-    fun get(uid: String): Flow<UserData?>
+    fun getWithCurrentUser(): Flow<UserMeta?>
+    fun get(uid: String): Flow<UserMeta?>
 
     fun hasOnboardedWithCurrentUser(): Flow<Boolean?>
     fun hasOnboarded(uid: String): Flow<Boolean?>
@@ -35,14 +35,14 @@ interface UserDataRepository : UserRepository<UserData, UserDataDto> {
     // ================================
 
     suspend fun createEmptyForCurrentUser(): Boolean
-    suspend fun setWithCurrentUser(userData: UserData, toDelete: Boolean): Boolean
-    suspend fun set(uid: String, userData: UserData, toDelete: Boolean): Boolean
+    suspend fun setWithCurrentUser(userMeta: UserMeta, toDelete: Boolean): Boolean
+    suspend fun set(uid: String, userMeta: UserMeta, toDelete: Boolean): Boolean
 
-    suspend fun setWithCurrentUser(userData: UserData): Boolean
-    suspend fun set(uid: String, userData: UserData): Boolean
+    suspend fun setWithCurrentUser(userMeta: UserMeta): Boolean
+    suspend fun set(uid: String, userMeta: UserMeta): Boolean
 
-    suspend fun deleteWithCurrentUser(userData: UserData): Boolean
-    suspend fun delete(uid: String, userData: UserData): Boolean
+    suspend fun deleteWithCurrentUser(userMeta: UserMeta): Boolean
+    suspend fun delete(uid: String, userMeta: UserMeta): Boolean
 
     suspend fun uploadAvatarWithCurrentUser(avatar: ByteArray): String?
     suspend fun uploadAvatar(uid: String, avatar: ByteArray): String?

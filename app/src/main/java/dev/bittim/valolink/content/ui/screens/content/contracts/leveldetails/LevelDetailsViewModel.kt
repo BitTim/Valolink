@@ -7,7 +7,7 @@
  File:       LevelDetailsViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   04.05.25, 13:45
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
@@ -19,7 +19,6 @@ import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.domain.model.Currency
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,6 +28,7 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
@@ -42,41 +42,21 @@ import javax.inject.Inject
 class LevelDetailsViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
-    private val userDataRepository: UserDataRepository,
     private val userContractRepository: UserContractRepository,
     private val userLevelRepository: UserLevelRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LevelDetailsState())
     val state = _state.asStateFlow()
 
-    private var fetchUserDataJob: Job? = null
-    private var fetchDetailsJob: Job? = null
-
-    init {
-        fetchUserDataJob?.cancel()
-        fetchUserDataJob = viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                userDataRepository.getWithCurrentUser()
-                    .onStart { _state.update { it.copy(isUserDataLoading = true) } }
-                    .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                    .collectLatest { userData ->
-                        _state.update {
-                            it.copy(
-                                isUserDataLoading = false, userData = userData
-                            )
-                        }
-                    }
-            }
-        }
-    }
+    private var fetchJob: Job? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun fetchDetails(uuid: String?, contract: String?) {
         if (uuid == null || contract == null) return
 
         // Get passed contract
-        fetchDetailsJob?.cancel()
-        fetchDetailsJob = viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             launch {
                 withContext(Dispatchers.IO) {
                     _state.update { LevelDetailsState() }
@@ -84,10 +64,20 @@ class LevelDetailsViewModel @Inject constructor(
                     contractRepository.getByUuid(contract, true)
                         .onStart { _state.update { it.copy(isContractLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                        .collectLatest { contract ->
+                        .filterNotNull()
+                        .flatMapLatest { contract ->
+                            val userContractFlow =
+                                userContractRepository.getWithCurrentUser(contract.uuid)
+                            combine(flowOf(contract), userContractFlow) { contract, userContract ->
+                                Pair(contract, userContract)
+                            }
+                        }
+                        .collectLatest { contractPair ->
                             _state.update {
                                 it.copy(
-                                    isContractLoading = false, contract = contract
+                                    isContractLoading = false,
+                                    contract = contractPair.first,
+                                    userContract = contractPair.second
                                 )
                             }
                         }
@@ -160,7 +150,7 @@ class LevelDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val contract = state.value.contract ?: return@withContext
-                val userData = state.value.userData ?: return@withContext
+                val userData = state.value.userContract ?: return@withContext
 
                 userContractRepository.set(contract.toUserObj(userData.uuid, freeOnly = true))
             }
@@ -172,10 +162,7 @@ class LevelDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val userData = state.value.userData ?: return@withContext
-                val userContract =
-                    userData.contracts.find { it.contract == state.value.contract?.uuid }
-                        ?: return@withContext
+                val userContract = state.value.userContract ?: return@withContext
                 val level = state.value.contract?.content?.chapters?.flatMap { it.levels }
                     ?.find { it.uuid == uuid } ?: return@withContext
 
@@ -189,10 +176,7 @@ class LevelDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val userData = state.value.userData ?: return@withContext
-                val userContract =
-                    userData.contracts.find { it.contract == state.value.contract?.uuid }
-                        ?: return@withContext
+                val userContract = state.value.userContract ?: return@withContext
                 val userLevel = userContract.levels.find { it.level == uuid } ?: return@withContext
 
                 userLevelRepository.delete(userLevel)

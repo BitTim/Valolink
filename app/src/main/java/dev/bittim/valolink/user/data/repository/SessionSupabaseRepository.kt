@@ -52,7 +52,7 @@ class SessionSupabaseRepository @Inject constructor(
         userFlags.setLocal(false)
 
         // Delete all cached user data on sign out
-        userDatabase.userDataDao.deleteAll()
+        userDatabase.userMetaDao.deleteAll()
         userDatabase.userAgentDao.deleteAll()
         userDatabase.userContractDao.deleteAll()
         userDatabase.userLevelDao.deleteAll()

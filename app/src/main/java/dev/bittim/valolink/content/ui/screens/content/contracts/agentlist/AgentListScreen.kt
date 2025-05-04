@@ -7,7 +7,7 @@
  File:       AgentListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   04.05.25, 13:02
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentlist
@@ -114,13 +114,12 @@ fun AgentListScreen(
                         val levelCount by remember { derivedStateOf { gear.calcLevelCount() } }
                         val derivedUserContract by remember {
                             derivedStateOf {
-                                state.userData?.contracts?.find { it.contract == gear.uuid }
+                                state.userGears?.find { it.contract == gear.uuid }
                             }
                         }
                         val isLocked by remember {
                             derivedStateOf {
-                                state.userData?.agents
-                                    ?.any { it.agent == gear.content.relation.uuid }
+                                state.userAgents?.any { it.agent == gear.content.relation.uuid }
                                     ?.not() != false
                             }
                         }

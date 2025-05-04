@@ -4,10 +4,10 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       UserDataSupabaseRepository.kt
+ File:       UserMetaSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:46
+ Modified:   04.05.25, 13:30
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -21,11 +21,11 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.user.data.local.UserDatabase
-import dev.bittim.valolink.user.data.local.entity.UserDataEntity
-import dev.bittim.valolink.user.data.remote.dto.UserDataDto
+import dev.bittim.valolink.user.data.local.entity.UserMetaEntity
+import dev.bittim.valolink.user.data.remote.dto.UserMetaDto
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.worker.UserSyncWorker
-import dev.bittim.valolink.user.domain.model.UserData
+import dev.bittim.valolink.user.domain.model.UserMeta
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,17 +43,15 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class UserDataSupabaseRepository @Inject constructor(
+class UserMetaSupabaseRepository @Inject constructor(
     private val context: Context,
     private val sessionRepository: SessionRepository,
-    private val userAgentRepository: UserAgentRepository,
-    private val userContractRepository: UserContractRepository,
     private val userRankRepository: UserRankRepository,
     private val userDatabase: UserDatabase,
     private val database: Postgrest,
     private val storage: Storage,
     private val workManager: WorkManager,
-) : UserDataRepository {
+) : UserMetaRepository {
     companion object {
         const val TABLE_NAME = "users"
     }
@@ -63,7 +61,7 @@ class UserDataSupabaseRepository @Inject constructor(
     // ================================
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getWithCurrentUser(): Flow<UserData?> {
+    override fun getWithCurrentUser(): Flow<UserMeta?> {
         return sessionRepository.getUid().flatMapLatest { uid ->
             if (uid == null) {
                 flowOf(null)
@@ -71,18 +69,16 @@ class UserDataSupabaseRepository @Inject constructor(
         }
     }
 
-    override fun get(uid: String): Flow<UserData?> {
+    override fun get(uid: String): Flow<UserMeta?> {
         return try {
             // Get from local database
-            val userFlow = userDatabase.userDataDao.getByUuid(uid).distinctUntilChanged()
-            val agentsFlow = userAgentRepository.getAll(uid)
-            val contractsFlow = userContractRepository.getAll(uid)
+            val userFlow = userDatabase.userMetaDao.getByUuid(uid).distinctUntilChanged()
             val rankFlow = userRankRepository.get(uid)
 
             val combinedFlow = combine(
-                userFlow, agentsFlow, contractsFlow, rankFlow
-            ) { user, agents, contracts, rank ->
-                user?.toType(agents, contracts, rank)
+                userFlow, rankFlow
+            ) { user, rank ->
+                user?.toType(rank)
             }
 
             // Queue worker to sync with Supabase
@@ -144,29 +140,27 @@ class UserDataSupabaseRepository @Inject constructor(
 
     override suspend fun createEmptyForCurrentUser(): Boolean {
         val uid = sessionRepository.getUid().firstOrNull() ?: return false
-        val data = UserData.empty(uid)
+        val data = UserMeta.empty(uid)
 
         return set(uid, data)
     }
 
-    override suspend fun setWithCurrentUser(userData: UserData, toDelete: Boolean): Boolean {
+    override suspend fun setWithCurrentUser(userMeta: UserMeta, toDelete: Boolean): Boolean {
         val uid = sessionRepository.getUid().firstOrNull() ?: return false
-        return set(uid, userData, toDelete)
+        return set(uid, userMeta, toDelete)
     }
 
     override suspend fun set(
         uid: String,
-        userData: UserData,
+        userMeta: UserMeta,
         toDelete: Boolean,
     ): Boolean {
         return try {
             // Insert into local database
-            userDatabase.userDataDao.upsert(
-                UserDataEntity.fromType(userData, false, toDelete)
+            userDatabase.userMetaDao.upsert(
+                UserMetaEntity.fromType(userMeta, false, toDelete)
             )
-            userData.agents.forEach { userAgentRepository.set(it, toDelete) }
-            userData.contracts.forEach { userContractRepository.set(it, toDelete) }
-            if (userData.rank != null) userRankRepository.set(userData.rank, toDelete)
+            if (userMeta.rank != null) userRankRepository.set(userMeta.rank, toDelete)
 
             // Queue worker to sync with Supabase
             queueWorker(uid)
@@ -180,22 +174,22 @@ class UserDataSupabaseRepository @Inject constructor(
         }
     }
 
-    override suspend fun setWithCurrentUser(userData: UserData): Boolean {
+    override suspend fun setWithCurrentUser(userMeta: UserMeta): Boolean {
         val uid = sessionRepository.getUid().firstOrNull() ?: return false
-        return set(uid, userData)
+        return set(uid, userMeta)
     }
 
-    override suspend fun set(uid: String, userData: UserData): Boolean {
-        return set(uid, userData, false)
+    override suspend fun set(uid: String, userMeta: UserMeta): Boolean {
+        return set(uid, userMeta, false)
     }
 
-    override suspend fun deleteWithCurrentUser(userData: UserData): Boolean {
+    override suspend fun deleteWithCurrentUser(userMeta: UserMeta): Boolean {
         val uid = sessionRepository.getUid().firstOrNull() ?: return false
-        return delete(uid, userData)
+        return delete(uid, userMeta)
     }
 
-    override suspend fun delete(uid: String, userData: UserData): Boolean {
-        return set(uid, userData, true)
+    override suspend fun delete(uid: String, userMeta: UserMeta): Boolean {
+        return set(uid, userMeta, true)
     }
 
     override suspend fun uploadAvatarWithCurrentUser(avatar: ByteArray): String? {
@@ -226,11 +220,11 @@ class UserDataSupabaseRepository @Inject constructor(
     //  Remote operations
     // ================================
 
-    override suspend fun remoteQuery(relation: String): List<UserDataDto>? {
+    override suspend fun remoteQuery(relation: String): List<UserMetaDto>? {
         try {
             return database.from(TABLE_NAME).select {
-                filter { UserDataDto::uuid eq relation }
-            }.decodeList<UserDataDto>()
+                filter { UserMetaDto::uuid eq relation }
+            }.decodeList<UserMetaDto>()
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             e.printStackTrace()
@@ -240,8 +234,8 @@ class UserDataSupabaseRepository @Inject constructor(
 
     override suspend fun remoteUpsert(uuid: String): Boolean {
         return try {
-            val entity = userDatabase.userDataDao.getByUuid(uuid).firstOrNull() ?: return false
-            val dto = UserDataDto.fromEntity(entity)
+            val entity = userDatabase.userMetaDao.getByUuid(uuid).firstOrNull() ?: return false
+            val dto = UserMetaDto.fromEntity(entity)
 
             database.from(TABLE_NAME).upsert(dto)
             true
@@ -255,7 +249,7 @@ class UserDataSupabaseRepository @Inject constructor(
     override suspend fun remoteDelete(uuid: String): Boolean {
         return try {
             database.from(TABLE_NAME).delete {
-                filter { UserDataDto::uuid eq uuid }
+                filter { UserMetaDto::uuid eq uuid }
             }
             true
         } catch (e: Exception) {
@@ -272,13 +266,13 @@ class UserDataSupabaseRepository @Inject constructor(
     private fun queueWorker(uid: String) {
         val workRequest = OneTimeWorkRequestBuilder<UserSyncWorker>().setInputData(
             workDataOf(
-                UserSyncWorker.KEY_TYPE to UserData::class.simpleName,
+                UserSyncWorker.KEY_TYPE to UserMeta::class.simpleName,
                 UserSyncWorker.KEY_RELATION to uid
             )
         ).setConstraints(Constraints(NetworkType.CONNECTED)).build()
 
         workManager.enqueueUniqueWork(
-            UserData::class.simpleName + UserSyncWorker.WORK_BASE_NAME,
+            UserMeta::class.simpleName + UserSyncWorker.WORK_BASE_NAME,
             ExistingWorkPolicy.REPLACE,
             workRequest
         )

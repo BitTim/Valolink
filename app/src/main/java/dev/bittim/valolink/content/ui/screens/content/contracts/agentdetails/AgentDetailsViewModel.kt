@@ -7,7 +7,7 @@
  File:       AgentDetailsViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   04.05.25, 12:25
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -21,14 +21,17 @@ import dev.bittim.valolink.content.domain.model.Currency
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -40,7 +43,6 @@ import javax.inject.Inject
 class AgentDetailsViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
-    private val userDataRepository: UserDataRepository,
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
     private val userLevelRepository: UserLevelRepository,
@@ -48,27 +50,10 @@ class AgentDetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow(AgentDetailsState())
     val state = _state.asStateFlow()
 
-    private var fetchUserDataJob: Job? = null
+    private var fetchUserAgentJob: Job? = null
     private var fetchDetailsJob: Job? = null
 
-    init {
-        fetchUserDataJob?.cancel()
-        fetchUserDataJob = viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                userDataRepository.getWithCurrentUser()
-                    .onStart { _state.update { it.copy(isUserDataLoading = true) } }
-                    .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                    .collectLatest { userData ->
-                        _state.update {
-                            it.copy(
-                                isUserDataLoading = false, userData = userData
-                            )
-                        }
-                    }
-            }
-        }
-    }
-
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun fetchDetails(uuid: String?) {
         if (uuid == null) return
 
@@ -79,10 +64,26 @@ class AgentDetailsViewModel @Inject constructor(
                     contractRepository.getByUuid(uuid, true)
                         .onStart { _state.update { it.copy(isContractLoading = true) } }
                         .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                        .collectLatest { contract ->
+                        .flatMapLatest { contract ->
+                            if (contract != null) {
+                                val userContractFlow =
+                                    userContractRepository.getWithCurrentUser(contract.uuid)
+                                combine(
+                                    flowOf(contract),
+                                    userContractFlow
+                                ) { contract, userContract ->
+                                    Pair(contract, userContract)
+                                }
+                            } else {
+                                flowOf(Pair(null, null))
+                            }
+                        }
+                        .collectLatest { contractPair ->
                             _state.update {
                                 it.copy(
-                                    isContractLoading = false, agentGear = contract
+                                    isContractLoading = false,
+                                    agentGear = contractPair.first,
+                                    userContract = contractPair.second
                                 )
                             }
                         }
@@ -104,6 +105,22 @@ class AgentDetailsViewModel @Inject constructor(
                 }
             }
         }
+
+        fetchUserAgentJob?.cancel()
+        fetchUserAgentJob = viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                userAgentRepository.getWithCurrentUser(uuid)
+                    .onStart { _state.update { it.copy(isUserDataLoading = true) } }
+                    .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                    .collectLatest { userAgent ->
+                        _state.update {
+                            it.copy(
+                                isUserDataLoading = false, userAgent = userAgent
+                            )
+                        }
+                    }
+            }
+        }
     }
 
 
@@ -111,7 +128,7 @@ class AgentDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val agent = state.value.agentGear?.content?.relation as Agent? ?: return@withContext
-                val userData = state.value.userData ?: return@withContext
+                val userData = state.value.userAgent ?: return@withContext
 
                 userAgentRepository.set(agent.toUserObj(userData.uuid))
             }
@@ -126,10 +143,7 @@ class AgentDetailsViewModel @Inject constructor(
 
                 val agent = state.value.agentGear?.content?.relation as Agent? ?: return@withContext
                 if (!agent.isBaseContent) {
-                    val userData = state.value.userData ?: return@withContext
-                    val userAgent =
-                        userData.agents.find { it.agent == agent.uuid } ?: return@withContext
-
+                    val userAgent = state.value.userAgent ?: return@withContext
                     userAgentRepository.delete(userAgent)
                 }
             }
@@ -140,7 +154,7 @@ class AgentDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val contract = state.value.agentGear ?: return@withContext
-                val userData = state.value.userData ?: return@withContext
+                val userData = state.value.userAgent ?: return@withContext
 
                 userContractRepository.set(contract.toUserObj(userData.uuid, false))
             }
@@ -152,10 +166,7 @@ class AgentDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val userData = state.value.userData ?: return@withContext
-                val userContract =
-                    userData.contracts.find { it.contract == state.value.agentGear?.uuid }
-                        ?: return@withContext
+                val userContract = state.value.userContract ?: return@withContext
                 val level = state.value.agentGear?.content?.chapters?.flatMap { it.levels }
                     ?.find { it.uuid == uuid } ?: return@withContext
 
@@ -169,10 +180,7 @@ class AgentDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val userData = state.value.userData ?: return@withContext
-                val userContract =
-                    userData.contracts.find { it.contract == state.value.agentGear?.uuid }
-                        ?: return@withContext
+                val userContract = state.value.userContract ?: return@withContext
                 val userLevel = userContract.levels.find { it.level == uuid } ?: return@withContext
 
                 userLevelRepository.delete(userLevel)

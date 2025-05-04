@@ -7,11 +7,12 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:11
+ Modified:   04.05.25, 12:12
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -75,6 +76,7 @@ import dev.bittim.valolink.core.ui.util.getProgressPercent
 import java.util.UUID
 import kotlin.math.ceil
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun AgentDetailsScreen(
     state: AgentDetailsState,
@@ -104,14 +106,11 @@ fun AgentDetailsScreen(
         ceil(LocalConfiguration.current.screenWidthDp / RewardCard.width.value).toInt()
 
     val agent = state.agentGear?.content?.relation as? Agent?
-    val isLocked = state.userData?.agents?.any { it.agent == agent?.uuid } != true
+    val isLocked = state.userAgent != null
 
     val agentGearLevels = state.agentGear?.content?.chapters?.flatMap { it.levels }
-    val userContract = state.userData?.contracts?.find {
-        it.contract == state.agentGear?.uuid
-    }
 
-    if (userContract == null) {
+    if (state.userContract == null) {
         if (!state.isUserDataLoading) {
             initUserContract()
         }
@@ -119,11 +118,11 @@ fun AgentDetailsScreen(
 
     // Scroll to the currently active reward
     LaunchedEffect(
-        userContract?.levels?.count(),
+        state.userContract?.levels?.count(),
         state.agentGear
     ) {
         val targetIndex = agentGearLevels?.indexOfFirst {
-            it.uuid == userContract?.levels?.lastOrNull()?.uuid
+            it.uuid == state.userContract?.levels?.lastOrNull()?.uuid
         } ?: return@LaunchedEffect
 
         if (targetIndex > -1) state.rewardListState.animateScrollToItem(targetIndex)
@@ -216,7 +215,7 @@ fun AgentDetailsScreen(
                     }
 
                     val totalLevels = state.agentGear?.calcLevelCount() ?: 0
-                    val unlockedLevels = userContract?.levels?.count() ?: 0
+                    val unlockedLevels = state.userContract?.levels?.count() ?: 0
                     val percentage = getProgressPercent(unlockedLevels, totalLevels)
 
                     val animatedProgress: Float by animateFloatAsState(
@@ -371,9 +370,9 @@ fun AgentDetailsScreen(
                         RewardCard(
                             data = rewardCardData,
                             isLocked = isLocked,
-                            isOwned = userContract?.levels?.any { it.level == level?.uuid } == true,
+                            isOwned = state.userContract?.levels?.any { it.level == level?.uuid } == true,
                             unlockReward = {
-                                if (userContract?.levels?.lastOrNull()?.level == level?.dependency) {
+                                if (state.userContract?.levels?.lastOrNull()?.level == level?.dependency) {
                                     // Unlock just one
                                     unlockLevel(level?.uuid)
                                 } else {
@@ -453,11 +452,11 @@ fun AgentDetailsScreen(
         )
     }
 
-    if (isRewardUnlockAlertShown && userContract?.levels?.any { it.level == targetLevelUuid } == false) {
+    if (isRewardUnlockAlertShown && state.userContract?.levels?.any { it.level == targetLevelUuid } == false) {
         val stagedLevels = Level.reverseTraverse(
             agentGearLevels ?: emptyList(),
             targetLevelUuid,
-            userContract.levels.lastOrNull()?.level,
+            state.userContract.levels.lastOrNull()?.level,
             false
         )
 
@@ -473,10 +472,10 @@ fun AgentDetailsScreen(
         )
     }
 
-    if (isRewardResetAlertShown && userContract?.levels?.any { it.level == targetLevelUuid } == true) {
+    if (isRewardResetAlertShown && state.userContract?.levels?.any { it.level == targetLevelUuid } == true) {
         val stagedLevels = Level.reverseTraverse(
             agentGearLevels ?: emptyList(),
-            userContract.levels.lastOrNull()?.level,
+            state.userContract.levels.lastOrNull()?.level,
             targetLevelUuid,
             true
         )

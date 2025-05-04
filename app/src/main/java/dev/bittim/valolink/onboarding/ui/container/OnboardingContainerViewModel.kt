@@ -7,7 +7,7 @@
  File:       OnboardingContainerViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   04.05.25, 10:54
  */
 
 package dev.bittim.valolink.onboarding.ui.container
@@ -19,7 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.core.domain.usecase.progress.CalcProgressDecimalUseCase
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OnboardingContainerViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
-    private val userDataRepository: UserDataRepository,
+    private val userMetaRepository: UserMetaRepository,
     private val calcProgressDecimalUseCase: CalcProgressDecimalUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(OnboardingContainerState())
@@ -50,10 +50,10 @@ class OnboardingContainerViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            userDataRepository.getWithCurrentUser()
+            userMetaRepository.getWithCurrentUser()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { data ->
-                    _state.update { it.copy(userData = data) }
+                    _state.update { it.copy(userMeta = data) }
                 }
         }
     }

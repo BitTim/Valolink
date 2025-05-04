@@ -7,7 +7,7 @@
  File:       UserDataDao.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   04.05.25, 10:54
  */
 
 package dev.bittim.valolink.user.data.local.dao
@@ -18,17 +18,17 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import dev.bittim.valolink.user.data.local.UserDatabase
-import dev.bittim.valolink.user.data.local.entity.UserDataEntity
+import dev.bittim.valolink.user.data.local.entity.UserMetaEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface UserDataDao {
+interface UserMetaDao {
     // --------------------------------
     //  Upsert
     // --------------------------------
 
     @Upsert
-    suspend fun upsert(userData: UserDataEntity)
+    suspend fun upsert(userData: UserMetaEntity)
 
     // --------------------------------
     //  Queries
@@ -36,20 +36,20 @@ interface UserDataDao {
 
     @Transaction
     @Query("SELECT * FROM Users WHERE uuid = :uuid LIMIT 1")
-    fun getByUuid(uuid: String): Flow<UserDataEntity?>
+    fun getByUuid(uuid: String): Flow<UserMetaEntity?>
 
     @Query("SELECT updatedAt FROM Users WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
     @Query("SELECT * FROM Users WHERE isSynced = false AND uuid != :localUser ORDER BY updatedAt ASC")
-    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserDataEntity?>>
+    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserMetaEntity?>>
 
     // --------------------------------
     //  Delete
     // --------------------------------
 
     @Delete
-    suspend fun delete(userData: UserDataEntity)
+    suspend fun delete(userData: UserMetaEntity)
 
     @Query("DELETE FROM Users WHERE uuid = :uuid")
     suspend fun deleteByUuid(uuid: String)

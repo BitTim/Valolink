@@ -4,32 +4,32 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       UserDataDto.kt
+ File:       UserMetaDto.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   04.05.25, 10:54
  */
 
 package dev.bittim.valolink.user.data.remote.dto
 
-import dev.bittim.valolink.user.data.local.entity.UserDataEntity
+import dev.bittim.valolink.user.data.local.entity.UserMetaEntity
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserDataDto(
+data class UserMetaDto(
     override val uuid: String,
     override val updatedAt: String,
     val isPrivate: Boolean,
     val username: String,
     val onboardingStep: Int,
     val avatar: String?,
-) : SyncedDto<UserDataEntity>() {
+) : SyncedDto<UserMetaEntity>() {
     override fun getIdentifier(): String {
         return uuid
     }
 
-    override fun toEntity(isSynced: Boolean, toDelete: Boolean): UserDataEntity {
-        return UserDataEntity(
+    override fun toEntity(isSynced: Boolean, toDelete: Boolean): UserMetaEntity {
+        return UserMetaEntity(
             uuid,
             isSynced,
             toDelete,
@@ -42,8 +42,8 @@ data class UserDataDto(
     }
 
     companion object {
-        fun fromEntity(userData: UserDataEntity): UserDataDto {
-            return UserDataDto(
+        fun fromEntity(userData: UserMetaEntity): UserMetaDto {
+            return UserMetaDto(
                 userData.uuid,
                 userData.updatedAt,
                 userData.isPrivate,

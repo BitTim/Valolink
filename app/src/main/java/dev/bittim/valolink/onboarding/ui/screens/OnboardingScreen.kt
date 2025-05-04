@@ -7,7 +7,7 @@
  File:       OnboardingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 17:27
+ Modified:   02.05.25, 08:29
  */
 
 package dev.bittim.valolink.onboarding.ui.screens
@@ -16,6 +16,7 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.onboarding.ui.screens.contractSetup.ContractSetupNav
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.CreateAccountNav
+import dev.bittim.valolink.onboarding.ui.screens.finish.FinishNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.PasswordForgotNav
 import dev.bittim.valolink.onboarding.ui.screens.passwordReset.PasswordResetNav
@@ -83,6 +84,13 @@ enum class OnboardingScreen(
         title = UiText.StringResource(R.string.onboarding_contractSetup_title),
         description = UiText.StringResource(R.string.onboarding_contractSetup_description),
         step = 4
+    ),
+
+    Finish(
+        route = FinishNav::class.java.name,
+        title = UiText.StringResource(R.string.onboarding_finish_title),
+        description = UiText.StringResource(R.string.onboarding_finish_description),
+        step = 5
     );
 
     companion object {

@@ -18,7 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.rank.RankRepository
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import dev.bittim.valolink.user.domain.model.UserRank
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +35,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RankSetupViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
-    private val userDataRepository: UserDataRepository,
+    private val userMetaRepository: UserMetaRepository,
     private val rankRepository: RankRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(RankSetupState())
@@ -54,7 +54,7 @@ class RankSetupViewModel @Inject constructor(
 
         viewModelScope.launch {
             val userRank =
-                userDataRepository.getWithCurrentUser().firstOrNull()?.rank ?: return@launch
+                userMetaRepository.getWithCurrentUser().firstOrNull()?.rank ?: return@launch
 
             _state.update {
                 it.copy(
@@ -69,8 +69,8 @@ class RankSetupViewModel @Inject constructor(
 
     fun navBack() {
         viewModelScope.launch {
-            val userData = userDataRepository.getWithCurrentUser().firstOrNull() ?: return@launch
-            userDataRepository.setWithCurrentUser(
+            val userData = userMetaRepository.getWithCurrentUser().firstOrNull() ?: return@launch
+            userMetaRepository.setWithCurrentUser(
                 userData.copy(
                     onboardingStep = OnboardingScreen.RankSetup.step - OnboardingScreen.STEP_OFFSET - 1
                 )
@@ -107,11 +107,11 @@ class RankSetupViewModel @Inject constructor(
     fun setRank(tier: Int, rr: Int, matchesPlayed: Int, matchesNeeded: Int) {
         viewModelScope.launch {
             val uid = sessionRepository.getUid().firstOrNull() ?: return@launch
-            val userData = userDataRepository.get(uid).firstOrNull() ?: return@launch
+            val userData = userMetaRepository.get(uid).firstOrNull() ?: return@launch
 
             val actualPlayed = if (tier > 0) matchesNeeded else matchesPlayed
 
-            userDataRepository.setWithCurrentUser(
+            userMetaRepository.setWithCurrentUser(
                 userData.copy(
                     rank = UserRank(
                         uuid = uid,

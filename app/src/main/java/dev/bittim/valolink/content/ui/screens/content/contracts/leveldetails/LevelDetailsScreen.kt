@@ -7,7 +7,7 @@
  File:       LevelDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 18:51
+ Modified:   04.05.25, 13:41
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
@@ -89,14 +89,13 @@ fun LevelDetailsScreen(
 
     val rewards = state.level?.rewards
     val contractLevels = state.contract?.content?.chapters?.flatMap { it.levels }
-    val userContract = state.userData?.contracts?.find { it.contract == state.contract?.uuid }
-    if (userContract == null) {
+    if (state.userContract == null) {
         if (!state.isUserDataLoading) {
             initUserContract()
         }
     }
 
-    val isLocked = userContract?.levels?.any { it.level == state.level?.uuid }?.not()
+    val isLocked = state.userContract?.levels?.any { it.level == state.level?.uuid }?.not()
 
     var isMenuExpanded: Boolean by remember { mutableStateOf(false) }
     var isRewardUnlockAlertShown: Boolean by remember { mutableStateOf(false) }
@@ -224,7 +223,7 @@ fun LevelDetailsScreen(
                         .padding(start = 16.dp, end = 16.dp),
                     data = unlockSectionData,
                     onUnlock = {
-                        if (userContract?.levels?.lastOrNull()?.level == state.level?.dependency) {
+                        if (state.userContract?.levels?.lastOrNull()?.level == state.level?.dependency) {
                             // Unlock just one
                             unlockLevel(state.level?.uuid, true)
                         } else {
@@ -236,11 +235,13 @@ fun LevelDetailsScreen(
 
                 val prevLevel = state.previousLevel
                 val prevLevelReward = prevLevel?.rewards?.find { !it.isFreeReward }?.relation
-                val isPrevLevelOwned = userContract?.levels?.any { it.level == prevLevel?.uuid }
+                val isPrevLevelOwned =
+                    state.userContract?.levels?.any { it.level == prevLevel?.uuid }
 
                 val nextLevel = state.nextLevel
                 val nextLevelReward = nextLevel?.rewards?.find { !it.isFreeReward }?.relation
-                val isNextLevelOwned = userContract?.levels?.any { it.level == nextLevel?.uuid }
+                val isNextLevelOwned =
+                    state.userContract?.levels?.any { it.level == nextLevel?.uuid }
 
                 val relationsSectionContentData =
                     if (state.isLevelRelationsLoading || state.contract == null) null else RelationsSectionContentData(
@@ -341,11 +342,11 @@ fun LevelDetailsScreen(
         onNavBack = onNavBack,
     )
 
-    if (isRewardUnlockAlertShown && userContract?.levels?.any { it.level == state.level?.uuid } == false) {
+    if (isRewardUnlockAlertShown && state.userContract?.levels?.any { it.level == state.level?.uuid } == false) {
         val stagedLevels = Level.reverseTraverse(
             contractLevels ?: emptyList(),
             state.level?.uuid,
-            userContract.levels.lastOrNull()?.level,
+            state.userContract.levels.lastOrNull()?.level,
             false
         )
 
@@ -361,10 +362,10 @@ fun LevelDetailsScreen(
         )
     }
 
-    if (isRewardResetAlertShown && userContract?.levels?.any { it.level == state.level?.uuid } == true) {
+    if (isRewardResetAlertShown && state.userContract?.levels?.any { it.level == state.level?.uuid } == true) {
         val stagedLevels = Level.reverseTraverse(
             contractLevels ?: emptyList(),
-            userContract.levels.lastOrNull()?.level,
+            state.userContract.levels.lastOrNull()?.level,
             state.level?.uuid,
             true
         )

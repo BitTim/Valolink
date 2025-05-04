@@ -7,7 +7,7 @@
  File:       UserDatabase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   23.04.25, 00:35
+ Modified:   04.05.25, 14:03
  */
 
 package dev.bittim.valolink.user.data.local
@@ -16,20 +16,20 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import dev.bittim.valolink.user.data.local.dao.UserAgentDao
 import dev.bittim.valolink.user.data.local.dao.UserContractDao
-import dev.bittim.valolink.user.data.local.dao.UserDataDao
 import dev.bittim.valolink.user.data.local.dao.UserLevelDao
+import dev.bittim.valolink.user.data.local.dao.UserMetaDao
 import dev.bittim.valolink.user.data.local.dao.UserRankDao
 import dev.bittim.valolink.user.data.local.entity.SyncedEntity
 import dev.bittim.valolink.user.data.local.entity.UserAgentEntity
 import dev.bittim.valolink.user.data.local.entity.UserContractEntity
-import dev.bittim.valolink.user.data.local.entity.UserDataEntity
 import dev.bittim.valolink.user.data.local.entity.UserLevelEntity
+import dev.bittim.valolink.user.data.local.entity.UserMetaEntity
 import dev.bittim.valolink.user.data.local.entity.UserRankEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 @Database(
-    entities = [UserDataEntity::class, UserAgentEntity::class, UserContractEntity::class, UserLevelEntity::class, UserRankEntity::class],
+    entities = [UserMetaEntity::class, UserAgentEntity::class, UserContractEntity::class, UserLevelEntity::class, UserRankEntity::class],
     version = 1
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -37,7 +37,7 @@ abstract class UserDatabase : RoomDatabase() {
         const val LOCAL_UUID = "00000000-0000-0000-0000-000000000000"
     }
 
-    abstract val userDataDao: UserDataDao
+    abstract val userMetaDao: UserMetaDao
     abstract val userAgentDao: UserAgentDao
     abstract val userContractDao: UserContractDao
     abstract val userLevelDao: UserLevelDao
@@ -45,7 +45,7 @@ abstract class UserDatabase : RoomDatabase() {
 
     fun getByRelation(type: String?, relation: String): Flow<List<SyncedEntity>> {
         return when (type) {
-            "UserData" -> userDataDao.getByUuid(relation).map { listOfNotNull(it) }
+            "UserData" -> userMetaDao.getByUuid(relation).map { listOfNotNull(it) }
             "UserAgent" -> userAgentDao.getByUser(relation)
             "UserContract" -> userContractDao.getByUser(relation)
             "UserLevel" -> userLevelDao.getByContract(relation)
@@ -57,7 +57,7 @@ abstract class UserDatabase : RoomDatabase() {
 
     fun getSyncQueue(type: String?): Flow<List<SyncedEntity?>> {
         return when (type) {
-            "UserData" -> userDataDao.getSyncQueue()
+            "UserData" -> userMetaDao.getSyncQueue()
             "UserAgent" -> userAgentDao.getSyncQueue()
             "UserContract" -> userContractDao.getSyncQueue()
             "UserLevel" -> userLevelDao.getSyncQueue()
@@ -69,7 +69,7 @@ abstract class UserDatabase : RoomDatabase() {
 
     suspend fun upsert(type: String?, entity: SyncedEntity) {
         when (type) {
-            "UserData" -> userDataDao.upsert(entity as UserDataEntity)
+            "UserData" -> userMetaDao.upsert(entity as UserMetaEntity)
             "UserAgent" -> userAgentDao.upsert(entity as UserAgentEntity)
             "UserContract" -> userContractDao.upsert(entity as UserContractEntity)
             "UserLevel" -> userLevelDao.upsert(entity as UserLevelEntity)
@@ -81,7 +81,7 @@ abstract class UserDatabase : RoomDatabase() {
 
     suspend fun deleteByUuid(type: String?, uuid: String) {
         when (type) {
-            "UserData" -> userDataDao.deleteByUuid(uuid)
+            "UserData" -> userMetaDao.deleteByUuid(uuid)
             "UserAgent" -> userAgentDao.deleteByUuid(uuid)
             "UserContract" -> userContractDao.deleteByUuid(uuid)
             "UserLevel" -> userLevelDao.deleteByUuid(uuid)

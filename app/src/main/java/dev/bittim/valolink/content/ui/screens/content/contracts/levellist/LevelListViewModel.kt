@@ -7,7 +7,7 @@
  File:       LevelListViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   04.05.25, 13:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.levellist
@@ -21,7 +21,6 @@ import dev.bittim.valolink.content.domain.model.Currency
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +29,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -40,7 +42,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LevelListViewModel @Inject constructor(
-    private val userDataRepository: UserDataRepository,
     private val contractRepository: ContractRepository,
     private val currencyRepository: CurrencyRepository,
     private val userContractRepository: UserContractRepository,
@@ -50,20 +51,20 @@ class LevelListViewModel @Inject constructor(
     private val _state = MutableStateFlow(LevelListState())
     val state = _state.asStateFlow()
 
-    private var userDataFetchJob: Job? = null
+    private var userAgentsFetchJob: Job? = null
     private var contractFetchJob: Job? = null
 
     init {
-        userDataFetchJob?.cancel()
-        userDataFetchJob = viewModelScope.launch {
+        userAgentsFetchJob?.cancel()
+        userAgentsFetchJob = viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                userDataRepository.getWithCurrentUser()
-                    .onStart { _state.update { it.copy(isUserDataLoading = true) } }
+                userAgentRepository.getAllWithCurrentUser()
+                    .onStart { _state.update { it.copy(isUserAgentsLoading = true) } }
                     .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                    .collectLatest { userData ->
+                    .collectLatest { userAgents ->
                         _state.update {
                             it.copy(
-                                isUserDataLoading = false, userData = userData
+                                isUserAgentsLoading = false, userAgents = userAgents
                             )
                         }
                     }
@@ -81,16 +82,27 @@ class LevelListViewModel @Inject constructor(
                 contractRepository.getByUuid(uuid, true)
                     .onStart { _state.update { it.copy(isContractLoading = true) } }
                     .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                    .filterNotNull()
                     .flatMapLatest { contract ->
+                        val userContractFlow =
+                            userContractRepository.getWithCurrentUser(contract.uuid)
+                        combine(flowOf(contract), userContractFlow) { contract, userContract ->
+                            Pair(contract, userContract)
+                        }
+                    }
+                    .flatMapLatest { contractPair ->
+                        val contract = contractPair.first
+
                         _state.update {
                             it.copy(
-                                contract = contract,
                                 isContractLoading = false,
+                                contract = contract,
+                                userContract = contractPair.second
                             )
                         }
 
                         val firstLevel =
-                            contract?.content?.chapters?.firstOrNull()?.levels?.firstOrNull()
+                            contract.content.chapters.firstOrNull()?.levels?.firstOrNull()
                         val currencyUuid =
                             if (firstLevel?.isPurchasableWithDough == true) Currency.DOUGH_UUID
                             else if (firstLevel?.isPurchasableWithVP == true) Currency.VP_UUID
@@ -114,7 +126,7 @@ class LevelListViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val contract = state.value.contract ?: return@withContext
-                val userData = state.value.userData ?: return@withContext
+                val userData = state.value.userContract ?: return@withContext
 
                 userContractRepository.set(contract.toUserObj(userData.uuid, freeOnly = true))
             }
@@ -129,14 +141,13 @@ class LevelListViewModel @Inject constructor(
 
                 val relation = state.value.contract?.content?.relation
                 if (relation is Agent && !relation.isBaseContent) {
-                    val userData = state.value.userData ?: return@withContext
                     val userAgent =
-                        userData.agents.find { it.agent == relation.uuid } ?: return@withContext
+                        state.value.userAgents?.find { it.agent == relation.uuid }
+                            ?: return@withContext
 
                     userAgentRepository.delete(userAgent)
                 } else {
-                    val userContract =
-                        state.value.userData?.contracts?.find { it.contract == contract.uuid }
+                    val userContract = state.value.userContract ?: return@withContext
                     userContractRepository.delete(userContract)
                 }
             }
@@ -148,10 +159,7 @@ class LevelListViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val userData = state.value.userData ?: return@withContext
-                val userContract =
-                    userData.contracts.find { it.contract == state.value.contract?.uuid }
-                        ?: return@withContext
+                val userContract = state.value.userContract ?: return@withContext
                 val userLevel = userContract.levels.find { it.level == uuid } ?: return@withContext
 
                 userLevelRepository.delete(userLevel)

@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 22:37
+ Modified:   04.05.25, 14:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -33,12 +33,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -75,6 +75,8 @@ fun RankSetupScreen(
 ) {
     var clickedPage by remember { mutableIntStateOf(0) }
     var pagerState = rememberPagerState(pageCount = { state.ranks?.count() ?: 0 })
+    val currentPage by remember { derivedStateOf { pagerState.currentPage } }
+    val targetPage by remember { derivedStateOf { pagerState.targetPage } }
 
     var isUnranked by remember { mutableStateOf(true) }
     var isHighest by remember { mutableStateOf(false) }
@@ -82,12 +84,10 @@ fun RankSetupScreen(
     var rrString by remember { mutableStateOf(state.rr.toString()) }
     var rrError: UiText? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { pagerState }.collect {
-            if (it.currentPage == it.targetPage) {
-                val newTier = state.ranks?.getOrNull(pagerState.currentPage)?.tier ?: 0
-                if (newTier != state.tier) onTierChanged(newTier)
-            }
+    LaunchedEffect(currentPage, targetPage) {
+        if (currentPage == targetPage) {
+            val newTier = state.ranks?.getOrNull(currentPage)?.tier ?: 0
+            if (newTier != state.tier) onTierChanged(newTier)
         }
     }
 

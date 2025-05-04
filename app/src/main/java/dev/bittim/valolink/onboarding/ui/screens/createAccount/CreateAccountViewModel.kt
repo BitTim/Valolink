@@ -24,7 +24,7 @@ import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import dev.bittim.valolink.user.domain.error.EmailError
 import dev.bittim.valolink.user.domain.error.PasswordError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
@@ -48,7 +48,7 @@ class CreateAccountViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
     private val sessionRepository: SessionRepository,
-    private val userDataRepository: UserDataRepository,
+    private val userMetaRepository: UserMetaRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
 ) : ViewModel() {
@@ -131,7 +131,7 @@ class CreateAccountViewModel @Inject constructor(
 
             if (error == null) {
                 sessionRepository.setLocal(false)
-                userDataRepository.createEmptyForCurrentUser()
+                userMetaRepository.createEmptyForCurrentUser()
             } else {
                 snackbarHostState?.showSnackbar(error.asString(context))
             }

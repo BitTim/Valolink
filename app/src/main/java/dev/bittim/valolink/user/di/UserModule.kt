@@ -7,7 +7,7 @@
  File:       UserModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   04.05.25, 13:31
  */
 
 package dev.bittim.valolink.user.di
@@ -29,10 +29,10 @@ import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserAgentSupabaseRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractSupabaseRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataSupabaseRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelSupabaseRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaSupabaseRepository
 import dev.bittim.valolink.user.data.repository.data.UserRankRepository
 import dev.bittim.valolink.user.data.repository.data.UserRankSupabaseRepository
 import io.github.jan.supabase.auth.Auth
@@ -55,7 +55,6 @@ object UserModule {
         @ApplicationContext
         context: Context,
         auth: Auth,
-        storage: Storage,
         userFlags: UserFlags,
         userDatabase: UserDatabase,
     ): SessionRepository {
@@ -121,19 +120,15 @@ object UserModule {
         @ApplicationContext
         context: Context,
         sessionRepository: SessionRepository,
-        userAgentRepository: UserAgentRepository,
-        userContractRepository: UserContractRepository,
         userRankRepository: UserRankRepository,
         userDatabase: UserDatabase,
         database: Postgrest,
         storage: Storage,
         workManager: WorkManager,
-    ): UserDataRepository {
-        return UserDataSupabaseRepository(
+    ): UserMetaRepository {
+        return UserMetaSupabaseRepository(
             context,
             sessionRepository,
-            userAgentRepository,
-            userContractRepository,
             userRankRepository,
             userDatabase,
             database,

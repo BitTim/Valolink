@@ -7,7 +7,7 @@
  File:       ContractsOverviewViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   04.05.25, 13:58
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -18,8 +18,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.domain.model.contract.content.ContentType
+import dev.bittim.valolink.user.data.repository.SessionRepository
+import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -41,7 +43,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ContractsOverviewViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
-    private val userDataRepository: UserDataRepository,
+    private val sessionRepository: SessionRepository,
+    private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
     private val _filterState = MutableStateFlow(ContentType.SEASON)
@@ -54,22 +57,6 @@ class ContractsOverviewViewModel @Inject constructor(
     init {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
-            launch {
-                withContext(Dispatchers.IO) {
-                    userDataRepository.getWithCurrentUser()
-                        .onStart { _state.update { it.copy(isUserDataLoading = true) } }
-                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
-                        .collectLatest { userData ->
-                            _state.update {
-                                it.copy(
-                                    userData = userData,
-                                    isUserDataLoading = false,
-                                )
-                            }
-                        }
-                }
-            }
-
             launch {
                 withContext(Dispatchers.IO) {
                     contractRepository.getActiveContracts(false)
@@ -118,6 +105,36 @@ class ContractsOverviewViewModel @Inject constructor(
                         }
                 }
             }
+
+            launch {
+                withContext(Dispatchers.IO) {
+                    userContractRepository.getAllWithCurrentUser()
+                        .onStart { _state.update { it.copy(isUserDataLoading = true) } }
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { contracts ->
+                            _state.update {
+                                it.copy(
+                                    userContracts = contracts,
+                                    isUserDataLoading = false,
+                                )
+                            }
+                        }
+                }
+            }
+
+            launch {
+                withContext(Dispatchers.IO) {
+                    userAgentRepository.getAllWithCurrentUser()
+                        .stateIn(viewModelScope, WhileSubscribed(5000), null)
+                        .collectLatest { agents ->
+                            _state.update {
+                                it.copy(
+                                    userAgents = agents,
+                                )
+                            }
+                        }
+                }
+            }
         }
     }
 
@@ -133,9 +150,9 @@ class ContractsOverviewViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 val contract =
                     state.value.agentGears?.find { it.uuid == uuid } ?: return@withContext
-                val userData = state.value.userData ?: return@withContext
+                val uid = sessionRepository.getUid().firstOrNull() ?: return@withContext
 
-                userContractRepository.set(contract.toUserObj(userData.uuid, freeOnly = true))
+                userContractRepository.set(contract.toUserObj(uid, freeOnly = true))
             }
         }
     }

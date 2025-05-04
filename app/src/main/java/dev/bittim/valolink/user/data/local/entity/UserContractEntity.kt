@@ -7,7 +7,7 @@
  File:       UserContractEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   25.04.25, 19:03
+ Modified:   04.05.25, 10:54
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -22,7 +22,7 @@ import java.time.OffsetDateTime
 
 @Entity(
     tableName = "UserContracts", foreignKeys = [ForeignKey(
-        entity = UserDataEntity::class,
+        entity = UserMetaEntity::class,
         parentColumns = ["uuid"],
         childColumns = ["user"],
         onDelete = ForeignKey.CASCADE

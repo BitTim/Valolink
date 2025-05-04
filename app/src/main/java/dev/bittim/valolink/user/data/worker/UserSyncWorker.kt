@@ -7,7 +7,7 @@
  File:       UserSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   04.05.25, 14:03
  */
 
 package dev.bittim.valolink.user.data.worker
@@ -23,8 +23,8 @@ import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import dev.bittim.valolink.user.data.repository.data.UserRankRepository
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.OffsetDateTime
@@ -35,7 +35,7 @@ class UserSyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted private val params: WorkerParameters,
     private val userDatabase: UserDatabase,
-    private val userDataRepository: UserDataRepository,
+    private val userMetaRepository: UserMetaRepository,
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
     private val userLevelRepository: UserLevelRepository,
@@ -57,7 +57,7 @@ class UserSyncWorker @AssistedInject constructor(
 
         // Get corresponding repository
         val repository = when (type) {
-            "UserData" -> userDataRepository
+            "UserData" -> userMetaRepository
             "UserAgent" -> userAgentRepository
             "UserContract" -> userContractRepository
             "UserLevel" -> userLevelRepository

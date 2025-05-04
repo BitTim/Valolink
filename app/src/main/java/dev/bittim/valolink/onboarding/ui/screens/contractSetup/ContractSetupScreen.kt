@@ -7,7 +7,7 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   02.05.25, 07:52
+ Modified:   04.05.25, 10:38
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -98,7 +98,7 @@ fun ContractSetupScreen(
         }
     }
 
-    LaunchedEffect(state.level) {
+    LaunchedEffect(levels, state.level) {
         val newPage = state.level - PAGE_OFFSET
         pagerState.animateScrollToPage(newPage)
 
@@ -110,7 +110,7 @@ fun ContractSetupScreen(
         }
     }
 
-    LaunchedEffect(xpCollectedString) {
+    LaunchedEffect(levels, xpCollectedString) {
         try {
             val uncheckedXpCollected = xpCollectedString.toInt()
             if (uncheckedXpCollected > xpTotal && !isHighest) {
@@ -127,7 +127,7 @@ fun ContractSetupScreen(
         }
     }
 
-    LaunchedEffect(state.xp) {
+    LaunchedEffect(levels, state.xp) {
         val newXpCollectedString = state.xp.toString()
         if (xpCollectedString != newXpCollectedString) {
             xpCollectedString = newXpCollectedString
@@ -249,7 +249,7 @@ fun ContractSetupScreen(
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = navBack,
-                    onContinue = { setContractProgress() },
+                    onContinue = setContractProgress,
                     disableContinueButton = xpCollectedError != null || levels == null,
                     dismissText = UiText.StringResource(R.string.button_back),
                     continueText = UiText.StringResource(R.string.button_continue)

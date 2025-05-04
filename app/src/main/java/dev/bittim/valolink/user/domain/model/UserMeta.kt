@@ -4,34 +4,30 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       UserData.kt
+ File:       UserMeta.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   04.05.25, 10:55
  */
 
 package dev.bittim.valolink.user.domain.model
 
-data class UserData(
+data class UserMeta(
     val uuid: String,
     val isPrivate: Boolean,
     val username: String,
     val onboardingStep: Int,
     val avatar: String?,
-    val agents: List<UserAgent>,
-    val contracts: List<UserContract>,
     val rank: UserRank?,
 ) {
     companion object {
-        fun empty(uid: String): UserData {
-            return UserData(
+        fun empty(uid: String): UserMeta {
+            return UserMeta(
                 uuid = uid,
                 isPrivate = true,
                 username = "",
                 onboardingStep = 0,
                 avatar = null,
-                agents = emptyList(),
-                contracts = emptyList(),
                 rank = null,
             )
         }

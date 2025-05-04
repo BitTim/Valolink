@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:51
+ Modified:   04.05.25, 09:34
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -27,7 +27,7 @@ import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import dev.bittim.valolink.user.domain.error.UsernameError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateUsernameUseCase
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +48,7 @@ class ProfileSetupViewModel @Inject constructor(
     private val agentRepository: AgentRepository,
     private val userAgentRepository: UserAgentRepository,
     private val sessionRepository: SessionRepository,
-    private val userDataRepository: UserDataRepository,
+    private val userMetaRepository: UserMetaRepository,
     private val validateUsernameUseCase: ValidateUsernameUseCase,
     private val generateAvatarUseCase: GenerateAvatarUseCase,
 ) : ViewModel() {
@@ -71,13 +71,13 @@ class ProfileSetupViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val userData = userDataRepository.getWithCurrentUser().firstOrNull()
+            val userData = userMetaRepository.getWithCurrentUser().firstOrNull()
             if (userData == null) {
                 selectAvatar("")
                 return@launch
             }
 
-            val avatarBytes = userDataRepository.downloadAvatarWithCurrentUser()
+            val avatarBytes = userMetaRepository.downloadAvatarWithCurrentUser()
             val avatar = if (avatarBytes == null) generateAvatarUseCase(userData.username) else {
                 BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.size)
             }
@@ -95,6 +95,10 @@ class ProfileSetupViewModel @Inject constructor(
     fun onUsernameChanged(value: String) {
         _state.update { it.copy(username = value) }
         validateUsername(value)
+    }
+
+    fun onPrivateChanged(value: Boolean) {
+        _state.update { it.copy(private = value) }
     }
 
     fun validateUsername(username: String): UiText? {
@@ -201,12 +205,12 @@ class ProfileSetupViewModel @Inject constructor(
                 }
             }
 
-            val userData = userDataRepository.getWithCurrentUser().firstOrNull()
+            val userData = userMetaRepository.getWithCurrentUser().firstOrNull()
             if (userData == null) return@launch
 
             val avatarLocation =
-                userDataRepository.uploadAvatarWithCurrentUser(avatarOutputStream.toByteArray())
-            userDataRepository.setWithCurrentUser(
+                userMetaRepository.uploadAvatarWithCurrentUser(avatarOutputStream.toByteArray())
+            userMetaRepository.setWithCurrentUser(
                 userData.copy(
                     username = username,
                     isPrivate = private,

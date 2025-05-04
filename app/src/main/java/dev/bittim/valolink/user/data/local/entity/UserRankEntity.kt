@@ -7,7 +7,7 @@
  File:       UserRankEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   23.04.25, 00:08
+ Modified:   04.05.25, 10:54
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -21,7 +21,7 @@ import java.time.OffsetDateTime
 
 @Entity(
     tableName = "UserRanks", foreignKeys = [ForeignKey(
-        entity = UserDataEntity::class,
+        entity = UserMetaEntity::class,
         parentColumns = ["uuid"],
         childColumns = ["uuid"],
         onDelete = ForeignKey.CASCADE

@@ -7,7 +7,7 @@
  File:       UserContractSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   04.05.25, 11:25
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -27,12 +27,12 @@ import dev.bittim.valolink.user.domain.model.UserContract
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -63,21 +63,7 @@ class UserContractSupabaseRepository @Inject constructor(
         return try {
             // Get from local database
             val contractsFlow = userDatabase.userContractDao.getByUser(uid).distinctUntilChanged()
-                .flatMapLatest { contracts ->
-                    if (contracts.isEmpty()) {
-                        flow { emit(emptyList()) }
-                    } else {
-                        combine(contracts.map { contract ->
-                            combine(
-                                flowOf(contract), userLevelRepository.getAll(contract.uuid)
-                            ) { c, levels ->
-                                c.toType(levels)
-                            }
-                        }) {
-                            it.toList()
-                        }
-                    }
-                }
+                .map { it.map { it.toType() } }
 
             // Queue worker to sync with Supabase
             queueWorker(uid)
@@ -98,20 +84,16 @@ class UserContractSupabaseRepository @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun get(
         uid: String,
         uuid: String,
     ): Flow<UserContract?> {
         return try {
             // Get from local database
-            val contractFlow = userDatabase.userContractDao.getByUserAndContract(
+            val combinedFlow = userDatabase.userContractDao.getByUserAndContract(
                 uid, uuid
-            ).distinctUntilChanged()
-            val levelsFlow = userLevelRepository.getAll(uuid)
-
-            val combinedFlow = combine(contractFlow, levelsFlow) { contract, levels ->
-                contract?.toType(levels)
-            }
+            ).filterNotNull().distinctUntilChanged().map { it.toType() }
 
             // Queue worker to sync with Supabase
             queueWorker(uid)
@@ -180,7 +162,7 @@ class UserContractSupabaseRepository @Inject constructor(
     override suspend fun remoteUpsert(uuid: String): Boolean {
         return try {
             val entity = userDatabase.userContractDao.getByUuid(uuid).firstOrNull() ?: return false
-            val dto = UserContractDto.fromEntity(entity)
+            val dto = UserContractDto.fromEntity(entity.contract)
 
             database.from(TABLE_NAME).upsert(dto)
             true

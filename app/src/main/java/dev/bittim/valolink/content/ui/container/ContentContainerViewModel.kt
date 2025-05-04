@@ -17,7 +17,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.domain.usecase.QueueFullSyncUseCase
 import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserDataRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContentContainerViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
-    private val userDataRepository: UserDataRepository,
+    private val userMetaRepository: UserMetaRepository,
     private val queueFullSyncUseCase: QueueFullSyncUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(ContentContainerState())
@@ -50,7 +50,7 @@ class ContentContainerViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            userDataRepository.hasOnboardedWithCurrentUser()
+            userMetaRepository.hasOnboardedWithCurrentUser()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { hasOnboarded ->
                     _state.update {

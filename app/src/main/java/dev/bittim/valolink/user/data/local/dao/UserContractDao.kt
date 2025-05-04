@@ -7,7 +7,7 @@
  File:       UserContractDao.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   04.05.25, 11:20
  */
 
 package dev.bittim.valolink.user.data.local.dao
@@ -19,6 +19,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.local.entity.UserContractEntity
+import dev.bittim.valolink.user.data.local.relation.UserContractWithLevels
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -39,22 +40,22 @@ interface UserContractDao {
     // --------------------------------
 
     @Query("SELECT * FROM UserContracts WHERE uuid = :uuid LIMIT 1")
-    fun getByUuid(uuid: String): Flow<UserContractEntity?>
+    fun getByUuid(uuid: String): Flow<UserContractWithLevels?>
 
     @Query("SELECT * FROM UserContracts WHERE user = :uid")
-    fun getByUser(uid: String): Flow<List<UserContractEntity>>
+    fun getByUser(uid: String): Flow<List<UserContractWithLevels>>
 
     @Query("SELECT * FROM UserContracts WHERE user = :uid AND contract = :contract LIMIT 1")
     fun getByUserAndContract(
         uid: String,
         contract: String,
-    ): Flow<UserContractEntity?>
+    ): Flow<UserContractWithLevels?>
 
     @Query("SELECT updatedAt FROM UserContracts WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
     @Query("SELECT * FROM UserContracts WHERE isSynced = false AND user != :localUser ORDER BY updatedAt ASC")
-    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserContractEntity?>>
+    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserContractWithLevels?>>
 
     // --------------------------------
     //  Delete

@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   25.04.25, 04:25
+  Modified:   02.05.25, 08:30
   -->
 
 <resources>
@@ -82,4 +82,7 @@
     <string name="onboarding_contractSetup_freeOnly_label">Free rewards only</string>
     <string name="onboarding_dialog_freeOnly_title">About free rewards only</string>
     <string name="onboarding_dialog_freeOnly_content">Enabling this option will exclude premium rewards of the currently active season from appearing in statistics and will appear as locked. Their progress will still be tracked internally as this is necessary for the calculation of XP, which enables you to change this option at any time.\n\nNote: This option can be found on the details page of the respective season contract.</string>
+    <string name="onboarding_finish_button_finish">Finish</string>
+    <string name="onboarding_finish_title">You\'re all set!</string>
+    <string name="onboarding_finish_description">That\'s it! You can now finally enjoy Valolink, have fun!</string>
 </resources>

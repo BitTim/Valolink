@@ -7,7 +7,7 @@
  File:       ContractsOverviewScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   04.05.25, 13:55
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -260,7 +260,7 @@ fun ContractsOverviewScreen(
                     flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = carouselState)
                 ) { index ->
                     val cardData =
-                        if (state.agentGears == null || state.userData == null || state.isAgentGearsLoading || state.isUserDataLoading) {
+                        if (state.agentGears == null || state.userContracts == null || state.isAgentGearsLoading || state.isUserDataLoading) {
                             null
                         } else {
                             val gear = state.agentGears[index]
@@ -270,7 +270,7 @@ fun ContractsOverviewScreen(
                                 val levelCount by remember { derivedStateOf { gear.calcLevelCount() } }
                                 val derivedUserContract by remember {
                                     derivedStateOf {
-                                        state.userData.contracts.find { it.contract == gear.uuid }
+                                        state.userContracts.find { it.contract == gear.uuid }
                                     }
                                 }
 
@@ -281,7 +281,7 @@ fun ContractsOverviewScreen(
                                     null
                                 } else {
                                     val unlockedLevels by remember { derivedStateOf { userContract.levels.count() } }
-                                    val isLocked by remember { derivedStateOf { !(state.userData.agents.any { it.agent == gear.content.relation.uuid }) } }
+                                    val isLocked by remember { derivedStateOf { (state.userAgents?.any { it.agent == gear.content.relation.uuid })?.not() != false } }
                                     val percentage by remember {
                                         derivedStateOf {
                                             getProgressPercent(

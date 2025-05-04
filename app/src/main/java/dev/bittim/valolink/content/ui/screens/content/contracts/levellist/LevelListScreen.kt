@@ -7,7 +7,7 @@
  File:       LevelListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   04.05.25, 13:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.levellist
@@ -82,27 +82,23 @@ fun LevelListScreen(
     val contractLevels = state.contract?.content?.chapters?.flatMap { it.levels }
     val contractRelation = state.contract?.content?.relation
     val isLocked = when (contractRelation is Agent) {
-        true -> state.userData?.agents?.any { it.agent == contractRelation.uuid } != true
+        true -> state.userAgents?.any { it.agent == contractRelation.uuid } != true
         false -> state.contract?.content?.relation?.endTime?.isBefore(Instant.now()) != false
     }
 
-    val userContract = state.userData?.contracts?.find {
-        it.contract == state.contract?.uuid
-    }
-
-    if (userContract == null) {
-        if (!state.isUserDataLoading) {
+    if (state.userContract == null) {
+        if (!state.isUserAgentsLoading) {
             initUserContract()
         }
     }
 
     // Scroll to the currently active reward
     LaunchedEffect(
-        userContract?.levels?.count(),
+        state.userContract?.levels?.count(),
         state.contract
     ) {
         val targetIndex = contractLevels?.indexOfFirst {
-            it.uuid == userContract?.levels?.lastOrNull()?.uuid
+            it.uuid == state.userContract?.levels?.lastOrNull()?.uuid
         } ?: return@LaunchedEffect
 
         if (targetIndex > -1) state.rewardListState.animateScrollToItem(targetIndex)
@@ -154,7 +150,7 @@ fun LevelListScreen(
         )
 
         val loadingBarVisible =
-            state.isUserDataLoading || state.isContractLoading || state.isCurrencyLoading
+            state.isUserAgentsLoading || state.isContractLoading || state.isCurrencyLoading
 
         Crossfade(
             modifier = Modifier.animateContentSize(),
@@ -217,7 +213,7 @@ fun LevelListScreen(
                         data = rewardCardData,
                         xpCollected = 0, // TODO: Replace with actual user data
                         isLocked = isLocked,
-                        isOwned = userContract?.levels?.any { it.level == level?.uuid } == true,
+                        isOwned = state.userContract?.levels?.any { it.level == level?.uuid } == true,
                         onNavToLevelDetails = { levelUuid ->
                             if (reward?.type == RewardType.AGENT) {
                                 onNavToAgentDetails(reward.uuid)
@@ -250,10 +246,10 @@ fun LevelListScreen(
         )
     }
 
-    if (isLevelResetAlertShown && userContract?.levels?.any { it.level == targetLevelUuid } == true) {
+    if (isLevelResetAlertShown && state.userContract?.levels?.any { it.level == targetLevelUuid } == true) {
         val stagedLevels = Level.reverseTraverse(
             contractLevels ?: emptyList(),
-            userContract.levels.lastOrNull()?.level,
+            state.userContract.levels.lastOrNull()?.level,
             targetLevelUuid,
             true
         )

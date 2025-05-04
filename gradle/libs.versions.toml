@@ -2,7 +2,7 @@
 agp = "8.9.2"
 apng = "1.12.0"
 constraintlayoutCompose = "1.1.1"
-datastorePreferences = "1.1.5"
+datastorePreferences = "1.1.4"
 ktorClientOkhttp = "3.1.2"
 supabaseBom = "3.1.4"
 coilComposeVersion = "2.7.0"

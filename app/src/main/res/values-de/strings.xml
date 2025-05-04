@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   25.04.25, 04:25
+  Modified:   02.05.25, 08:31
   -->
 
 <resources>
@@ -83,4 +83,7 @@
     <string name="onboarding_contractSetup_freeOnly_label">Nur kostenlose Belohnungen</string>
     <string name="onboarding_dialog_freeOnly_title">Über nur kostenlose Belohnungen</string>
     <string name="onboarding_dialog_freeOnly_content">Wenn diese Option aktiviert ist, werden Premium-Belohnungen der aktuellen Saison nicht in deinen Statistiken berücksichtigt und als gesperrt dargestellt. Dein Fortschritt bei ihnen wird weiterhin intern gespeichert, um die EP-Berechnung zu ermöglichen, was es dir erlaubt, diese Einstellung jederzeit zu ändern.\n\nHinweis: Du findest diese Einstellung auf der Detailseite des jeweiligen Saison-Fortschitts.</string>
+    <string name="onboarding_finish_button_finish">Abschließen</string>
+    <string name="onboarding_finish_title">Du bist startklar!</string>
+    <string name="onboarding_finish_description">Das wars! Du kannst Valolink jetzt endlich genießen, viel Spaß!</string>
 </resources>

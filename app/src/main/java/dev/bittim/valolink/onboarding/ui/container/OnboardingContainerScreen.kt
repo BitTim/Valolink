@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 19:09
+ Modified:   04.05.25, 10:54
  */
 
 
@@ -39,6 +39,7 @@ import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
 import dev.bittim.valolink.onboarding.ui.screens.contractSetup.contractSetupScreen
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.createAccountScreen
 import dev.bittim.valolink.onboarding.ui.screens.createAccount.navOnboardingCreateAccount
+import dev.bittim.valolink.onboarding.ui.screens.finish.finishScreen
 import dev.bittim.valolink.onboarding.ui.screens.landing.LandingNav
 import dev.bittim.valolink.onboarding.ui.screens.landing.landingScreen
 import dev.bittim.valolink.onboarding.ui.screens.landing.navToOnboardingLanding
@@ -59,9 +60,9 @@ fun OnboardingContainerScreen(
     snackbarHostState: SnackbarHostState,
     navContent: () -> Unit,
 ) {
-    LaunchedEffect(state.isAuthenticated, state.userData?.onboardingStep, state.route) {
-        if (state.isAuthenticated == true && state.userData != null) {
-            val step = state.userData.onboardingStep + OnboardingScreen.STEP_OFFSET
+    LaunchedEffect(state.isAuthenticated, state.userMeta?.onboardingStep, state.route) {
+        if (state.isAuthenticated == true && state.userMeta != null) {
+            val step = state.userMeta.onboardingStep + OnboardingScreen.STEP_OFFSET
             if (step > OnboardingScreen.getMaxStep()) {
                 navContent()
                 return@LaunchedEffect
@@ -146,6 +147,7 @@ fun OnboardingContainerScreen(
                 profileSetupScreen()
                 rankSetupScreen()
                 contractSetupScreen()
+                finishScreen()
             }
 
             Surface(
