@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 14:03
+ Modified:   06.05.25, 02:15
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -23,7 +23,6 @@ import dev.bittim.valolink.user.data.repository.data.UserContractRepository
 import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
 import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
@@ -114,12 +113,10 @@ class ContractSetupViewModel @Inject constructor(
             val contractUuid = state.value.contract?.uuid ?: return@launch
 
             val oldUserContract = userContractRepository.get(uid, contractUuid).firstOrNull()
-            val userContract = state.value.contract?.toUserObj(uid, freeOnly) ?: return@launch
+            if (oldUserContract != null) userContractRepository.delete(oldUserContract)
 
-            async {
-                if (oldUserContract != null) userContractRepository.delete(oldUserContract)
-                userContractRepository.set(userContract)
-            }.await()
+            val userContract = state.value.contract?.toUserObj(uid, freeOnly) ?: return@launch
+            userContractRepository.set(userContract)
 
             val levels = state.value.contract?.content?.chapters?.flatMap { it.levels }
                 ?.take(level + 1) ?: emptyList()
@@ -129,13 +126,13 @@ class ContractSetupViewModel @Inject constructor(
                     false,
                     if (i == levels.lastIndex) xp else levels[i].xp
                 )
-                async { userLevelRepository.set(level) }.await()
+                userLevelRepository.set(level)
             }
 
-            val userData = userMetaRepository.get(uid).firstOrNull() ?: return@launch
+            val userMeta = userMetaRepository.get(uid).firstOrNull() ?: return@launch
             userMetaRepository.set(
                 uid,
-                userData.copy(
+                userMeta.copy(
                     onboardingStep = OnboardingScreen.ContractSetup.step - OnboardingScreen.STEP_OFFSET + 1
                 )
             )

@@ -7,7 +7,7 @@
  File:       UserContractSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 11:25
+ Modified:   06.05.25, 02:15
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -28,7 +28,6 @@ import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -93,7 +92,7 @@ class UserContractSupabaseRepository @Inject constructor(
             // Get from local database
             val combinedFlow = userDatabase.userContractDao.getByUserAndContract(
                 uid, uuid
-            ).filterNotNull().distinctUntilChanged().map { it.toType() }
+            ).distinctUntilChanged().map { it?.toType() }
 
             // Queue worker to sync with Supabase
             queueWorker(uid)

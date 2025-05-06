@@ -7,7 +7,7 @@
  File:       UserSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 14:03
+ Modified:   06.05.25, 02:15
  */
 
 package dev.bittim.valolink.user.data.worker
@@ -48,9 +48,6 @@ class UserSyncWorker @AssistedInject constructor(
         // Check if user is authenticated
         if (sessionRepository.isAuthenticated().firstOrNull() != true) return Result.failure()
 
-        // Check if user is in local mode
-        if (sessionRepository.isLocal().firstOrNull() == true) return Result.success()
-
         // Retrieve contract uuid from input data
         val type = inputData.getString(KEY_TYPE) ?: return Result.failure()
         val relation = inputData.getString(KEY_RELATION) ?: return Result.failure()
@@ -63,6 +60,21 @@ class UserSyncWorker @AssistedInject constructor(
             "UserLevel" -> userLevelRepository
             "UserRank" -> userRankRepository
             else -> return Result.failure()
+        }
+
+        // Only delete marked entries if in local mode and finish
+        // TODO: Create new .getDeletionQueue function and replace this with that
+        if (sessionRepository.isLocal().firstOrNull() == true) {
+            val deleteQueue = userDatabase.getSyncQueue(type).firstOrNull()
+            deleteQueue?.forEach { entity ->
+                if (entity == null) return@forEach
+
+                if (entity.toDelete) {
+                    userDatabase.deleteByUuid(type, entity.uuid)
+                }
+            }
+
+            return Result.success()
         }
 
         // Get most recent data from local database and Supabase
@@ -97,7 +109,10 @@ class UserSyncWorker @AssistedInject constructor(
                 if (local == null || OffsetDateTime.parse(local.updatedAt)
                         .isBefore(OffsetDateTime.parse(remote.updatedAt))
                 ) {
-                    userDatabase.upsert(type, remote.toEntity(isSynced = true, toDelete = false))
+                    userDatabase.upsert(
+                        type,
+                        remote.toEntity(isSynced = true, toDelete = false)
+                    )
                 }
             }
         } catch (e: Exception) {
@@ -105,7 +120,7 @@ class UserSyncWorker @AssistedInject constructor(
             e.printStackTrace()
         }
 
-        // Push write queue to Supabase
+        // Delete marked items and push write queue to Supabase
         val syncQueue = userDatabase.getSyncQueue(type).firstOrNull()
         syncQueue?.forEach { entity ->
             if (entity == null) return@forEach
