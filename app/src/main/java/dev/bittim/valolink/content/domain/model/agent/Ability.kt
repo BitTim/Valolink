@@ -1,0 +1,31 @@
+/*
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       Ability.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:48
+ */
+
+package dev.bittim.valolink.content.domain.model.agent
+
+data class Ability(
+    val agent: String,
+    val slot: String,
+    val displayName: String,
+    val description: String,
+    val displayIcon: String?,
+) {
+    companion object {
+        val EMPTY = Ability(
+            agent = "",
+            slot = "",
+            displayName = "",
+            description = "",
+            displayIcon = null
+        )
+    }
+}

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
+  Project:    Valolink
+  License:    GPLv3
+
+  File:       strings.xml
+  Module:     Valolink.app.main
+  Author:     Tim Anhalt (BitTim)
+  Modified:   02.05.25, 08:31
+  -->
+
+<resources>
+    <string name="app_name">Valolink</string>
+
+    <string name="button_cancel">Abbrechen</string>
+    <string name="button_back">Zurück</string>
+    <string name="button_continue">Weiter</string>
+
+    <string name="error_empty">Darf nicht leer sein</string>
+    <string name="error_unknown">Unbekannter Fehler ist aufgetreten</string>
+
+    <string name="error_email_invalid">Ungültige E-Mail Adresse</string>
+
+    <string name="error_password_tooShort">Muss mindestens %d Zeichen lang sein</string>
+    <string name="error_password_noDigit">Muss mindestens eine Ziffer enthalten</string>
+    <string name="error_password_noLowercase">Muss mindestens einen kleinen Buchstaben enthalten</string>
+    <string name="error_password_noUppercase">Muss mindestens einen großen Buchstaben enthalten</string>
+    <string name="error_password_noSpecialChar">Muss mindestens ein Sonderzeichen enthalten</string>
+
+    <string name="error_confirmPassword_noMatch">Passwörter stimmen nicht überein</string>
+
+    <string name="onboarding_textField_label_email">E-Mail</string>
+    <string name="onboarding_textField_label_password">Passwort</string>
+
+    <string name="onboarding_landing_title">Wilkommen</string>
+    <string name="onboarding_landing_description">Wilkommen bei Valolink! Erhalte Einsicht in deine Spiele, deinen Fortschritt im Battlepass und deinen Rang indem du dich anmeldest</string>
+    <string name="onboarding_landing_button_local">Lokales Konto verwenden</string>
+    <string name="onboarding_landing_button_google">Weiter mit Google</string>
+    <string name="onboarding_landing_button_riot">Weiter mit Riot</string>
+    <string name="onboarding_landing_button_email">Weiter mit E-Mail</string>
+
+    <string name="onboarding_signin_title">Anmelden</string>
+    <string name="onboarding_signin_description">Melde dich hier an um mit Valolink loszulegen!</string>
+    <string name="onboarding_signin_button_forgotPassword">Passwort vergessen?</string>
+    <string name="onboarding_signin_button_createAccount">Konto erstellen</string>
+
+    <string name="onboarding_createAccount_title">Konto erstellen</string>
+    <string name="onboarding_createAccount_description">Du hast noch kein Konto? Kein Problem, erstelle hier einfach eins und dann kann es losgehen!</string>
+    <string name="onboarding_createAccount_button_createAccount">Konto Erstellen</string>
+
+    <string name="onboarding_passwordForgot_title">Passwort vergessen</string>
+    <string name="onboarding_passwordForgot_description">Keine Sorge, das passiert den Besten von uns. Gib deine E-Mail Adresse ein und wir senden dir einen Link zum Zurücksetzen des Passworts</string>
+    <string name="onboarding_passwordForgot_button_send">Reset-Link senden</string>
+    <string name="onboarding_passwordReset_button_send">Passwort zurücksetzen</string>
+    <string name="onboarding_passwordReset_title">Passwort zurücksetzen</string>
+    <string name="onboarding_passwordReset_description">Bitte gebe dein neues Passwort ein</string>
+    <string name="onboarding_profileSetup_title">Richte dein Profil ein</string>
+    <string name="onboarding_profileSetup_description">Du kannst hier dein Profil einrichten indem du dein Profilbild und Nutzernamen setzt. Diese sind für andere Nutzer sichtbar</string>
+    <string name="onboarding_textField_label_username">Nutzername</string>
+    <string name="error_username_tooShort">Nutzername muss mindestens 4 Zeichen lang sein</string>
+    <string name="onboarding_switch_label_private">Privates Konto verwenden</string>
+    <string name="onboarding_dialog_privateAccount_title">Über private Konten</string>
+    <string name="button_ok">OK</string>
+    <string name="onboarding_dialog_privateAccount_content">Ein privates Konto verbirgt dein Profil von der öffentlichen Suche und schließt deine Daten von der globalen Statistik aus. Du kannst immer noch deiner Daten zwischen Geräten synchronisieren, dich mit deinen Freunden verbinden und mit deinen Freunden interagieren.\n\nHinweis: Deine Freunde können deine Informationen weiterhin einsehen.</string>
+    <string name="onboarding_dialog_localAccount_title">Lokales Konto verwenden</string>
+    <string name="onboarding_dialog_localAccount_content">Deine Daten bleiben bei dieser Option nur auf diesem Gerät gespeichert. Funktionen wie Geräte-Sync, soziale Features und soziale Statistiken sind nicht verfügbar.</string>
+    <string name="onboarding_dialog_localAccount_button_confirm">Lokales Konto verwenden</string>
+    <string name="onboarding_profileSetup_button_signout">Abmelden</string>
+    <string name="onboarding_rankSetup_slider_currentRR_label">Aktuelle RW</string>
+    <string name="onboarding_rankSetup_title">Richte deinen Rang ein</string>
+    <string name="onboarding_rankSetup_description">Wähle deinen aktuellen Rang und aktuelle RW aus um einen Anhaltspunkt für Rang-Tracking mit deiner kompetitiven Laufbahn in Valolink zu haben</string>
+    <string name="unit_rr">RW</string>
+    <string name="onboarding_rankSetup_slider_matchesPlayed_label">Gespielte Matches</string>
+    <string name="onboarding_rankSetup_slider_matchesNeeded_label">Benötigte Matches</string>
+    <string name="unit_match_plural">Matches</string>
+    <string name="onboarding_contractSetup_title">Dein Startpunkt</string>
+    <string name="onboarding_contractSetup_description">Gib dein aktuelles Level im Battlepass und deinen Fortschritt innerhalb dieses Levels an, damit wir deine EP genau verfolgen können.\n\nHinweis: Bitte wähle ein Premium-Level aus, auch wenn du den Battlepass nicht gekauft hast. Dies ist für die Genauigkeit der EP-Berechnungen notwendig.</string>
+    <string name="unit_xp">EP</string>
+    <string name="onboarding_contractSetup_xpCollected_label">Gesammelte EP</string>
+    <string name="error_numberFormat">Wert muss einer gültigen Zahl entsprechen</string>
+    <string name="onboarding_contractSetup_xpCollected_error">Gesammelte EP darf nicht höher sein als die Gesamt EP</string>
+    <string name="onboarding_contractSetup_freeOnly_label">Nur kostenlose Belohnungen</string>
+    <string name="onboarding_dialog_freeOnly_title">Über nur kostenlose Belohnungen</string>
+    <string name="onboarding_dialog_freeOnly_content">Wenn diese Option aktiviert ist, werden Premium-Belohnungen der aktuellen Saison nicht in deinen Statistiken berücksichtigt und als gesperrt dargestellt. Dein Fortschritt bei ihnen wird weiterhin intern gespeichert, um die EP-Berechnung zu ermöglichen, was es dir erlaubt, diese Einstellung jederzeit zu ändern.\n\nHinweis: Du findest diese Einstellung auf der Detailseite des jeweiligen Saison-Fortschitts.</string>
+    <string name="onboarding_finish_button_finish">Abschließen</string>
+    <string name="onboarding_finish_title">Du bist startklar!</string>
+    <string name="onboarding_finish_description">Das wars! Du kannst Valolink jetzt endlich genießen, viel Spaß!</string>
+</resources>

@@ -1,3 +1,15 @@
+/*
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
+ Project:    Valolink
+ License:    GPLv3
+
+ File:       build.gradle.kts
+ Module:     Valolink.app
+ Author:     Tim Anhalt (BitTim)
+ Modified:   13.04.25, 16:46
+ */
+
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -154,18 +166,11 @@ android {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-}
-
-composeCompiler {
-    enableStrongSkippingMode = true
 }
 
 dependencies {
@@ -197,6 +202,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.constraintlayout.compose)
 
     // Dagger - Hilt
     implementation(libs.hilt.android)
@@ -224,6 +230,7 @@ dependencies {
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.auth.kt)
     implementation(libs.supabase.postgrest.kt)
+    implementation(libs.supabase.storage.kt)
     implementation(libs.supabase.realtime.kt)
     implementation(libs.supabase.functions.kt)
     implementation(libs.supabase.compose.auth)

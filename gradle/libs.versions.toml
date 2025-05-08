@@ -1,42 +1,44 @@
 [versions]
-agp = "8.7.2"
-apng = "1.11.0"
-datastorePreferences = "1.1.1"
-ktorClientOkhttp = "3.0.1"
-supabaseBom = "3.0.1"
+agp = "8.10.0"
+apng = "1.12.0"
+constraintlayoutCompose = "1.1.1"
+datastorePreferences = "1.1.6"
+ktorClientOkhttp = "3.1.2"
+supabaseBom = "3.1.4"
 coilComposeVersion = "2.7.0"
 converterMoshi = "2.11.0"
-hiltAndroid = "2.52"
-hiltAndroidCompiler = "2.52"
+hiltAndroid = "2.56.2"
+hiltAndroidCompiler = "2.56.2"
 hiltCompiler = "1.2.0"
-kotlin = "2.0.0"
-coreKtx = "1.15.0"
+kotlin = "2.1.0"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.9.3"
-composeBom = "2024.10.01"
-materialIconsExtendedAndroid = "1.7.5"
-moshiKotlin = "1.15.1"
-navigationCompose = "2.8.3"
-playServicesAuth = "21.2.0"
-lifecycleRuntimeCompose = "2.8.7"
+lifecycleRuntimeKtx = "2.9.0"
+activityCompose = "1.10.1"
+composeBom = "2025.05.00"
+materialIconsExtendedAndroid = "1.7.8"
+moshiKotlin = "1.15.2"
+navigationCompose = "2.9.0"
+playServicesAuth = "21.3.0"
+lifecycleRuntimeCompose = "2.9.0"
 retrofit = "2.11.0"
-roomKtx = "2.6.1"
+roomKtx = "2.7.1"
 material = "1.12.0"
-material3 = "1.3.1"
-serialization = "1.7.3"
-material3AdaptiveNavigationSuite = "1.3.1"
-adaptive = "1.0.0"
-adaptiveLayout = "1.0.0"
-adaptiveNavigation = "1.0.0"
-workRuntimeKtx = "2.10.0"
+material3 = "1.3.2"
+serialization = "1.8.1"
+material3AdaptiveNavigationSuite = "1.3.2"
+adaptive = "1.1.0"
+adaptiveLayout = "1.1.0"
+adaptiveNavigation = "1.1.0"
+workRuntimeKtx = "2.10.1"
 hiltCommon = "1.2.0"
 hiltWork = "1.2.0"
-ksp = "2.0.0-1.0.23"
+ksp = "2.1.0-1.0.29"
 
 [libraries]
+androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferences" }
@@ -64,7 +66,7 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.7.5" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.1" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
@@ -72,6 +74,7 @@ play-services-auth = { group = "com.google.android.gms", name = "play-services-a
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 supabase-auth-kt = { module = "io.github.jan-tennert.supabase:auth-kt" }
 supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+supabase-storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt" }
 supabase-realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 supabase-functions-kt = { module = "io.github.jan-tennert.supabase:functions-kt" }
 supabase-compose-auth = { module = "io.github.jan-tennert.supabase:compose-auth" }
@@ -94,4 +97,3 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-

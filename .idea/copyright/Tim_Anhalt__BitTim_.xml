@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright (c) &amp;#36;originalComment.match(&quot;Copyright \(c\) (\d+)&quot;, 1, &quot;-&quot;, &quot;&amp;#36;today.year&quot;)&amp;#36;today.year Tim Anhalt (BitTim)&#10;&#10;Project:    &amp;#36;project.name&#10;License:    GPLv3&#10;&#10;File:       &amp;#36;file.fileName&#10;Module:     &amp;#36;module.name&#10;Author:     Tim Anhalt (BitTim)&#10;Modified:   &amp;#36;file.lastModified" />
+    <option name="myName" value="Tim Anhalt (BitTim)" />
+  </copyright>
+</component>

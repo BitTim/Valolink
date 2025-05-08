@@ -1,14 +1,14 @@
 /*
-Copyright (c) 2024 BitTim
-
-Project:        Valolink
-License:        GPLv3
-
-File:           Valolink.kt
-Author:         Tim Anhalt (BitTim)
-Created:        25.03.2024
-Description:    The main module for Hilt DI
-*/
+ Copyright (c) 2024 Tim Anhalt (BitTim)
+ 
+ Project:    Valolink
+ License:    GPLv3
+ 
+ File:       Valolink.kt
+ Module:     Valolink.app.main
+ Author:     Tim Anhalt (BitTim)
+ Modified:   14.12.24, 14:48
+ */
 
 package dev.bittim.valolink
 
@@ -24,7 +24,7 @@ import coil.request.CachePolicy
 import coil.transition.CrossfadeTransition
 import coil.util.DebugLogger
 import dagger.hilt.android.HiltAndroidApp
-import dev.bittim.valolink.core.ui.decoder.AnimatedPngDecoder
+import dev.bittim.valolink.core.ui.util.decoder.AnimatedPngDecoder
 import javax.inject.Inject
 
 @HiltAndroidApp

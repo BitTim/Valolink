@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (c) 2024 Tim Anhalt (BitTim)
+  
+  Project:    Valolink
+  License:    GPLv3
+  
+  File:       colors.xml
+  Module:     Valolink.app.main
+  Author:     Tim Anhalt (BitTim)
+  Modified:   14.12.24, 14:50
+  -->
+
 <resources>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>

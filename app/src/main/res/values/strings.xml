@@ -1,3 +1,88 @@
+<!--
+  Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
+  Project:    Valolink
+  License:    GPLv3
+
+  File:       strings.xml
+  Module:     Valolink.app.main
+  Author:     Tim Anhalt (BitTim)
+  Modified:   02.05.25, 08:30
+  -->
+
 <resources>
     <string name="app_name">Valolink</string>
+
+    <string name="button_cancel">Cancel</string>
+    <string name="button_back">Back</string>
+    <string name="button_continue">Continue</string>
+
+    <string name="error_empty">Cannot be empty</string>
+    <string name="error_unknown">Something went wrong</string>
+
+    <string name="error_email_invalid">Invalid E-Mail address</string>
+
+    <string name="error_password_tooShort">Must be at least %d characters long</string>
+    <string name="error_password_noDigit">Must contain at least one digit</string>
+    <string name="error_password_noLowercase">Must contain at least one lowercase letter</string>
+    <string name="error_password_noUppercase">Must contain at least one uppercase letter</string>
+    <string name="error_password_noSpecialChar">Must contain at least one special character</string>
+
+    <string name="error_confirmPassword_noMatch">Passwords do not match</string>
+
+    <string name="onboarding_textField_label_email">E-Mail</string>
+    <string name="onboarding_textField_label_password">Password</string>
+
+    <string name="onboarding_landing_title">Welcome</string>
+    <string name="onboarding_landing_description">Welcome to Valolink! Start to get insights in your matches, battlepass progress and rank by signing in</string>
+    <string name="onboarding_landing_button_local">Use local account</string>
+    <string name="onboarding_landing_button_google">Continue with Google</string>
+    <string name="onboarding_landing_button_riot">Continue with Riot</string>
+    <string name="onboarding_landing_button_email">Continue with E-Mail</string>
+
+    <string name="onboarding_signin_title">Sign In</string>
+    <string name="onboarding_signin_description">Sign in below to get started with Valolink!</string>
+    <string name="onboarding_signin_button_forgotPassword">Forgot Password?</string>
+    <string name="onboarding_signin_button_createAccount">Create Account</string>
+
+    <string name="onboarding_createAccount_title">Create account</string>
+    <string name="onboarding_createAccount_description">Don’t have an account yet? No problem, just create one below and you’re all set!</string>
+    <string name="onboarding_createAccount_button_createAccount">Create account</string>
+    <string name="onboarding_passwordForgot_title">Forgot Password</string>
+    <string name="onboarding_passwordForgot_description">Don\'t worry, this happens to the best of us. Just enter your E-Mail address below and we will send you a reset link</string>
+    <string name="onboarding_passwordForgot_button_send">Send reset link</string>
+    <string name="onboarding_passwordReset_button_send">Reset Password</string>
+    <string name="onboarding_passwordReset_title">Reset Password</string>
+    <string name="onboarding_passwordReset_description">Please enter your new password below</string>
+    <string name="onboarding_profileSetup_title">Set up your profile</string>
+    <string name="onboarding_profileSetup_description">Set up your profile below by setting a profile picture and a username. These will be visible to other users</string>
+    <string name="onboarding_textField_label_username">Username</string>
+    <string name="error_username_tooShort">Username must be at least 4 characters long</string>
+    <string name="onboarding_switch_label_private">Make account private</string>
+    <string name="onboarding_dialog_privateAccount_title">About private accounts</string>
+    <string name="button_ok">OK</string>
+    <string name="onboarding_dialog_privateAccount_content">A private account hides your profile from public discovery and excludes your data from global statistics. You are still able to sync data between your clients, connect with friends and interact with friends.\n\nNote: Your friends are still able to view your information.</string>
+    <string name="onboarding_dialog_localAccount_title">Use local account</string>
+    <string name="onboarding_dialog_localAccount_content">Your data stays only on this device with this option. Features like device sync, social features, and social statistics are not available.</string>
+    <string name="onboarding_dialog_localAccount_button_confirm">Use local account</string>
+    <string name="onboarding_profileSetup_button_signout">Sign out</string>
+    <string name="onboarding_rankSetup_slider_currentRR_label">Current RR</string>
+    <string name="onboarding_rankSetup_title">Set up your rank</string>
+    <string name="onboarding_rankSetup_description">Select your current rank and RR to have a starting point for rank tracking with your competitive journey in Valolink</string>
+    <string name="unit_rr">RR</string>
+    <string name="onboarding_rankSetup_slider_matchesPlayed_label">Matches played</string>
+    <string name="onboarding_rankSetup_slider_matchesNeeded_label">Matches required</string>
+    <string name="unit_match_plural">Matches</string>
+    <string name="onboarding_contractSetup_title">Your starting point</string>
+    <string name="onboarding_contractSetup_description">Specify your current battlepass level and your progress within it so we can accurately track your XP\n\nNote: please select a premium level even if you didn\'t purchase the battlepass. This is necessary for the accuracy of XP calculations</string>
+    <string name="unit_xp">XP</string>
+    <string name="onboarding_contractSetup_xpCollected_label">Collected XP</string>
+    <string name="error_numberFormat">Value must be a valid number</string>
+    <string name="onboarding_contractSetup_xpCollected_error">Collected XP cannot be higher than the total</string>
+    <string name="onboarding_contractSetup_freeOnly_label">Free rewards only</string>
+    <string name="onboarding_dialog_freeOnly_title">About free rewards only</string>
+    <string name="onboarding_dialog_freeOnly_content">Enabling this option will exclude premium rewards of the currently active season from appearing in statistics and will appear as locked. Their progress will still be tracked internally as this is necessary for the calculation of XP, which enables you to change this option at any time.\n\nNote: This option can be found on the details page of the respective season contract.</string>
+    <string name="onboarding_finish_button_finish">Finish</string>
+    <string name="onboarding_finish_title">You\'re all set!</string>
+    <string name="onboarding_finish_description">That\'s it! You can now finally enjoy Valolink, have fun!</string>
 </resources>

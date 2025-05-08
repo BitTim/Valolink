@@ -1,0 +1,14 @@
+<component name="CopyrightManager">
+  <settings default="Tim Anhalt (BitTim)">
+    <module2copyright>
+      <element module="Bagadesh Autofill" copyright="Bagadesh Autofill" />
+      <element module="colinrtwhite APNG Decoder" copyright="colinrtwhite APNG Decoder" />
+      <element module="Philipp Lackner Result" copyright="Philipp Lackner Result" />
+      <element module="Philipp Lackner UiText" copyright="Philipp Lackner UiText" />
+      <element module="ujizin KeyboardAsState" copyright="ujizin KeyboardAsState" />
+    </module2copyright>
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="prefixLines" value="false" />
+    </LanguageOptions>
+  </settings>
+</component>

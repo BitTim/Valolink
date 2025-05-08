@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="colinrtwhite APNG Decoder" pattern="file[Valolink.app.main]:java/dev/bittim/valolink/core/ui/util/decoder/AnimatedPngDecoder.kt" />
+</component>

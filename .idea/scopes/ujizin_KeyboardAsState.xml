@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="ujizin KeyboardAsState" pattern="file[Valolink.app.main]:java/dev/bittim/valolink/core/ui/util/KeyboardAsState.kt" />
+</component>
