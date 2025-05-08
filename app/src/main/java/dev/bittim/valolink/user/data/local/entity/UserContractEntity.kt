@@ -7,7 +7,7 @@
  File:       UserContractEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.05.25, 12:43
+ Modified:   08.05.25, 15:21
  */
 
 package dev.bittim.valolink.user.data.local.entity
@@ -29,7 +29,7 @@ import java.time.OffsetDateTime
     )], indices = [Index(
         value = ["uuid"], unique = true
     ), Index(
-        value = ["user", "contract"]
+        value = ["user", "contract"], unique = true
     )]
 )
 data class UserContractEntity(

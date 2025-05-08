@@ -7,7 +7,7 @@
  File:       UserLevelSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.05.25, 14:03
+ Modified:   08.05.25, 15:26
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -66,15 +66,15 @@ class UserLevelSupabaseRepository @Inject constructor(
         }
     }
 
-    override fun get(uid: String, uuid: String): Flow<UserLevel?> {
+    override fun get(userContract: String, level: String): Flow<UserLevel?> {
         return try {
             // Get from local database
             val levelFlow = userDatabase.userLevelDao.getByContractAndLevel(
-                uid, uuid
+                userContract, level
             ).distinctUntilChanged().map { it?.toType() }
 
             // Queue worker to sync with Supabase
-            queueWorker(uid)
+            queueWorker(userContract)
 
             // Return
             levelFlow

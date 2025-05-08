@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.05.25, 12:40
+ Modified:   09.05.25, 01:20
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -114,19 +114,30 @@ class ContractSetupViewModel @Inject constructor(
             val contractUuid = state.value.contract?.uuid ?: return@launch
 
             val oldUserContract = userContractRepository.get(uid, contractUuid).firstOrNull()
-            if (oldUserContract != null) userContractRepository.delete(oldUserContract)
 
-            val userContract = state.value.contract?.toUserObj(uid, freeOnly) ?: return@launch
+            var userContract = state.value.contract?.toUserObj(uid, freeOnly) ?: return@launch
+            if (oldUserContract != null) userContract =
+                userContract.copy(uuid = oldUserContract.uuid)
+
             userContractRepository.set(userContract)
 
-            val levels = state.value.contract?.content?.chapters?.flatMap { it.levels }
-                ?.take(level + 1) ?: emptyList()
+            val levels =
+                state.value.contract?.content?.chapters?.flatMap { it.levels } ?: emptyList()
             for (i in levels.indices) {
-                val userLevel = levels[i].toUserObj(
+                val oldLevel =
+                    userLevelRepository.get(userContract.uuid, levels[i].uuid).firstOrNull()
+
+                if (i > level) {
+                    if (oldLevel != null) userLevelRepository.delete(oldLevel)
+                    continue
+                }
+
+                var userLevel = levels[i].toUserObj(
                     userContract.uuid,
                     false,
-                    if (i == levels.lastIndex) xp else levels[i].xp
+                    if (i == level) xp else levels[i].xp
                 )
+                if (oldLevel != null) userLevel = userLevel.copy(uuid = oldLevel.uuid)
                 userLevelRepository.set(userLevel)
             }
 

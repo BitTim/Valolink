@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 14:03
+ Modified:   09.05.25, 01:23
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -74,7 +74,7 @@ fun RankSetupScreen(
     setRank: () -> Unit,
 ) {
     var clickedPage by remember { mutableIntStateOf(0) }
-    var pagerState = rememberPagerState(pageCount = { state.ranks?.count() ?: 0 })
+    val pagerState = rememberPagerState(pageCount = { state.ranks?.count() ?: 0 })
     val currentPage by remember { derivedStateOf { pagerState.currentPage } }
     val targetPage by remember { derivedStateOf { pagerState.targetPage } }
 
@@ -91,7 +91,7 @@ fun RankSetupScreen(
         }
     }
 
-    LaunchedEffect(state.tier) {
+    LaunchedEffect(state.ranks, state.tier) {
         val newPage = state.ranks?.indexOfFirst { it.tier == state.tier } ?: 0
         pagerState.animateScrollToPage(newPage)
 

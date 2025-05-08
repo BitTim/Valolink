@@ -7,7 +7,7 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 10:38
+ Modified:   09.05.25, 01:31
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -113,8 +113,9 @@ fun ContractSetupScreen(
     LaunchedEffect(levels, xpCollectedString) {
         try {
             val uncheckedXpCollected = xpCollectedString.toInt()
+            if (uncheckedXpCollected == state.xp) return@LaunchedEffect
+
             if (uncheckedXpCollected > xpTotal && !isHighest) {
-                onXpChanged(xpTotal)
                 xpCollectedError =
                     UiText.StringResource(R.string.onboarding_contractSetup_xpCollected_error)
             } else {

@@ -7,7 +7,7 @@
  File:       UserSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.05.25, 13:40
+ Modified:   08.05.25, 15:13
  */
 
 package dev.bittim.valolink.user.data.worker

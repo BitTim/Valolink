@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c5131c96a76461ffabd6723c3bbd72a2",
+    "identityHash": "21c9a50b03e39991b682f7352e7b91bd",
     "entities": [
       {
         "tableName": "Users",
@@ -221,13 +221,13 @@
           },
           {
             "name": "index_UserContracts_user_contract",
-            "unique": false,
+            "unique": true,
             "columnNames": [
               "user",
               "contract"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_UserContracts_user_contract` ON `${TABLE_NAME}` (`user`, `contract`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_UserContracts_user_contract` ON `${TABLE_NAME}` (`user`, `contract`)"
           }
         ],
         "foreignKeys": [
@@ -424,7 +424,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c5131c96a76461ffabd6723c3bbd72a2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '21c9a50b03e39991b682f7352e7b91bd')"
     ]
   }
 }
