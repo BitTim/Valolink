@@ -4,10 +4,10 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       UserDataDao.kt
+ File:       UserMetaDao.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 10:54
+ Modified:   08.05.25, 13:02
  */
 
 package dev.bittim.valolink.user.data.local.dao
@@ -17,7 +17,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.local.entity.UserMetaEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -34,15 +33,17 @@ interface UserMetaDao {
     //  Queries
     // --------------------------------
 
-    @Transaction
     @Query("SELECT * FROM Users WHERE uuid = :uuid LIMIT 1")
     fun getByUuid(uuid: String): Flow<UserMetaEntity?>
 
     @Query("SELECT updatedAt FROM Users WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
-    @Query("SELECT * FROM Users WHERE isSynced = false AND uuid != :localUser ORDER BY updatedAt ASC")
-    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserMetaEntity?>>
+    @Query("SELECT * FROM Users WHERE isSynced = false ORDER BY updatedAt ASC")
+    fun getSyncQueue(): Flow<List<UserMetaEntity?>>
+
+    @Query("SELECT * FROM Users WHERE toDelete = true ORDER BY updatedAt ASC")
+    fun getDeleteQueue(): Flow<List<UserMetaEntity?>>
 
     // --------------------------------
     //  Delete

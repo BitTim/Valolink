@@ -7,7 +7,7 @@
  File:       UserRankDao.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   23.04.25, 00:34
+ Modified:   08.05.25, 12:36
  */
 
 package dev.bittim.valolink.user.data.local.dao
@@ -17,7 +17,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.local.entity.UserRankEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -44,8 +43,11 @@ interface UserRankDao {
     @Query("SELECT updatedAt FROM UserRanks WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
-    @Query("SELECT * FROM UserRanks WHERE isSynced = false AND uuid != :localUser ORDER BY updatedAt ASC")
-    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserRankEntity?>>
+    @Query("SELECT * FROM UserRanks WHERE isSynced = false ORDER BY updatedAt ASC")
+    fun getSyncQueue(): Flow<List<UserRankEntity?>>
+
+    @Query("SELECT * FROM UserRanks WHERE toDelete = true ORDER BY updatedAt ASC")
+    fun getDeleteQueue(): Flow<List<UserRankEntity?>>
 
     // --------------------------------
     //  Delete

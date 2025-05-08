@@ -7,7 +7,7 @@
  File:       FlexEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   08.05.25, 13:39
  */
 
 package dev.bittim.valolink.content.data.local.entity

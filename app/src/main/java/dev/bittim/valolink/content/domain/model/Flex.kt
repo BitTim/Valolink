@@ -7,7 +7,7 @@
  File:       Flex.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   08.05.25, 13:38
  */
 
 package dev.bittim.valolink.content.domain.model

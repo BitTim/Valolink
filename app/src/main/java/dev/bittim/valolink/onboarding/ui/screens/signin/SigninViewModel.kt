@@ -68,8 +68,7 @@ class SigninViewModel @Inject constructor(
     }
 
     fun validateEmail(email: String): UiText? {
-        val emailResult = validateEmailUseCase(email)
-        val emailError = when (emailResult) {
+        val emailError = when (val emailResult = validateEmailUseCase(email)) {
             is Result.Ok -> null
             is Result.Err -> {
                 when (emailResult.error) {

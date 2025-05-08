@@ -7,7 +7,7 @@
  File:       UserMetaSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:30
+ Modified:   08.05.25, 14:03
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -28,6 +28,7 @@ import dev.bittim.valolink.user.data.worker.UserSyncWorker
 import dev.bittim.valolink.user.domain.model.UserMeta
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -37,6 +38,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -73,7 +75,7 @@ class UserMetaSupabaseRepository @Inject constructor(
         return try {
             // Get from local database
             val userFlow = userDatabase.userMetaDao.getByUuid(uid).distinctUntilChanged()
-            val rankFlow = userRankRepository.get(uid)
+            val rankFlow = userRankRepository.get(uid).distinctUntilChanged()
 
             val combinedFlow = combine(
                 userFlow, rankFlow
@@ -107,7 +109,9 @@ class UserMetaSupabaseRepository @Inject constructor(
 
     override fun hasOnboarded(uid: String): Flow<Boolean?> {
         return get(uid).map { data ->
-            data?.let { it.onboardingStep + OnboardingScreen.STEP_OFFSET > OnboardingScreen.getMaxStep() }
+            if (data == null) set(uid, UserMeta.empty(uid))
+            (data
+                ?: UserMeta.empty(uid)).onboardingStep + OnboardingScreen.STEP_OFFSET > OnboardingScreen.getMaxStep()
         }
     }
 
@@ -120,13 +124,15 @@ class UserMetaSupabaseRepository @Inject constructor(
         val isLocal = sessionRepository.isLocal().firstOrNull() ?: return null
         val avatar = get(uid).firstOrNull()?.avatar ?: return null
 
-        return if (isLocal) {
-            val filename = avatar
-            val file = FileInputStream(filename)
-            val bytes = file.readAllBytes()
-            file.close()
 
-            bytes
+        return if (isLocal) {
+            withContext(Dispatchers.IO) {
+                val file = FileInputStream(avatar)
+                val bytes = file.readAllBytes()
+                file.close()
+
+                return@withContext bytes
+            }
         } else {
             val bucket = storage.from("avatars")
             bucket.downloadAuthenticated(avatar)
@@ -201,11 +207,14 @@ class UserMetaSupabaseRepository @Inject constructor(
         val isLocal = sessionRepository.isLocal().firstOrNull() ?: return null
 
         val location = if (isLocal) {
-            val filename = context.filesDir.resolve(File(SessionRepository.LOCAL_AVATAR_FILENAME))
-            val file = FileOutputStream(filename)
-            file.write(avatar)
-            file.close()
-            filename.toString()
+            withContext(Dispatchers.IO) {
+                val filename =
+                    context.filesDir.resolve(File(SessionRepository.LOCAL_AVATAR_FILENAME))
+                val file = FileOutputStream(filename)
+                file.write(avatar)
+                file.close()
+                return@withContext filename.toString()
+            }
         } else {
             val bucket = storage.from("avatars")
             val filename = "$uid.jpg"
@@ -273,7 +282,7 @@ class UserMetaSupabaseRepository @Inject constructor(
 
         workManager.enqueueUniqueWork(
             UserMeta::class.simpleName + UserSyncWorker.WORK_BASE_NAME,
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

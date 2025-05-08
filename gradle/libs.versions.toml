@@ -1,8 +1,8 @@
 [versions]
-agp = "8.9.2"
+agp = "8.10.0"
 apng = "1.12.0"
 constraintlayoutCompose = "1.1.1"
-datastorePreferences = "1.1.4"
+datastorePreferences = "1.1.6"
 ktorClientOkhttp = "3.1.2"
 supabaseBom = "3.1.4"
 coilComposeVersion = "2.7.0"
@@ -15,14 +15,14 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
+lifecycleRuntimeKtx = "2.9.0"
 activityCompose = "1.10.1"
-composeBom = "2025.04.01"
+composeBom = "2025.05.00"
 materialIconsExtendedAndroid = "1.7.8"
 moshiKotlin = "1.15.2"
-navigationCompose = "2.8.9"
+navigationCompose = "2.9.0"
 playServicesAuth = "21.3.0"
-lifecycleRuntimeCompose = "2.8.7"
+lifecycleRuntimeCompose = "2.9.0"
 retrofit = "2.11.0"
 roomKtx = "2.7.1"
 material = "1.12.0"
@@ -66,7 +66,7 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.0" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.1" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }

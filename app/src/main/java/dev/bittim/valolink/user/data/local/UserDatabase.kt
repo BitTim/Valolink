@@ -7,7 +7,7 @@
  File:       UserDatabase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 14:03
+ Modified:   08.05.25, 13:40
  */
 
 package dev.bittim.valolink.user.data.local
@@ -45,7 +45,7 @@ abstract class UserDatabase : RoomDatabase() {
 
     fun getByRelation(type: String?, relation: String): Flow<List<SyncedEntity>> {
         return when (type) {
-            "UserData" -> userMetaDao.getByUuid(relation).map { listOfNotNull(it) }
+            "UserMeta" -> userMetaDao.getByUuid(relation).map { listOfNotNull(it) }
             "UserAgent" -> userAgentDao.getByUser(relation)
             "UserContract" -> userContractDao.getByUser(relation)
             "UserLevel" -> userLevelDao.getByContract(relation)
@@ -57,7 +57,7 @@ abstract class UserDatabase : RoomDatabase() {
 
     fun getSyncQueue(type: String?): Flow<List<SyncedEntity?>> {
         return when (type) {
-            "UserData" -> userMetaDao.getSyncQueue()
+            "UserMeta" -> userMetaDao.getSyncQueue()
             "UserAgent" -> userAgentDao.getSyncQueue()
             "UserContract" -> userContractDao.getSyncQueue()
             "UserLevel" -> userLevelDao.getSyncQueue()
@@ -67,9 +67,21 @@ abstract class UserDatabase : RoomDatabase() {
         }
     }
 
+    fun getDeleteQueue(type: String?): Flow<List<SyncedEntity?>> {
+        return when (type) {
+            "UserMeta" -> userMetaDao.getDeleteQueue()
+            "UserAgent" -> userAgentDao.getDeleteQueue()
+            "UserContract" -> userContractDao.getDeleteQueue()
+            "UserLevel" -> userLevelDao.getDeleteQueue()
+            "UserRank" -> userRankDao.getDeleteQueue()
+
+            else -> throw IllegalArgumentException("Unknown type: $type")
+        }
+    }
+
     suspend fun upsert(type: String?, entity: SyncedEntity) {
         when (type) {
-            "UserData" -> userMetaDao.upsert(entity as UserMetaEntity)
+            "UserMeta" -> userMetaDao.upsert(entity as UserMetaEntity)
             "UserAgent" -> userAgentDao.upsert(entity as UserAgentEntity)
             "UserContract" -> userContractDao.upsert(entity as UserContractEntity)
             "UserLevel" -> userLevelDao.upsert(entity as UserLevelEntity)
@@ -81,7 +93,7 @@ abstract class UserDatabase : RoomDatabase() {
 
     suspend fun deleteByUuid(type: String?, uuid: String) {
         when (type) {
-            "UserData" -> userMetaDao.deleteByUuid(uuid)
+            "UserMeta" -> userMetaDao.deleteByUuid(uuid)
             "UserAgent" -> userAgentDao.deleteByUuid(uuid)
             "UserContract" -> userContractDao.deleteByUuid(uuid)
             "UserLevel" -> userLevelDao.deleteByUuid(uuid)

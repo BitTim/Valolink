@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   06.05.25, 02:15
+ Modified:   08.05.25, 12:40
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -51,7 +51,7 @@ class ContractSetupViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             contractRepository.getActiveContracts(true)
-                .map { it.firstOrNull { it.content.relation is Season } }
+                .map { contracts -> contracts.firstOrNull { it.content.relation is Season } }
                 .filterNotNull()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null).filterNotNull()
                 .collectLatest { contract ->
@@ -65,7 +65,8 @@ class ContractSetupViewModel @Inject constructor(
 
         viewModelScope.launch {
             val userContract = contractRepository.getActiveContracts(false)
-                .map { it.firstOrNull { it.content.relation is Season } }.filterNotNull()
+                .map { contracts -> contracts.firstOrNull { it.content.relation is Season } }
+                .filterNotNull()
                 .flatMapLatest { contract ->
                     userContractRepository.getWithCurrentUser(contract.uuid)
                 }.firstOrNull() ?: return@launch
@@ -121,12 +122,12 @@ class ContractSetupViewModel @Inject constructor(
             val levels = state.value.contract?.content?.chapters?.flatMap { it.levels }
                 ?.take(level + 1) ?: emptyList()
             for (i in levels.indices) {
-                val level = levels[i].toUserObj(
+                val userLevel = levels[i].toUserObj(
                     userContract.uuid,
                     false,
                     if (i == levels.lastIndex) xp else levels[i].xp
                 )
-                userLevelRepository.set(level)
+                userLevelRepository.set(userLevel)
             }
 
             val userMeta = userMetaRepository.get(uid).firstOrNull() ?: return@launch

@@ -7,7 +7,7 @@
  File:       UserAgentSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   08.05.25, 14:03
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -196,7 +196,7 @@ class UserAgentSupabaseRepository @Inject constructor(
 
         workManager.enqueueUniqueWork(
             UserAgent::class.simpleName + UserSyncWorker.WORK_BASE_NAME,
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

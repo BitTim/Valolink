@@ -7,7 +7,7 @@
  File:       UserMeta.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 10:55
+ Modified:   08.05.25, 13:56
  */
 
 package dev.bittim.valolink.user.domain.model
@@ -24,7 +24,7 @@ data class UserMeta(
         fun empty(uid: String): UserMeta {
             return UserMeta(
                 uuid = uid,
-                isPrivate = true,
+                isPrivate = false,
                 username = "",
                 onboardingStep = 0,
                 avatar = null,

@@ -7,7 +7,7 @@
  File:       UserContractSupabaseRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   06.05.25, 02:15
+ Modified:   08.05.25, 14:03
  */
 
 package dev.bittim.valolink.user.data.repository.data
@@ -199,7 +199,7 @@ class UserContractSupabaseRepository @Inject constructor(
 
         workManager.enqueueUniqueWork(
             UserContract::class.simpleName + UserSyncWorker.WORK_BASE_NAME,
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }

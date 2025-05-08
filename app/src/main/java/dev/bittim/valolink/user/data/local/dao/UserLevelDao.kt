@@ -7,7 +7,7 @@
  File:       UserLevelDao.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.04.25, 02:40
+ Modified:   08.05.25, 12:35
  */
 
 package dev.bittim.valolink.user.data.local.dao
@@ -17,7 +17,6 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import dev.bittim.valolink.user.data.local.UserDatabase
 import dev.bittim.valolink.user.data.local.entity.UserLevelEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -53,15 +52,11 @@ interface UserLevelDao {
     @Query("SELECT updatedAt FROM UserLevels WHERE uuid = :uuid LIMIT 1")
     fun getUpdatedAtByUuid(uuid: String): Flow<String?>
 
-    @Query(
-        """
-        SELECT UserLevels.* FROM UserLevels
-        JOIN UserContracts ON UserLevels.userContract = UserContracts.uuid
-        WHERE UserLevels.isSynced = false AND UserContracts.user != :localUser
-        ORDER BY updatedAt ASC
-    """
-    )
-    fun getSyncQueue(localUser: String = UserDatabase.LOCAL_UUID): Flow<List<UserLevelEntity?>>
+    @Query("SELECT * FROM UserLevels WHERE isSynced = false ORDER BY updatedAt ASC")
+    fun getSyncQueue(): Flow<List<UserLevelEntity?>>
+
+    @Query("SELECT * FROM UserLevels WHERE toDelete = true ORDER BY updatedAt ASC")
+    fun getDeleteQueue(): Flow<List<UserLevelEntity?>>
 
     // --------------------------------
     //  Delete

@@ -7,7 +7,7 @@
  File:       UserSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   06.05.25, 02:15
+ Modified:   08.05.25, 13:40
  */
 
 package dev.bittim.valolink.user.data.worker
@@ -54,7 +54,7 @@ class UserSyncWorker @AssistedInject constructor(
 
         // Get corresponding repository
         val repository = when (type) {
-            "UserData" -> userMetaRepository
+            "UserMeta" -> userMetaRepository
             "UserAgent" -> userAgentRepository
             "UserContract" -> userContractRepository
             "UserLevel" -> userLevelRepository
@@ -62,10 +62,9 @@ class UserSyncWorker @AssistedInject constructor(
             else -> return Result.failure()
         }
 
-        // Only delete marked entries if in local mode and finish
-        // TODO: Create new .getDeletionQueue function and replace this with that
+        // If in local mode, only delete marked entries and finish
         if (sessionRepository.isLocal().firstOrNull() == true) {
-            val deleteQueue = userDatabase.getSyncQueue(type).firstOrNull()
+            val deleteQueue = userDatabase.getDeleteQueue(type).firstOrNull()
             deleteQueue?.forEach { entity ->
                 if (entity == null) return@forEach
 

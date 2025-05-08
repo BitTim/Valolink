@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 09:34
+ Modified:   08.05.25, 12:53
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -71,21 +71,21 @@ class ProfileSetupViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val userData = userMetaRepository.getWithCurrentUser().firstOrNull()
-            if (userData == null) {
+            val userMeta = userMetaRepository.getWithCurrentUser().firstOrNull()
+            if (userMeta == null) {
                 selectAvatar("")
                 return@launch
             }
 
             val avatarBytes = userMetaRepository.downloadAvatarWithCurrentUser()
-            val avatar = if (avatarBytes == null) generateAvatarUseCase(userData.username) else {
+            val avatar = if (avatarBytes == null) generateAvatarUseCase(userMeta.username) else {
                 BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.size)
             }
 
             _state.update {
                 it.copy(
-                    username = userData.username,
-                    private = userData.isPrivate,
+                    username = userMeta.username,
+                    private = userMeta.isPrivate,
                     avatar = avatar
                 )
             }
