@@ -7,7 +7,7 @@
  File:       ContractsOverviewScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 16:03
+ Modified:   08.06.25, 17:49
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -33,13 +33,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -62,12 +60,14 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.components.Agent
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.AgentCarouselCardData
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.ContractCard
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.ContractCardData
+import dev.bittim.valolink.core.ui.components.ConnectedButtonEntry
+import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
 import dev.bittim.valolink.core.ui.util.getProgressPercent
 import java.util.UUID
 
 @OptIn(
     ExperimentalFoundationApi::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
 fun ContractsOverviewScreen(
@@ -348,22 +348,18 @@ fun ContractsOverviewScreen(
                             style = MaterialTheme.typography.headlineMedium
                         )
 
-                        SingleChoiceSegmentedButtonRow(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            ContentType.entries.forEachIndexed { index, entry ->
-                                SegmentedButton(
-                                    selected = entry == state.archiveTypeFilter,
-                                    onClick = { onArchiveTypeFilterChange(entry) },
-                                    shape = SegmentedButtonDefaults.itemShape(
-                                        index = index,
-                                        count = ContentType.entries.count()
-                                    )
-                                ) {
-                                    Text(text = entry.displayName)
-                                }
+                        SingleConnectedButtonGroup(
+                            modifier = Modifier.fillMaxWidth(),
+                            entries = ContentType.entries.map {
+                                ConnectedButtonEntry(
+                                    label = it.displayName,
+                                    icon = null,
+                                )
+                            },
+                            onSelectedChanged = {
+                                onArchiveTypeFilterChange(ContentType.entries[it])
                             }
-                        }
+                        )
                     }
                 }
             }

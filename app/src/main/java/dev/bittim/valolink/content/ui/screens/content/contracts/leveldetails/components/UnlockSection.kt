@@ -7,7 +7,7 @@
  File:       UnlockSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 18:51
+ Modified:   08.06.25, 17:49
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -32,8 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.components.UnlockButton
 import dev.bittim.valolink.core.ui.components.rewardCard.ProgressCluster
+import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 @Immutable
@@ -58,7 +60,7 @@ fun UnlockSection(
         modifier = modifier
     ) {
         Text(
-            text = "Unlock",
+            text = UiText.StringResource(R.string.levelDetails_unlock_title).asString(),
             style = MaterialTheme.typography.titleLarge
         )
 

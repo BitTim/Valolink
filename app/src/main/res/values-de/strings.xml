@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   02.05.25, 08:31
+  Modified:   08.06.25, 17:49
   -->
 
 <resources>
@@ -86,4 +86,16 @@
     <string name="onboarding_finish_button_finish">Abschließen</string>
     <string name="onboarding_finish_title">Du bist startklar!</string>
     <string name="onboarding_finish_description">Das wars! Du kannst Valolink jetzt endlich genießen, viel Spaß!</string>
+    <string name="contentType_season">Saison</string>
+    <string name="contentType_event">Event</string>
+    <string name="contentType_agent">Rekrut</string>
+    <string name="reward_premium">Premium</string>
+    <string name="reward_free">Kostenlos</string>
+    <string name="relation_previous">Vorheriges</string>
+    <string name="relation_next">Nächstes</string>
+    <string name="levelDetails_rewardSelector_title">Belohnungen im Level</string>
+    <string name="levelDetails_relations_title">Beziehungen</string>
+    <string name="levelDetails_unlock_title">Freischalten</string>
+    <string name="levelDetails_variant_portrait">Hochformat</string>
+    <string name="levelDetails_variant_landscape">Querformat</string>
 </resources>

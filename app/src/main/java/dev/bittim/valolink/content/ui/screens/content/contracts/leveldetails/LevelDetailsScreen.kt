@@ -7,11 +7,12 @@
  File:       LevelDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:41
+ Modified:   08.06.25, 17:49
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.automirrored.outlined.Redo
+import androidx.compose.material.icons.automirrored.outlined.Undo
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -63,6 +66,8 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.com
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
 import dev.bittim.valolink.core.ui.components.DetailScreen
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
+import dev.bittim.valolink.core.ui.util.ToggleIcon
+import dev.bittim.valolink.core.ui.util.UiText
 
 @Composable
 fun LevelDetailsScreen(
@@ -159,11 +164,11 @@ fun LevelDetailsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(8.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.End
             ) {
-                Crossfade(
+                AnimatedContent(
                     reward?.relation?.previewImages?.map { it.second } ?: emptyList(),
                     label = "VariantCluster appearance"
                 ) { checkedVariants ->
@@ -260,8 +265,11 @@ fun LevelDetailsScreen(
                                     displayIcon = prevLevelReward.displayIcon,
                                     background = prevLevelReward.background,
                                 ),
-                                name = "Previous",
-                                icon = Icons.AutoMirrored.Default.Undo
+                                icon = ToggleIcon(
+                                    Icons.AutoMirrored.Filled.Undo,
+                                    Icons.AutoMirrored.Outlined.Undo,
+                                    UiText.StringResource(R.string.relation_previous)
+                                )
                             ),
                             if (nextLevel == null || nextLevelReward == null || isNextLevelOwned == null) null else RelationsSectionRelation(
                                 level = RewardListCardData(
@@ -277,8 +285,11 @@ fun LevelDetailsScreen(
                                     displayIcon = nextLevelReward.displayIcon,
                                     background = nextLevelReward.background,
                                 ),
-                                name = "Next",
-                                icon = Icons.AutoMirrored.Default.Redo
+                                icon = ToggleIcon(
+                                    Icons.AutoMirrored.Filled.Redo,
+                                    Icons.AutoMirrored.Outlined.Redo,
+                                    UiText.StringResource(R.string.relation_next)
+                                )
                             )
                         )
                     )

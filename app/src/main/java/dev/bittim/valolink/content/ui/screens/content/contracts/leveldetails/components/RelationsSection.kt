@@ -7,7 +7,7 @@
  File:       RelationsSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   08.06.25, 17:49
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -31,9 +31,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.automirrored.outlined.Redo
+import androidx.compose.material.icons.automirrored.outlined.Undo
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalIconToggleButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,16 +46,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
+import dev.bittim.valolink.core.ui.components.ConnectedButtonEntry
+import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.ToggleIcon
+import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.getScaledLineHeightFromFontStyle
 import javax.annotation.concurrent.Immutable
@@ -63,8 +67,7 @@ import javax.annotation.concurrent.Immutable
 @Immutable
 data class RelationsSectionRelation(
     val level: RewardListCardData?,
-    val name: String,
-    val icon: ImageVector,
+    val icon: ToggleIcon,
 )
 
 @Immutable
@@ -120,10 +123,12 @@ fun RelationsSection(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.padding(end = 8.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
             ) {
                 Text(
-                    text = "Relations",
+                    text = UiText.StringResource(R.string.levelDetails_relations_title).asString(),
                     style = MaterialTheme.typography.titleLarge,
                 )
 
@@ -148,7 +153,8 @@ fun RelationsSection(
                         )
                     } else {
                         Text(
-                            text = it.relations.getOrNull(selectedRelation)?.name ?: "",
+                            text = it.relations.getOrNull(selectedRelation)?.icon?.contentDescription?.asString()
+                                ?: "",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -159,7 +165,9 @@ fun RelationsSection(
             }
 
             AnimatedContent(
-                modifier = Modifier.wrapContentWidth(Alignment.End),
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentWidth(Alignment.End),
                 targetState = contentData,
                 label = "Relation buttons Loading",
             ) { checkedData ->
@@ -172,27 +180,16 @@ fun RelationsSection(
                             .pulseAnimation()
                     )
                 } else {
-                    Row(
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        checkedData.relations.forEachIndexed { index, relation ->
-                            val isSelected = selectedRelation == index
-
-                            FilledTonalIconToggleButton(
-                                checked = isSelected,
-                                onCheckedChange = {
-                                    if (it) {
-                                        selectedRelation = index
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = relation.icon,
-                                    contentDescription = relation.name
-                                )
-                            }
-                        }
-                    }
+                    SingleConnectedButtonGroup(
+                        modifier = Modifier.fillMaxWidth(),
+                        entries = checkedData.relations.map {
+                            ConnectedButtonEntry(
+                                label = null,
+                                icon = it.icon
+                            )
+                        },
+                        onSelectedChanged = { selectedRelation = it }
+                    )
                 }
             }
         }
@@ -241,8 +238,11 @@ fun RelationsSectionPreview() {
                                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                                 background = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/background.png"
                             ),
-                            name = "Previous",
-                            icon = Icons.AutoMirrored.Default.Undo
+                            icon = ToggleIcon(
+                                Icons.AutoMirrored.Filled.Undo,
+                                Icons.AutoMirrored.Outlined.Undo,
+                                UiText.StringResource(R.string.relation_previous)
+                            )
                         ),
                         RelationsSectionRelation(
                             level = RewardListCardData(
@@ -258,8 +258,11 @@ fun RelationsSectionPreview() {
                                 displayIcon = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/displayicon.png",
                                 background = "https://media.valorant-api.com/playercards/d6dbc61e-49f4-c28e-baa2-79b23cdb6499/background.png"
                             ),
-                            name = "Next",
-                            icon = Icons.AutoMirrored.Default.Redo
+                            icon = ToggleIcon(
+                                Icons.AutoMirrored.Filled.Redo,
+                                Icons.AutoMirrored.Outlined.Redo,
+                                UiText.StringResource(R.string.relation_next)
+                            )
                         ),
                     )
                 ),

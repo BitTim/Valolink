@@ -7,19 +7,18 @@
  File:       VariantPreviewCluster.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   08.06.25, 17:49
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Crop169
 import androidx.compose.material.icons.filled.CropPortrait
-import androidx.compose.material3.FilledIconToggleButton
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.outlined.Crop169
+import androidx.compose.material.icons.outlined.CropPortrait
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -28,10 +27,14 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.R
+import dev.bittim.valolink.core.ui.components.ConnectedButtonEntry
+import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
+import dev.bittim.valolink.core.ui.util.ToggleIcon
+import dev.bittim.valolink.core.ui.util.UiText
 
 @Composable
 fun VariantPreviewCluster(
@@ -45,42 +48,25 @@ fun VariantPreviewCluster(
     }
 
     Surface(
-        modifier = modifier,
+        modifier = modifier.padding(8.dp),
         shape = MaterialTheme.shapes.extraLarge,
         shadowElevation = 3.dp,
         color = MaterialTheme.colorScheme.surface,
     ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-        ) {
-            variants.forEachIndexed { index, image ->
-                val isSelected = selected == index
-
-                if (image is ImageVector) {
-                    FilledIconToggleButton(checked = isSelected, onCheckedChange = {
-                        if (it) {
-                            selected = index
-                            onSelected(index)
-                        }
-                    }) {
-                        Icon(imageVector = image, contentDescription = null)
-                    }
-                }
-
-                if (image is String) {
-                    ChromaToggleButton(
-                        swatch = image,
-                        checked = isSelected,
-                        onCheckedChange = {
-                            if (it) {
-                                selected = index
-                                onSelected(index)
-                            }
-                        }
-                    )
-                }
+        SingleConnectedButtonGroup(
+            modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            entries = variants.map {
+                ConnectedButtonEntry(
+                    icon = it as? ToggleIcon,
+                    image = it as? String,
+                )
+            },
+            fillWidth = false,
+            onSelectedChanged = {
+                selected = it
+                onSelected(it)
             }
-        }
+        )
     }
 }
 
@@ -91,7 +77,18 @@ fun PreviewClusterPlayerCard() {
     ValolinkTheme {
         Surface {
             VariantPreviewCluster(
-                variants = listOf(Icons.Filled.CropPortrait, Icons.Filled.Crop169),
+                variants = listOf(
+                    ToggleIcon(
+                        Icons.Filled.CropPortrait,
+                        Icons.Outlined.CropPortrait,
+                        UiText.StringResource(R.string.levelDetails_variant_portrait),
+                    ),
+                    ToggleIcon(
+                        Icons.Filled.Crop169,
+                        Icons.Outlined.Crop169,
+                        UiText.StringResource(R.string.levelDetails_variant_landscape),
+                    ),
+                ),
                 onSelected = {}
             )
         }
