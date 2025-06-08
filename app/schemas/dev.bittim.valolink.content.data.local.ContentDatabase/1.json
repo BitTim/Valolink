@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d2d6b4f95ef64b40d24671a3e9f4cef6",
+    "identityHash": "94ba40f7a68b0ad376da0e9dd4e64e80",
     "entities": [
       {
         "tableName": "Version",
@@ -146,7 +146,7 @@
       },
       {
         "tableName": "Events",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `shortDisplayName` TEXT NOT NULL, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, `assetPath` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT, `shortDisplayName` TEXT, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, `assetPath` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -163,14 +163,12 @@
           {
             "fieldPath": "displayName",
             "columnName": "displayName",
-            "affinity": "TEXT",
-            "notNull": true
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "shortDisplayName",
             "columnName": "shortDisplayName",
-            "affinity": "TEXT",
-            "notNull": true
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "startTime",
@@ -2614,7 +2612,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd2d6b4f95ef64b40d24671a3e9f4cef6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '94ba40f7a68b0ad376da0e9dd4e64e80')"
     ]
   }
 }

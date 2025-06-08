@@ -7,7 +7,7 @@
  File:       ContentSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.content.data.worker
@@ -87,6 +87,7 @@ class ContentSyncWorker @AssistedInject constructor(
         // Get remote version
         val remoteVersion = versionRepository.get().firstOrNull()?.version
         if (remoteVersion.isNullOrEmpty()) return Result.retry()
+
 
         // Fetch from API if remote version is different
         if (

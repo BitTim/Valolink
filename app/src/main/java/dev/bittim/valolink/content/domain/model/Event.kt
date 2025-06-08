@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       Event.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.content.domain.model
@@ -18,8 +18,8 @@ import java.time.temporal.ChronoUnit
 
 data class Event(
     override val uuid: String,
-    override val displayName: String,
-    val shortDisplayName: String,
+    override val displayName: String?,
+    val shortDisplayName: String?,
     override val startTime: Instant,
     override val endTime: Instant,
 ) : ContentRelation {

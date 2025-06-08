@@ -7,7 +7,7 @@
  File:       AbilitySection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -27,9 +27,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -98,7 +98,7 @@ fun AbilitySection(
                     }
                 }
             } else {
-                TabRow(selectedTabIndex = selectedAbility) {
+                SecondaryTabRow(selectedTabIndex = selectedAbility) {
                     it.forEachIndexed { index, ability ->
                         val isSelected = index == selectedAbility
 

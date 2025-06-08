@@ -1,8 +1,8 @@
 [versions]
-agp = "8.10.0"
+agp = "8.10.1"
 apng = "1.12.0"
 constraintlayoutCompose = "1.1.1"
-datastorePreferences = "1.1.6"
+datastorePreferences = "1.1.7"
 ktorClientOkhttp = "3.1.2"
 supabaseBom = "3.1.4"
 coilComposeVersion = "2.7.0"
@@ -15,20 +15,19 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.0"
+lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2025.05.00"
+composeBom = "2025.06.00"
 materialIconsExtendedAndroid = "1.7.8"
 moshiKotlin = "1.15.2"
 navigationCompose = "2.9.0"
 playServicesAuth = "21.3.0"
-lifecycleRuntimeCompose = "2.9.0"
+lifecycleRuntimeCompose = "2.9.1"
 retrofit = "2.11.0"
 roomKtx = "2.7.1"
 material = "1.12.0"
-material3 = "1.3.2"
+material3 = "1.4.0-alpha15"
 serialization = "1.8.1"
-material3AdaptiveNavigationSuite = "1.3.2"
 adaptive = "1.1.0"
 adaptiveLayout = "1.1.0"
 adaptiveNavigation = "1.1.0"
@@ -36,6 +35,7 @@ workRuntimeKtx = "2.10.1"
 hiltCommon = "1.2.0"
 hiltWork = "1.2.0"
 ksp = "2.1.0-1.0.29"
+ui = "1.9.0-alpha04"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -62,11 +62,11 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.1" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.2" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
@@ -83,7 +83,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
-androidx-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
+androidx-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "material3" }
 androidx-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "adaptive" }
 androidx-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "adaptiveLayout" }
 androidx-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "adaptiveNavigation" }

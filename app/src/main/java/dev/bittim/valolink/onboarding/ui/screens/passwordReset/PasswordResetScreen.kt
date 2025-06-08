@@ -7,7 +7,7 @@
  File:       PasswordResetScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:11
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordReset
@@ -30,7 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.autofill.AutofillType
+import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.autofill.contentType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,9 +44,6 @@ import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
-import dev.bittim.valolink.core.ui.util.autofill.autofillRequestHandler
-import dev.bittim.valolink.core.ui.util.extensions.connectNode
-import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 
@@ -66,12 +64,6 @@ fun PasswordResetScreen(
         password = value
         validatePassword(value)
     }
-
-    val passwordAutofillHandler =
-        autofillRequestHandler(
-            autofillTypes = listOf(AutofillType.NewPassword),
-            onFill = onPasswordChanged
-        )
 
     OnboardingLayout(
         modifier = Modifier
@@ -106,17 +98,13 @@ fun PasswordResetScreen(
                 OutlinedTextFieldWithError(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .connectNode(passwordAutofillHandler)
-                        .defaultFocusChangeAutoFill(passwordAutofillHandler),
+                        .contentType(ContentType.NewPassword),
                     label = UiText.StringResource(R.string.onboarding_textField_label_password)
                         .asString(),
                     value = password,
                     visibility = false,
                     error = state.passwordError,
-                    onValueChange = {
-                        if (it.isEmpty()) passwordAutofillHandler.requestVerifyManual()
-                        onPasswordChanged(it)
-                    },
+                    onValueChange = { onPasswordChanged },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Next

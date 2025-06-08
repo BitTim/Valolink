@@ -7,7 +7,7 @@
  File:       ContractsOverviewScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:55
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -314,7 +314,7 @@ fun ContractsOverviewScreen(
                             .animateItem()
                             .animateContentSize(),
                         data = cardData,
-                        maskedWidth = carouselItemInfo.maskRect.width,
+                        maskedWidth = carouselItemDrawInfo.maskRect.width,
                         onNavToAgentDetails = onNavToAgentDetails
                     )
                 }

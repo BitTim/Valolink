@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       EventApiRepository.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:48
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.content.data.repository.event
@@ -95,6 +95,7 @@ class EventApiRepository @Inject constructor(
         version: String,
     ) {
         val response = contentApi.getEvent(uuid)
+
         if (response.isSuccessful) {
             contentDatabase.withTransaction {
                 contentDatabase.eventDao.upsert(response.body()!!.data!!.toEntity(version))
@@ -106,11 +107,11 @@ class EventApiRepository @Inject constructor(
 
     override suspend fun fetchAll(version: String) {
         val response = contentApi.getAllEvents()
+
         if (response.isSuccessful) {
             contentDatabase.withTransaction {
-                contentDatabase.eventDao.upsert(response.body()!!.data!!.map {
-                    it.toEntity(version)
-                }.distinct().toSet())
+                contentDatabase.eventDao.upsert(response.body()!!.data!!.map { it.toEntity(version) }
+                    .distinct().toSet())
             }
         }
     }

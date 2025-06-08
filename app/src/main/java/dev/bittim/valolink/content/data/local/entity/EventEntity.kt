@@ -1,13 +1,13 @@
 /*
- Copyright (c) 2024 Tim Anhalt (BitTim)
- 
+ Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+
  Project:    Valolink
  License:    GPLv3
- 
+
  File:       EventEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   14.12.24, 14:47
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.content.data.local.entity
@@ -28,8 +28,8 @@ import java.time.Instant
 data class EventEntity(
     @PrimaryKey override val uuid: String,
     override val version: String,
-    val displayName: String,
-    val shortDisplayName: String,
+    val displayName: String?,
+    val shortDisplayName: String?,
     val startTime: String,
     val endTime: String,
     val assetPath: String,

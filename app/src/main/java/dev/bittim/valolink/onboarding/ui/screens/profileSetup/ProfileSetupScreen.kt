@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 20:29
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup

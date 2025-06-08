@@ -7,7 +7,7 @@
  File:       CreateAccountScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 18:57
+ Modified:   08.06.25, 16:03
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -30,7 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.autofill.AutofillType
+import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.autofill.contentType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,9 +44,6 @@ import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
-import dev.bittim.valolink.core.ui.util.autofill.autofillRequestHandler
-import dev.bittim.valolink.core.ui.util.extensions.connectNode
-import dev.bittim.valolink.core.ui.util.extensions.defaultFocusChangeAutoFill
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 
@@ -74,18 +72,6 @@ fun CreateAccount(
         password = value
         validatePassword(value)
     }
-
-    val emailAutoFillHandler =
-        autofillRequestHandler(
-            autofillTypes = listOf(AutofillType.EmailAddress),
-            onFill = onEmailChanged
-        )
-
-    val passwordAutoFillHandler =
-        autofillRequestHandler(
-            autofillTypes = listOf(AutofillType.NewPassword),
-            onFill = onPasswordChanged
-        )
 
     OnboardingLayout(
         modifier = Modifier
@@ -118,16 +104,12 @@ fun CreateAccount(
                 OutlinedTextFieldWithError(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .connectNode(emailAutoFillHandler)
-                        .defaultFocusChangeAutoFill(emailAutoFillHandler),
+                        .contentType(ContentType.NewUsername),
                     label = UiText.StringResource(R.string.onboarding_textField_label_email)
                         .asString(),
                     value = email,
                     error = state.emailError,
-                    onValueChange = {
-                        if (it.isEmpty()) emailAutoFillHandler.requestVerifyManual()
-                        onEmailChanged(it)
-                    },
+                    onValueChange = onEmailChanged,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
@@ -137,16 +119,12 @@ fun CreateAccount(
                 OutlinedTextFieldWithError(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .connectNode(passwordAutoFillHandler)
-                        .defaultFocusChangeAutoFill(passwordAutoFillHandler),
+                        .contentType(ContentType.NewPassword),
                     label = UiText.StringResource(R.string.onboarding_textField_label_password)
                         .asString(),
                     value = password,
                     error = state.passwordError,
-                    onValueChange = {
-                        if (it.isEmpty()) passwordAutoFillHandler.requestVerifyManual()
-                        onPasswordChanged(it)
-                    },
+                    onValueChange = onPasswordChanged,
                     enableVisibilityToggle = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
