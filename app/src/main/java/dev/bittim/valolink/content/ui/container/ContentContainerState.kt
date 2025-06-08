@@ -7,12 +7,15 @@
  File:       ContentContainerState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.container
 
+import android.graphics.Bitmap
+
 data class ContentContainerState(
     val isAuthenticated: Boolean? = null,
     val hasOnboarded: Boolean? = null,
+    val userAvatar: Bitmap? = null,
 )

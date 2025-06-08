@@ -7,7 +7,7 @@
  File:       AgentListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:02
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentlist
@@ -56,7 +56,7 @@ fun AgentListScreen(
     onNavBack: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
 ) {
-    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -71,7 +71,7 @@ fun AgentListScreen(
                     )
                 }
             },
-            scrollBehavior = scrollBehaviour,
+            scrollBehavior = scrollBehavior,
             windowInsets = WindowInsets.statusBars
         )
 
@@ -99,7 +99,7 @@ fun AgentListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
-                .nestedScroll(scrollBehaviour.nestedScrollConnection),
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             columns = GridCells.Adaptive(AgentCarouselCard.minWidth),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),

@@ -7,7 +7,7 @@
  File:       ContentContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.05.25, 13:42
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.container
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ import dev.bittim.valolink.content.ui.container.components.navbar.NavItem
 import dev.bittim.valolink.content.ui.screens.content.ContentNavGraph
 import dev.bittim.valolink.core.ui.theme.Spacing
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentContainerScreen(
     state: ContentContainerState,
@@ -76,10 +78,12 @@ fun ContentContainerScreen(
                         it.navigation(navController)
                     })
             }
-        }) {
+        }
+    ) {
         ContentNavGraph(
             modifier = Modifier.fillMaxSize(),
             navController = navController,
+            userAvatar = state.userAvatar,
             signOut = signOut
         )
     }

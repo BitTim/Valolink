@@ -7,7 +7,7 @@
  File:       DetailScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 18:52
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.core.ui.components

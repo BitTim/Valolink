@@ -7,7 +7,7 @@
  File:       LevelListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:52
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.levellist
@@ -77,7 +77,7 @@ fun LevelListScreen(
     }
 
     val numRewardsVisible = 10
-    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val contractLevels = state.contract?.content?.chapters?.flatMap { it.levels }
     val contractRelation = state.contract?.content?.relation
@@ -145,7 +145,7 @@ fun LevelListScreen(
                     }
                 }
             },
-            scrollBehavior = scrollBehaviour,
+            scrollBehavior = scrollBehavior,
             windowInsets = WindowInsets.statusBars
         )
 

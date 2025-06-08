@@ -7,11 +7,13 @@
  File:       ContractsOverviewNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:16
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
 
+import android.graphics.Bitmap
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,7 +26,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 object ContractsOverviewNav
 
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.contractsOverviewScreen(
+    userAvatar: Bitmap?,
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
     onNavToContractDetails: (String) -> Unit,
@@ -35,6 +39,7 @@ fun NavGraphBuilder.contractsOverviewScreen(
 
         ContractsOverviewScreen(
             state = contractsMainState,
+            userAvatar = userAvatar,
             initUserContract = viewModel::initUserContract,
             onArchiveTypeFilterChange = viewModel::onArchiveTypeFilterChange,
             onNavToGearList = onNavToGearList,

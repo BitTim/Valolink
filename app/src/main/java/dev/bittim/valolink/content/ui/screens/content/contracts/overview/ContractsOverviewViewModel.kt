@@ -7,11 +7,12 @@
  File:       ContractsOverviewViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:58
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
 
+import android.graphics.BitmapFactory
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +22,7 @@ import dev.bittim.valolink.content.domain.model.contract.content.ContentType
 import dev.bittim.valolink.user.data.repository.SessionRepository
 import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
 import dev.bittim.valolink.user.data.repository.data.UserContractRepository
+import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -44,6 +46,7 @@ import javax.inject.Inject
 class ContractsOverviewViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
     private val sessionRepository: SessionRepository,
+    private val userMetaRepository: UserMetaRepository,
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
@@ -103,6 +106,19 @@ class ContractsOverviewViewModel @Inject constructor(
                                 )
                             }
                         }
+                }
+            }
+
+            launch {
+                withContext(Dispatchers.IO) {
+                    val avatarBytes = userMetaRepository.downloadAvatarWithCurrentUser()
+                    val avatar = if (avatarBytes != null) BitmapFactory.decodeByteArray(
+                        avatarBytes,
+                        0,
+                        avatarBytes.size
+                    ) else null
+
+                    _state.update { it.copy(userAvatar = avatar) }
                 }
             }
 

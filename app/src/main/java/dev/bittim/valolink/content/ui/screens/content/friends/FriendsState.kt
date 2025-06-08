@@ -7,7 +7,7 @@
  File:       FriendsState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.friends

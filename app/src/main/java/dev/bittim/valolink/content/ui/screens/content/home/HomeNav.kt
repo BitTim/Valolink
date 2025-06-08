@@ -7,11 +7,13 @@
  File:       HomeNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.home
 
+import android.graphics.Bitmap
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,8 +26,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 object HomeNav
 
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.homeScreen(
     signOut: () -> Unit,
+    userAvatar: Bitmap?,
 ) {
     composable<HomeNav> {
         val viewModel: HomeViewModel = hiltViewModel()
@@ -33,6 +37,7 @@ fun NavGraphBuilder.homeScreen(
 
         HomeScreen(
             state = homeState,
+            userAvatar = userAvatar,
             signOut = signOut
         )
     }

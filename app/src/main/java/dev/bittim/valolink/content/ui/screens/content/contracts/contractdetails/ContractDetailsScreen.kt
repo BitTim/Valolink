@@ -7,7 +7,7 @@
  File:       ContractDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   02.05.25, 08:12
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.contractdetails

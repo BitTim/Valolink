@@ -7,11 +7,12 @@
  File:       ContractsOverviewState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:54
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
 
+import android.graphics.Bitmap
 import dev.bittim.valolink.content.domain.model.contract.Contract
 import dev.bittim.valolink.content.domain.model.contract.content.ContentType
 import dev.bittim.valolink.user.domain.model.UserAgent
@@ -22,6 +23,8 @@ data class ContractsOverviewState(
     val isActiveContractsLoading: Boolean = false,
     val isAgentGearsLoading: Boolean = false,
     val isInactiveContractsLoading: Boolean = false,
+
+    val userAvatar: Bitmap? = null,
 
     val userContracts: List<UserContract>? = null,
     val userAgents: List<UserAgent>? = null,

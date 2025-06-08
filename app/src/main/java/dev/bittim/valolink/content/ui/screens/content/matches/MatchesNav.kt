@@ -7,11 +7,13 @@
  File:       MatchesNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:25
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches
 
+import android.graphics.Bitmap
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,13 +26,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 object MatchesNav
 
-fun NavGraphBuilder.matchesScreen() {
+@OptIn(ExperimentalMaterial3Api::class)
+fun NavGraphBuilder.matchesScreen(
+    userAvatar: Bitmap?
+) {
     composable<MatchesNav> {
         val viewModel: MatchesViewModel = hiltViewModel()
-        val matchesState by viewModel.matchesState.collectAsStateWithLifecycle()
+        val matchesState by viewModel.state.collectAsStateWithLifecycle()
 
         MatchesScreen(
             state = matchesState,
+            userAvatar = userAvatar,
             onFetch = viewModel::onFetch
         )
     }

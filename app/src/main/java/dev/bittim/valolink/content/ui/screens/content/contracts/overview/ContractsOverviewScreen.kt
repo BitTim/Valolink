@@ -1,17 +1,18 @@
 /*
  Copyright (c) 2024-2025 Tim Anhalt (BitTim)
-
+ 
  Project:    Valolink
  License:    GPLv3
-
+ 
  File:       ContractsOverviewScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   08.06.25, 20:26
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
 
+import android.graphics.Bitmap
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -20,18 +21,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -40,7 +38,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.carousel.CarouselDefaults
 import androidx.compose.material3.carousel.CarouselState
@@ -56,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.domain.model.contract.Contract
 import dev.bittim.valolink.content.domain.model.contract.content.ContentType
+import dev.bittim.valolink.content.ui.components.ValolinkTopAppBar
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.AgentCarouselCard
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.AgentCarouselCardData
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.ContractCard
@@ -72,30 +70,18 @@ import java.util.UUID
 @Composable
 fun ContractsOverviewScreen(
     state: ContractsOverviewState,
+    userAvatar: Bitmap?,
     initUserContract: (String) -> Unit,
     onArchiveTypeFilterChange: (ContentType) -> Unit,
     onNavToGearList: () -> Unit,
     onNavToAgentDetails: (String) -> Unit,
     onNavToContractDetails: (String) -> Unit,
 ) {
-    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopAppBar(
-            title = { Text(text = "Valolink") },
-            actions = {
-                IconButton(onClick = { }) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = null
-                    )
-                }
-            },
-            scrollBehavior = scrollBehaviour,
-            windowInsets = WindowInsets.statusBars
-        )
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+        ValolinkTopAppBar(userAvatar, scrollBehavior)
 
         val loadingBarVisible =
             state.isUserDataLoading || state.isActiveContractsLoading || state.isAgentGearsLoading || state.isInactiveContractsLoading
@@ -131,7 +117,7 @@ fun ContractsOverviewScreen(
                     top = 16.dp,
                     end = 16.dp
                 )
-                .nestedScroll(scrollBehaviour.nestedScrollConnection),
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             stickyHeader {

@@ -7,11 +7,13 @@
  File:       ContentNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   08.06.25, 20:32
  */
 
 package dev.bittim.valolink.content.ui.screens.content
 
+import android.graphics.Bitmap
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -23,10 +25,12 @@ import dev.bittim.valolink.content.ui.screens.content.home.homeScreen
 import dev.bittim.valolink.content.ui.screens.content.matches.matchesScreen
 import dev.bittim.valolink.core.ui.theme.Transition
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentNavGraph(
     modifier: Modifier,
     navController: NavHostController,
+    userAvatar: Bitmap?,
     signOut: () -> Unit,
 ) {
     NavHost(
@@ -38,9 +42,9 @@ fun ContentNavGraph(
         popEnterTransition = { Transition.TopLevel.popEnter },
         popExitTransition = { Transition.TopLevel.popExit }
     ) {
-        homeScreen(signOut = signOut)
-        contractsNavGraph(navController)
-        matchesScreen()
-        friendsScreen()
+        homeScreen(signOut = signOut, userAvatar = userAvatar)
+        contractsNavGraph(navController, userAvatar = userAvatar)
+        matchesScreen(userAvatar = userAvatar)
+        friendsScreen(userAvatar = userAvatar)
     }
 }
