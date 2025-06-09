@@ -7,7 +7,7 @@
  File:       ModeDto.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   09.06.25, 19:06
  */
 
 package dev.bittim.valolink.content.data.remote.dto.mode
@@ -51,7 +51,7 @@ data class ModeDto(
             displayName,
             description,
             scoreType,
-            assetPath.contains("Bomb"),
+            assetPath.contains("BombGameMode"),
             duration,
             roundsPerHalf,
             displayIcon,
