@@ -7,7 +7,7 @@
  File:       ProfileSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 16:03
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -49,7 +49,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
@@ -126,7 +125,7 @@ fun ProfileSetupScreen(
                     ) {
                         FilledTonalIconButton(
                             modifier = Modifier
-                                .width(48.dp)
+                                .width(Spacing.xxxl)
                                 .aspectRatio(1f),
                             onClick = {
                                 resetAvatar(state.username, context)
@@ -137,7 +136,7 @@ fun ProfileSetupScreen(
 
                         FilledTonalIconButton(
                             modifier = Modifier
-                                .width(48.dp)
+                                .width(Spacing.xxxl)
                                 .aspectRatio(1f),
                             onClick = {
                                 mediaPicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))

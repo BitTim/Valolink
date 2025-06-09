@@ -7,7 +7,7 @@
  File:       ValolinkTopAppBar.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.components
@@ -19,11 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -32,13 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.UiText
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ValolinkTopAppBar(
     userAvatar: Bitmap?,
@@ -47,12 +45,9 @@ fun ValolinkTopAppBar(
     TopAppBar(
         title = { Text(text = UiText.StringResource(R.string.app_name).asString()) },
         actions = {
-            IconButton(modifier = Modifier.padding(horizontal = 8.dp), onClick = { }) {
+            IconButton(modifier = Modifier.padding(horizontal = Spacing.s), onClick = { }) {
                 if (userAvatar == null) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = null
-                    )
+                    LoadingIndicator()
                 } else {
                     AsyncImage(
                         modifier = Modifier

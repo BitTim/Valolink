@@ -7,7 +7,7 @@
  File:       UnlockButton.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 18:51
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -24,10 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 
 @Composable
 fun UnlockButton(
@@ -44,7 +44,7 @@ fun UnlockButton(
         if (!isOwned && !isLocked) {
             AsyncImage(
                 modifier = Modifier
-                    .height(24.dp)
+                    .height(Spacing.xl)
                     .aspectRatio(1f),
                 model = currencyIcon,
                 contentDescription = null,
@@ -54,7 +54,7 @@ fun UnlockButton(
                 )
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(Spacing.s))
             Text(text = "$price")
         } else {
             if (isLocked) Text(text = "Locked")

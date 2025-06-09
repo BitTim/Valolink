@@ -7,7 +7,7 @@
  File:       ContractSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.05.25, 01:31
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -163,7 +163,7 @@ fun ContractSetupScreen(
 
                     val pageOffset = pagerState.getOffsetDistanceInPages(thisPage).absoluteValue
                     val topPadding = (32f * minOf(pageOffset, 1f)).dp
-                    val bottomPadding = 32.dp - topPadding
+                    val bottomPadding = Spacing.xxl - topPadding
                     val blur =
                         lerp(start = 0f, stop = 4f, fraction = pageOffset.coerceIn(0f, 1f)).dp
                     val saturation = lerp(

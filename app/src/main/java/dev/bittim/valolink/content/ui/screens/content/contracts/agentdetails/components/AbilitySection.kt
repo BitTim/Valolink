@@ -7,7 +7,7 @@
  File:       AbilitySection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 16:03
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -46,6 +46,7 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.agent.Ability
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
@@ -71,7 +72,7 @@ fun AbilitySection(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(Spacing.xs)
     ) {
         Crossfade(
             modifier = Modifier.animateContentSize(),
@@ -82,8 +83,8 @@ fun AbilitySection(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(horizontal = Spacing.l, vertical = Spacing.xs),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.s)
                 ) {
                     repeat(4) {
                         Box(
@@ -107,7 +108,7 @@ fun AbilitySection(
                             onClick = { selectedAbility = index },
                             icon = {
                                 AsyncImage(
-                                    modifier = Modifier.padding(12.dp),
+                                    modifier = Modifier.padding(Spacing.m),
                                     model = ability.displayIcon,
                                     contentDescription = ability.displayName,
                                     colorFilter = ColorFilter.tint(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
@@ -146,10 +147,10 @@ fun AbilitySection(
                     val ability = abilities?.get(index)
 
                     Card(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(Spacing.l),
                     ) {
                         AbilityDetailsItem(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(Spacing.l),
                             displayName = ability?.displayName ?: "",
                             slot = ability?.slot ?: "",
                             description = ability?.description ?: "",

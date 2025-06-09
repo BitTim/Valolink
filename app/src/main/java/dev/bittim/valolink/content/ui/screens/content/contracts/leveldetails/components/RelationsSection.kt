@@ -7,7 +7,7 @@
  File:       RelationsSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -50,13 +50,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.components.ConnectedButtonEntry
 import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.ToggleIcon
 import dev.bittim.valolink.core.ui.util.UiText
@@ -118,14 +118,14 @@ fun RelationsSection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
+                .padding(start = Spacing.l, end = Spacing.l),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp),
+                    .padding(end = Spacing.s),
             ) {
                 Text(
                     text = UiText.StringResource(R.string.levelDetails_relations_title).asString(),
@@ -194,7 +194,7 @@ fun RelationsSection(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Spacing.s))
 
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
@@ -202,7 +202,7 @@ fun RelationsSection(
             state = pagerState
         ) { index ->
             RewardListCard(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(start = Spacing.l, end = Spacing.l),
                 data = contentData?.relations?.get(index)?.level,
                 xpCollected = userData?.relations?.get(index)?.xpCollected ?: 0,
                 isLocked = userData?.relations?.get(index)?.isLocked == true,
@@ -211,7 +211,7 @@ fun RelationsSection(
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(Spacing.xl))
     }
 }
 

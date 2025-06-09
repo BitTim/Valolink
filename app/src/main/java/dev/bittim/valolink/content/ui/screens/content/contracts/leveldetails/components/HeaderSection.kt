@@ -7,7 +7,7 @@
  File:       HeaderSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -24,9 +24,9 @@ import androidx.compose.material.icons.outlined.MoneyOff
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.contract.reward.Reward
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.ToggleIcon
 import dev.bittim.valolink.core.ui.util.UiText
 
@@ -42,7 +42,7 @@ fun HeaderSection(
     ) {
         LevelHeader(data = levelHeaderData)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.l))
 
         Crossfade(
             rewards,
@@ -67,6 +67,6 @@ fun HeaderSection(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Spacing.xl))
     }
 }

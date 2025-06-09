@@ -7,7 +7,7 @@
  File:       UnlockSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.components.UnlockButton
 import dev.bittim.valolink.core.ui.components.rewardCard.ProgressCluster
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
@@ -64,7 +65,7 @@ fun UnlockSection(
             style = MaterialTheme.typography.titleLarge
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(Spacing.s))
 
         Crossfade(
             modifier = Modifier.animateContentSize(),
@@ -94,7 +95,7 @@ fun UnlockSection(
                             isCompact = false
                         )
 
-                        Spacer(modifier = Modifier.width(24.dp))
+                        Spacer(modifier = Modifier.width(Spacing.xl))
 
                         if (it.currencyIcon != null) {
                             UnlockButton(
@@ -126,6 +127,6 @@ fun UnlockSection(
             }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(Spacing.xl))
     }
 }

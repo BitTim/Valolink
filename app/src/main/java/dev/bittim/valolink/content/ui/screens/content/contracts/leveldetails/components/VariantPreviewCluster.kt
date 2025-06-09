@@ -7,7 +7,7 @@
  File:       VariantPreviewCluster.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.components.ConnectedButtonEntry
 import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.ToggleIcon
 import dev.bittim.valolink.core.ui.util.UiText
@@ -48,13 +49,13 @@ fun VariantPreviewCluster(
     }
 
     Surface(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(Spacing.s),
         shape = MaterialTheme.shapes.extraLarge,
         shadowElevation = 3.dp,
         color = MaterialTheme.colorScheme.surface,
     ) {
         SingleConnectedButtonGroup(
-            modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = modifier.padding(horizontal = Spacing.s, vertical = Spacing.xs),
             entries = variants.map {
                 ConnectedButtonEntry(
                     icon = it as? ToggleIcon,

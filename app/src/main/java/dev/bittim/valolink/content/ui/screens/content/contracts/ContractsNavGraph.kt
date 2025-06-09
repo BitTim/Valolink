@@ -7,13 +7,12 @@
  File:       ContractsNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts
 
 import android.graphics.Bitmap
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
@@ -35,7 +34,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 object ContractsNav
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.contractsNavGraph(
     navController: NavController,
     userAvatar: Bitmap?,

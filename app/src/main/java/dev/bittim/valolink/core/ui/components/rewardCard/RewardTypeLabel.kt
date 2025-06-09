@@ -7,7 +7,7 @@
  File:       RewardTypeLabel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
@@ -60,7 +61,7 @@ fun RewardTypeLabel(
     }
 
     val iconSize = when (style) {
-        RewardTypeLabelStyle.DEFAULT -> 24.dp
+        RewardTypeLabelStyle.DEFAULT -> Spacing.xl
         RewardTypeLabelStyle.SMALL -> 20.dp
     }
 
@@ -80,7 +81,7 @@ fun RewardTypeLabel(
         } else {
             Row(
                 modifier = modifier,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -107,7 +108,7 @@ fun RewardTypeLabelPreview() {
     ValolinkTheme {
         Surface {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
                 items(items = RewardType.entries, itemContent = {
                     RewardTypeLabel(
@@ -134,7 +135,7 @@ fun SmallRewardTypeLabelPreview() {
     ValolinkTheme {
         Surface {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
                 items(items = RewardType.entries, itemContent = {
                     RewardTypeLabel(

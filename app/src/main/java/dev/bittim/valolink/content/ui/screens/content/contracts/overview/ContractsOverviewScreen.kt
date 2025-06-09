@@ -7,7 +7,7 @@
  File:       ContractsOverviewScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:26
+ Modified:   08.06.25, 21:43
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -49,7 +49,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.domain.model.contract.Contract
 import dev.bittim.valolink.content.domain.model.contract.content.ContentType
@@ -60,6 +59,7 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.components.Contr
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.ContractCardData
 import dev.bittim.valolink.core.ui.components.ConnectedButtonEntry
 import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.getProgressPercent
 import java.util.UUID
 
@@ -98,12 +98,12 @@ fun ContractsOverviewScreen(
                     LinearProgressIndicator(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(4.dp)
+                            .height(Spacing.xs)
                     )
                 } else {
                     Box(
                         modifier = Modifier
-                            .height(4.dp)
+                            .height(Spacing.xs)
                     )
                 }
             }
@@ -113,12 +113,12 @@ fun ContractsOverviewScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    start = 16.dp,
-                    top = 16.dp,
-                    end = 16.dp
+                    start = Spacing.l,
+                    top = Spacing.l,
+                    end = Spacing.l
                 )
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.m)
         ) {
             stickyHeader {
                 Surface(
@@ -129,7 +129,7 @@ fun ContractsOverviewScreen(
                         .animateContentSize()
                 ) {
                     Text(
-                        modifier = Modifier.padding(bottom = 4.dp),
+                        modifier = Modifier.padding(bottom = Spacing.xs),
                         text = "Active",
                         style = MaterialTheme.typography.headlineMedium
                     )
@@ -192,7 +192,7 @@ fun ContractsOverviewScreen(
             item {
                 Spacer(
                     modifier = Modifier
-                        .height(8.dp)
+                        .height(Spacing.s)
                         .animateItem()
                         .animateContentSize()
                 )
@@ -207,8 +207,8 @@ fun ContractsOverviewScreen(
                         .animateContentSize()
                 ) {
                     Row(
-                        modifier = Modifier.padding(bottom = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(bottom = Spacing.xs),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -240,7 +240,7 @@ fun ContractsOverviewScreen(
                         .animateContentSize(),
                     state = carouselState,
                     preferredItemWidth = AgentCarouselCard.preferredWidth,
-                    itemSpacing = 8.dp,
+                    itemSpacing = Spacing.s,
                     minSmallItemWidth = AgentCarouselCard.minCompressedWidth,
                     maxSmallItemWidth = AgentCarouselCard.minWidth,
                     flingBehavior = CarouselDefaults.multiBrowseFlingBehavior(state = carouselState)
@@ -309,7 +309,7 @@ fun ContractsOverviewScreen(
             item {
                 Spacer(
                     modifier = Modifier
-                        .height(8.dp)
+                        .height(Spacing.s)
                         .animateItem()
                         .animateContentSize()
                 )
@@ -326,8 +326,8 @@ fun ContractsOverviewScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 4.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                            .padding(bottom = Spacing.xs),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.s)
                     ) {
                         Text(
                             text = "Archive",
@@ -406,7 +406,7 @@ fun ContractsOverviewScreen(
             item {
                 Spacer(
                     modifier = Modifier
-                        .height(4.dp)
+                        .height(Spacing.xs)
                         .animateItem()
                         .animateContentSize()
                 )

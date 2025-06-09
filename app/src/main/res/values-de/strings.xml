@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   08.06.25, 17:49
+  Modified:   09.06.25, 18:52
   -->
 
 <resources>
@@ -98,4 +98,6 @@
     <string name="levelDetails_unlock_title">Freischalten</string>
     <string name="levelDetails_variant_portrait">Hochformat</string>
     <string name="levelDetails_variant_landscape">Querformat</string>
+    <string name="matches_overview_empty_title">Noch keine Matches</string>
+    <string name="matches_overview_empty_description">Spiele ein Match und füge es hinzu um es hier wiederzufinden</string>
 </resources>

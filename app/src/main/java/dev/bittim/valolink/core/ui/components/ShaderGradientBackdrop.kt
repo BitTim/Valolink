@@ -7,7 +7,7 @@
  File:       ShaderGradientBackdrop.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -58,7 +58,7 @@ fun ShaderGradientBackdrop(
                 modifier = Modifier
                     .alpha(0.15f)
                     .fillMaxSize()
-                    .blur(4.dp),
+                    .blur(Spacing.xs),
                 model = backgroundImage,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,

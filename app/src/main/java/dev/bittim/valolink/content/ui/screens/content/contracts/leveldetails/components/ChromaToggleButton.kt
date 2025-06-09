@@ -7,7 +7,7 @@
  File:       ChromaToggleButton.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 
 @Composable
@@ -42,7 +43,7 @@ fun ChromaToggleButton(
 ) {
     FilledIconToggleButton(
         modifier = modifier
-            .padding(4.dp)
+            .padding(Spacing.xs)
             .height(52.dp)
             .aspectRatio(1f),
         checked = checked,

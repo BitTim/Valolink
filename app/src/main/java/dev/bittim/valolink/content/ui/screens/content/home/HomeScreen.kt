@@ -7,7 +7,7 @@
  File:       HomeScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.home
@@ -25,8 +25,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.ui.components.ValolinkTopAppBar
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,9 +45,9 @@ fun HomeScreen(
 
         Column(
             modifier = Modifier.padding(
-                start = 16.dp,
-                top = 16.dp,
-                end = 16.dp
+                start = Spacing.l,
+                top = Spacing.l,
+                end = Spacing.l
             )
         ) {
             Text(
@@ -55,7 +55,7 @@ fun HomeScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(Spacing.s))
 
             Button(onClick = signOut) {
                 Text(text = "Sign out")

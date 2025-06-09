@@ -7,7 +7,7 @@
  File:       ProgressCluster.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -118,7 +118,7 @@ fun ProgressClusterPreview() {
             Box(
                 modifier = Modifier
                     .width(412.dp)
-                    .padding(16.dp)
+                    .padding(Spacing.l)
             ) {
                 ProgressCluster(
                     progress = 60,
@@ -143,7 +143,7 @@ fun MonochromeProgressClusterPreview() {
                     .background(
                         Brush.horizontalGradient(listOf(Color.DarkGray, Color.Gray))
                     )
-                    .padding(16.dp)
+                    .padding(Spacing.l)
             ) {
                 ProgressCluster(
                     progress = 3,
@@ -166,8 +166,8 @@ fun CompactProgressClusterPreview() {
         Surface {
             Box(
                 modifier = Modifier
-                    .width(48.dp)
-                    .padding(16.dp)
+                    .width(Spacing.xxxl)
+                    .padding(Spacing.l)
             ) {
                 ProgressCluster(
                     modifier = Modifier.size(Spacing.xxl),
@@ -189,11 +189,11 @@ fun CompactMonochromeProgressClusterPreview() {
         Surface {
             Box(
                 modifier = Modifier
-                    .width(48.dp)
+                    .width(Spacing.xxxl)
                     .background(
                         Brush.horizontalGradient(listOf(Color.DarkGray, Color.Gray))
                     )
-                    .padding(16.dp)
+                    .padding(Spacing.l)
             ) {
                 ProgressCluster(
                     modifier = Modifier.size(Spacing.xxl),

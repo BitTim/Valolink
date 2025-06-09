@@ -7,7 +7,7 @@
  File:       QueueFullSyncUseCase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.domain.usecase
@@ -18,6 +18,8 @@ import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.data.repository.event.EventRepository
 import dev.bittim.valolink.content.data.repository.flex.FlexRepository
+import dev.bittim.valolink.content.data.repository.map.MapRepository
+import dev.bittim.valolink.content.data.repository.mode.ModeRepository
 import dev.bittim.valolink.content.data.repository.playerCard.PlayerCardRepository
 import dev.bittim.valolink.content.data.repository.playerTitle.PlayerTitleRepository
 import dev.bittim.valolink.content.data.repository.rank.RankRepository
@@ -32,6 +34,8 @@ class QueueFullSyncUseCase(
     private val currencyRepository: CurrencyRepository,
     private val eventRepository: EventRepository,
     private val flexRepository: FlexRepository,
+    private val mapRepository: MapRepository,
+    private val modeRepository: ModeRepository,
     private val playerCardRepository: PlayerCardRepository,
     private val playerTitleRepository: PlayerTitleRepository,
     private val rankRepository: RankRepository,
@@ -46,6 +50,8 @@ class QueueFullSyncUseCase(
         currencyRepository.queueWorker()
         eventRepository.queueWorker()
         flexRepository.queueWorker()
+        mapRepository.queueWorker()
+        modeRepository.queueWorker()
         playerCardRepository.queueWorker()
         playerTitleRepository.queueWorker()
         rankRepository.queueWorker()

@@ -7,7 +7,7 @@
  File:       ContractDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.contractdetails
@@ -41,10 +41,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCardData
+import dev.bittim.valolink.core.ui.theme.Spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,13 +101,13 @@ fun ContractDetailsScreen(
                     scrollBehavior = scrollBehavior
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Spacing.l))
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(Spacing.s)
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier.padding(horizontal = Spacing.l),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -124,8 +124,8 @@ fun ContractDetailsScreen(
                     }
 
                     LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        contentPadding = PaddingValues(horizontal = Spacing.l),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.m)
                     ) {
                         items(
                             items = state.contract.content.chapters.flatMap { it.levels },

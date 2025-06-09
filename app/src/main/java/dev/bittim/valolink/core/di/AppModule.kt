@@ -7,7 +7,7 @@
  File:       AppModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 04:05
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.di
@@ -36,6 +36,10 @@ import dev.bittim.valolink.content.data.repository.event.EventApiRepository
 import dev.bittim.valolink.content.data.repository.event.EventRepository
 import dev.bittim.valolink.content.data.repository.flex.FlexApiRepository
 import dev.bittim.valolink.content.data.repository.flex.FlexRepository
+import dev.bittim.valolink.content.data.repository.map.MapApiRepository
+import dev.bittim.valolink.content.data.repository.map.MapRepository
+import dev.bittim.valolink.content.data.repository.mode.ModeApiRepository
+import dev.bittim.valolink.content.data.repository.mode.ModeRepository
 import dev.bittim.valolink.content.data.repository.playerCard.PlayerCardApiRepository
 import dev.bittim.valolink.content.data.repository.playerCard.PlayerCardRepository
 import dev.bittim.valolink.content.data.repository.playerTitle.PlayerTitleApiRepository
@@ -378,6 +382,30 @@ object AppModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun providesMapRepository(
+        contentDatabase: ContentDatabase,
+        contentApi: ContentApi,
+        workManager: WorkManager,
+    ): MapRepository {
+        return MapApiRepository(
+            contentDatabase, contentApi, workManager
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesModeRepository(
+        contentDatabase: ContentDatabase,
+        contentApi: ContentApi,
+        workManager: WorkManager,
+    ): ModeRepository {
+        return ModeApiRepository(
+            contentDatabase, contentApi, workManager
+        )
+    }
+
 
     // --------------------------------
     //  Use Cases
@@ -398,6 +426,8 @@ object AppModule {
         currencyRepository: CurrencyRepository,
         eventRepository: EventRepository,
         flexRepository: FlexRepository,
+        mapRepository: MapRepository,
+        modeRepository: ModeRepository,
         playerCardRepository: PlayerCardRepository,
         playerTitleRepository: PlayerTitleRepository,
         rankRepository: RankRepository,
@@ -412,6 +442,8 @@ object AppModule {
             currencyRepository,
             eventRepository,
             flexRepository,
+            mapRepository,
+            modeRepository,
             playerCardRepository,
             playerTitleRepository,
             rankRepository,

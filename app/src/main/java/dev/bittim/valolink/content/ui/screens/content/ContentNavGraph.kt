@@ -7,7 +7,7 @@
  File:       ContentNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content
@@ -22,7 +22,7 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.contractsNavGrap
 import dev.bittim.valolink.content.ui.screens.content.friends.friendsScreen
 import dev.bittim.valolink.content.ui.screens.content.home.HomeNav
 import dev.bittim.valolink.content.ui.screens.content.home.homeScreen
-import dev.bittim.valolink.content.ui.screens.content.matches.matchesScreen
+import dev.bittim.valolink.content.ui.screens.content.matches.matchesNavGraph
 import dev.bittim.valolink.core.ui.theme.Transition
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,8 +43,8 @@ fun ContentNavGraph(
         popExitTransition = { Transition.TopLevel.popExit }
     ) {
         homeScreen(signOut = signOut, userAvatar = userAvatar)
-        contractsNavGraph(navController, userAvatar = userAvatar)
-        matchesScreen(userAvatar = userAvatar)
+        contractsNavGraph(navController = navController, userAvatar = userAvatar)
+        matchesNavGraph(navController = navController, userAvatar = userAvatar)
         friendsScreen(userAvatar = userAvatar)
     }
 }

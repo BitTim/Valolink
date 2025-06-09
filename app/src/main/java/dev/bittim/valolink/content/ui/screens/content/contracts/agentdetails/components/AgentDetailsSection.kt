@@ -7,7 +7,7 @@
  File:       AgentDetailsSection.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -35,17 +35,18 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
 @Composable
 fun AgentDetailsSection(agent: Agent?) {
     Column(
         modifier = Modifier.wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(Spacing.l)
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.padding(horizontal = Spacing.l),
+            verticalArrangement = Arrangement.spacedBy(Spacing.xs)
         ) {
             Crossfade(
                 modifier = Modifier.animateContentSize(),
@@ -93,8 +94,8 @@ fun AgentDetailsSection(agent: Agent?) {
         }
 
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier.padding(horizontal = Spacing.l),
+            verticalArrangement = Arrangement.spacedBy(Spacing.xs)
         ) {
             Crossfade(
                 modifier = Modifier.animateContentSize(),
@@ -113,11 +114,11 @@ fun AgentDetailsSection(agent: Agent?) {
                 } else {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
                     ) {
                         AsyncImage(
                             modifier = Modifier
-                                .height(16.dp)
+                                .height(Spacing.l)
                                 .aspectRatio(1f),
                             model = it.displayIcon,
                             contentDescription = it.displayName,

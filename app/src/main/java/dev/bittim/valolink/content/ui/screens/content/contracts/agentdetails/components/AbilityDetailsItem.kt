@@ -7,7 +7,7 @@
  File:       AbilityDetailsItem.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:37
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -26,10 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 
 @Composable
@@ -44,18 +44,18 @@ fun AbilityDetailsItem(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(Spacing.s)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.m)
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .height(48.dp)
+                    .height(Spacing.xxxl)
                     .aspectRatio(1f),
                 model = displayIcon,
                 contentDescription = null,

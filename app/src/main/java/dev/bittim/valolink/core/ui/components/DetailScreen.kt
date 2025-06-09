@@ -7,7 +7,7 @@
  File:       DetailScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.zIndex
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 
@@ -194,15 +195,15 @@ fun DetailScreen(
 
     Column(
         modifier = Modifier
-            .padding(top = cardSize - 16.dp)
+            .padding(top = cardSize - Spacing.l)
             .fillMaxSize()
             .verticalScroll(scrollState)
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .offset(y = maxCardHeight - cardSize)
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(Spacing.xxl))
         content()
-        Spacer(modifier = Modifier.height(maxCardHeight - cardSize + 16.dp))
+        Spacer(modifier = Modifier.height(maxCardHeight - cardSize + Spacing.l))
     }
 }
 
@@ -221,7 +222,7 @@ fun DetailScreenPreview() {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp),
+                            .padding(Spacing.l),
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.End
                     ) {
@@ -234,14 +235,14 @@ fun DetailScreenPreview() {
                 },
                 content = {
                     Column(
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = Spacing.l)
                     ) {
                         Text(
                             text = "Base Details Screen",
                             style = MaterialTheme.typography.headlineMedium
                         )
 
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(Spacing.xs))
 
                         Text(text = "This is a sample details screen")
                     }

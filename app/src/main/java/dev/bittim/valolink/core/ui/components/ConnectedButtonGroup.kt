@@ -7,7 +7,7 @@
  File:       ConnectedButtonGroup.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -33,10 +33,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.ToggleIcon
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
@@ -93,7 +93,7 @@ fun SingleConnectedButtonGroup(
                 if (entry.image != null) {
                     AsyncImage(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(Spacing.xl)
                             .clip(CircleShape),
                         model = entry.image,
                         contentDescription = null,

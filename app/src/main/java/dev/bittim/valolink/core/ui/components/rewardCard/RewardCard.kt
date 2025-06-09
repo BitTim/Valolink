@@ -7,7 +7,7 @@
  File:       RewardCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 19:47
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -145,7 +145,7 @@ fun RewardCard(
                     }
 
                     val imagePadding = when (data.type) {
-                        RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(32.dp)
+                        RewardType.CURRENCY, RewardType.TITLE -> PaddingValues(Spacing.xxl)
                         RewardType.PLAYER_CARD, RewardType.FLEX -> PaddingValues(0.dp)
                         else -> PaddingValues(Spacing.l)
                     }
@@ -160,7 +160,7 @@ fun RewardCard(
                                 .padding(imagePadding)
                                 .conditional(it) {
                                     Modifier.blur(
-                                        4.dp,
+                                        Spacing.xs,
                                         BlurredEdgeTreatment.Rectangle
                                     )
                                 },

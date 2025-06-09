@@ -7,7 +7,7 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 12:12
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -55,7 +55,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.agent.Agent
@@ -70,6 +69,7 @@ import dev.bittim.valolink.core.ui.components.DetailScreen
 import dev.bittim.valolink.core.ui.components.ShaderGradientBackdrop
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardCardData
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient
 import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
 import dev.bittim.valolink.core.ui.util.getProgressPercent
@@ -162,7 +162,7 @@ fun AgentDetailsScreen(
                             .calculateTopPadding()
                     )
                     .conditional(isLocked) {
-                        blur(4.dp)
+                        blur(Spacing.xs)
                     },
                 model = agent?.fullPortrait,
                 contentDescription = null,
@@ -180,9 +180,9 @@ fun AgentDetailsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
+                        .padding(Spacing.l),
                     verticalArrangement = Arrangement.spacedBy(
-                        8.dp,
+                        Spacing.s,
                         Alignment.Bottom
                     )
                 ) {
@@ -197,11 +197,11 @@ fun AgentDetailsScreen(
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
                         ) {
                             AsyncImage(
                                 modifier = Modifier
-                                    .height(16.dp)
+                                    .height(Spacing.l)
                                     .aspectRatio(1f),
                                 model = agent?.role?.displayIcon,
                                 contentDescription = null,
@@ -242,12 +242,12 @@ fun AgentDetailsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
+                        .padding(Spacing.l),
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(Spacing.xs)
                     ) {
                         Text(
                             text = agent?.displayName ?: "",
@@ -255,11 +255,11 @@ fun AgentDetailsScreen(
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
                         ) {
                             AsyncImage(
                                 modifier = Modifier
-                                    .height(16.dp)
+                                    .height(Spacing.l)
                                     .aspectRatio(1f),
                                 model = agent?.role?.displayIcon,
                                 contentDescription = null,
@@ -275,7 +275,7 @@ fun AgentDetailsScreen(
                     FilledTonalButton(onClick = unlockAgent) {
                         AsyncImage(
                             modifier = Modifier
-                                .width(16.dp)
+                                .width(Spacing.l)
                                 .aspectRatio(1f),
                             model = state.dough?.displayIcon,
                             contentDescription = null,
@@ -284,7 +284,7 @@ fun AgentDetailsScreen(
                         )
 
                         Text(
-                            modifier = Modifier.padding(start = 8.dp),
+                            modifier = Modifier.padding(start = Spacing.s),
                             text = "8000"  // TODO: Move to a different data source
                         )
                     }
@@ -293,31 +293,31 @@ fun AgentDetailsScreen(
         },
         content = {
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = Spacing.l),
                 text = "Details",
                 style = MaterialTheme.typography.titleLarge
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.s))
 
             AgentDetailsSection(agent)
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.xl))
 
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = Spacing.l),
                 text = "Abilities",
                 style = MaterialTheme.typography.titleLarge
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.s))
 
             AbilitySection(abilities = agent?.abilities)
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.xl))
 
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = Spacing.l),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -333,12 +333,12 @@ fun AgentDetailsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Spacing.m))
 
             LazyRow(
                 state = state.rewardListState,
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                contentPadding = PaddingValues(horizontal = Spacing.l),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
                 val items =
                     state.agentGear?.content?.chapters?.flatMap { chapter -> chapter.levels }
@@ -394,12 +394,12 @@ fun AgentDetailsScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Spacing.xl))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(Spacing.xxs)
             ) {
                 Text(
                     text = "Contract: ${state.agentGear?.uuid}",

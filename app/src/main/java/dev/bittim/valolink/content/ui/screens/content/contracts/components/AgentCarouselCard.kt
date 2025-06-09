@@ -7,7 +7,7 @@
  File:       AgentCarouselCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   09.06.25, 18:52
  */
 
 @file:Suppress("SpellCheckingInspection")
@@ -60,6 +60,7 @@ import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.core.ui.theme.Motion
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.color.ShaderGradient
 import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
@@ -142,7 +143,7 @@ fun AgentCarouselCard(
                         modifier = Modifier
                             .fillMaxSize()
                             .conditional(checkedData.isLocked) {
-                                blur(4.dp)
+                                blur(Spacing.xs)
                             },
                         model = checkedData.fullPortrait,
                         contentDescription = null,
@@ -166,14 +167,14 @@ fun AgentCarouselCard(
                     ) {
                         Row(
                             modifier = Modifier
-                                .padding(16.dp)
+                                .padding(Spacing.l)
                                 .fillMaxSize(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.Bottom
                         ) {
                             if (!it) {
                                 Column(
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    verticalArrangement = Arrangement.spacedBy(Spacing.xs)
                                 ) {
                                     Text(
                                         text = checkedData.agentName,
@@ -182,11 +183,11 @@ fun AgentCarouselCard(
 
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                        horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
                                     ) {
                                         AsyncImage(
                                             modifier = Modifier
-                                                .height(16.dp)
+                                                .height(Spacing.l)
                                                 .aspectRatio(1f),
                                             model = checkedData.roleIcon,
                                             contentDescription = null,
@@ -215,14 +216,14 @@ fun AgentCarouselCard(
 
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    verticalArrangement = Arrangement.spacedBy(Spacing.xs)
                                 ) {
                                     CircularProgressIndicator(
                                         progress = {
                                             animatedProgress
                                         },
                                         modifier = Modifier
-                                            .height(32.dp)
+                                            .height(Spacing.xxl)
                                             .aspectRatio(1f),
                                         color = Color.White,
                                         trackColor = Color.Black.copy(alpha = 0.2f),

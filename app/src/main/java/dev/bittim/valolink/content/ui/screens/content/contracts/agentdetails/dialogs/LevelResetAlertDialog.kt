@@ -7,7 +7,7 @@
  File:       LevelResetAlertDialog.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs
@@ -26,10 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.Currency
 import dev.bittim.valolink.content.domain.model.contract.chapter.Level
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components.PricedListItem
+import dev.bittim.valolink.core.ui.theme.Spacing
 
 @Composable
 fun LevelResetAlertDialog(
@@ -50,7 +50,7 @@ fun LevelResetAlertDialog(
             LazyColumn {
                 item { Text(text = "The following rewards will be reset:") }
 
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(Spacing.l)) }
 
                 items(
                     items = levels,

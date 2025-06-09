@@ -7,7 +7,7 @@
  File:       ContentSyncWorker.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 16:03
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.data.worker
@@ -25,6 +25,8 @@ import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.data.repository.event.EventRepository
 import dev.bittim.valolink.content.data.repository.flex.FlexRepository
+import dev.bittim.valolink.content.data.repository.map.MapRepository
+import dev.bittim.valolink.content.data.repository.mode.ModeRepository
 import dev.bittim.valolink.content.data.repository.playerCard.PlayerCardRepository
 import dev.bittim.valolink.content.data.repository.playerTitle.PlayerTitleRepository
 import dev.bittim.valolink.content.data.repository.rank.RankRepository
@@ -32,6 +34,20 @@ import dev.bittim.valolink.content.data.repository.season.SeasonRepository
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.content.data.repository.version.VersionRepository
 import dev.bittim.valolink.content.data.repository.weapon.WeaponRepository
+import dev.bittim.valolink.content.domain.model.Currency
+import dev.bittim.valolink.content.domain.model.Event
+import dev.bittim.valolink.content.domain.model.Flex
+import dev.bittim.valolink.content.domain.model.PlayerCard
+import dev.bittim.valolink.content.domain.model.PlayerTitle
+import dev.bittim.valolink.content.domain.model.Season
+import dev.bittim.valolink.content.domain.model.Spray
+import dev.bittim.valolink.content.domain.model.agent.Agent
+import dev.bittim.valolink.content.domain.model.buddy.Buddy
+import dev.bittim.valolink.content.domain.model.contract.Contract
+import dev.bittim.valolink.content.domain.model.map.GameMap
+import dev.bittim.valolink.content.domain.model.mode.Mode
+import dev.bittim.valolink.content.domain.model.rank.Rank
+import dev.bittim.valolink.content.domain.model.weapon.Weapon
 import kotlinx.coroutines.flow.firstOrNull
 
 @HiltWorker
@@ -46,6 +62,8 @@ class ContentSyncWorker @AssistedInject constructor(
     private val currencyRepository: CurrencyRepository,
     private val eventRepository: EventRepository,
     private val flexRepository: FlexRepository,
+    private val mapRepository: MapRepository,
+    private val modeRepository: ModeRepository,
     private val playerCardRepository: PlayerCardRepository,
     private val playerTitleRepository: PlayerTitleRepository,
     private val rankRepository: RankRepository,
@@ -62,18 +80,20 @@ class ContentSyncWorker @AssistedInject constructor(
 
         // Get repository that shall be used
         val repository = when (type) {
-            "Agent" -> agentRepository
-            "Buddy" -> buddyRepository
-            "Contract" -> contractRepository
-            "Currency" -> currencyRepository
-            "Event" -> eventRepository
-            "Flex" -> flexRepository
-            "PlayerCard" -> playerCardRepository
-            "PlayerTitle" -> playerTitleRepository
-            "Rank" -> rankRepository
-            "Season" -> seasonRepository
-            "Spray" -> sprayRepository
-            "Weapon" -> weaponRepository
+            Agent::class.simpleName -> agentRepository
+            Buddy::class.simpleName -> buddyRepository
+            Contract::class.simpleName -> contractRepository
+            Currency::class.simpleName -> currencyRepository
+            Event::class.simpleName -> eventRepository
+            Flex::class.simpleName -> flexRepository
+            GameMap::class.simpleName -> mapRepository
+            Mode::class.simpleName -> modeRepository
+            PlayerCard::class.simpleName -> playerCardRepository
+            PlayerTitle::class.simpleName -> playerTitleRepository
+            Rank::class.simpleName -> rankRepository
+            Season::class.simpleName -> seasonRepository
+            Spray::class.simpleName -> sprayRepository
+            Weapon::class.simpleName -> weaponRepository
 
             else -> return Result.failure()
         }
@@ -106,6 +126,6 @@ class ContentSyncWorker @AssistedInject constructor(
     companion object {
         const val KEY_TYPE = "KEY_TYPE"
         const val KEY_UUID = "KEY_UUID"
-        const val WORK_BASE_NAME = "GameSyncWorker"
+        const val WORK_BASE_NAME = "ContentSyncWorker"
     }
 }

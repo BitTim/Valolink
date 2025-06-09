@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "94ba40f7a68b0ad376da0e9dd4e64e80",
+    "identityHash": "781f4489a527cc609dfe7d6efe5aebb2",
     "entities": [
       {
         "tableName": "Version",
@@ -2608,11 +2608,291 @@
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_RankTables_uuid` ON `${TABLE_NAME}` (`uuid`)"
           }
         ]
+      },
+      {
+        "tableName": "Maps",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `narrativeDescription` TEXT, `tacticalDescription` TEXT, `coordinates` TEXT, `displayIcon` TEXT, `listViewIcon` TEXT, `listViewIconTall` TEXT, `splash` TEXT, `stylizedBackgroundImage` TEXT, `premierBackgroundImage` TEXT, `type` TEXT NOT NULL, `xMultiplier` REAL NOT NULL, `yMultiplier` REAL NOT NULL, `xScalarToAdd` REAL NOT NULL, `yScalarToAdd` REAL NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "narrativeDescription",
+            "columnName": "narrativeDescription",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tacticalDescription",
+            "columnName": "tacticalDescription",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "coordinates",
+            "columnName": "coordinates",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "listViewIcon",
+            "columnName": "listViewIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "listViewIconTall",
+            "columnName": "listViewIconTall",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "splash",
+            "columnName": "splash",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "stylizedBackgroundImage",
+            "columnName": "stylizedBackgroundImage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "premierBackgroundImage",
+            "columnName": "premierBackgroundImage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xMultiplier",
+            "columnName": "xMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yMultiplier",
+            "columnName": "yMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xScalarToAdd",
+            "columnName": "xScalarToAdd",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yScalarToAdd",
+            "columnName": "yScalarToAdd",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Maps_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Maps_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "MapCallouts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `map` TEXT NOT NULL, `version` TEXT NOT NULL, `regionName` TEXT, `superRegionName` TEXT, `x` REAL NOT NULL, `y` REAL NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`map`) REFERENCES `Maps`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "map",
+            "columnName": "map",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "regionName",
+            "columnName": "regionName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "superRegionName",
+            "columnName": "superRegionName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "x",
+            "columnName": "x",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "y",
+            "columnName": "y",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_MapCallouts_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_MapCallouts_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          },
+          {
+            "name": "index_MapCallouts_map",
+            "unique": false,
+            "columnNames": [
+              "map"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_MapCallouts_map` ON `${TABLE_NAME}` (`map`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Maps",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "map"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "Modes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT, `scoreType` TEXT NOT NULL, `canBeRanked` INTEGER NOT NULL, `duration` TEXT, `roundsPerHalf` INTEGER NOT NULL, `displayIcon` TEXT, `listViewIconTall` TEXT, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "scoreType",
+            "columnName": "scoreType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canBeRanked",
+            "columnName": "canBeRanked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "roundsPerHalf",
+            "columnName": "roundsPerHalf",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "listViewIconTall",
+            "columnName": "listViewIconTall",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Modes_uuid",
+            "unique": true,
+            "columnNames": [
+              "uuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Modes_uuid` ON `${TABLE_NAME}` (`uuid`)"
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '94ba40f7a68b0ad376da0e9dd4e64e80')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '781f4489a527cc609dfe7d6efe5aebb2')"
     ]
   }
 }

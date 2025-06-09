@@ -7,7 +7,7 @@
  File:       PricedListItem.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.components
@@ -24,10 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 
 @Composable
 fun PricedListItem(
@@ -43,12 +43,12 @@ fun PricedListItem(
         Text(text = itemName)
         Row {
             Text(text = "$price")
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(Spacing.xs))
 
             AsyncImage(
                 modifier = Modifier
-                    .padding(end = 8.dp)
-                    .width(16.dp)
+                    .padding(end = Spacing.s)
+                    .width(Spacing.l)
                     .aspectRatio(1f),
                 model = currencyIcon,
                 contentDescription = null,

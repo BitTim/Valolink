@@ -7,7 +7,7 @@
  File:       LevelDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails
@@ -45,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.bittim.valolink.R
@@ -66,6 +65,7 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.com
 import dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components.VariantPreviewCluster
 import dev.bittim.valolink.core.ui.components.DetailScreen
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.ToggleIcon
 import dev.bittim.valolink.core.ui.util.UiText
 
@@ -141,9 +141,9 @@ fun LevelDetailsScreen(
                                 top = WindowInsets.displayCutout
                                     .asPaddingValues()
                                     .calculateTopPadding(),
-                                end = 16.dp,
-                                bottom = 16.dp,
-                                start = 16.dp,
+                                end = Spacing.l,
+                                bottom = Spacing.l,
+                                start = Spacing.l,
                             ),
                         model = ImageRequest
                             .Builder(
@@ -164,7 +164,7 @@ fun LevelDetailsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp),
+                    .padding(Spacing.s),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.End
             ) {
@@ -204,7 +204,7 @@ fun LevelDetailsScreen(
                 HeaderSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
+                        .padding(start = Spacing.l, end = Spacing.l),
                     levelHeaderData = levelHeaderData,
                     rewards = rewards,
                     onRewardSelected = {
@@ -225,7 +225,7 @@ fun LevelDetailsScreen(
                 UnlockSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
+                        .padding(start = Spacing.l, end = Spacing.l),
                     data = unlockSectionData,
                     onUnlock = {
                         if (state.userContract?.levels?.lastOrNull()?.level == state.level?.dependency) {

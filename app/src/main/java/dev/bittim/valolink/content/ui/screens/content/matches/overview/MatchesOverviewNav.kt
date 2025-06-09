@@ -4,13 +4,13 @@
  Project:    Valolink
  License:    GPLv3
 
- File:       MatchesNav.kt
+ File:       MatchesOverviewNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
-package dev.bittim.valolink.content.ui.screens.content.matches
+package dev.bittim.valolink.content.ui.screens.content.matches.overview
 
 import android.graphics.Bitmap
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,14 +24,14 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-object MatchesNav
+object MatchesOverviewNav
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun NavGraphBuilder.matchesScreen(
+fun NavGraphBuilder.matchesOverviewScreen(
     userAvatar: Bitmap?
 ) {
-    composable<MatchesNav> {
-        val viewModel: MatchesViewModel = hiltViewModel()
+    composable<MatchesOverviewNav> {
+        val viewModel: MatchesOverviewViewModel = hiltViewModel()
         val matchesState by viewModel.state.collectAsStateWithLifecycle()
 
         MatchesScreen(
@@ -43,7 +43,7 @@ fun NavGraphBuilder.matchesScreen(
 }
 
 fun NavController.navToMatches() {
-    navigate(MatchesNav) {
+    navigate(MatchesOverviewNav) {
         popUpTo(graph.findStartDestination().id) {
             inclusive = true
             saveState = true

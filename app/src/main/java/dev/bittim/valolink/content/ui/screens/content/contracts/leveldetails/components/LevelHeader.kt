@@ -7,7 +7,7 @@
  File:       LevelHeader.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -47,6 +47,7 @@ import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardTypeLabel
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardTypeLabelStyle
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.extensions.modifier.conditional
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
@@ -71,11 +72,11 @@ fun LevelHeader(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
             Crossfade(
                 modifier = Modifier.animateContentSize(),
@@ -103,7 +104,7 @@ fun LevelHeader(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .conditional(it.type != RewardType.PLAYER_CARD && it.type != RewardType.SPRAY && it.type != RewardType.FLEX) {
-                                    padding(8.dp)
+                                    padding(Spacing.s)
                                 },
                             model = it.displayIcon,
                             contentScale = ContentScale.Fit,
@@ -132,7 +133,7 @@ fun LevelHeader(
                                         density,
                                         configuration,
                                         MaterialTheme.typography.labelLarge
-                                    ) - 2.dp // 2.dp is the padding
+                                    ) - Spacing.xxs // Spacing.xxs is the padding
                                 )
                                 .padding(1.dp)
                                 .clip(MaterialTheme.shapes.small)
@@ -161,7 +162,7 @@ fun LevelHeader(
                                         density,
                                         configuration,
                                         MaterialTheme.typography.titleLarge
-                                    ) - 2.dp // 2.dp is the padding
+                                    ) - Spacing.xxs // Spacing.xxs is the padding
                                 )
                                 .padding(1.dp)
                                 .clip(MaterialTheme.shapes.small)
@@ -176,7 +177,7 @@ fun LevelHeader(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Spacing.s))
 
                 RewardTypeLabel(
                     modifier = Modifier.fillMaxWidth(),
@@ -197,7 +198,7 @@ fun LevelHeaderPreview() {
             Box(
                 modifier = Modifier
                     .width(412.dp)
-                    .padding(16.dp),
+                    .padding(Spacing.l),
             ) {
                 LevelHeader(
                     data = LevelHeaderData(
@@ -222,7 +223,7 @@ fun ProgressLevelHeaderPreview() {
             Box(
                 modifier = Modifier
                     .width(412.dp)
-                    .padding(16.dp),
+                    .padding(Spacing.l),
             ) {
                 LevelHeader(
                     data = LevelHeaderData(
@@ -247,7 +248,7 @@ fun NullProgressLevelHeaderPreview() {
             Box(
                 modifier = Modifier
                     .width(412.dp)
-                    .padding(16.dp),
+                    .padding(Spacing.l),
             ) {
                 LevelHeader(
                     data = null,

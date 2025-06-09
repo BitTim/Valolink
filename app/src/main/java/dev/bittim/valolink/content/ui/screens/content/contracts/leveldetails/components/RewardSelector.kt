@@ -7,7 +7,7 @@
  File:       RewardSelector.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 17:49
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.leveldetails.components
@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.components.ConnectedButtonEntry
 import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.ToggleIcon
 import dev.bittim.valolink.core.ui.util.UiText
@@ -64,7 +65,7 @@ fun RewardSelector(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(top = 8.dp, start = 16.dp, bottom = 8.dp, end = 8.dp)
+                .padding(top = Spacing.s, start = Spacing.l, bottom = Spacing.s, end = Spacing.s)
         ) {
             Text(
                 text = UiText.StringResource(R.string.levelDetails_rewardSelector_title).asString(),
@@ -80,7 +81,7 @@ fun RewardSelector(
         SingleConnectedButtonGroup(
             modifier = Modifier
                 .weight(1f)
-                .padding(8.dp),
+                .padding(Spacing.s),
             entries = rewards.map {
                 ConnectedButtonEntry(
                     label = null,

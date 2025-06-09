@@ -7,7 +7,7 @@
  File:       AgentListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentlist
@@ -41,10 +41,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.AgentCarouselCard
 import dev.bittim.valolink.content.ui.screens.content.contracts.components.AgentCarouselCardData
+import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.util.getProgressPercent
 
 
@@ -84,12 +84,12 @@ fun AgentListScreen(
                     LinearProgressIndicator(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(4.dp)
+                            .height(Spacing.xs)
                     )
                 } else {
                     Box(
                         modifier = Modifier
-                            .height(4.dp)
+                            .height(Spacing.xs)
                     )
                 }
             }
@@ -98,12 +98,12 @@ fun AgentListScreen(
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = Spacing.l)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             columns = GridCells.Adaptive(AgentCarouselCard.minWidth),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.m),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.m),
+            contentPadding = PaddingValues(vertical = Spacing.l)
         ) {
             items(
                 items = state.agentGears ?: List(20) { null },

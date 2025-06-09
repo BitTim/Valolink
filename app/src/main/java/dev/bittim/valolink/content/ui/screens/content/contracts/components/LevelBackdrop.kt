@@ -7,7 +7,7 @@
  File:       LevelBackdrop.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   13.04.25, 17:30
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.components
@@ -20,10 +20,10 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
 import dev.bittim.valolink.content.ui.components.coilDebugPlaceholder
+import dev.bittim.valolink.core.ui.theme.Spacing
 
 @Composable
 fun LevelBackdrop(
@@ -37,7 +37,7 @@ fun LevelBackdrop(
             modifier = modifier
                 .fillMaxSize()
                 .blur(
-                    32.dp
+                    Spacing.xxl
                 ),
             model = backgroundImage,
             contentDescription = null,

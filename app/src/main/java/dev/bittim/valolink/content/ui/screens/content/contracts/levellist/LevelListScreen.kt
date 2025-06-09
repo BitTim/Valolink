@@ -7,7 +7,7 @@
  File:       LevelListScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.levellist
@@ -45,7 +45,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.content.domain.model.agent.Agent
 import dev.bittim.valolink.content.domain.model.contract.chapter.Level
 import dev.bittim.valolink.content.domain.model.contract.reward.RewardType
@@ -53,6 +52,7 @@ import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dia
 import dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails.dialogs.LevelResetAlertDialog
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCard
 import dev.bittim.valolink.core.ui.components.rewardCard.RewardListCardData
+import dev.bittim.valolink.core.ui.theme.Spacing
 import java.time.Instant
 import java.util.UUID
 
@@ -164,24 +164,24 @@ fun LevelListScreen(
                     LinearProgressIndicator(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(4.dp)
+                            .height(Spacing.xs)
                     )
                 } else {
                     Box(
                         modifier = Modifier
-                            .height(4.dp)
+                            .height(Spacing.xs)
                     )
                 }
             }
         }
 
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(horizontal = Spacing.l),
+            verticalArrangement = Arrangement.spacedBy(Spacing.m),
             state = state.rewardListState
         ) {
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Spacing.l))
             }
 
             val items = state.contract?.content?.chapters?.flatMap { it.levels }
@@ -229,7 +229,7 @@ fun LevelListScreen(
             )
 
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Spacing.l))
             }
         }
     }

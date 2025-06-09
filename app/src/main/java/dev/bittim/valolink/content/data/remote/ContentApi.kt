@@ -7,7 +7,7 @@
  File:       ContentApi.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.data.remote
@@ -23,6 +23,8 @@ import dev.bittim.valolink.content.data.remote.dto.VersionDto
 import dev.bittim.valolink.content.data.remote.dto.agents.AgentDto
 import dev.bittim.valolink.content.data.remote.dto.buddy.BuddyDto
 import dev.bittim.valolink.content.data.remote.dto.contract.ContractDto
+import dev.bittim.valolink.content.data.remote.dto.map.MapDto
+import dev.bittim.valolink.content.data.remote.dto.mode.ModeDto
 import dev.bittim.valolink.content.data.remote.dto.rank.RankTableDto
 import dev.bittim.valolink.content.data.remote.dto.weapon.WeaponDto
 import retrofit2.Response
@@ -160,4 +162,24 @@ interface ContentApi {
 
     @GET("competitivetiers")
     suspend fun getAllRankTables(): Response<ContentApiResponse<List<RankTableDto>>>
+
+    // --------------------------------
+    //  Maps
+    // --------------------------------
+
+    @GET("maps/{uuid}")
+    suspend fun getMap(@Path("uuid") uuid: String): Response<ContentApiResponse<MapDto>>
+
+    @GET("maps")
+    suspend fun getAllMaps(): Response<ContentApiResponse<List<MapDto>>>
+
+    // --------------------------------
+    //  Modes
+    // --------------------------------
+
+    @GET("gamemodes/{uuid}")
+    suspend fun getMode(@Path("uuid") uuid: String): Response<ContentApiResponse<ModeDto>>
+
+    @GET("gamemodes")
+    suspend fun getAllModes(): Response<ContentApiResponse<List<ModeDto>>>
 }

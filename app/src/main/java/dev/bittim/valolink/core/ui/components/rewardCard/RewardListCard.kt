@@ -7,7 +7,7 @@
  File:       RewardListCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.core.ui.components.rewardCard
@@ -152,7 +152,7 @@ fun RewardListCard(
                                 .padding(imagePadding)
                                 .conditional(isLocked || isOwned) {
                                     blur(
-                                        4.dp,
+                                        Spacing.xs,
                                         BlurredEdgeTreatment.Rectangle
                                     )
                                 },
@@ -190,7 +190,7 @@ fun RewardListCard(
                                 ) {
                                     Icon(
                                         modifier = Modifier
-                                            .height(48.dp)
+                                            .height(Spacing.xxxl)
                                             .aspectRatio(1f),
                                         imageVector = Icons.Default.Lock,
                                         contentDescription = null,
@@ -218,7 +218,7 @@ fun RewardListCard(
                                 ) {
                                     Icon(
                                         modifier = Modifier
-                                            .height(48.dp)
+                                            .height(Spacing.xxxl)
                                             .aspectRatio(1f),
                                         imageVector = Icons.Default.CheckCircle,
                                         contentDescription = null,
@@ -273,7 +273,7 @@ fun RewardListCard(
                     }
                 }
 
-                Spacer(Modifier.height(2.dp))
+                Spacer(Modifier.height(Spacing.xxs))
 
                 Crossfade(
                     targetState = data,

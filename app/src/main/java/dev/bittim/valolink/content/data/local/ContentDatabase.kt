@@ -7,7 +7,7 @@
  File:       ContentDatabase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   09.06.25, 18:52
  */
 
 package dev.bittim.valolink.content.data.local
@@ -21,6 +21,8 @@ import dev.bittim.valolink.content.data.local.dao.ContractsDao
 import dev.bittim.valolink.content.data.local.dao.CurrencyDao
 import dev.bittim.valolink.content.data.local.dao.EventDao
 import dev.bittim.valolink.content.data.local.dao.FlexDao
+import dev.bittim.valolink.content.data.local.dao.MapDao
+import dev.bittim.valolink.content.data.local.dao.ModeDao
 import dev.bittim.valolink.content.data.local.dao.PlayerCardDao
 import dev.bittim.valolink.content.data.local.dao.PlayerTitleDao
 import dev.bittim.valolink.content.data.local.dao.RankDao
@@ -48,6 +50,8 @@ import dev.bittim.valolink.content.data.local.entity.contract.ContentEntity
 import dev.bittim.valolink.content.data.local.entity.contract.ContractEntity
 import dev.bittim.valolink.content.data.local.entity.contract.LevelEntity
 import dev.bittim.valolink.content.data.local.entity.contract.RewardEntity
+import dev.bittim.valolink.content.data.local.entity.map.MapCalloutEntity
+import dev.bittim.valolink.content.data.local.entity.map.MapEntity
 import dev.bittim.valolink.content.data.local.entity.rank.RankEntity
 import dev.bittim.valolink.content.data.local.entity.rank.RankTableEntity
 import dev.bittim.valolink.content.data.local.entity.weapon.WeaponEntity
@@ -61,6 +65,20 @@ import dev.bittim.valolink.content.data.local.entity.weapon.stats.WeaponAirBurst
 import dev.bittim.valolink.content.data.local.entity.weapon.stats.WeaponAltShotgunStatsEntity
 import dev.bittim.valolink.content.data.local.entity.weapon.stats.WeaponDamageRangeEntity
 import dev.bittim.valolink.content.data.local.entity.weapon.stats.WeaponStatsEntity
+import dev.bittim.valolink.content.domain.model.Currency
+import dev.bittim.valolink.content.domain.model.Event
+import dev.bittim.valolink.content.domain.model.Flex
+import dev.bittim.valolink.content.domain.model.PlayerCard
+import dev.bittim.valolink.content.domain.model.PlayerTitle
+import dev.bittim.valolink.content.domain.model.Season
+import dev.bittim.valolink.content.domain.model.Spray
+import dev.bittim.valolink.content.domain.model.agent.Agent
+import dev.bittim.valolink.content.domain.model.buddy.Buddy
+import dev.bittim.valolink.content.domain.model.contract.Contract
+import dev.bittim.valolink.content.domain.model.map.GameMap
+import dev.bittim.valolink.content.domain.model.mode.Mode
+import dev.bittim.valolink.content.domain.model.rank.Rank
+import dev.bittim.valolink.content.domain.model.weapon.Weapon
 import dev.bittim.valolink.core.data.local.converter.StringListConverter
 import kotlinx.coroutines.flow.Flow
 
@@ -74,7 +92,9 @@ import kotlinx.coroutines.flow.Flow
         BuddyEntity::class, BuddyLevelEntity::class,
         WeaponEntity::class, WeaponStatsEntity::class, WeaponAdsStatsEntity::class, WeaponAltShotgunStatsEntity::class, WeaponAirBurstStatsEntity::class, WeaponDamageRangeEntity::class, WeaponShopDataEntity::class, WeaponGridPositionEntity::class, WeaponSkinEntity::class, WeaponSkinChromaEntity::class, WeaponSkinLevelEntity::class,
         FlexEntity::class,
-        RankEntity::class, RankTableEntity::class
+        RankEntity::class, RankTableEntity::class,
+        MapEntity::class, MapCalloutEntity::class,
+        ModeEntity::class,
     ],
     version = 1
 )
@@ -88,6 +108,8 @@ abstract class ContentDatabase : RoomDatabase() {
     abstract val currencyDao: CurrencyDao
     abstract val eventDao: EventDao
     abstract val flexDao: FlexDao
+    abstract val mapDao: MapDao
+    abstract val modeDao: ModeDao
     abstract val playerCardDao: PlayerCardDao
     abstract val playerTitleDao: PlayerTitleDao
     abstract val rankDao: RankDao
@@ -97,18 +119,20 @@ abstract class ContentDatabase : RoomDatabase() {
 
     fun getAllOfType(type: String?): Flow<List<VersionedEntity?>> {
         return when (type) {
-            "Agent" -> agentDao.getAll()
-            "Buddy" -> buddyDao.getAll()
-            "Contract" -> contractsDao.getAll()
-            "Currency" -> currencyDao.getAll()
-            "Event" -> eventDao.getAll()
-            "Flex" -> flexDao.getAll()
-            "PlayerCard" -> playerCardDao.getAll()
-            "PlayerTitle" -> playerTitleDao.getAll()
-            "Rank" -> rankDao.getAllTables()
-            "Season" -> seasonDao.getAll()
-            "Spray" -> sprayDao.getAll()
-            "Weapon" -> weaponDao.getAll()
+            Agent::class.simpleName -> agentDao.getAll()
+            Buddy::class.simpleName -> buddyDao.getAll()
+            Contract::class.simpleName -> contractsDao.getAll()
+            Currency::class.simpleName -> currencyDao.getAll()
+            Event::class.simpleName -> eventDao.getAll()
+            Flex::class.simpleName -> flexDao.getAll()
+            GameMap::class.simpleName -> mapDao.getAll()
+            Mode::class.simpleName -> modeDao.getAll()
+            PlayerCard::class.simpleName -> playerCardDao.getAll()
+            PlayerTitle::class.simpleName -> playerTitleDao.getAll()
+            Rank::class.simpleName -> rankDao.getAllTables()
+            Season::class.simpleName -> seasonDao.getAll()
+            Spray::class.simpleName -> sprayDao.getAll()
+            Weapon::class.simpleName -> weaponDao.getAll()
 
             else -> throw IllegalArgumentException("Unknown type: $type")
         }
