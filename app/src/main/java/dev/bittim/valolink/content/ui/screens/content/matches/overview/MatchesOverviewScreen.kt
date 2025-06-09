@@ -7,7 +7,7 @@
  File:       MatchesOverviewScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   09.06.25, 21:31
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.overview
@@ -46,7 +46,7 @@ import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun MatchesScreen(
+fun MatchesOverviewScreen(
     state: MatchesOverviewState,
     userAvatar: Bitmap?,
     onFetch: () -> Unit,
@@ -121,7 +121,7 @@ fun MatchesScreen(
 @Composable
 fun MatchesScreenPreview() {
     ValolinkTheme {
-        MatchesScreen(
+        MatchesOverviewScreen(
             state = MatchesOverviewState(),
             userAvatar = null,
             onFetch = {}

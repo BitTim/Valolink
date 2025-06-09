@@ -7,7 +7,7 @@
  File:       NavItem.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   09.06.25, 21:31
  */
 
 package dev.bittim.valolink.content.ui.container.components.navbar
@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import dev.bittim.valolink.content.ui.screens.content.contracts.navToContractsGraph
 import dev.bittim.valolink.content.ui.screens.content.friends.navToFriends
 import dev.bittim.valolink.content.ui.screens.content.home.navToHome
-import dev.bittim.valolink.content.ui.screens.content.matches.overview.navToMatches
+import dev.bittim.valolink.content.ui.screens.content.matches.overview.navToMatchesOverview
 
 enum class NavItem(
     val title: String,
@@ -83,7 +83,7 @@ enum class NavItem(
                 contentDescription = "History"
             )
         },
-        navigation = NavController::navToMatches
+        navigation = NavController::navToMatchesOverview
     ),
 
     Friends(

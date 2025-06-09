@@ -7,13 +7,12 @@
  File:       MatchesOverviewNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   09.06.25, 21:31
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.overview
 
 import android.graphics.Bitmap
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,7 +25,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 object MatchesOverviewNav
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.matchesOverviewScreen(
     userAvatar: Bitmap?
 ) {
@@ -34,7 +32,7 @@ fun NavGraphBuilder.matchesOverviewScreen(
         val viewModel: MatchesOverviewViewModel = hiltViewModel()
         val matchesState by viewModel.state.collectAsStateWithLifecycle()
 
-        MatchesScreen(
+        MatchesOverviewScreen(
             state = matchesState,
             userAvatar = userAvatar,
             onFetch = viewModel::onFetch
@@ -42,7 +40,7 @@ fun NavGraphBuilder.matchesOverviewScreen(
     }
 }
 
-fun NavController.navToMatches() {
+fun NavController.navToMatchesOverview() {
     navigate(MatchesOverviewNav) {
         popUpTo(graph.findStartDestination().id) {
             inclusive = true
