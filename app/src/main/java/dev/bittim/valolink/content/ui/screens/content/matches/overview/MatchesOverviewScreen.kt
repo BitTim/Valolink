@@ -7,7 +7,7 @@
  File:       MatchesOverviewScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 21:31
+ Modified:   14.06.25, 02:07
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.overview
@@ -50,6 +50,7 @@ fun MatchesOverviewScreen(
     state: MatchesOverviewState,
     userAvatar: Bitmap?,
     onFetch: () -> Unit,
+    navToMatchesAdd: () -> Unit,
 ) {
     // TODO: Placeholder
     if (!state.isLoading) {
@@ -62,7 +63,7 @@ fun MatchesOverviewScreen(
         topBar = { ValolinkTopAppBar(userAvatar, scrollBehavior) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {}
+                onClick = navToMatchesAdd
             ) {
                 Icon(Icons.Default.Add, null)
             }
@@ -124,7 +125,8 @@ fun MatchesScreenPreview() {
         MatchesOverviewScreen(
             state = MatchesOverviewState(),
             userAvatar = null,
-            onFetch = {}
+            onFetch = {},
+            navToMatchesAdd = {}
         )
     }
 }

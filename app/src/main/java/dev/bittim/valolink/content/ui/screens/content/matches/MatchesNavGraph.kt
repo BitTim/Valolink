@@ -7,7 +7,7 @@
  File:       MatchesNavGraph.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   14.06.25, 02:07
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches
@@ -17,6 +17,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navigation
+import dev.bittim.valolink.content.ui.screens.content.matches.add.matchesAddScreen
+import dev.bittim.valolink.content.ui.screens.content.matches.add.navToMatchesAdd
 import dev.bittim.valolink.content.ui.screens.content.matches.overview.MatchesOverviewNav
 import dev.bittim.valolink.content.ui.screens.content.matches.overview.matchesOverviewScreen
 import kotlinx.serialization.Serializable
@@ -32,7 +34,12 @@ fun NavGraphBuilder.matchesNavGraph(
         startDestination = MatchesOverviewNav
     ) {
         matchesOverviewScreen(
-            userAvatar = userAvatar
+            userAvatar = userAvatar,
+            navToMatchesAdd = { navController.navToMatchesAdd() }
+        )
+
+        matchesAddScreen(
+            onNavBack = { navController.navigateUp() }
         )
     }
 }

@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   09.06.25, 18:52
+  Modified:   14.06.25, 02:07
   -->
 
 <resources>
@@ -99,4 +99,5 @@
     <string name="levelDetails_variant_landscape">Landscape</string>
     <string name="matches_overview_empty_title">No matches yet</string>
     <string name="matches_overview_empty_description">Play a match and add it to view it here</string>
+    <string name="matches_add_title">Add Match</string>
 </resources>

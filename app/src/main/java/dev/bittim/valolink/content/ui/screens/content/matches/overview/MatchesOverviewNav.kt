@@ -7,7 +7,7 @@
  File:       MatchesOverviewNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 21:31
+ Modified:   14.06.25, 02:07
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.overview
@@ -26,7 +26,8 @@ import kotlinx.serialization.Serializable
 object MatchesOverviewNav
 
 fun NavGraphBuilder.matchesOverviewScreen(
-    userAvatar: Bitmap?
+    userAvatar: Bitmap?,
+    navToMatchesAdd: () -> Unit,
 ) {
     composable<MatchesOverviewNav> {
         val viewModel: MatchesOverviewViewModel = hiltViewModel()
@@ -35,7 +36,8 @@ fun NavGraphBuilder.matchesOverviewScreen(
         MatchesOverviewScreen(
             state = matchesState,
             userAvatar = userAvatar,
-            onFetch = viewModel::onFetch
+            onFetch = viewModel::onFetch,
+            navToMatchesAdd = navToMatchesAdd
         )
     }
 }

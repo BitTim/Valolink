@@ -7,7 +7,7 @@
  File:       MatchesAddNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 21:31
+ Modified:   14.06.25, 02:07
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -24,13 +24,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 object MatchesAddNav
 
-fun NavGraphBuilder.matchesAddScreen() {
+fun NavGraphBuilder.matchesAddScreen(
+    onNavBack: () -> Unit
+) {
     composable<MatchesAddNav> {
         val viewModel: MatchesAddViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         MatchesAddScreen(
             state = state,
+            onNavBack = onNavBack
         )
     }
 }

@@ -7,7 +7,7 @@
  File:       MapCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 21:31
+ Modified:   14.06.25, 02:07
  */package dev.bittim.valolink.content.ui.screens.content.matches.components
 
 import androidx.compose.animation.Crossfade
@@ -70,15 +70,23 @@ fun MapCard(
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        model = data?.mapImage,
-                        contentDescription = data?.mapName,
-                        contentScale = ContentScale.FillWidth,
-                        alignment = Alignment.Center,
-                        placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_map_image)
-                    )
+                    if (it.mapImage != null) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            model = it.mapImage,
+                            contentDescription = it.mapName,
+                            contentScale = ContentScale.FillWidth,
+                            alignment = Alignment.Center,
+                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_map_image)
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                        )
+                    }
 
                     Column(
                         modifier = Modifier
@@ -95,13 +103,13 @@ fun MapCard(
                         verticalArrangement = Arrangement.Bottom,
                     ) {
                         Text(
-                            text = data?.mapName ?: "",
+                            text = it.mapName ?: "",
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color.White
                         )
 
                         Text(
-                            text = data?.mapCoordinates ?: "",
+                            text = it.mapCoordinates ?: "",
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.White.copy(alpha = 0.5f)
                         )
