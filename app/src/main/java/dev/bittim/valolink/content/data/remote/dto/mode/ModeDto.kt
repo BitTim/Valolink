@@ -7,12 +7,13 @@
  File:       ModeDto.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 19:06
+ Modified:   16.06.25, 01:14
  */
 
 package dev.bittim.valolink.content.data.remote.dto.mode
 
 import dev.bittim.valolink.content.data.local.ModeEntity
+import dev.bittim.valolink.content.domain.model.map.MapType
 import dev.bittim.valolink.content.domain.model.mode.ScoreType
 
 data class ModeDto(
@@ -35,14 +36,23 @@ data class ModeDto(
 ) {
     fun toEntity(version: String): ModeEntity {
         val scoreType = when {
-            assetPath.contains("NPEV2_GameMode") ||
-                    assetPath.contains("NPEGameMode") ||
-                    assetPath.contains("ShootingRangeGameMode") -> ScoreType.None
+            assetPath.contains("/NPEV2_GameMode") ||
+                    assetPath.contains("/NPEGameMode") ||
+                    assetPath.contains("/ShootingRangeGameMode") -> ScoreType.None
 
-            assetPath.contains("DeathmatchGameMode") ||
-                    assetPath.contains("SnowballFightGameMode") -> ScoreType.Placement
+            assetPath.contains("/DeathmatchGameMode") ||
+                    assetPath.contains("/SnowballFightGameMode") -> ScoreType.Placement
 
             else -> ScoreType.Default
+        }
+
+        val mapType = when {
+            assetPath.contains("/HURM") -> MapType.TDM
+            assetPath.contains("/NPEV2_GameMode") ||
+                    assetPath.contains("/NPEGameMode") -> MapType.Tutorial
+
+            assetPath.contains("/ShootingRangeGameMode") -> MapType.Range
+            else -> MapType.Default
         }
 
         return ModeEntity(
@@ -51,7 +61,8 @@ data class ModeDto(
             displayName,
             description,
             scoreType,
-            assetPath.contains("BombGameMode"),
+            mapType,
+            assetPath.contains("/BombGameMode"),
             duration,
             roundsPerHalf,
             displayIcon,

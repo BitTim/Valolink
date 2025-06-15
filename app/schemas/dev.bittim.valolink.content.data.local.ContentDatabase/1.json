@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "781f4489a527cc609dfe7d6efe5aebb2",
+    "identityHash": "e9672162bf3c9e25561e762d79293d6d",
     "entities": [
       {
         "tableName": "Version",
@@ -2812,7 +2812,7 @@
       },
       {
         "tableName": "Modes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT, `scoreType` TEXT NOT NULL, `canBeRanked` INTEGER NOT NULL, `duration` TEXT, `roundsPerHalf` INTEGER NOT NULL, `displayIcon` TEXT, `listViewIconTall` TEXT, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `version` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT, `scoreType` TEXT NOT NULL, `mapType` TEXT NOT NULL, `canBeRanked` INTEGER NOT NULL, `duration` TEXT, `roundsPerHalf` INTEGER NOT NULL, `displayIcon` TEXT, `listViewIconTall` TEXT, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -2840,6 +2840,12 @@
           {
             "fieldPath": "scoreType",
             "columnName": "scoreType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mapType",
+            "columnName": "mapType",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -2892,7 +2898,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '781f4489a527cc609dfe7d6efe5aebb2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e9672162bf3c9e25561e762d79293d6d')"
     ]
   }
 }

@@ -7,7 +7,7 @@
  File:       ModeEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   16.06.25, 01:14
  */
 
 package dev.bittim.valolink.content.data.local
@@ -16,6 +16,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dev.bittim.valolink.content.data.local.entity.VersionedEntity
+import dev.bittim.valolink.content.domain.model.map.MapType
 import dev.bittim.valolink.content.domain.model.mode.Mode
 import dev.bittim.valolink.content.domain.model.mode.ScoreType
 
@@ -32,6 +33,7 @@ data class ModeEntity(
     val displayName: String,
     val description: String?,
     val scoreType: ScoreType,
+    val mapType: MapType,
     val canBeRanked: Boolean,
     val duration: String?,
     val roundsPerHalf: Int,
@@ -44,6 +46,7 @@ data class ModeEntity(
             displayName,
             description,
             scoreType,
+            mapType,
             canBeRanked,
             duration,
             roundsPerHalf,

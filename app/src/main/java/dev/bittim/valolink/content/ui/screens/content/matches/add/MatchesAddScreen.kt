@@ -7,7 +7,7 @@
  File:       MatchesAddScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.06.25, 16:00
+ Modified:   16.06.25, 01:14
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -15,7 +15,6 @@ package dev.bittim.valolink.content.ui.screens.content.matches.add
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,15 +36,19 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.MilitaryTech
 import androidx.compose.material.icons.outlined.MilitaryTech
 import androidx.compose.material.icons.outlined.OutlinedFlag
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -71,16 +74,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import coil.compose.AsyncImage
 import dev.bittim.valolink.R
-import dev.bittim.valolink.content.domain.model.map.MapType
 import dev.bittim.valolink.content.domain.model.mode.ScoreType
 import dev.bittim.valolink.content.ui.screens.content.matches.components.MapCard
 import dev.bittim.valolink.content.ui.screens.content.matches.components.MapCardData
@@ -103,22 +105,13 @@ fun MatchesAddScreen(
     determineScoreResult: (score: Int, enemyScore: Int?, surrender: Boolean, enemySurrender: Boolean) -> ScoreResult,
     onNavBack: () -> Unit,
 ) {
-    val maps by remember(state.maps) {
-        derivedStateOf {
-            state.maps?.filter { it.type == MapType.Default || it.type == MapType.TDM }
-        }
-    }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val modes by remember(state.modes) {
         derivedStateOf {
             state.modes?.filter { it.scoreType != ScoreType.None }
         }
     }
-
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-    val pagerState = rememberPagerState(pageCount = { maps?.count() ?: 0 })
-    var clickedPage by remember { mutableIntStateOf(0) }
 
     var mode by remember { mutableStateOf(modes?.firstOrNull()) }
     var isModeMenuExpanded by remember { mutableStateOf(false) }
@@ -128,6 +121,21 @@ fun MatchesAddScreen(
     var enemyScoreString by remember { mutableStateOf("") }
     var surrender by remember { mutableStateOf(false) }
     var enemySurrender by remember { mutableStateOf(false) }
+
+    var xpString by remember { mutableStateOf("") }
+
+    val maps by remember(state.maps, mode) {
+        derivedStateOf {
+            state.maps?.filter { it.type == mode?.mapType } ?: listOf(
+                null,
+                null,
+                null
+            )
+        }
+    }
+
+    val pagerState = rememberPagerState(pageCount = { maps.count() })
+    var clickedPage by remember { mutableIntStateOf(0) }
 
     val score by remember { derivedStateOf { scoreString.toIntOrNull() ?: 0 } }
     val enemyScore by remember { derivedStateOf { enemyScoreString.toIntOrNull() ?: 0 } }
@@ -180,7 +188,7 @@ fun MatchesAddScreen(
                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
             )
 
-            val map = maps?.getOrNull(thisPage)
+            val map = maps.getOrNull(thisPage)
 
             MapCard(
                 modifier = Modifier
@@ -267,17 +275,21 @@ fun MatchesAddScreen(
                         horizontalArrangement = Arrangement.spacedBy(Spacing.l),
                         verticalAlignment = Alignment.Bottom
                     ) {
-                        val rotation = if (isModeMenuExpanded) 180f else 0f
-                        val animatedRotation = animateFloatAsState(targetValue = rotation)
-
-                        Box(
+                        ExposedDropdownMenuBox(
+                            expanded = isModeMenuExpanded,
+                            onExpandedChange = { isModeMenuExpanded = it },
                             modifier = Modifier.weight(1f),
                         ) {
                             OutlinedTextField(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor(
+                                        ExposedDropdownMenuAnchorType.PrimaryNotEditable
+                                    ),
                                 value = mode!!.displayName,
                                 onValueChange = {},
                                 readOnly = true,
+                                singleLine = true,
                                 label = {
                                     Text(
                                         text = UiText.StringResource(R.string.matches_add_mode_label)
@@ -296,17 +308,36 @@ fun MatchesAddScreen(
                                     )
                                 },
                                 trailingIcon = {
-                                    IconButton(onClick = {
-                                        isModeMenuExpanded = !isModeMenuExpanded
-                                    }) {
-                                        Icon(
-                                            modifier = Modifier.rotate(animatedRotation.value),
-                                            imageVector = Icons.Default.ArrowDropDown,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isModeMenuExpanded)
+                                },
                             )
+
+                            ExposedDropdownMenu(
+                                expanded = isModeMenuExpanded,
+                                onDismissRequest = { isModeMenuExpanded = false },
+                            ) {
+                                it.forEach { m ->
+                                    DropdownMenuItem(
+                                        leadingIcon = {
+                                            AsyncImage(
+                                                modifier = Modifier
+                                                    .size(Spacing.xl)
+                                                    .aspectRatio(1f),
+                                                model = m.displayIcon,
+                                                contentDescription = m.displayName,
+                                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                                                contentScale = ContentScale.Fit,
+                                            )
+                                        },
+                                        text = { Text(text = m.displayName) },
+                                        onClick = {
+                                            mode = m
+                                            isModeMenuExpanded = false
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                    )
+                                }
+                            }
                         }
 
                         AnimatedVisibility(mode!!.canBeRanked) {
@@ -336,13 +367,27 @@ fun MatchesAddScreen(
 
             Crossfade(modes) {
                 if (it == null || mode == null) {
-                    Box(
-                        modifier = Modifier
-                            .height(OutlinedTextFieldDefaults.MinHeight)
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(Spacing.m))
-                            .pulseAnimation(),
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.m),
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .height(OutlinedTextFieldDefaults.MinHeight)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(Spacing.m))
+                                .pulseAnimation(),
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .height(OutlinedTextFieldDefaults.MinHeight)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(Spacing.m))
+                                .pulseAnimation(),
+                        )
+                    }
                 } else {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -381,7 +426,9 @@ fun MatchesAddScreen(
                                     text = UiText.StringResource(R.string.matches_add_score_label)
                                         .asString()
                                 )
-                            }
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
 
                         OutlinedIconToggleButton(
@@ -416,11 +463,33 @@ fun MatchesAddScreen(
                                     text = UiText.StringResource(R.string.matches_add_enemyScore_label)
                                         .asString()
                                 )
-                            }
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
                     }
                 }
             }
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = xpString,
+                onValueChange = { xpString = it },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                label = {
+                    Text(
+                        text = UiText.StringResource(R.string.unit_xp)
+                            .asString()
+                    )
+                },
+                suffix = {
+                    Text(
+                        text = UiText.StringResource(R.string.unit_xp)
+                            .asString()
+                    )
+                }
+            )
         }
     }
 }
