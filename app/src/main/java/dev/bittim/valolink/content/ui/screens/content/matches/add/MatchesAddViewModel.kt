@@ -7,7 +7,7 @@
  File:       MatchesAddViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 21:31
+ Modified:   15.06.25, 16:00
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -18,6 +18,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.map.MapRepository
 import dev.bittim.valolink.content.data.repository.mode.ModeRepository
 import dev.bittim.valolink.content.data.repository.rank.RankRepository
+import dev.bittim.valolink.core.domain.model.ScoreResult
+import dev.bittim.valolink.core.domain.usecase.score.DetermineScoreResultUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +36,8 @@ import javax.inject.Inject
 class MatchesAddViewModel @Inject constructor(
     private val mapRepository: MapRepository,
     private val modeRepository: ModeRepository,
-    private val rankRepository: RankRepository
+    private val rankRepository: RankRepository,
+    private val determineScoreResultUseCase: DetermineScoreResultUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(MatchesAddState())
     val state = _state.asStateFlow()
@@ -50,7 +53,7 @@ class MatchesAddViewModel @Inject constructor(
                 mapRepository.getAll()
                     .stateIn(viewModelScope, WhileSubscribed(5000), null)
                     .collectLatest { maps ->
-                        _state.update { it.copy(maps = maps) }
+                        _state.update { it.copy(maps = maps?.sortedBy { map -> map.displayName }) }
                     }
             }
         }
@@ -76,5 +79,14 @@ class MatchesAddViewModel @Inject constructor(
                     }
             }
         }
+    }
+
+    fun determineScoreResult(
+        score: Int,
+        enemyScore: Int?,
+        surrender: Boolean,
+        enemySurrender: Boolean
+    ): ScoreResult {
+        return determineScoreResultUseCase(score, enemyScore, surrender, enemySurrender)
     }
 }

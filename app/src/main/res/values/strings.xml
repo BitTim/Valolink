@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   14.06.25, 02:07
+  Modified:   15.06.25, 16:00
   -->
 
 <resources>
@@ -100,4 +100,10 @@
     <string name="matches_overview_empty_title">No matches yet</string>
     <string name="matches_overview_empty_description">Play a match and add it to view it here</string>
     <string name="matches_add_title">Add Match</string>
+    <string name="matches_add_summary_title">Summary</string>
+    <string name="matches_add_summary_description">Mode, Score and XP</string>
+    <string name="unit_place">Place</string>
+    <string name="matches_add_mode_label">Mode</string>
+    <string name="matches_add_score_label">You</string>
+    <string name="matches_add_enemyScore_label">Enemy</string>
 </resources>
