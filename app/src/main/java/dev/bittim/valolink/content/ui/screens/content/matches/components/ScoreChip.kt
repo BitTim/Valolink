@@ -7,7 +7,7 @@
  File:       ScoreChip.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.06.25, 16:00
+ Modified:   19.06.25, 02:03
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.components
@@ -73,6 +73,8 @@ fun ScoreChip(
     val isPlacement by remember(enemyScore) {
         derivedStateOf { enemyScore == null }
     }
+
+    val surrender = enemyScore != null && surrender
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.xxs),

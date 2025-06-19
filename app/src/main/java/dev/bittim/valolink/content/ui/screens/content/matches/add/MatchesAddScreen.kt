@@ -7,12 +7,13 @@
  File:       MatchesAddScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.06.25, 01:14
+ Modified:   19.06.25, 02:03
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
@@ -137,8 +138,16 @@ fun MatchesAddScreen(
     val pagerState = rememberPagerState(pageCount = { maps.count() })
     var clickedPage by remember { mutableIntStateOf(0) }
 
-    val score by remember { derivedStateOf { scoreString.toIntOrNull() ?: 0 } }
-    val enemyScore by remember { derivedStateOf { enemyScoreString.toIntOrNull() ?: 0 } }
+    val scoreType by remember(mode) { derivedStateOf { mode?.scoreType ?: ScoreType.None } }
+    val score by remember(scoreString) { derivedStateOf { scoreString.toIntOrNull() ?: 0 } }
+    val enemyScore by remember(
+        enemyScoreString,
+        scoreType
+    ) {
+        derivedStateOf {
+            if (scoreType == ScoreType.Placement) null else enemyScoreString.toIntOrNull() ?: 0
+        }
+    }
 
     LaunchedEffect(clickedPage) {
         pagerState.animateScrollToPage(clickedPage)
@@ -226,7 +235,7 @@ fun MatchesAddScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = Spacing.l),
-            verticalArrangement = Arrangement.spacedBy(Spacing.m)
+            verticalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -367,18 +376,31 @@ fun MatchesAddScreen(
 
             Crossfade(modes) {
                 if (it == null || mode == null) {
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.m),
-                        verticalAlignment = Alignment.Bottom
+                        verticalArrangement = Arrangement.spacedBy(Spacing.s)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .height(OutlinedTextFieldDefaults.MinHeight)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(Spacing.m))
-                                .pulseAnimation(),
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .height(OutlinedTextFieldDefaults.MinHeight)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(Spacing.m))
+                                    .pulseAnimation(),
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .height(OutlinedTextFieldDefaults.MinHeight)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(Spacing.m))
+                                    .pulseAnimation(),
+                            )
+                        }
 
                         Box(
                             modifier = Modifier
@@ -389,107 +411,161 @@ fun MatchesAddScreen(
                         )
                     }
                 } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.m),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        OutlinedIconToggleButton(
-                            checked = surrender,
-                            onCheckedChange = {
-                                surrender = it
-                                enemySurrender = false
-                            },
-                            modifier = Modifier.size(
-                                IconButtonDefaults.mediumContainerSize(
-                                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                                )
-                            ),
-                            shapes = IconToggleButtonShapes(
-                                shape = IconButtonDefaults.mediumRoundShape,
-                                pressedShape = IconButtonDefaults.mediumPressedShape,
-                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
-                            )
-                        ) {
-                            Icon(
-                                imageVector = if (surrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
-                                contentDescription = null
-                            )
+                    AnimatedContent(scoreType) {
+                        when (it) {
+                            ScoreType.Default -> {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(Spacing.s),
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                                        verticalAlignment = Alignment.Bottom
+                                    ) {
+                                        OutlinedIconToggleButton(
+                                            checked = surrender,
+                                            onCheckedChange = {
+                                                surrender = it
+                                                enemySurrender = false
+                                            },
+                                            modifier = Modifier.size(
+                                                IconButtonDefaults.mediumContainerSize(
+                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
+                                                )
+                                            ),
+                                            shapes = IconToggleButtonShapes(
+                                                shape = IconButtonDefaults.mediumRoundShape,
+                                                pressedShape = IconButtonDefaults.mediumPressedShape,
+                                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                                            )
+                                        ) {
+                                            Icon(
+                                                imageVector = if (surrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
+                                                contentDescription = null
+                                            )
+                                        }
+
+                                        OutlinedTextField(
+                                            modifier = Modifier.weight(1f),
+                                            value = scoreString,
+                                            onValueChange = { scoreString = it },
+                                            label = {
+                                                Text(
+                                                    text = UiText.StringResource(R.string.matches_add_score_label)
+                                                        .asString()
+                                                )
+                                            },
+                                            singleLine = true,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                        )
+
+                                        OutlinedIconToggleButton(
+                                            checked = enemySurrender,
+                                            onCheckedChange = {
+                                                enemySurrender = it
+                                                surrender = false
+                                            },
+                                            modifier = Modifier.size(
+                                                IconButtonDefaults.mediumContainerSize(
+                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
+                                                )
+                                            ),
+                                            shapes = IconToggleButtonShapes(
+                                                shape = IconButtonDefaults.mediumRoundShape,
+                                                pressedShape = IconButtonDefaults.mediumPressedShape,
+                                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                                            )
+                                        ) {
+                                            Icon(
+                                                imageVector = if (enemySurrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
+                                                contentDescription = null
+                                            )
+                                        }
+
+                                        OutlinedTextField(
+                                            modifier = Modifier.weight(1f),
+                                            value = enemyScoreString,
+                                            onValueChange = { enemyScoreString = it },
+                                            label = {
+                                                Text(
+                                                    text = UiText.StringResource(R.string.matches_add_enemyScore_label)
+                                                        .asString()
+                                                )
+                                            },
+                                            singleLine = true,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                        )
+                                    }
+
+                                    OutlinedTextField(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        value = xpString,
+                                        onValueChange = { xpString = it },
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        label = {
+                                            Text(
+                                                text = UiText.StringResource(R.string.unit_xp)
+                                                    .asString()
+                                            )
+                                        },
+                                        suffix = {
+                                            Text(
+                                                text = UiText.StringResource(R.string.unit_xp)
+                                                    .asString()
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+
+                            ScoreType.Placement -> {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(Spacing.m),
+                                ) {
+                                    OutlinedTextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = scoreString,
+                                        onValueChange = { scoreString = it },
+                                        label = {
+                                            Text(
+                                                text = UiText.StringResource(R.string.matches_add_placement_label)
+                                                    .asString()
+                                            )
+                                        },
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                    )
+
+                                    OutlinedTextField(
+                                        modifier = Modifier.weight(1f),
+                                        value = xpString,
+                                        onValueChange = { xpString = it },
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        label = {
+                                            Text(
+                                                text = UiText.StringResource(R.string.unit_xp)
+                                                    .asString()
+                                            )
+                                        },
+                                        suffix = {
+                                            Text(
+                                                text = UiText.StringResource(R.string.unit_xp)
+                                                    .asString()
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+
+                            else -> Unit
                         }
-
-                        OutlinedTextField(
-                            modifier = Modifier.weight(1f),
-                            value = scoreString,
-                            onValueChange = { scoreString = it },
-                            label = {
-                                Text(
-                                    text = UiText.StringResource(R.string.matches_add_score_label)
-                                        .asString()
-                                )
-                            },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-
-                        OutlinedIconToggleButton(
-                            checked = enemySurrender,
-                            onCheckedChange = {
-                                enemySurrender = it
-                                surrender = false
-                            },
-                            modifier = Modifier.size(
-                                IconButtonDefaults.mediumContainerSize(
-                                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                                )
-                            ),
-                            shapes = IconToggleButtonShapes(
-                                shape = IconButtonDefaults.mediumRoundShape,
-                                pressedShape = IconButtonDefaults.mediumPressedShape,
-                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
-                            )
-                        ) {
-                            Icon(
-                                imageVector = if (enemySurrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
-                                contentDescription = null
-                            )
-                        }
-
-                        OutlinedTextField(
-                            modifier = Modifier.weight(1f),
-                            value = enemyScoreString,
-                            onValueChange = { enemyScoreString = it },
-                            label = {
-                                Text(
-                                    text = UiText.StringResource(R.string.matches_add_enemyScore_label)
-                                        .asString()
-                                )
-                            },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
                     }
                 }
             }
-
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = xpString,
-                onValueChange = { xpString = it },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                label = {
-                    Text(
-                        text = UiText.StringResource(R.string.unit_xp)
-                            .asString()
-                    )
-                },
-                suffix = {
-                    Text(
-                        text = UiText.StringResource(R.string.unit_xp)
-                            .asString()
-                    )
-                }
-            )
         }
     }
 }
