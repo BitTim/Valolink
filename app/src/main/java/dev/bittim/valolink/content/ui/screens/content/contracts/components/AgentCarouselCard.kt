@@ -7,7 +7,7 @@
  File:       AgentCarouselCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   21.06.25, 02:20
  */
 
 @file:Suppress("SpellCheckingInspection")
@@ -112,7 +112,7 @@ fun AgentCarouselCard(
             .clickable {
                 if (data != null) onNavToAgentDetails(data.contractUuid)
             },
-        gradient = ShaderGradient.fromList(data?.backgroundGradientColors ?: emptyList()),
+        gradient = ShaderGradient.fromRGBAList(data?.backgroundGradientColors ?: emptyList()),
         backgroundImage = data?.backgroundImage,
         isDisabled = data?.isLocked != false
     ) {

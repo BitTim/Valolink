@@ -7,7 +7,7 @@
  File:       MatchesAddScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   19.06.25, 02:03
+ Modified:   21.06.25, 02:20
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -87,6 +87,7 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.content.domain.model.mode.ScoreType
 import dev.bittim.valolink.content.ui.screens.content.matches.components.MapCard
 import dev.bittim.valolink.content.ui.screens.content.matches.components.MapCardData
+import dev.bittim.valolink.content.ui.screens.content.matches.components.RankChip
 import dev.bittim.valolink.content.ui.screens.content.matches.components.ScoreChip
 import dev.bittim.valolink.core.domain.model.ScoreResult
 import dev.bittim.valolink.core.ui.theme.Spacing
@@ -116,7 +117,7 @@ fun MatchesAddScreen(
 
     var mode by remember { mutableStateOf(modes?.firstOrNull()) }
     var isModeMenuExpanded by remember { mutableStateOf(false) }
-    var isRanked by remember { mutableStateOf(false) }
+    var isRankedToggle by remember { mutableStateOf(false) }
 
     var scoreString by remember { mutableStateOf("") }
     var enemyScoreString by remember { mutableStateOf("") }
@@ -139,6 +140,10 @@ fun MatchesAddScreen(
     var clickedPage by remember { mutableIntStateOf(0) }
 
     val scoreType by remember(mode) { derivedStateOf { mode?.scoreType ?: ScoreType.None } }
+    val isRanked by remember(
+        isRankedToggle,
+        mode
+    ) { derivedStateOf { isRankedToggle && mode?.canBeRanked == true } }
     val score by remember(scoreString) { derivedStateOf { scoreString.toIntOrNull() ?: 0 } }
     val enemyScore by remember(
         enemyScoreString,
@@ -356,8 +361,8 @@ fun MatchesAddScreen(
                                         IconButtonDefaults.IconButtonWidthOption.Wide
                                     )
                                 ),
-                                checked = isRanked,
-                                onCheckedChange = { isRanked = it },
+                                checked = isRankedToggle,
+                                onCheckedChange = { isRankedToggle = it },
                                 shapes = IconToggleButtonShapes(
                                     shape = IconButtonDefaults.mediumRoundShape,
                                     pressedShape = IconButtonDefaults.mediumPressedShape,
@@ -365,7 +370,7 @@ fun MatchesAddScreen(
                                 )
                             ) {
                                 Icon(
-                                    imageVector = if (isRanked) Icons.Filled.MilitaryTech else Icons.Outlined.MilitaryTech,
+                                    imageVector = if (isRankedToggle) Icons.Filled.MilitaryTech else Icons.Outlined.MilitaryTech,
                                     contentDescription = null
                                 )
                             }
@@ -562,6 +567,59 @@ fun MatchesAddScreen(
                             }
 
                             else -> Unit
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(Spacing.xl))
+
+        AnimatedVisibility(visible = isRanked, modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.l),
+                verticalArrangement = Arrangement.spacedBy(Spacing.s)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+                    ) {
+                        Text(
+                            text = UiText.StringResource(R.string.matches_add_rank_title)
+                                .asString(),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text = UiText.StringResource(R.string.matches_add_rank_description)
+                                .asString(),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+
+                    val rank = state.ranks?.find { it.tier == state.userRank?.tier }
+
+                    Crossfade(rank) {
+                        if (it == null) {
+                            Box(
+                                modifier = Modifier
+                                    .height(OutlinedTextFieldDefaults.MinHeight)
+                                    .fillMaxWidth(0.2f)
+                                    .clip(RoundedCornerShape(Spacing.m))
+                                    .pulseAnimation(),
+                            )
+                        } else {
+                            RankChip(
+                                rank = it,
+                                deltaRR = 0,
+                                isRankChanged = false,
+                                showRankName = false,
+                                compact = false
+                            )
                         }
                     }
                 }

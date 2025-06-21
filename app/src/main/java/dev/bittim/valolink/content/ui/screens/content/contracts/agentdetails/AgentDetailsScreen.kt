@@ -7,7 +7,7 @@
  File:       AgentDetailsScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   21.06.25, 02:20
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -146,7 +146,7 @@ fun AgentDetailsScreen(
             if (agent != null) {
                 ShaderGradientBackdrop(
                     modifier = Modifier.fillMaxSize(),
-                    gradient = ShaderGradient.fromList(agent.backgroundGradientColors),
+                    gradient = ShaderGradient.fromRGBAList(agent.backgroundGradientColors),
                     backgroundImage = agent.background,
                     isDisabled = isLocked
                 ) {}

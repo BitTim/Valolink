@@ -7,7 +7,7 @@
  File:       ShaderGradient.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   20.04.25, 03:29
+ Modified:   21.06.25, 02:20
  */
 
 package dev.bittim.valolink.core.ui.util.color
@@ -15,7 +15,9 @@ package dev.bittim.valolink.core.ui.util.color
 import android.graphics.RuntimeShader
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.toArgb
 import org.intellij.lang.annotations.Language
 
 @Language("AGSL")
@@ -40,8 +42,40 @@ class ShaderGradient() {
     private var disabledSaturation: Float = 0f
     private var enabledSaturation: Float = 1f
 
+    private fun colorToArgb(color: Color): String {
+        return String.format("#%06X", 0xFFFFFF and color.toArgb())
+    }
+
     companion object {
-        fun fromList(list: List<String>): ShaderGradient? {
+        fun fromARGBList(list: List<String>): ShaderGradient? {
+            return when (list.size) {
+                1 -> ShaderGradient(list[0])
+                2 -> ShaderGradient(list[0], list[1])
+                4 -> ShaderGradient(list[0], list[1], list[2], list[3])
+                else -> null
+            }
+        }
+
+        fun fromRGBAList(list: List<String>): ShaderGradient? {
+            return when (list.size) {
+                1 -> ShaderGradient(convertRGBAtoARGB(list[0], true))
+                2 -> ShaderGradient(
+                    convertRGBAtoARGB(list[0], true),
+                    convertRGBAtoARGB(list[1], true)
+                )
+
+                4 -> ShaderGradient(
+                    convertRGBAtoARGB(list[0], true),
+                    convertRGBAtoARGB(list[1], true),
+                    convertRGBAtoARGB(list[2], true),
+                    convertRGBAtoARGB(list[3], true)
+                )
+
+                else -> null
+            }
+        }
+
+        fun fromColorList(list: List<Color>): ShaderGradient? {
             return when (list.size) {
                 1 -> ShaderGradient(list[0])
                 2 -> ShaderGradient(list[0], list[1])
@@ -52,71 +86,114 @@ class ShaderGradient() {
     }
 
     constructor(
-        rgba: String,
+        argb: String,
         disabledSaturation: Float = 0.3f,
         enabledSaturation: Float = 1f
     ) : this() {
-        this.argbTopLeft = convertRGBAtoARGB(rgba, true)
-        this.argbTopRight = convertRGBAtoARGB(rgba, true)
-        this.argbBottomRight = convertRGBAtoARGB(rgba, true)
-        this.argbBottomLeft = convertRGBAtoARGB(rgba, true)
+        this.argbTopLeft = argb
+        this.argbTopRight = argb
+        this.argbBottomRight = argb
+        this.argbBottomLeft = argb
         this.disabledSaturation = disabledSaturation
         this.enabledSaturation = enabledSaturation
     }
 
     constructor(
-        rgbaTopLeftBottomRight: String,
-        rgbaTopRightBottomLeft: String,
+        argbTopLeftBottomRight: String,
+        argbTopRightBottomLeft: String,
         disabledSaturation: Float = 0.3f,
         enabledSaturation: Float = 1f
     ) : this() {
-        this.argbTopLeft = convertRGBAtoARGB(rgbaTopLeftBottomRight, true)
-        this.argbTopRight = convertRGBAtoARGB(rgbaTopRightBottomLeft, true)
-        this.argbBottomRight = convertRGBAtoARGB(rgbaTopLeftBottomRight, true)
-        this.argbBottomLeft = convertRGBAtoARGB(rgbaTopRightBottomLeft, true)
+        this.argbTopLeft = argbTopLeftBottomRight
+        this.argbTopRight = argbTopRightBottomLeft
+        this.argbBottomRight = argbTopLeftBottomRight
+        this.argbBottomLeft = argbTopRightBottomLeft
         this.disabledSaturation = disabledSaturation
         this.enabledSaturation = enabledSaturation
     }
 
     constructor(
-        rgbaTopLeft: String,
-        rgbaTopRight: String,
-        rgbaBottomRight: String,
-        rgbaBottomLeft: String,
+        argbTopLeft: String,
+        argbTopRight: String,
+        argbBottomRight: String,
+        argbBottomLeft: String,
         disabledSaturation: Float = 0.3f,
         enabledSaturation: Float = 1f
     ) : this() {
-        this.argbTopLeft = convertRGBAtoARGB(rgbaTopLeft, true)
-        this.argbTopRight = convertRGBAtoARGB(rgbaTopRight, true)
-        this.argbBottomLeft = convertRGBAtoARGB(rgbaBottomLeft, true)
-        this.argbBottomRight = convertRGBAtoARGB(rgbaBottomRight, true)
+        this.argbTopLeft = argbTopLeft
+        this.argbTopRight = argbTopRight
+        this.argbBottomLeft = argbBottomLeft
+        this.argbBottomRight = argbBottomRight
+        this.disabledSaturation = disabledSaturation
+        this.enabledSaturation = enabledSaturation
+    }
+
+    constructor(
+        color: Color,
+        disabledSaturation: Float = 0.3f,
+        enabledSaturation: Float = 1f
+    ) : this() {
+        this.argbTopLeft = colorToArgb(color)
+        this.argbTopRight = colorToArgb(color)
+        this.argbBottomRight = colorToArgb(color)
+        this.argbBottomLeft = colorToArgb(color)
+        this.disabledSaturation = disabledSaturation
+        this.enabledSaturation = enabledSaturation
+    }
+
+    constructor(
+        colorTopLeftBottomRight: Color,
+        colorTopRightBottomLeft: Color,
+        disabledSaturation: Float = 0.3f,
+        enabledSaturation: Float = 1f
+    ) : this() {
+        this.argbTopLeft = colorToArgb(colorTopLeftBottomRight)
+        this.argbTopRight = colorToArgb(colorTopRightBottomLeft)
+        this.argbBottomRight = colorToArgb(colorTopLeftBottomRight)
+        this.argbBottomLeft = colorToArgb(colorTopRightBottomLeft)
+        this.disabledSaturation = disabledSaturation
+        this.enabledSaturation = enabledSaturation
+    }
+
+    constructor(
+        colorTopLeft: Color,
+        colorTopRight: Color,
+        colorBottomRight: Color,
+        colorBottomLeft: Color,
+        disabledSaturation: Float = 0.3f,
+        enabledSaturation: Float = 1f
+    ) : this() {
+        this.argbTopLeft = colorToArgb(colorTopLeft)
+        this.argbTopRight = colorToArgb(colorTopRight)
+        this.argbBottomLeft = colorToArgb(colorBottomLeft)
+        this.argbBottomRight = colorToArgb(colorBottomRight)
         this.disabledSaturation = disabledSaturation
         this.enabledSaturation = enabledSaturation
     }
 
     fun getColorTopLeft(isDisabled: Boolean): Int {
-        return parseAndSaturateColor(
+        return parseAndSaturateARGBToColor(
             argbTopLeft,
             if (isDisabled) disabledSaturation else enabledSaturation
         )
     }
 
     fun getColorTopRight(isDisabled: Boolean): Int {
-        return parseAndSaturateColor(
+        return parseAndSaturateARGBToColor(
             argbTopRight,
             if (isDisabled) disabledSaturation else enabledSaturation
         )
     }
 
     fun getColorBottomRight(isDisabled: Boolean): Int {
-        return parseAndSaturateColor(
+        return parseAndSaturateARGBToColor(
             argbBottomRight,
             if (isDisabled) disabledSaturation else enabledSaturation
         )
     }
 
     fun getColorBottomLeft(isDisabled: Boolean): Int {
-        return parseAndSaturateColor(
+        return parseAndSaturateARGBToColor(
             argbBottomLeft,
             if (isDisabled) disabledSaturation else enabledSaturation
         )

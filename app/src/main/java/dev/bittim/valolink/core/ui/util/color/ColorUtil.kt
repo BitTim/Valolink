@@ -7,7 +7,7 @@
  File:       ColorUtil.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   17.04.25, 14:53
+ Modified:   21.06.25, 02:20
  */
 
 package dev.bittim.valolink.core.ui.util.color
@@ -19,14 +19,29 @@ import androidx.core.graphics.toColorInt
 
 fun convertRGBAtoARGB(colorString: String, leadingHash: Boolean = false): String {
     try {
-        val argb = colorString.substring(6) + colorString.substring(0, 6)
+        val strippedString = colorString.removePrefix("#")
+        val argb = strippedString.substring(6) + strippedString.substring(0, 6)
         return if (leadingHash) "#$argb" else argb
     } catch (_: Exception) {
         return if (leadingHash) "#ffff00ff" else "ffff00ff"
     }
 }
 
-fun parseAndSaturateColor(
+fun convertARGBtoRGBA(colorString: String, leadingHash: Boolean = false): String {
+    try {
+        val strippedString = colorString.removePrefix("#")
+        val rgba = strippedString.substring(0, 6) + strippedString.substring(6)
+        return if (leadingHash) "#$rgba" else rgba
+    } catch (_: Exception) {
+        return if (leadingHash) "#ff00ffff" else "ff00ffff"
+    }
+}
+
+fun parseARGBToColor(argbString: String): Int {
+    return parseAndSaturateARGBToColor(argbString, 1f)
+}
+
+fun parseAndSaturateARGBToColor(
     argbString: String,
     saturation: Float,
 ): Int {

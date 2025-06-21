@@ -7,7 +7,7 @@
   File:       strings.xml
   Module:     Valolink.app.main
   Author:     Tim Anhalt (BitTim)
-  Modified:   19.06.25, 02:03
+  Modified:   21.06.25, 02:20
   -->
 
 <resources>
@@ -107,4 +107,6 @@
     <string name="matches_add_score_label">You</string>
     <string name="matches_add_enemyScore_label">Enemy</string>
     <string name="matches_add_placement_label">Placement</string>
+    <string name="matches_add_rank_title">Rank</string>
+    <string name="matches_add_rank_description">Influence on your rank</string>
 </resources>

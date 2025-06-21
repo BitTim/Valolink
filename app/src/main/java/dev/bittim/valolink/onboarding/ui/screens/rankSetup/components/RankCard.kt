@@ -7,7 +7,7 @@
  File:       RankCard.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 17:30
+ Modified:   21.06.25, 02:20
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup.components
@@ -76,7 +76,7 @@ fun RankCard(
                 ShaderGradientBackdrop(
                     modifier = Modifier.fillMaxHeight(),
                     isDisabled = false,
-                    gradient = ShaderGradient.fromList(checkedData.gradient),
+                    gradient = ShaderGradient.fromRGBAList(checkedData.gradient),
                     backgroundImage = null
                 ) {
                     Row(
@@ -94,7 +94,7 @@ fun RankCard(
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             alignment = Alignment.Center,
-                            placeholder = coilDebugPlaceholder(R.drawable.debug_rank_iron2)
+                            placeholder = coilDebugPlaceholder(R.drawable.debug_rank_gold2)
                         )
 
                         RankCluster(
@@ -123,11 +123,11 @@ fun LargeRankCardPreview() {
                 RankCard(
                     modifier = Modifier.width(300.dp),
                     data = RankCardData(
-                        rankName = "Iron 2",
+                        rankName = "Gold 2",
                         rankIcon = "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/4/largeicon.png",
                         gradient = listOf(
-                            "4f514fff",
-                            "828282ff",
+                            "eccf56ff",
+                            "eec56aff",
                         ),
                     ),
                     isUnranked = false,
@@ -144,8 +144,8 @@ fun LargeRankCardPreview() {
                         rankName = "Unranked",
                         rankIcon = "https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/4/largeicon.png",
                         gradient = listOf(
-                            "4f514fff",
-                            "828282ff",
+                            "ffffffff",
+                            "00000000",
                         ),
                     ),
                     isUnranked = true,
