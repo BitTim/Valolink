@@ -3,10 +3,10 @@ agp = "8.10.1"
 apng = "1.12.0"
 constraintlayoutCompose = "1.1.1"
 datastorePreferences = "1.1.7"
-ktorClientOkhttp = "3.1.2"
+ktorClientOkhttp = "3.2.0"
 supabaseBom = "3.1.4"
 coilComposeVersion = "2.7.0"
-converterMoshi = "2.11.0"
+converterMoshi = "3.0.0"
 hiltAndroid = "2.56.2"
 hiltAndroidCompiler = "2.56.2"
 hiltCompiler = "1.2.0"
@@ -17,25 +17,25 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2025.06.00"
+composeBom = "2025.06.01"
 materialIconsExtendedAndroid = "1.7.8"
 moshiKotlin = "1.15.2"
 navigationCompose = "2.9.0"
 playServicesAuth = "21.3.0"
 lifecycleRuntimeCompose = "2.9.1"
-retrofit = "2.11.0"
-roomKtx = "2.7.1"
+retrofit = "3.0.0"
+roomKtx = "2.7.2"
 material = "1.12.0"
-material3 = "1.4.0-alpha15"
+material3 = "1.4.0-alpha16"
 serialization = "1.8.1"
 adaptive = "1.1.0"
 adaptiveLayout = "1.1.0"
 adaptiveNavigation = "1.1.0"
-workRuntimeKtx = "2.10.1"
+workRuntimeKtx = "2.10.2"
 hiltCommon = "1.2.0"
 hiltWork = "1.2.0"
 ksp = "2.1.0-1.0.29"
-ui = "1.9.0-alpha04"
+ui = "1.9.0-beta01"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -66,7 +66,7 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.2" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.3" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }

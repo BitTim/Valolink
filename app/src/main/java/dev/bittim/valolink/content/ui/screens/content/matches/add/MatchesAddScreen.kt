@@ -7,7 +7,7 @@
  File:       MatchesAddScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 02:20
+ Modified:   21.06.25, 03:13
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -40,16 +40,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.MilitaryTech
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.outlined.MilitaryTech
 import androidx.compose.material.icons.outlined.OutlinedFlag
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,10 +65,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconToggleButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -98,6 +107,11 @@ import dev.bittim.valolink.core.ui.util.extensions.modifier.SATURATION_DESATURAT
 import dev.bittim.valolink.core.ui.util.extensions.modifier.pulseAnimation
 import dev.bittim.valolink.core.ui.util.extensions.modifier.saturation
 import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
+
+data object MatchesAddScreenDefaults {
+    const val MAX_DELTA_RR = 50
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("ConfigurationScreenWidthHeight")
@@ -108,6 +122,9 @@ fun MatchesAddScreen(
     onNavBack: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val deltaRRSliderState = rememberSliderState(
+        valueRange = -MatchesAddScreenDefaults.MAX_DELTA_RR.toFloat()..MatchesAddScreenDefaults.MAX_DELTA_RR.toFloat(),
+    )
 
     val modes by remember(state.modes) {
         derivedStateOf {
@@ -125,6 +142,7 @@ fun MatchesAddScreen(
     var enemySurrender by remember { mutableStateOf(false) }
 
     var xpString by remember { mutableStateOf("") }
+    var rankSpecial by remember { mutableStateOf(false) }
 
     val maps by remember(state.maps, mode) {
         derivedStateOf {
@@ -154,6 +172,8 @@ fun MatchesAddScreen(
         }
     }
 
+    val deltaRR by remember { derivedStateOf { deltaRRSliderState.value.roundToInt() } }
+
     LaunchedEffect(clickedPage) {
         pagerState.animateScrollToPage(clickedPage)
     }
@@ -172,7 +192,15 @@ fun MatchesAddScreen(
                 IconButton(onClick = { onNavBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = null
+                    )
+                }
+            },
+            actions = {
+                FilledIconButton(onClick = { /* TODO */ }) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null
                     )
                 }
             },
@@ -354,26 +382,25 @@ fun MatchesAddScreen(
                             }
                         }
 
-                        AnimatedVisibility(mode!!.canBeRanked) {
-                            FilledTonalIconToggleButton(
-                                modifier = Modifier.size(
-                                    IconButtonDefaults.mediumContainerSize(
-                                        IconButtonDefaults.IconButtonWidthOption.Wide
-                                    )
-                                ),
-                                checked = isRankedToggle,
-                                onCheckedChange = { isRankedToggle = it },
-                                shapes = IconToggleButtonShapes(
-                                    shape = IconButtonDefaults.mediumRoundShape,
-                                    pressedShape = IconButtonDefaults.mediumPressedShape,
-                                    checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                        FilledTonalIconToggleButton(
+                            modifier = Modifier.size(
+                                IconButtonDefaults.mediumContainerSize(
+                                    IconButtonDefaults.IconButtonWidthOption.Wide
                                 )
-                            ) {
-                                Icon(
-                                    imageVector = if (isRankedToggle) Icons.Filled.MilitaryTech else Icons.Outlined.MilitaryTech,
-                                    contentDescription = null
-                                )
-                            }
+                            ),
+                            enabled = mode?.canBeRanked == true,
+                            checked = isRankedToggle && mode?.canBeRanked == true,
+                            onCheckedChange = { isRankedToggle = it },
+                            shapes = IconToggleButtonShapes(
+                                shape = IconButtonDefaults.mediumRoundShape,
+                                pressedShape = IconButtonDefaults.mediumPressedShape,
+                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                            )
+                        ) {
+                            Icon(
+                                imageVector = if (isRankedToggle) Icons.Filled.MilitaryTech else Icons.Outlined.MilitaryTech,
+                                contentDescription = null
+                            )
                         }
                     }
                 }
@@ -615,10 +642,68 @@ fun MatchesAddScreen(
                         } else {
                             RankChip(
                                 rank = it,
-                                deltaRR = 0,
+                                deltaRR = deltaRR,
                                 isRankChanged = false,
                                 showRankName = false,
                                 compact = false
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.l),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = (-MatchesAddScreenDefaults.MAX_DELTA_RR).toString(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Slider(
+                            modifier = Modifier.weight(1f),
+                            state = deltaRRSliderState,
+                            track = { SliderDefaults.CenteredTrack(sliderState = deltaRRSliderState) }
+                        )
+
+                        Text(
+                            text = MatchesAddScreenDefaults.MAX_DELTA_RR.toString(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    FilledTonalIconToggleButton(
+                        checked = rankSpecial,
+                        enabled = deltaRR != 0,
+                        onCheckedChange = { rankSpecial = it },
+                        modifier = Modifier.size(
+                            IconButtonDefaults.mediumContainerSize(
+                                IconButtonDefaults.IconButtonWidthOption.Wide
+                            )
+                        ),
+                        shapes = IconToggleButtonShapes(
+                            shape = IconButtonDefaults.mediumRoundShape,
+                            pressedShape = IconButtonDefaults.mediumPressedShape,
+                            checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                        )
+                    ) {
+                        val isShield = deltaRR < 0
+
+                        AnimatedContent(isShield) {
+                            Icon(
+                                imageVector = when {
+                                    it -> if (rankSpecial) Icons.Filled.Shield else Icons.Outlined.Shield
+                                    else -> if (rankSpecial) Icons.Filled.KeyboardDoubleArrowUp else Icons.Outlined.KeyboardDoubleArrowUp
+                                },
+                                contentDescription = null
                             )
                         }
                     }

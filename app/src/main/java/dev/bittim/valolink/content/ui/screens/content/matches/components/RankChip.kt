@@ -7,14 +7,14 @@
  File:       RankChip.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 02:20
+ Modified:   21.06.25, 03:13
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -97,7 +97,7 @@ fun RankChip(
     val textStyle =
         if (compact) MaterialTheme.typography.labelLarge else MaterialTheme.typography.titleMedium
     val smallTextStyle =
-        if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.titleSmall
+        if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.xxs),
@@ -167,20 +167,18 @@ fun RankChip(
                 modifier = Modifier
                     .padding(vertical = verticalPadding, horizontal = horizontalPadding)
                     .height(iconSize),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.xxs),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
             ) {
-                AnimatedContent(deltaRR) { it ->
-                    Text(
-                        it.toString(),
-                        style = textStyle,
-                        color = animatedObjectColor.value
-                    )
-                }
+                Text(
+                    modifier = Modifier.animateContentSize(),
+                    text = deltaRR.toString(),
+                    style = textStyle,
+                    color = animatedObjectColor.value
+                )
 
                 Text(
                     text = UiText.StringResource(R.string.unit_rr).asString(),
-                    style = smallTextStyle,
+                    style = textStyle,
                     color = animatedObjectColor.value
                 )
             }
