@@ -7,7 +7,7 @@
  File:       MatchesAddNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   15.06.25, 16:00
+ Modified:   21.06.25, 22:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -34,6 +34,7 @@ fun NavGraphBuilder.matchesAddScreen(
         MatchesAddScreen(
             state = state,
             determineScoreResult = viewModel::determineScoreResult,
+            determineRankChangeResult = viewModel::determineRankChangeResult,
             onNavBack = onNavBack
         )
     }

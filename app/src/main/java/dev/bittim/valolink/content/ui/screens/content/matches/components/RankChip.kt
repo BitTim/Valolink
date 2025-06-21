@@ -7,15 +7,17 @@
  File:       RankChip.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 03:13
+ Modified:   21.06.25, 22:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -51,6 +53,7 @@ import dev.bittim.valolink.core.ui.util.color.parseARGBToColor
 
 @Composable
 fun RankChip(
+    modifier: Modifier = Modifier,
     rank: Rank,
     deltaRR: Int,
     isRankChanged: Boolean,
@@ -100,7 +103,8 @@ fun RankChip(
         if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium
 
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.xxs),
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.xxs, Alignment.End)
     ) {
         Surface(
             shape = RoundedCornerShape(
@@ -119,13 +123,15 @@ fun RankChip(
                     horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(
-                        modifier = Modifier.size(iconSize),
-                        model = rank.icon,
-                        contentScale = ContentScale.Fit,
-                        contentDescription = rank.name,
-                        placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_rank_gold2)
-                    )
+                    AnimatedContent(rank) {
+                        AsyncImage(
+                            modifier = Modifier.size(iconSize),
+                            model = it.icon,
+                            contentScale = ContentScale.Fit,
+                            contentDescription = it.name,
+                            placeholder = coilDebugPlaceholder(debugPreview = R.drawable.debug_rank_gold2)
+                        )
+                    }
 
                     AnimatedVisibility(showRankName) {
                         Text(
@@ -138,19 +144,29 @@ fun RankChip(
             }
         }
 
-        AnimatedVisibility(rankChangeIcon != null) {
+        AnimatedVisibility(deltaRR != 0 && isRankChanged) {
             Surface(
                 shape = RoundedCornerShape(Spacing.xs),
                 color = animatedContainerColor.value,
             ) {
-                Icon(
-                    modifier = Modifier
-                        .padding(verticalPadding)
-                        .size(iconSize),
-                    imageVector = rankChangeIcon!!,
-                    contentDescription = null,
-                    tint = animatedObjectColor.value
-                )
+                AnimatedContent(rankChangeIcon) {
+                    if (it == null) {
+                        Box(
+                            modifier = Modifier
+                                .padding(verticalPadding)
+                                .size(iconSize)
+                        )
+                    } else {
+                        Icon(
+                            modifier = Modifier
+                                .padding(verticalPadding)
+                                .size(iconSize),
+                            imageVector = it,
+                            contentDescription = null,
+                            tint = animatedObjectColor.value
+                        )
+                    }
+                }
             }
         }
 

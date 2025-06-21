@@ -7,7 +7,7 @@
  File:       MatchesAddScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 03:13
+ Modified:   21.06.25, 22:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -98,6 +98,7 @@ import dev.bittim.valolink.content.ui.screens.content.matches.components.MapCard
 import dev.bittim.valolink.content.ui.screens.content.matches.components.MapCardData
 import dev.bittim.valolink.content.ui.screens.content.matches.components.RankChip
 import dev.bittim.valolink.content.ui.screens.content.matches.components.ScoreChip
+import dev.bittim.valolink.core.domain.model.RankChangeResult
 import dev.bittim.valolink.core.domain.model.ScoreResult
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
@@ -119,6 +120,7 @@ data object MatchesAddScreenDefaults {
 fun MatchesAddScreen(
     state: MatchesAddState,
     determineScoreResult: (score: Int, enemyScore: Int?, surrender: Boolean, enemySurrender: Boolean) -> ScoreResult,
+    determineRankChangeResult: (tier: Int, rr: Int, deltaRR: Int, specialBehavior: Boolean) -> RankChangeResult?,
     onNavBack: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -628,22 +630,32 @@ fun MatchesAddScreen(
                         )
                     }
 
-                    val rank = state.ranks?.find { it.tier == state.userRank?.tier }
+                    val rankChangeResult = determineRankChangeResult(
+                        state.userRank?.tier ?: 0,
+                        state.userRank?.rr ?: 0,
+                        deltaRR,
+                        rankSpecial
+                    )
+                    val rank = state.ranks?.find { it.tier == rankChangeResult?.newTier }
 
-                    Crossfade(rank) {
-                        if (it == null) {
+                    Crossfade(
+                        modifier = Modifier.weight(1f),
+                        targetState = rank == null
+                    ) {
+                        if (it) {
                             Box(
                                 modifier = Modifier
-                                    .height(OutlinedTextFieldDefaults.MinHeight)
-                                    .fillMaxWidth(0.2f)
+                                    .height(Spacing.xl + Spacing.l)
+                                    .fillMaxWidth()
                                     .clip(RoundedCornerShape(Spacing.m))
                                     .pulseAnimation(),
                             )
                         } else {
                             RankChip(
-                                rank = it,
+                                modifier = Modifier.fillMaxWidth(),
+                                rank = rank!!,
                                 deltaRR = deltaRR,
-                                isRankChanged = false,
+                                isRankChanged = rank.tier != state.userRank?.tier,
                                 showRankName = false,
                                 compact = false
                             )
@@ -651,60 +663,81 @@ fun MatchesAddScreen(
                     }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.l),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.s),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = (-MatchesAddScreenDefaults.MAX_DELTA_RR).toString(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                Crossfade(state.userRank) {
+                    if (it == null) {
+                        Box(
+                            modifier = Modifier
+                                .height(
+                                    IconButtonDefaults.mediumContainerSize(
+                                        IconButtonDefaults.IconButtonWidthOption.Wide
+                                    ).height
+                                )
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(Spacing.m))
+                                .pulseAnimation(),
                         )
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.l),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = (-MatchesAddScreenDefaults.MAX_DELTA_RR).toString(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
 
-                        Slider(
-                            modifier = Modifier.weight(1f),
-                            state = deltaRRSliderState,
-                            track = { SliderDefaults.CenteredTrack(sliderState = deltaRRSliderState) }
-                        )
+                                Slider(
+                                    modifier = Modifier.weight(1f),
+                                    state = deltaRRSliderState,
+                                    track = { SliderDefaults.CenteredTrack(sliderState = deltaRRSliderState) }
+                                )
 
-                        Text(
-                            text = MatchesAddScreenDefaults.MAX_DELTA_RR.toString(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                                Text(
+                                    text = MatchesAddScreenDefaults.MAX_DELTA_RR.toString(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
 
-                    FilledTonalIconToggleButton(
-                        checked = rankSpecial,
-                        enabled = deltaRR != 0,
-                        onCheckedChange = { rankSpecial = it },
-                        modifier = Modifier.size(
-                            IconButtonDefaults.mediumContainerSize(
-                                IconButtonDefaults.IconButtonWidthOption.Wide
-                            )
-                        ),
-                        shapes = IconToggleButtonShapes(
-                            shape = IconButtonDefaults.mediumRoundShape,
-                            pressedShape = IconButtonDefaults.mediumPressedShape,
-                            checkedShape = IconButtonDefaults.mediumSelectedRoundShape
-                        )
-                    ) {
-                        val isShield = deltaRR < 0
+                            val isSpecialEnabled = deltaRR > 0 || (deltaRR < 0 && it.rr == 0)
+                            if (!isSpecialEnabled) {
+                                rankSpecial = false
+                            }
 
-                        AnimatedContent(isShield) {
-                            Icon(
-                                imageVector = when {
-                                    it -> if (rankSpecial) Icons.Filled.Shield else Icons.Outlined.Shield
-                                    else -> if (rankSpecial) Icons.Filled.KeyboardDoubleArrowUp else Icons.Outlined.KeyboardDoubleArrowUp
-                                },
-                                contentDescription = null
-                            )
+                            FilledTonalIconToggleButton(
+                                checked = rankSpecial,
+                                enabled = isSpecialEnabled,
+                                onCheckedChange = { rankSpecial = it },
+                                modifier = Modifier.size(
+                                    IconButtonDefaults.mediumContainerSize(
+                                        IconButtonDefaults.IconButtonWidthOption.Wide
+                                    )
+                                ),
+                                shapes = IconToggleButtonShapes(
+                                    shape = IconButtonDefaults.mediumRoundShape,
+                                    pressedShape = IconButtonDefaults.mediumPressedShape,
+                                    checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                                )
+                            ) {
+                                val isShield = deltaRR < 0
+
+                                AnimatedContent(isShield) {
+                                    Icon(
+                                        imageVector = when {
+                                            it -> if (rankSpecial) Icons.Filled.Shield else Icons.Outlined.Shield
+                                            else -> if (rankSpecial) Icons.Filled.KeyboardDoubleArrowUp else Icons.Outlined.KeyboardDoubleArrowUp
+                                        },
+                                        contentDescription = null
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -721,6 +754,7 @@ fun MatchesAddScreenPreview() {
             MatchesAddScreen(
                 state = MatchesAddState(),
                 determineScoreResult = { _, _, _, _ -> ScoreResult.Draw },
+                determineRankChangeResult = { _, _, _, _ -> null },
                 onNavBack = {},
             )
         }

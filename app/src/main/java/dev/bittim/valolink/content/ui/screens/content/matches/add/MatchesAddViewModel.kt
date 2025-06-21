@@ -7,7 +7,7 @@
  File:       MatchesAddViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 02:20
+ Modified:   21.06.25, 22:18
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -18,7 +18,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.map.MapRepository
 import dev.bittim.valolink.content.data.repository.mode.ModeRepository
 import dev.bittim.valolink.content.data.repository.rank.RankRepository
+import dev.bittim.valolink.core.domain.model.RankChangeResult
 import dev.bittim.valolink.core.domain.model.ScoreResult
+import dev.bittim.valolink.core.domain.usecase.rank.DetermineRankChangeResultUseCase
 import dev.bittim.valolink.core.domain.usecase.score.DetermineScoreResultUseCase
 import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +43,7 @@ class MatchesAddViewModel @Inject constructor(
     private val rankRepository: RankRepository,
     private val userMetaRepository: UserMetaRepository,
     private val determineScoreResultUseCase: DetermineScoreResultUseCase,
+    private val determineRankChangeResultUseCase: DetermineRankChangeResultUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(MatchesAddState())
     val state = _state.asStateFlow()
@@ -103,5 +106,21 @@ class MatchesAddViewModel @Inject constructor(
         enemySurrender: Boolean
     ): ScoreResult {
         return determineScoreResultUseCase(score, enemyScore, surrender, enemySurrender)
+    }
+
+    fun determineRankChangeResult(
+        tier: Int,
+        rr: Int,
+        deltaRR: Int,
+        specialBehaviour: Boolean,
+    ): RankChangeResult? {
+        val highestRank = _state.value.ranks?.lastOrNull() ?: return null
+        return determineRankChangeResultUseCase(
+            tier,
+            rr,
+            deltaRR,
+            specialBehaviour,
+            highestRank.tier
+        )
     }
 }
