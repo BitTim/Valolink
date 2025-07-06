@@ -7,7 +7,7 @@
  File:       RankChip.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 22:18
+ Modified:   06.07.25, 02:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.components
@@ -56,6 +56,8 @@ fun RankChip(
     modifier: Modifier = Modifier,
     rank: Rank,
     deltaRR: Int,
+    matchesPlayed: Int? = null,
+    matchesNeeded: Int? = null,
     isRankChanged: Boolean,
     showRankName: Boolean,
     compact: Boolean,
@@ -88,8 +90,12 @@ fun RankChip(
     }
     val animatedObjectColor = animateColorAsState(objectColor)
 
+    val rankUnlocked =
+        rank.tier == 0 && matchesPlayed != null && matchesNeeded != null && matchesPlayed == matchesNeeded - 1
+
     val rankChangeIcon = when {
         deltaRR > 0 && isRankChanged -> Icons.Default.KeyboardDoubleArrowUp
+        rankUnlocked -> Icons.Default.KeyboardDoubleArrowUp
         deltaRR < 0 && isRankChanged -> Icons.Default.KeyboardDoubleArrowDown
         else -> null
     }
@@ -144,7 +150,7 @@ fun RankChip(
             }
         }
 
-        AnimatedVisibility(deltaRR != 0 && isRankChanged) {
+        AnimatedVisibility((deltaRR != 0 && isRankChanged) || rankUnlocked) {
             Surface(
                 shape = RoundedCornerShape(Spacing.xs),
                 color = animatedContainerColor.value,
@@ -187,13 +193,16 @@ fun RankChip(
             ) {
                 Text(
                     modifier = Modifier.animateContentSize(),
-                    text = deltaRR.toString(),
+                    text = if (rank.tier != 0) deltaRR.toString() else "$matchesPlayed / $matchesNeeded",
                     style = textStyle,
                     color = animatedObjectColor.value
                 )
 
                 Text(
-                    text = UiText.StringResource(R.string.unit_rr).asString(),
+                    modifier = Modifier.animateContentSize(),
+                    text = if (rank.tier != 0) UiText.StringResource(R.string.unit_rr)
+                        .asString() else UiText.StringResource(R.string.unit_match_plural)
+                        .asString(),
                     style = textStyle,
                     color = animatedObjectColor.value
                 )
@@ -205,6 +214,17 @@ fun RankChip(
 @ComponentPreviewAnnotations
 @Composable
 fun RankChipPreview() {
+    val unranked = Rank(
+        tier = 0,
+        name = "UNRANKED",
+        divisionName = "UNRANKED",
+        color = "ffffffff",
+        backgroundColor = "00000000",
+        icon = "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/0/largeicon.png",
+        triangleDownIcon = null,
+        triangleUpIcon = null
+    )
+
     val gold2 = Rank(
         tier = 13,
         name = "GOLD 2",
@@ -264,6 +284,16 @@ fun RankChipPreview() {
                         showRankName = false,
                         compact = false
                     )
+
+                    RankChip(
+                        rank = unranked,
+                        deltaRR = 0,
+                        matchesPlayed = 2,
+                        matchesNeeded = 5,
+                        isRankChanged = false,
+                        showRankName = false,
+                        compact = false
+                    )
                 }
 
                 Column(
@@ -309,6 +339,16 @@ fun RankChipPreview() {
                         showRankName = true,
                         compact = false
                     )
+
+                    RankChip(
+                        rank = unranked,
+                        deltaRR = 0,
+                        matchesPlayed = 2,
+                        matchesNeeded = 5,
+                        isRankChanged = false,
+                        showRankName = true,
+                        compact = false
+                    )
                 }
 
                 Column(
@@ -354,6 +394,16 @@ fun RankChipPreview() {
                         showRankName = false,
                         compact = true
                     )
+
+                    RankChip(
+                        rank = unranked,
+                        deltaRR = 0,
+                        matchesPlayed = 2,
+                        matchesNeeded = 5,
+                        isRankChanged = false,
+                        showRankName = false,
+                        compact = true
+                    )
                 }
 
                 Column(
@@ -396,6 +446,16 @@ fun RankChipPreview() {
                         rank = gold2,
                         deltaRR = -27,
                         isRankChanged = true,
+                        showRankName = true,
+                        compact = true
+                    )
+
+                    RankChip(
+                        rank = unranked,
+                        deltaRR = 0,
+                        matchesPlayed = 2,
+                        matchesNeeded = 5,
+                        isRankChanged = false,
                         showRankName = true,
                         compact = true
                     )

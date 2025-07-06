@@ -7,7 +7,7 @@
  File:       MatchesAddScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 22:18
+ Modified:   06.07.25, 02:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -36,8 +36,10 @@ import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -55,7 +57,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -79,6 +80,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,6 +88,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
@@ -100,6 +103,8 @@ import dev.bittim.valolink.content.ui.screens.content.matches.components.RankChi
 import dev.bittim.valolink.content.ui.screens.content.matches.components.ScoreChip
 import dev.bittim.valolink.core.domain.model.RankChangeResult
 import dev.bittim.valolink.core.domain.model.ScoreResult
+import dev.bittim.valolink.core.ui.components.rankCard.RankCardData
+import dev.bittim.valolink.core.ui.components.rankCard.RankIconCard
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
@@ -123,7 +128,9 @@ fun MatchesAddScreen(
     determineRankChangeResult: (tier: Int, rr: Int, deltaRR: Int, specialBehavior: Boolean) -> RankChangeResult?,
     onNavBack: () -> Unit,
 ) {
+    val scrollState = rememberScrollState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     val deltaRRSliderState = rememberSliderState(
         valueRange = -MatchesAddScreenDefaults.MAX_DELTA_RR.toFloat()..MatchesAddScreenDefaults.MAX_DELTA_RR.toFloat(),
     )
@@ -136,15 +143,15 @@ fun MatchesAddScreen(
 
     var mode by remember { mutableStateOf(modes?.firstOrNull()) }
     var isModeMenuExpanded by remember { mutableStateOf(false) }
-    var isRankedToggle by remember { mutableStateOf(false) }
+    var isRankedToggle by rememberSaveable { mutableStateOf(false) }
 
-    var scoreString by remember { mutableStateOf("") }
-    var enemyScoreString by remember { mutableStateOf("") }
-    var surrender by remember { mutableStateOf(false) }
-    var enemySurrender by remember { mutableStateOf(false) }
+    var scoreString by rememberSaveable { mutableStateOf("") }
+    var enemyScoreString by rememberSaveable { mutableStateOf("") }
+    var surrender by rememberSaveable { mutableStateOf(false) }
+    var enemySurrender by rememberSaveable { mutableStateOf(false) }
 
-    var xpString by remember { mutableStateOf("") }
-    var rankSpecial by remember { mutableStateOf(false) }
+    var xpString by rememberSaveable { mutableStateOf("") }
+    var rankSpecial by rememberSaveable { mutableStateOf(false) }
 
     val maps by remember(state.maps, mode) {
         derivedStateOf {
@@ -156,8 +163,22 @@ fun MatchesAddScreen(
         }
     }
 
-    val pagerState = rememberPagerState(pageCount = { maps.count() })
-    var clickedPage by remember { mutableIntStateOf(0) }
+    val ranks by remember(state.ranks) {
+        derivedStateOf {
+            state.ranks?.sortedBy { it.tier }?.dropLast(1)?.drop(1) ?: listOf(
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        }
+    }
+
+    val mapPagerState = rememberPagerState(pageCount = { maps.count() })
+    var mapClickedPage by rememberSaveable { mutableIntStateOf(0) }
+    val rankPagerState = rememberPagerState(pageCount = { ranks.count() })
+    var rankClickedPage by rememberSaveable { mutableIntStateOf(0) }
 
     val scoreType by remember(mode) { derivedStateOf { mode?.scoreType ?: ScoreType.None } }
     val isRanked by remember(
@@ -176,8 +197,12 @@ fun MatchesAddScreen(
 
     val deltaRR by remember { derivedStateOf { deltaRRSliderState.value.roundToInt() } }
 
-    LaunchedEffect(clickedPage) {
-        pagerState.animateScrollToPage(clickedPage)
+    LaunchedEffect(mapClickedPage) {
+        mapPagerState.animateScrollToPage(mapClickedPage)
+    }
+
+    LaunchedEffect(rankClickedPage) {
+        rankPagerState.animateScrollToPage(rankClickedPage)
     }
 
     LaunchedEffect(modes) {
@@ -199,7 +224,7 @@ fun MatchesAddScreen(
                 }
             },
             actions = {
-                FilledIconButton(onClick = { /* TODO */ }) {
+                IconButton(onClick = { /* TODO */ }) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null
@@ -210,401 +235,68 @@ fun MatchesAddScreen(
             windowInsets = WindowInsets.statusBars
         )
 
-        val contentPadding = (LocalConfiguration.current.screenWidthDp.dp - MapCard.width) / 2
-
-        HorizontalPager(
-            state = pagerState,
-            pageSize = PageSize.Fixed(MapCard.width),
-            contentPadding = PaddingValues(horizontal = contentPadding),
-            flingBehavior = PagerDefaults.flingBehavior(
-                state = pagerState,
-                pagerSnapDistance = PagerSnapDistance.atMost(pagerState.pageCount)
-            ),
-        ) { thisPage ->
-            val pageOffset = pagerState.getOffsetDistanceInPages(thisPage).absoluteValue
-            val topPadding = (32f * minOf(pageOffset, 1f)).dp
-            val bottomPadding = Spacing.xxl - topPadding
-            val blur =
-                lerp(start = 0f, stop = 4f, fraction = pageOffset.coerceIn(0f, 1f)).dp
-            val saturation = lerp(
-                start = SATURATION_DESATURATED,
-                stop = 1f,
-                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-            )
-
-            val map = maps.getOrNull(thisPage)
-
-            MapCard(
-                modifier = Modifier
-                    .blur(blur)
-                    .padding(
-                        start = Spacing.xs,
-                        end = Spacing.xs,
-                        top = Spacing.xs + topPadding,
-                        bottom = Spacing.xs + bottomPadding
-                    )
-                    .saturation(saturation)
-                    .graphicsLayer {
-                        alpha = lerp(
-                            start = 0f,
-                            stop = 1f,
-                            fraction = 2f - pageOffset.coerceIn(0f, 2f)
-                        )
-                    }
-                    .clickable(
-                        onClick = {
-                            clickedPage = thisPage
-                        }
-                    ),
-                data = if (map == null) null else MapCardData(
-                    mapImage = map.listViewIconTall,
-                    mapName = map.displayName,
-                    mapCoordinates = map.coordinates,
-                )
-            )
-        }
-
-        Spacer(modifier = Modifier.height(Spacing.xl))
-
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Spacing.l),
-            verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(Spacing.xs),
-                ) {
-                    Text(
-                        text = UiText.StringResource(R.string.matches_add_summary_title).asString(),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(
-                        text = UiText.StringResource(R.string.matches_add_summary_description)
-                            .asString(),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
+            val contentPadding = (LocalConfiguration.current.screenWidthDp.dp - MapCard.width) / 2
 
-                ScoreChip(
-                    score = score,
-                    enemyScore = enemyScore,
-                    surrender = surrender || enemySurrender,
-                    scoreResult = determineScoreResult(
-                        score,
-                        enemyScore,
-                        surrender,
-                        enemySurrender
-                    ),
-                    compact = false
+            HorizontalPager(
+                state = mapPagerState,
+                pageSize = PageSize.Fixed(MapCard.width),
+                contentPadding = PaddingValues(horizontal = contentPadding),
+                flingBehavior = PagerDefaults.flingBehavior(
+                    state = mapPagerState,
+                    pagerSnapDistance = PagerSnapDistance.atMost(mapPagerState.pageCount)
+                ),
+            ) { thisPage ->
+                val pageOffset = mapPagerState.getOffsetDistanceInPages(thisPage).absoluteValue
+                val topPadding = (32f * minOf(pageOffset, 1f)).dp
+                val bottomPadding = Spacing.xxl - topPadding
+                val blur =
+                    lerp(start = 0f, stop = 4f, fraction = pageOffset.coerceIn(0f, 1f)).dp
+                val saturation = lerp(
+                    start = SATURATION_DESATURATED,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                )
+
+                val map = maps.getOrNull(thisPage)
+
+                MapCard(
+                    modifier = Modifier
+                        .blur(blur)
+                        .padding(
+                            start = Spacing.xs,
+                            end = Spacing.xs,
+                            top = Spacing.xs + topPadding,
+                            bottom = Spacing.xs + bottomPadding
+                        )
+                        .saturation(saturation)
+                        .graphicsLayer {
+                            alpha = lerp(
+                                start = 0f,
+                                stop = 1f,
+                                fraction = 2f - pageOffset.coerceIn(0f, 2f)
+                            )
+                        }
+                        .clickable(
+                            onClick = {
+                                mapClickedPage = thisPage
+                            }
+                        ),
+                    data = if (map == null) null else MapCardData(
+                        mapImage = map.listViewIconTall,
+                        mapName = map.displayName,
+                        mapCoordinates = map.coordinates,
+                    )
                 )
             }
 
-            Crossfade(modes) {
-                if (it == null || mode == null) {
-                    Box(
-                        modifier = Modifier
-                            .height(OutlinedTextFieldDefaults.MinHeight)
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(Spacing.m))
-                            .pulseAnimation(),
-                    )
-                } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.l),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        ExposedDropdownMenuBox(
-                            expanded = isModeMenuExpanded,
-                            onExpandedChange = { isModeMenuExpanded = it },
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(
-                                        ExposedDropdownMenuAnchorType.PrimaryNotEditable
-                                    ),
-                                value = mode!!.displayName,
-                                onValueChange = {},
-                                readOnly = true,
-                                singleLine = true,
-                                label = {
-                                    Text(
-                                        text = UiText.StringResource(R.string.matches_add_mode_label)
-                                            .asString()
-                                    )
-                                },
-                                leadingIcon = {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .size(Spacing.xl)
-                                            .aspectRatio(1f),
-                                        model = mode!!.displayIcon,
-                                        contentDescription = mode!!.displayName,
-                                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-                                        contentScale = ContentScale.Fit,
-                                    )
-                                },
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isModeMenuExpanded)
-                                },
-                            )
+            Spacer(modifier = Modifier.height(Spacing.xl))
 
-                            ExposedDropdownMenu(
-                                expanded = isModeMenuExpanded,
-                                onDismissRequest = { isModeMenuExpanded = false },
-                            ) {
-                                it.forEach { m ->
-                                    DropdownMenuItem(
-                                        leadingIcon = {
-                                            AsyncImage(
-                                                modifier = Modifier
-                                                    .size(Spacing.xl)
-                                                    .aspectRatio(1f),
-                                                model = m.displayIcon,
-                                                contentDescription = m.displayName,
-                                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-                                                contentScale = ContentScale.Fit,
-                                            )
-                                        },
-                                        text = { Text(text = m.displayName) },
-                                        onClick = {
-                                            mode = m
-                                            isModeMenuExpanded = false
-                                        },
-                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                    )
-                                }
-                            }
-                        }
-
-                        FilledTonalIconToggleButton(
-                            modifier = Modifier.size(
-                                IconButtonDefaults.mediumContainerSize(
-                                    IconButtonDefaults.IconButtonWidthOption.Wide
-                                )
-                            ),
-                            enabled = mode?.canBeRanked == true,
-                            checked = isRankedToggle && mode?.canBeRanked == true,
-                            onCheckedChange = { isRankedToggle = it },
-                            shapes = IconToggleButtonShapes(
-                                shape = IconButtonDefaults.mediumRoundShape,
-                                pressedShape = IconButtonDefaults.mediumPressedShape,
-                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
-                            )
-                        ) {
-                            Icon(
-                                imageVector = if (isRankedToggle) Icons.Filled.MilitaryTech else Icons.Outlined.MilitaryTech,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
-            }
-
-            Crossfade(modes) {
-                if (it == null || mode == null) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(Spacing.s)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(Spacing.s),
-                            verticalAlignment = Alignment.Bottom
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .height(OutlinedTextFieldDefaults.MinHeight)
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(Spacing.m))
-                                    .pulseAnimation(),
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .height(OutlinedTextFieldDefaults.MinHeight)
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(Spacing.m))
-                                    .pulseAnimation(),
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .height(OutlinedTextFieldDefaults.MinHeight)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(Spacing.m))
-                                .pulseAnimation(),
-                        )
-                    }
-                } else {
-                    AnimatedContent(scoreType) {
-                        when (it) {
-                            ScoreType.Default -> {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(Spacing.s),
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(Spacing.s),
-                                        verticalAlignment = Alignment.Bottom
-                                    ) {
-                                        OutlinedIconToggleButton(
-                                            checked = surrender,
-                                            onCheckedChange = {
-                                                surrender = it
-                                                enemySurrender = false
-                                            },
-                                            modifier = Modifier.size(
-                                                IconButtonDefaults.mediumContainerSize(
-                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                                                )
-                                            ),
-                                            shapes = IconToggleButtonShapes(
-                                                shape = IconButtonDefaults.mediumRoundShape,
-                                                pressedShape = IconButtonDefaults.mediumPressedShape,
-                                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
-                                            )
-                                        ) {
-                                            Icon(
-                                                imageVector = if (surrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
-                                                contentDescription = null
-                                            )
-                                        }
-
-                                        OutlinedTextField(
-                                            modifier = Modifier.weight(1f),
-                                            value = scoreString,
-                                            onValueChange = { scoreString = it },
-                                            label = {
-                                                Text(
-                                                    text = UiText.StringResource(R.string.matches_add_score_label)
-                                                        .asString()
-                                                )
-                                            },
-                                            singleLine = true,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                                        )
-
-                                        OutlinedIconToggleButton(
-                                            checked = enemySurrender,
-                                            onCheckedChange = {
-                                                enemySurrender = it
-                                                surrender = false
-                                            },
-                                            modifier = Modifier.size(
-                                                IconButtonDefaults.mediumContainerSize(
-                                                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                                                )
-                                            ),
-                                            shapes = IconToggleButtonShapes(
-                                                shape = IconButtonDefaults.mediumRoundShape,
-                                                pressedShape = IconButtonDefaults.mediumPressedShape,
-                                                checkedShape = IconButtonDefaults.mediumSelectedRoundShape
-                                            )
-                                        ) {
-                                            Icon(
-                                                imageVector = if (enemySurrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
-                                                contentDescription = null
-                                            )
-                                        }
-
-                                        OutlinedTextField(
-                                            modifier = Modifier.weight(1f),
-                                            value = enemyScoreString,
-                                            onValueChange = { enemyScoreString = it },
-                                            label = {
-                                                Text(
-                                                    text = UiText.StringResource(R.string.matches_add_enemyScore_label)
-                                                        .asString()
-                                                )
-                                            },
-                                            singleLine = true,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                                        )
-                                    }
-
-                                    OutlinedTextField(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        value = xpString,
-                                        onValueChange = { xpString = it },
-                                        singleLine = true,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        label = {
-                                            Text(
-                                                text = UiText.StringResource(R.string.unit_xp)
-                                                    .asString()
-                                            )
-                                        },
-                                        suffix = {
-                                            Text(
-                                                text = UiText.StringResource(R.string.unit_xp)
-                                                    .asString()
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-
-                            ScoreType.Placement -> {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(Spacing.m),
-                                ) {
-                                    OutlinedTextField(
-                                        modifier = Modifier.weight(1f),
-                                        value = scoreString,
-                                        onValueChange = { scoreString = it },
-                                        label = {
-                                            Text(
-                                                text = UiText.StringResource(R.string.matches_add_placement_label)
-                                                    .asString()
-                                            )
-                                        },
-                                        singleLine = true,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                                    )
-
-                                    OutlinedTextField(
-                                        modifier = Modifier.weight(1f),
-                                        value = xpString,
-                                        onValueChange = { xpString = it },
-                                        singleLine = true,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        label = {
-                                            Text(
-                                                text = UiText.StringResource(R.string.unit_xp)
-                                                    .asString()
-                                            )
-                                        },
-                                        suffix = {
-                                            Text(
-                                                text = UiText.StringResource(R.string.unit_xp)
-                                                    .asString()
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-
-                            else -> Unit
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(Spacing.xl))
-
-        AnimatedVisibility(visible = isRanked, modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -619,59 +311,36 @@ fun MatchesAddScreen(
                         verticalArrangement = Arrangement.spacedBy(Spacing.xs),
                     ) {
                         Text(
-                            text = UiText.StringResource(R.string.matches_add_rank_title)
+                            text = UiText.StringResource(R.string.matches_add_summary_title)
                                 .asString(),
                             style = MaterialTheme.typography.titleLarge
                         )
                         Text(
-                            text = UiText.StringResource(R.string.matches_add_rank_description)
+                            text = UiText.StringResource(R.string.matches_add_summary_description)
                                 .asString(),
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
 
-                    val rankChangeResult = determineRankChangeResult(
-                        state.userRank?.tier ?: 0,
-                        state.userRank?.rr ?: 0,
-                        deltaRR,
-                        rankSpecial
+                    ScoreChip(
+                        score = score,
+                        enemyScore = enemyScore,
+                        surrender = surrender || enemySurrender,
+                        scoreResult = determineScoreResult(
+                            score,
+                            enemyScore,
+                            surrender,
+                            enemySurrender
+                        ),
+                        compact = false
                     )
-                    val rank = state.ranks?.find { it.tier == rankChangeResult?.newTier }
-
-                    Crossfade(
-                        modifier = Modifier.weight(1f),
-                        targetState = rank == null
-                    ) {
-                        if (it) {
-                            Box(
-                                modifier = Modifier
-                                    .height(Spacing.xl + Spacing.l)
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(Spacing.m))
-                                    .pulseAnimation(),
-                            )
-                        } else {
-                            RankChip(
-                                modifier = Modifier.fillMaxWidth(),
-                                rank = rank!!,
-                                deltaRR = deltaRR,
-                                isRankChanged = rank.tier != state.userRank?.tier,
-                                showRankName = false,
-                                compact = false
-                            )
-                        }
-                    }
                 }
 
-                Crossfade(state.userRank) {
-                    if (it == null) {
+                Crossfade(modes) { checkedModes ->
+                    if (checkedModes == null || mode == null) {
                         Box(
                             modifier = Modifier
-                                .height(
-                                    IconButtonDefaults.mediumContainerSize(
-                                        IconButtonDefaults.IconButtonWidthOption.Wide
-                                    ).height
-                                )
+                                .height(OutlinedTextFieldDefaults.MinHeight)
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(Spacing.m))
                                 .pulseAnimation(),
@@ -680,68 +349,508 @@ fun MatchesAddScreen(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(Spacing.l),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Bottom
                         ) {
-                            Row(
+                            ExposedDropdownMenuBox(
+                                expanded = isModeMenuExpanded,
+                                onExpandedChange = { isModeMenuExpanded = it },
                                 modifier = Modifier.weight(1f),
-                                horizontalArrangement = Arrangement.spacedBy(Spacing.s),
-                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = (-MatchesAddScreenDefaults.MAX_DELTA_RR).toString(),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                OutlinedTextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .menuAnchor(
+                                            ExposedDropdownMenuAnchorType.PrimaryNotEditable
+                                        ),
+                                    value = mode!!.displayName,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    singleLine = true,
+                                    label = {
+                                        Text(
+                                            text = UiText.StringResource(R.string.matches_add_mode_label)
+                                                .asString()
+                                        )
+                                    },
+                                    leadingIcon = {
+                                        AsyncImage(
+                                            modifier = Modifier
+                                                .size(Spacing.xl)
+                                                .aspectRatio(1f),
+                                            model = mode!!.displayIcon,
+                                            contentDescription = mode!!.displayName,
+                                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                                            contentScale = ContentScale.Fit,
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isModeMenuExpanded)
+                                    },
                                 )
 
-                                Slider(
-                                    modifier = Modifier.weight(1f),
-                                    state = deltaRRSliderState,
-                                    track = { SliderDefaults.CenteredTrack(sliderState = deltaRRSliderState) }
-                                )
-
-                                Text(
-                                    text = MatchesAddScreenDefaults.MAX_DELTA_RR.toString(),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-
-                            val isSpecialEnabled = deltaRR > 0 || (deltaRR < 0 && it.rr == 0)
-                            if (!isSpecialEnabled) {
-                                rankSpecial = false
+                                ExposedDropdownMenu(
+                                    expanded = isModeMenuExpanded,
+                                    onDismissRequest = { isModeMenuExpanded = false },
+                                ) {
+                                    checkedModes.forEach { m ->
+                                        DropdownMenuItem(
+                                            leadingIcon = {
+                                                AsyncImage(
+                                                    modifier = Modifier
+                                                        .size(Spacing.xl)
+                                                        .aspectRatio(1f),
+                                                    model = m.displayIcon,
+                                                    contentDescription = m.displayName,
+                                                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                                                    contentScale = ContentScale.Fit,
+                                                )
+                                            },
+                                            text = { Text(text = m.displayName) },
+                                            onClick = {
+                                                mode = m
+                                                isModeMenuExpanded = false
+                                            },
+                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                        )
+                                    }
+                                }
                             }
 
                             FilledTonalIconToggleButton(
-                                checked = rankSpecial,
-                                enabled = isSpecialEnabled,
-                                onCheckedChange = { rankSpecial = it },
                                 modifier = Modifier.size(
                                     IconButtonDefaults.mediumContainerSize(
                                         IconButtonDefaults.IconButtonWidthOption.Wide
                                     )
                                 ),
+                                enabled = mode?.canBeRanked == true,
+                                checked = isRankedToggle && mode?.canBeRanked == true,
+                                onCheckedChange = { isRankedToggle = it },
                                 shapes = IconToggleButtonShapes(
                                     shape = IconButtonDefaults.mediumRoundShape,
                                     pressedShape = IconButtonDefaults.mediumPressedShape,
                                     checkedShape = IconButtonDefaults.mediumSelectedRoundShape
                                 )
                             ) {
-                                val isShield = deltaRR < 0
+                                Icon(
+                                    imageVector = if (isRankedToggle) Icons.Filled.MilitaryTech else Icons.Outlined.MilitaryTech,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    }
+                }
 
-                                AnimatedContent(isShield) {
-                                    Icon(
-                                        imageVector = when {
-                                            it -> if (rankSpecial) Icons.Filled.Shield else Icons.Outlined.Shield
-                                            else -> if (rankSpecial) Icons.Filled.KeyboardDoubleArrowUp else Icons.Outlined.KeyboardDoubleArrowUp
-                                        },
-                                        contentDescription = null
+                Crossfade(modes) { checkedModes ->
+                    if (checkedModes == null || mode == null) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(OutlinedTextFieldDefaults.MinHeight)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(Spacing.m))
+                                        .pulseAnimation(),
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .height(OutlinedTextFieldDefaults.MinHeight)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(Spacing.m))
+                                        .pulseAnimation(),
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .height(OutlinedTextFieldDefaults.MinHeight)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(Spacing.m))
+                                    .pulseAnimation(),
+                            )
+                        }
+                    } else {
+                        AnimatedContent(scoreType) { checkedScoreType ->
+                            when (checkedScoreType) {
+                                ScoreType.Default -> {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalArrangement = Arrangement.spacedBy(Spacing.s),
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                                            verticalAlignment = Alignment.Bottom
+                                        ) {
+                                            OutlinedIconToggleButton(
+                                                checked = surrender,
+                                                onCheckedChange = {
+                                                    surrender = it
+                                                    enemySurrender = false
+                                                },
+                                                modifier = Modifier.size(
+                                                    IconButtonDefaults.mediumContainerSize(
+                                                        IconButtonDefaults.IconButtonWidthOption.Narrow
+                                                    )
+                                                ),
+                                                shapes = IconToggleButtonShapes(
+                                                    shape = IconButtonDefaults.mediumRoundShape,
+                                                    pressedShape = IconButtonDefaults.mediumPressedShape,
+                                                    checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                                                )
+                                            ) {
+                                                Icon(
+                                                    imageVector = if (surrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
+                                                    contentDescription = null
+                                                )
+                                            }
+
+                                            OutlinedTextField(
+                                                modifier = Modifier.weight(1f),
+                                                value = scoreString,
+                                                onValueChange = { scoreString = it },
+                                                label = {
+                                                    Text(
+                                                        text = UiText.StringResource(R.string.matches_add_score_label)
+                                                            .asString()
+                                                    )
+                                                },
+                                                singleLine = true,
+                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                            )
+
+                                            OutlinedIconToggleButton(
+                                                checked = enemySurrender,
+                                                onCheckedChange = {
+                                                    enemySurrender = it
+                                                    surrender = false
+                                                },
+                                                modifier = Modifier.size(
+                                                    IconButtonDefaults.mediumContainerSize(
+                                                        IconButtonDefaults.IconButtonWidthOption.Narrow
+                                                    )
+                                                ),
+                                                shapes = IconToggleButtonShapes(
+                                                    shape = IconButtonDefaults.mediumRoundShape,
+                                                    pressedShape = IconButtonDefaults.mediumPressedShape,
+                                                    checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                                                )
+                                            ) {
+                                                Icon(
+                                                    imageVector = if (enemySurrender) Icons.Filled.Flag else Icons.Outlined.OutlinedFlag,
+                                                    contentDescription = null
+                                                )
+                                            }
+
+                                            OutlinedTextField(
+                                                modifier = Modifier.weight(1f),
+                                                value = enemyScoreString,
+                                                onValueChange = { enemyScoreString = it },
+                                                label = {
+                                                    Text(
+                                                        text = UiText.StringResource(R.string.matches_add_enemyScore_label)
+                                                            .asString()
+                                                    )
+                                                },
+                                                singleLine = true,
+                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                            )
+                                        }
+
+                                        OutlinedTextField(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            value = xpString,
+                                            onValueChange = { xpString = it },
+                                            singleLine = true,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                            label = {
+                                                Text(
+                                                    text = UiText.StringResource(R.string.unit_xp)
+                                                        .asString()
+                                                )
+                                            },
+                                            suffix = {
+                                                Text(
+                                                    text = UiText.StringResource(R.string.unit_xp)
+                                                        .asString()
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+
+                                ScoreType.Placement -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(Spacing.m),
+                                    ) {
+                                        OutlinedTextField(
+                                            modifier = Modifier.weight(1f),
+                                            value = scoreString,
+                                            onValueChange = { scoreString = it },
+                                            label = {
+                                                Text(
+                                                    text = UiText.StringResource(R.string.matches_add_placement_label)
+                                                        .asString()
+                                                )
+                                            },
+                                            singleLine = true,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                        )
+
+                                        OutlinedTextField(
+                                            modifier = Modifier.weight(1f),
+                                            value = xpString,
+                                            onValueChange = { xpString = it },
+                                            singleLine = true,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                            label = {
+                                                Text(
+                                                    text = UiText.StringResource(R.string.unit_xp)
+                                                        .asString()
+                                                )
+                                            },
+                                            suffix = {
+                                                Text(
+                                                    text = UiText.StringResource(R.string.unit_xp)
+                                                        .asString()
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+
+                                else -> Unit
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.xl))
+
+            AnimatedVisibility(visible = isRanked, modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Spacing.l),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.s)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+                        ) {
+                            Text(
+                                text = UiText.StringResource(R.string.matches_add_rank_title)
+                                    .asString(),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = UiText.StringResource(R.string.matches_add_rank_description)
+                                    .asString(),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+
+                        val rankChangeResult = determineRankChangeResult(
+                            state.userRank?.tier ?: 0,
+                            state.userRank?.rr ?: 0,
+                            deltaRR,
+                            rankSpecial
+                        )
+                        val rank = state.ranks?.find { it.tier == rankChangeResult?.newTier }
+
+                        Crossfade(
+                            modifier = Modifier.weight(1f),
+                            targetState = rank == null
+                        ) {
+                            if (it) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(Spacing.xl + Spacing.l)
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(Spacing.m))
+                                        .pulseAnimation(),
+                                )
+                            } else {
+                                RankChip(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    rank = rank!!,
+                                    deltaRR = deltaRR,
+                                    matchesPlayed = state.userRank?.matchesPlayed,
+                                    matchesNeeded = state.userRank?.matchesNeeded,
+                                    isRankChanged = rank.tier != state.userRank?.tier,
+                                    showRankName = false,
+                                    compact = false
+                                )
+                            }
+                        }
+                    }
+
+                    Crossfade(state.userRank) { checkedUserRank ->
+                        if (checkedUserRank == null) {
+                            Box(
+                                modifier = Modifier
+                                    .height(
+                                        IconButtonDefaults.mediumContainerSize(
+                                            IconButtonDefaults.IconButtonWidthOption.Wide
+                                        ).height
                                     )
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(Spacing.m))
+                                    .pulseAnimation(),
+                            )
+                        } else {
+                            AnimatedVisibility(checkedUserRank.tier > 0) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(Spacing.l),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        modifier = Modifier.weight(1f),
+                                        horizontalArrangement = Arrangement.spacedBy(Spacing.s),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = (-MatchesAddScreenDefaults.MAX_DELTA_RR).toString(),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+
+                                        Slider(
+                                            modifier = Modifier.weight(1f),
+                                            state = deltaRRSliderState,
+                                            track = { SliderDefaults.CenteredTrack(sliderState = deltaRRSliderState) }
+                                        )
+
+                                        Text(
+                                            text = MatchesAddScreenDefaults.MAX_DELTA_RR.toString(),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+
+                                    val isSpecialEnabled =
+                                        deltaRR > 0 || (deltaRR < 0 && checkedUserRank.rr == 0)
+                                    if (!isSpecialEnabled) {
+                                        rankSpecial = false
+                                    }
+
+                                    FilledTonalIconToggleButton(
+                                        checked = rankSpecial,
+                                        enabled = isSpecialEnabled,
+                                        onCheckedChange = { rankSpecial = it },
+                                        modifier = Modifier.size(
+                                            IconButtonDefaults.mediumContainerSize(
+                                                IconButtonDefaults.IconButtonWidthOption.Wide
+                                            )
+                                        ),
+                                        shapes = IconToggleButtonShapes(
+                                            shape = IconButtonDefaults.mediumRoundShape,
+                                            pressedShape = IconButtonDefaults.mediumPressedShape,
+                                            checkedShape = IconButtonDefaults.mediumSelectedRoundShape
+                                        )
+                                    ) {
+                                        val isShield = deltaRR < 0
+
+                                        AnimatedContent(isShield) {
+                                            Icon(
+                                                imageVector = when {
+                                                    it -> if (rankSpecial) Icons.Filled.Shield else Icons.Outlined.Shield
+                                                    else -> if (rankSpecial) Icons.Filled.KeyboardDoubleArrowUp else Icons.Outlined.KeyboardDoubleArrowUp
+                                                },
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(Spacing.s))
+
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxWidth(),
+                visible = isRanked && state.userRank != null && state.userRank.tier == 0 && state.userRank.matchesPlayed == state.userRank.matchesNeeded - 1
+            ) {
+                val rankContentPadding =
+                    (LocalConfiguration.current.screenWidthDp.dp - RankIconCard.size) / 2
+
+                HorizontalPager(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally),
+                    state = rankPagerState,
+                    pageSize = PageSize.Fixed(RankIconCard.size),
+                    contentPadding = PaddingValues(horizontal = rankContentPadding),
+                    flingBehavior = PagerDefaults.flingBehavior(
+                        state = rankPagerState,
+                        pagerSnapDistance = PagerSnapDistance.atMost(rankPagerState.pageCount)
+                    ),
+                ) {
+                    val rank = ranks.getOrNull(it)
+                    val rankCardData = if (rank == null) null else {
+                        RankCardData(
+                            rankName = rank.name,
+                            rankIcon = rank.icon,
+                            gradient = listOf(
+                                rank.color,
+                                rank.backgroundColor
+                            )
+                        )
+                    }
+
+                    val pageOffset = rankPagerState.getOffsetDistanceInPages(it).absoluteValue
+                    val topPadding = (32f * minOf(pageOffset, 1f)).dp
+                    val bottomPadding = Spacing.xxl - topPadding
+                    val blur =
+                        lerp(start = 0f, stop = 4f, fraction = pageOffset.coerceIn(0f, 1f)).dp
+                    val saturation = lerp(
+                        start = SATURATION_DESATURATED,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                    )
+
+                    RankIconCard(
+                        modifier = Modifier
+                            .blur(blur)
+                            .padding(
+                                start = Spacing.xs,
+                                end = Spacing.xs,
+                                top = Spacing.xs + topPadding,
+                                bottom = Spacing.xs + bottomPadding
+                            )
+                            .saturation(saturation)
+                            .graphicsLayer {
+                                alpha = lerp(
+                                    start = 0f,
+                                    stop = 1f,
+                                    fraction = 2f - pageOffset.coerceIn(0f, 2f)
+                                )
+                            }
+                            .clickable {
+                                if (pageOffset <= 1) rankClickedPage = it
+                            },
+                        data = rankCardData,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.xl))
         }
     }
 }

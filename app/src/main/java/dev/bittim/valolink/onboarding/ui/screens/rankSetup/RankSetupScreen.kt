@@ -7,7 +7,7 @@
  File:       RankSetupScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.05.25, 01:23
+ Modified:   06.07.25, 02:52
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.rankSetup
@@ -49,6 +49,8 @@ import androidx.compose.ui.util.lerp
 import dev.bittim.valolink.R
 import dev.bittim.valolink.core.ui.components.LabeledSlider
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
+import dev.bittim.valolink.core.ui.components.rankCard.RankCard
+import dev.bittim.valolink.core.ui.components.rankCard.RankCardData
 import dev.bittim.valolink.core.ui.theme.Spacing
 import dev.bittim.valolink.core.ui.theme.ValolinkTheme
 import dev.bittim.valolink.core.ui.util.UiText
@@ -57,8 +59,6 @@ import dev.bittim.valolink.core.ui.util.extensions.modifier.SATURATION_DESATURAT
 import dev.bittim.valolink.core.ui.util.extensions.modifier.saturation
 import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
-import dev.bittim.valolink.onboarding.ui.screens.rankSetup.components.RankCard
-import dev.bittim.valolink.onboarding.ui.screens.rankSetup.components.RankCardData
 import kotlin.math.absoluteValue
 
 const val MAX_RR = 99

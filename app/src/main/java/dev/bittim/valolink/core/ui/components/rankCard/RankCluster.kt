@@ -7,10 +7,10 @@
  File:       RankCluster.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.04.25, 16:22
+ Modified:   06.07.25, 02:52
  */
 
-package dev.bittim.valolink.onboarding.ui.screens.rankSetup.components
+package dev.bittim.valolink.core.ui.components.rankCard
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement

@@ -7,7 +7,7 @@
  File:       MatchesAddViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 22:18
+ Modified:   06.07.25, 02:52
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -79,7 +79,7 @@ class MatchesAddViewModel @Inject constructor(
         ranksFetchJob?.cancel()
         ranksFetchJob = viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                rankRepository.getAll()
+                rankRepository.getAllByLatestTable()
                     .stateIn(viewModelScope, WhileSubscribed(5000), null)
                     .collectLatest { ranks ->
                         _state.update { it.copy(ranks = ranks) }

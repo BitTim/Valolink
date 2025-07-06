@@ -7,7 +7,7 @@
  File:       DetermineRankChangeResultUseCase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   21.06.25, 22:18
+ Modified:   06.07.25, 02:52
  */
 
 package dev.bittim.valolink.core.domain.usecase.rank
@@ -28,6 +28,12 @@ class DetermineRankChangeResultUseCase @Inject constructor() {
         specialBehavior: Boolean,
         maxTier: Int,
     ): RankChangeResult {
+        if (tier < MIN_TIER) return RankChangeResult(
+            newTier = tier,
+            newRR = rr,
+            shadowDeltaRR = 0,
+        )
+
         var newRR = rr + deltaRR
         var newTier = tier
 
