@@ -25,7 +25,7 @@ plugins {
 
 android {
     namespace = "dev.bittim.valolink"
-    compileSdk = 35
+    compileSdk = 36
 
     // Determine version
     applicationVariants.all {
@@ -88,7 +88,7 @@ android {
     defaultConfig {
         applicationId = "dev.bittim.valolink"
         minSdk = 33
-        targetSdk = 35
+        targetSdk = 36
         this.versionCode = buildVersion
         this.versionName = versionName
 
@@ -108,10 +108,11 @@ android {
             useSupportLibrary = true
         }
 
+        //noinspection WrongGradleMethod
         ksp {
             arg(
                 "room.schemaLocation",
-                "$projectDir/schemas"
+                "${project.projectDir.absolutePath}/schemas"
             )
         }
     }
@@ -156,11 +157,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         compose = true
@@ -170,6 +168,9 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+    kotlin {
+        jvmToolchain(21)
     }
 }
 
