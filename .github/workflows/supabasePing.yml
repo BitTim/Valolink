@@ -29,7 +29,7 @@ jobs:
       - name: Ping Supabase
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }} # Supabase project URL
-          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }} # Supabase service role key
+          SUPABASE_KEY: ${{ secrets.SUPABASE_API_KEY }} # Supabase publishable API key
         run: |
           node -e "
           (async () => {
