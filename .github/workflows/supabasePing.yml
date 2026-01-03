@@ -34,16 +34,12 @@ jobs:
           node -e "
           (async () => {
             try {
-              // Debugging: Log environment variables (optional)
-              console.log('Supabase URL:', process.env.SUPABASE_URL);
-              console.log('Supabase Key:', process.env.SUPABASE_KEY);
-
               // Import Supabase client
               const { createClient } = require('@supabase/supabase-js');
               const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
               // Ping Supabase by querying a table (e.g., 'songs')
-              const { data, error } = await supabase.from('your_table').select('*').limit(10);
+              const { data, error } = await supabase.from('users').select('*').limit(1);
 
               // Handle errors
               if (error) throw error;
