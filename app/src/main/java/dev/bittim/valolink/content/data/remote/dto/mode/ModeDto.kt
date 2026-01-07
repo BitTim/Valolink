@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2025 Tim Anhalt (BitTim)
+ Copyright (c) 2025-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,12 +7,12 @@
  File:       ModeDto.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.06.25, 01:14
+ Modified:   07.01.26, 01:16
  */
 
 package dev.bittim.valolink.content.data.remote.dto.mode
 
-import dev.bittim.valolink.content.data.local.ModeEntity
+import dev.bittim.valolink.content.data.local.entity.ModeEntity
 import dev.bittim.valolink.content.domain.model.map.MapType
 import dev.bittim.valolink.content.domain.model.mode.ScoreType
 

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       ContentDatabase.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.06.25, 18:52
+ Modified:   07.01.26, 01:16
  */
 
 package dev.bittim.valolink.content.data.local
@@ -33,6 +33,7 @@ import dev.bittim.valolink.content.data.local.dao.WeaponDao
 import dev.bittim.valolink.content.data.local.entity.CurrencyEntity
 import dev.bittim.valolink.content.data.local.entity.EventEntity
 import dev.bittim.valolink.content.data.local.entity.FlexEntity
+import dev.bittim.valolink.content.data.local.entity.ModeEntity
 import dev.bittim.valolink.content.data.local.entity.PlayerCardEntity
 import dev.bittim.valolink.content.data.local.entity.PlayerTitleEntity
 import dev.bittim.valolink.content.data.local.entity.SeasonEntity

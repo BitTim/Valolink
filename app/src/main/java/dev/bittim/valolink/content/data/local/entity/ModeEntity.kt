@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2025 Tim Anhalt (BitTim)
+ Copyright (c) 2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,15 +7,14 @@
  File:       ModeEntity.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.06.25, 01:14
+ Modified:   07.01.26, 01:16
  */
 
-package dev.bittim.valolink.content.data.local
+package dev.bittim.valolink.content.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dev.bittim.valolink.content.data.local.entity.VersionedEntity
 import dev.bittim.valolink.content.domain.model.map.MapType
 import dev.bittim.valolink.content.domain.model.mode.Mode
 import dev.bittim.valolink.content.domain.model.mode.ScoreType
