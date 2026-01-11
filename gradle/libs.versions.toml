@@ -2,6 +2,7 @@
 agp = "8.13.2"
 apng = "1.12.0"
 constraintlayoutCompose = "1.1.1"
+powerSync = "1.10.1"
 datastorePreferences = "1.2.0"
 ktorClientOkhttp = "3.3.3"
 supabaseBom = "3.3.0"
@@ -21,7 +22,7 @@ composeBom = "2025.12.01"
 materialIconsExtendedAndroid = "1.7.8"
 moshiKotlin = "1.15.2"
 navigationCompose = "2.9.6"
-playServicesAuth = "21.4.0"
+playServicesAuth = "21.5.0"
 lifecycleRuntimeCompose = "2.10.0"
 retrofit = "3.0.0"
 roomKtx = "2.8.4"
@@ -50,6 +51,8 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 apng = { module = "com.linecorp:apng", version.ref = "apng" }
+powerSync-connector-supabase = { module = "com.powersync:connector-supabase", version.ref = "powerSync" }
+powerSync = { module = "com.powersync:core", version.ref = "powerSync" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientOkhttp" }
 supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabaseBom" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilComposeVersion" }

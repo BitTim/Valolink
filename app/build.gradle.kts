@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       build.gradle.kts
  Module:     Valolink.app
  Author:     Tim Anhalt (BitTim)
- Modified:   15.06.25, 16:00
+ Modified:   11.01.26, 00:35
  */
 
 import java.io.FileInputStream
@@ -212,6 +212,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Retrofit
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
 
@@ -236,9 +237,12 @@ dependencies {
     implementation(libs.supabase.functions.kt)
     implementation(libs.supabase.compose.auth)
     implementation(libs.supabase.compose.auth.ui)
-    implementation(libs.ktor.client.okhttp)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.preferences.core)
+
+    // PowerSync
+    implementation(libs.powerSync)
+    implementation(libs.powerSync.connector.supabase)
 }
