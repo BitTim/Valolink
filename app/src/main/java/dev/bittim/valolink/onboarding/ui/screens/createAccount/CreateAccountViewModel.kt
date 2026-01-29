@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       CreateAccountViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   16.04.25, 19:18
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -22,9 +22,8 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
-import dev.bittim.valolink.user.data.repository.SessionRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
 import dev.bittim.valolink.user.domain.error.EmailError
 import dev.bittim.valolink.user.domain.error.PasswordError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
@@ -47,8 +46,8 @@ class CreateAccountViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
-    private val sessionRepository: SessionRepository,
-    private val userMetaRepository: UserMetaRepository,
+    private val sessionRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
 ) : ViewModel() {
@@ -131,7 +130,7 @@ class CreateAccountViewModel @Inject constructor(
 
             if (error == null) {
                 sessionRepository.setLocal(false)
-                userMetaRepository.createEmptyForCurrentUser()
+                userRepository.createEmptyForCurrentUser()
             } else {
                 snackbarHostState?.showSnackbar(error.asString(context))
             }

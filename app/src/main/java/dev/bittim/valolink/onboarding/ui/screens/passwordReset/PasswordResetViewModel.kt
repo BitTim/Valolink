@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2025 Tim Anhalt (BitTim)
+ Copyright (c) 2025-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       PasswordResetViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   05.04.25, 11:12
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordReset
@@ -22,7 +22,6 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
-import dev.bittim.valolink.user.data.repository.auth.AuthRepository
 import dev.bittim.valolink.user.domain.error.PasswordError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidatePasswordUseCase
 import kotlinx.coroutines.Dispatchers

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2025 Tim Anhalt (BitTim)
+ Copyright (c) 2025-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       MatchesAddViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   06.07.25, 02:52
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.matches.add
@@ -22,7 +22,7 @@ import dev.bittim.valolink.core.domain.model.RankChangeResult
 import dev.bittim.valolink.core.domain.model.ScoreResult
 import dev.bittim.valolink.core.domain.usecase.rank.DetermineRankChangeResultUseCase
 import dev.bittim.valolink.core.domain.usecase.score.DetermineScoreResultUseCase
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +41,7 @@ class MatchesAddViewModel @Inject constructor(
     private val mapRepository: MapRepository,
     private val modeRepository: ModeRepository,
     private val rankRepository: RankRepository,
-    private val userMetaRepository: UserMetaRepository,
+    private val userRepository: UserRepository,
     private val determineScoreResultUseCase: DetermineScoreResultUseCase,
     private val determineRankChangeResultUseCase: DetermineRankChangeResultUseCase
 ) : ViewModel() {
@@ -90,7 +90,7 @@ class MatchesAddViewModel @Inject constructor(
         userRankFetchJob?.cancel()
         userRankFetchJob = viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                userMetaRepository.getWithCurrentUser().map { it?.rank }
+                userRepository.getWithCurrentUser().map { it?.rank }
                     .stateIn(viewModelScope, WhileSubscribed(5000), null)
                     .collectLatest { rank ->
                         _state.update { it.copy(userRank = rank) }

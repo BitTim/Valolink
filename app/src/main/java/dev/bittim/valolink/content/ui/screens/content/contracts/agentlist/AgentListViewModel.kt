@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       AgentListViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:28
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentlist
@@ -16,8 +16,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserContractRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.synced.UserContractRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -41,7 +41,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AgentListViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
-    private val sessionRepository: SessionRepository,
+    private val authRepository: AuthRepository,
     private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AgentListState())
@@ -94,9 +94,9 @@ class AgentListViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 val contract =
                     state.value.agentGears?.find { it.uuid == uuid } ?: return@withContext
-                val uid = sessionRepository.getUid().firstOrNull() ?: return@withContext
+                val uid = authRepository.getUid().firstOrNull() ?: return@withContext
 
-                userContractRepository.set(contract.toUserObj(uid, freeOnly = false))
+                userContractRepository.insert(contract.toUserObj(uid, freeOnly = false))
             }
         }
     }

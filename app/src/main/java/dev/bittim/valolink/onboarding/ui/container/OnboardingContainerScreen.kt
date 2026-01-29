@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.05.25, 12:56
+ Modified:   29.01.26, 15:30
  */
 
 
@@ -60,9 +60,9 @@ fun OnboardingContainerScreen(
     snackbarHostState: SnackbarHostState,
     navContent: () -> Unit,
 ) {
-    LaunchedEffect(state.isAuthenticated, state.userMeta?.onboardingStep, state.route) {
-        if (state.isAuthenticated == true && state.userMeta != null) {
-            val step = state.userMeta.onboardingStep + OnboardingScreen.STEP_OFFSET
+    LaunchedEffect(state.isAuthenticated, state.user?.onboardingStep, state.route) {
+        if (state.isAuthenticated == true && state.user != null) {
+            val step = state.user.onboardingStep + OnboardingScreen.STEP_OFFSET
             if (step > OnboardingScreen.getMaxStep()) {
                 navContent()
                 return@LaunchedEffect

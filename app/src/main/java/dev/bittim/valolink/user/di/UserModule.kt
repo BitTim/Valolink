@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,34 +7,37 @@
  File:       UserModule.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 13:31
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.user.di
 
 import android.content.Context
 import androidx.work.WorkManager
+import com.powersync.DatabaseDriverFactory
+import com.powersync.PowerSyncDatabase
+import com.powersync.connector.supabase.SupabaseConnector
+import com.powersync.db.schema.Schema
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.bittim.valolink.BuildConfig
+import dev.bittim.valolink.user.data.db.UserSchema
 import dev.bittim.valolink.user.data.flags.UserFlags
 import dev.bittim.valolink.user.data.local.UserDatabase
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.SessionSupabaseRepository
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
-import dev.bittim.valolink.user.data.repository.auth.SupabaseAuthRepository
-import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
-import dev.bittim.valolink.user.data.repository.data.UserAgentSupabaseRepository
-import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserContractSupabaseRepository
-import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
-import dev.bittim.valolink.user.data.repository.data.UserLevelSupabaseRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaSupabaseRepository
-import dev.bittim.valolink.user.data.repository.data.UserRankRepository
-import dev.bittim.valolink.user.data.repository.data.UserRankSupabaseRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthSupabaseRepository
+import dev.bittim.valolink.user.data.repository.synced.UserAgentPowersyncRepository
+import dev.bittim.valolink.user.data.repository.synced.UserAgentRepository
+import dev.bittim.valolink.user.data.repository.synced.UserContractPowersyncRepository
+import dev.bittim.valolink.user.data.repository.synced.UserContractRepository
+import dev.bittim.valolink.user.data.repository.synced.UserLevelPowersyncRepository
+import dev.bittim.valolink.user.data.repository.synced.UserLevelRepository
+import dev.bittim.valolink.user.data.repository.synced.UserPowersyncRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
+import dev.bittim.valolink.user.data.retired.local.UserDatabase
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
@@ -45,8 +48,43 @@ import javax.inject.Singleton
 object UserModule {
     @Provides
     @Singleton
+    fun provideUserSchema(): Schema {
+        return UserSchema.schema
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabaseDriverFactory(@ApplicationContext context: Context): DatabaseDriverFactory {
+        return DatabaseDriverFactory(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSupabaseConnector(): SupabaseConnector {
+        return SupabaseConnector(
+            supabaseUrl = BuildConfig.SUPABASE_URL,
+            supabaseKey = BuildConfig.SUPABASE_KEY,
+            powerSyncEndpoint = BuildConfig.POWERSYNC_URL,
+            storageBucket = BuildConfig.SUPABASE_STORAGE_BUCKET
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDatabase(
+        driverFactory: DatabaseDriverFactory,
+        schema: Schema
+    ): PowerSyncDatabase {
+        return PowerSyncDatabase(
+            factory = driverFactory,
+            schema = schema
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(auth: Auth): AuthRepository {
-        return SupabaseAuthRepository(auth)
+        return AuthSupabaseRepository(auth)
     }
 
     @Provides
@@ -57,8 +95,8 @@ object UserModule {
         auth: Auth,
         userFlags: UserFlags,
         userDatabase: UserDatabase,
-    ): SessionRepository {
-        return SessionSupabaseRepository(
+    ): AuthRepository {
+        return AuthSupabaseRepository(
             context, auth, userFlags, userDatabase
         )
     }
@@ -82,7 +120,7 @@ object UserModule {
         database: Postgrest,
         workManager: WorkManager,
     ): UserLevelRepository {
-        return UserLevelSupabaseRepository(
+        return UserLevelPowersyncRepository(
             userDatabase, database, workManager
         )
     }
@@ -90,27 +128,27 @@ object UserModule {
     @Provides
     @Singleton
     fun provideUserContractRepository(
-        sessionRepository: SessionRepository,
+        authRepository: AuthRepository,
         userLevelRepository: UserLevelRepository,
         userDatabase: UserDatabase,
         database: Postgrest,
         workManager: WorkManager,
     ): UserContractRepository {
-        return UserContractSupabaseRepository(
-            sessionRepository, userLevelRepository, userDatabase, database, workManager
+        return UserContractPowersyncRepository(
+            authRepository, userLevelRepository, userDatabase, database, workManager
         )
     }
 
     @Provides
     @Singleton
     fun provideUserAgentRepository(
-        sessionRepository: SessionRepository,
+        authRepository: AuthRepository,
         userDatabase: UserDatabase,
         database: Postgrest,
         workManager: WorkManager,
     ): UserAgentRepository {
-        return UserAgentSupabaseRepository(
-            sessionRepository, userDatabase, database, workManager
+        return UserAgentPowersyncRepository(
+            authRepository, userDatabase, database, workManager
         )
     }
 
@@ -119,16 +157,16 @@ object UserModule {
     fun provideUserRepository(
         @ApplicationContext
         context: Context,
-        sessionRepository: SessionRepository,
+        authRepository: AuthRepository,
         userRankRepository: UserRankRepository,
         userDatabase: UserDatabase,
         database: Postgrest,
         storage: Storage,
         workManager: WorkManager,
-    ): UserMetaRepository {
-        return UserMetaSupabaseRepository(
+    ): UserRepository {
+        return UserPowersyncRepository(
             context,
-            sessionRepository,
+            authRepository,
             userRankRepository,
             userDatabase,
             database,

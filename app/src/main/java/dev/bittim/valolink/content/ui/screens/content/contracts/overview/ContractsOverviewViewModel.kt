@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       ContractsOverviewViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.overview
@@ -19,10 +19,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.domain.model.contract.content.ContentType
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
-import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.synced.UserAgentRepository
+import dev.bittim.valolink.user.data.repository.synced.UserContractRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -45,8 +45,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ContractsOverviewViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
-    private val sessionRepository: SessionRepository,
-    private val userMetaRepository: UserMetaRepository,
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val userAgentRepository: UserAgentRepository,
     private val userContractRepository: UserContractRepository,
 ) : ViewModel() {
@@ -111,7 +111,7 @@ class ContractsOverviewViewModel @Inject constructor(
 
             launch {
                 withContext(Dispatchers.IO) {
-                    val avatarBytes = userMetaRepository.downloadAvatarWithCurrentUser()
+                    val avatarBytes = userRepository.downloadAvatarWithCurrentUser()
                     val avatar = if (avatarBytes != null) BitmapFactory.decodeByteArray(
                         avatarBytes,
                         0,
@@ -166,9 +166,9 @@ class ContractsOverviewViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 val contract =
                     state.value.agentGears?.find { it.uuid == uuid } ?: return@withContext
-                val uid = sessionRepository.getUid().firstOrNull() ?: return@withContext
+                val uid = authRepository.getUid().firstOrNull() ?: return@withContext
 
-                userContractRepository.set(contract.toUserObj(uid, freeOnly = true))
+                userContractRepository.insert(contract.toUserObj(uid, freeOnly = true))
             }
         }
     }

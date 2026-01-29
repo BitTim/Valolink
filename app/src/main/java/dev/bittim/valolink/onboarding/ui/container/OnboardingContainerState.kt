@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,17 +7,17 @@
  File:       OnboardingContainerState.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 10:54
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.onboarding.ui.container
 
 import dev.bittim.valolink.core.ui.util.UiText
-import dev.bittim.valolink.user.domain.model.UserMeta
+import dev.bittim.valolink.user.domain.model.User
 
 data class OnboardingContainerState(
     val isAuthenticated: Boolean? = null,
-    val userMeta: UserMeta? = null,
+    val user: User? = null,
 
     val route: String? = null,
     val title: UiText? = null,

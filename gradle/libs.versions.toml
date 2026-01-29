@@ -1,9 +1,9 @@
 [versions]
-agp = "8.13.2"
+agp = "9.0.0"
 apng = "1.12.0"
+crypto-bom = "0.8.0"
 constraintlayoutCompose = "1.1.1"
 powerSync = "1.10.1"
-datastorePreferences = "1.2.0"
 ktorClientOkhttp = "3.3.3"
 supabaseBom = "3.3.0"
 coilComposeVersion = "2.7.0"
@@ -42,8 +42,6 @@ testManifest = "1.10.0"
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
-androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferences" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }
 androidx-material-icons-extended-android = { module = "androidx.compose.material:material-icons-extended-android", version.ref = "materialIconsExtendedAndroid" }
@@ -51,9 +49,11 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 apng = { module = "com.linecorp:apng", version.ref = "apng" }
+crypto-bom = { module = "org.kotlincrypto.hash:bom", version.ref = "crypto-bom" }
 powerSync-connector-supabase = { module = "com.powersync:connector-supabase", version.ref = "powerSync" }
 powerSync = { module = "com.powersync:core", version.ref = "powerSync" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientOkhttp" }
+crypto-sha2 = { module = "org.kotlincrypto.hash:sha2" }
 supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabaseBom" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilComposeVersion" }
 coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }

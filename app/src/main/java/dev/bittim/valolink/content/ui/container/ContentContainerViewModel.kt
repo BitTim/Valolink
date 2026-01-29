@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       ContentContainerViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.06.25, 20:32
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.content.ui.container
@@ -17,8 +17,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.domain.usecase.QueueFullSyncUseCase
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -32,8 +32,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContentContainerViewModel @Inject constructor(
-    private val sessionRepository: SessionRepository,
-    private val userMetaRepository: UserMetaRepository,
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val queueFullSyncUseCase: QueueFullSyncUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(ContentContainerState())
@@ -45,7 +45,7 @@ class ContentContainerViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            sessionRepository.isAuthenticated()
+            authRepository.isAuthenticated()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { isAuthenticated ->
                     _state.update { it.copy(isAuthenticated = isAuthenticated) }
@@ -53,7 +53,7 @@ class ContentContainerViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            userMetaRepository.hasOnboardedWithCurrentUser()
+            userRepository.hasOnboardedWithCurrentUser()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { hasOnboarded ->
                     _state.update {
@@ -64,7 +64,7 @@ class ContentContainerViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val avatarBytes = userMetaRepository.downloadAvatarWithCurrentUser()
+                val avatarBytes = userRepository.downloadAvatarWithCurrentUser()
                 val avatar = if (avatarBytes != null) BitmapFactory.decodeByteArray(
                     avatarBytes,
                     0,
@@ -78,7 +78,7 @@ class ContentContainerViewModel @Inject constructor(
 
     fun signOut() {
         viewModelScope.launch {
-            sessionRepository.signOut()
+            authRepository.signOut()
         }
     }
 }

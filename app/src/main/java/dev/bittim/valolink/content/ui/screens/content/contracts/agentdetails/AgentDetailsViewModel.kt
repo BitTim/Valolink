@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       AgentDetailsViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 12:25
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.content.ui.screens.content.contracts.agentdetails
@@ -19,9 +19,9 @@ import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.data.repository.currency.CurrencyRepository
 import dev.bittim.valolink.content.domain.model.Currency
 import dev.bittim.valolink.content.domain.model.agent.Agent
-import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
-import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
+import dev.bittim.valolink.user.data.repository.synced.UserAgentRepository
+import dev.bittim.valolink.user.data.repository.synced.UserContractRepository
+import dev.bittim.valolink.user.data.repository.synced.UserLevelRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -130,7 +130,7 @@ class AgentDetailsViewModel @Inject constructor(
                 val agent = state.value.agentGear?.content?.relation as Agent? ?: return@withContext
                 val userData = state.value.userAgent ?: return@withContext
 
-                userAgentRepository.set(agent.toUserObj(userData.uuid))
+                userAgentRepository.insert(agent.toUserObj(userData.uuid))
             }
         }
     }
@@ -156,7 +156,7 @@ class AgentDetailsViewModel @Inject constructor(
                 val contract = state.value.agentGear ?: return@withContext
                 val userData = state.value.userAgent ?: return@withContext
 
-                userContractRepository.set(contract.toUserObj(userData.uuid, false))
+                userContractRepository.insert(contract.toUserObj(userData.uuid, false))
             }
         }
     }

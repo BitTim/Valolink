@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2025 Tim Anhalt (BitTim)
+ Copyright (c) 2025-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   08.05.25, 12:53
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -25,9 +25,9 @@ import dev.bittim.valolink.core.domain.usecase.profile.GenerateAvatarUseCase
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserAgentRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.synced.UserAgentRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import dev.bittim.valolink.user.domain.error.UsernameError
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateUsernameUseCase
 import kotlinx.coroutines.Dispatchers
@@ -47,8 +47,8 @@ import javax.inject.Inject
 class ProfileSetupViewModel @Inject constructor(
     private val agentRepository: AgentRepository,
     private val userAgentRepository: UserAgentRepository,
-    private val sessionRepository: SessionRepository,
-    private val userMetaRepository: UserMetaRepository,
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val validateUsernameUseCase: ValidateUsernameUseCase,
     private val generateAvatarUseCase: GenerateAvatarUseCase,
 ) : ViewModel() {
@@ -57,27 +57,27 @@ class ProfileSetupViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            sessionRepository.isAuthenticated().stateIn(viewModelScope, WhileSubscribed(5000), null)
+            authRepository.isAuthenticated().stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { isAuthenticated ->
                     _state.update { it.copy(isAuthenticated = isAuthenticated) }
                 }
         }
 
         viewModelScope.launch {
-            sessionRepository.isLocal().stateIn(viewModelScope, WhileSubscribed(5000), null)
+            authRepository.isLocal().stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { isLocal ->
                     _state.update { it.copy(isLocal = isLocal) }
                 }
         }
 
         viewModelScope.launch {
-            val userMeta = userMetaRepository.getWithCurrentUser().firstOrNull()
+            val userMeta = userRepository.getWithCurrentUser().firstOrNull()
             if (userMeta == null) {
                 selectAvatar("")
                 return@launch
             }
 
-            val avatarBytes = userMetaRepository.downloadAvatarWithCurrentUser()
+            val avatarBytes = userRepository.downloadAvatarWithCurrentUser()
             val avatar = if (avatarBytes == null) generateAvatarUseCase(userMeta.username) else {
                 BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.size)
             }
@@ -118,7 +118,7 @@ class ProfileSetupViewModel @Inject constructor(
 
     fun signOut() {
         viewModelScope.launch {
-            sessionRepository.signOut()
+            authRepository.signOut()
         }
     }
 
@@ -198,19 +198,19 @@ class ProfileSetupViewModel @Inject constructor(
             if (baseAgents != null) {
                 for (agentUuid in baseAgents) {
                     val agent = agentRepository.getByUuid(agentUuid).firstOrNull()
-                    val uid = sessionRepository.getUid().firstOrNull()
-                    if (agent != null && uid != null) userAgentRepository.set(
+                    val uid = authRepository.getUid().firstOrNull()
+                    if (agent != null && uid != null) userAgentRepository.insert(
                         agent.toUserObj(uid)
                     )
                 }
             }
 
-            val userData = userMetaRepository.getWithCurrentUser().firstOrNull()
+            val userData = userRepository.getWithCurrentUser().firstOrNull()
             if (userData == null) return@launch
 
             val avatarLocation =
-                userMetaRepository.uploadAvatarWithCurrentUser(avatarOutputStream.toByteArray())
-            userMetaRepository.setWithCurrentUser(
+                userRepository.uploadAvatarWithCurrentUser(avatarOutputStream.toByteArray())
+            userRepository.setWithCurrentUser(
                 userData.copy(
                     username = username,
                     isPrivate = private,

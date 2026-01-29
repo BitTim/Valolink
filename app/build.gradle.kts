@@ -7,7 +7,7 @@
  File:       build.gradle.kts
  Module:     Valolink.app
  Author:     Tim Anhalt (BitTim)
- Modified:   11.01.26, 00:35
+ Modified:   29.01.26, 15:30
  */
 
 import java.io.FileInputStream
@@ -78,11 +78,11 @@ android {
         supabaseProperties.load(FileInputStream(supabasePropertiesFile))
 
         supabaseUrl = supabaseProperties.getProperty("SUPABASE_URL")
-        supabaseAnonKey = supabaseProperties.getProperty("SUPABASE_ANON_KEY")
+        supabaseAnonKey = supabaseProperties.getProperty("SUPABASE_KEY")
     } else {
         println("Could not read supabase.properties file, using environment variables instead")
         supabaseUrl = System.getenv("SUPABASE_URL") ?: ""
-        supabaseAnonKey = System.getenv("SUPABASE_ANON_KEY") ?: ""
+        supabaseAnonKey = System.getenv("SUPABAS_KEY") ?: ""
     }
 
     defaultConfig {
@@ -99,7 +99,7 @@ android {
         )
         buildConfigField(
             "String",
-            "SUPABASE_ANON_KEY",
+            "SUPABASE_KEY",
             supabaseAnonKey
         )
 
@@ -238,11 +238,11 @@ dependencies {
     implementation(libs.supabase.compose.auth)
     implementation(libs.supabase.compose.auth.ui)
 
-    // DataStore
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.datastore.preferences.core)
-
     // PowerSync
     implementation(libs.powerSync)
     implementation(libs.powerSync.connector.supabase)
+
+    // KotlinCrypto
+    implementation(platform(libs.crypto.bom))
+    implementation(libs.crypto.sha2)
 }

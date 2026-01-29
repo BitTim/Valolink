@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2025 Tim Anhalt (BitTim)
+ Copyright (c) 2025-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   09.05.25, 01:20
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -18,10 +18,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.domain.model.Season
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserContractRepository
-import dev.bittim.valolink.user.data.repository.data.UserLevelRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.synced.UserContractRepository
+import dev.bittim.valolink.user.data.repository.synced.UserLevelRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -40,8 +40,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ContractSetupViewModel @Inject constructor(
     private val contractRepository: ContractRepository,
-    private val sessionRepository: SessionRepository,
-    private val userMetaRepository: UserMetaRepository,
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val userContractRepository: UserContractRepository,
     private val userLevelRepository: UserLevelRepository
 ) : ViewModel() {
@@ -87,8 +87,8 @@ class ContractSetupViewModel @Inject constructor(
 
     fun navBack() {
         viewModelScope.launch {
-            val userData = userMetaRepository.getWithCurrentUser().firstOrNull() ?: return@launch
-            userMetaRepository.setWithCurrentUser(
+            val userData = userRepository.getWithCurrentUser().firstOrNull() ?: return@launch
+            userRepository.setWithCurrentUser(
                 userData.copy(
                     onboardingStep = OnboardingScreen.ContractSetup.step - OnboardingScreen.STEP_OFFSET - 1
                 )
@@ -110,7 +110,7 @@ class ContractSetupViewModel @Inject constructor(
 
     fun setContractProgress(level: Int, xp: Int, freeOnly: Boolean) {
         viewModelScope.launch {
-            val uid = sessionRepository.getUid().firstOrNull() ?: return@launch
+            val uid = authRepository.getUid().firstOrNull() ?: return@launch
             val contractUuid = state.value.contract?.uuid ?: return@launch
 
             val oldUserContract = userContractRepository.get(uid, contractUuid).firstOrNull()
@@ -119,7 +119,7 @@ class ContractSetupViewModel @Inject constructor(
             if (oldUserContract != null) userContract =
                 userContract.copy(uuid = oldUserContract.uuid)
 
-            userContractRepository.set(userContract)
+            userContractRepository.insert(userContract)
 
             val levels =
                 state.value.contract?.content?.chapters?.flatMap { it.levels } ?: emptyList()
@@ -141,8 +141,8 @@ class ContractSetupViewModel @Inject constructor(
                 userLevelRepository.set(userLevel)
             }
 
-            val userMeta = userMetaRepository.get(uid).firstOrNull() ?: return@launch
-            userMetaRepository.set(
+            val userMeta = userRepository.get(uid).firstOrNull() ?: return@launch
+            userRepository.set(
                 uid,
                 userMeta.copy(
                     onboardingStep = OnboardingScreen.ContractSetup.step - OnboardingScreen.STEP_OFFSET + 1

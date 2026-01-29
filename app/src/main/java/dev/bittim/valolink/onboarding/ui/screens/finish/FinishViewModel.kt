@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2025 Tim Anhalt (BitTim)
+ Copyright (c) 2025-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       FinishViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   02.05.25, 08:41
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.finish
@@ -17,8 +17,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,8 +36,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FinishViewModel @Inject constructor(
     private val sprayRepository: SprayRepository,
-    private val sessionRepository: SessionRepository,
-    private val userMetaRepository: UserMetaRepository
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(FinishState())
     val state = _state.asStateFlow()
@@ -66,8 +66,8 @@ class FinishViewModel @Inject constructor(
 
     fun navBack() {
         viewModelScope.launch {
-            val userData = userMetaRepository.getWithCurrentUser().firstOrNull() ?: return@launch
-            userMetaRepository.setWithCurrentUser(
+            val userData = userRepository.getWithCurrentUser().firstOrNull() ?: return@launch
+            userRepository.setWithCurrentUser(
                 userData.copy(
                     onboardingStep = OnboardingScreen.Finish.step - OnboardingScreen.STEP_OFFSET - 1
                 )
@@ -77,8 +77,8 @@ class FinishViewModel @Inject constructor(
 
     fun finish() {
         viewModelScope.launch {
-            val userData = userMetaRepository.getWithCurrentUser().firstOrNull() ?: return@launch
-            userMetaRepository.setWithCurrentUser(
+            val userData = userRepository.getWithCurrentUser().firstOrNull() ?: return@launch
+            userRepository.setWithCurrentUser(
                 userData.copy(
                     onboardingStep = OnboardingScreen.Finish.step - OnboardingScreen.STEP_OFFSET + 1
                 )

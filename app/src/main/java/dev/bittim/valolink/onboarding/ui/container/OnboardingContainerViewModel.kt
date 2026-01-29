@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       OnboardingContainerViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   04.05.25, 10:54
+ Modified:   29.01.26, 15:30
  */
 
 package dev.bittim.valolink.onboarding.ui.container
@@ -18,8 +18,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.core.domain.usecase.progress.CalcProgressDecimalUseCase
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
-import dev.bittim.valolink.user.data.repository.SessionRepository
-import dev.bittim.valolink.user.data.repository.data.UserMetaRepository
+import dev.bittim.valolink.user.data.repository.auth.AuthRepository
+import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,8 +31,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingContainerViewModel @Inject constructor(
-    private val sessionRepository: SessionRepository,
-    private val userMetaRepository: UserMetaRepository,
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val calcProgressDecimalUseCase: CalcProgressDecimalUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(OnboardingContainerState())
@@ -42,7 +42,7 @@ class OnboardingContainerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            sessionRepository.isAuthenticated()
+            authRepository.isAuthenticated()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { isAuthenticated ->
                     _state.update { it.copy(isAuthenticated = isAuthenticated) }
@@ -50,10 +50,10 @@ class OnboardingContainerViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            userMetaRepository.getWithCurrentUser()
+            userRepository.getWithCurrentUser()
                 .stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { data ->
-                    _state.update { it.copy(userMeta = data) }
+                    _state.update { it.copy(user = data) }
                 }
         }
     }
