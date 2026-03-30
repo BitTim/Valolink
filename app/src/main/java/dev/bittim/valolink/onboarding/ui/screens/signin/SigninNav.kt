@@ -21,36 +21,36 @@ import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SigninNav
+object SignInNav
 
-fun NavGraphBuilder.signinScreen(
+fun NavGraphBuilder.signInScreen(
     navBack: () -> Unit,
     navMain: () -> Unit,
     navPasswordForgot: () -> Unit,
     navCreateAccount: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    composable<SigninNav> {
-        val viewModel: SigninViewModel = hiltViewModel()
+    composable<SignInNav> {
+        val viewModel: SignInViewModel = hiltViewModel()
         viewModel.setSnackbarHostState(snackbarHostState)
 
         val state = viewModel.state.collectAsStateWithLifecycle()
 
-        SigninScreen(
+        SignInScreen(
             state = state.value,
             validateEmail = viewModel::validateEmail,
             onForgotPassword = navPasswordForgot,
             onCreateAccount = navCreateAccount,
             onCancel = navBack,
-            signin = { email, password ->
+            signIn = { email, password ->
                 viewModel.signIn(email, password, navMain)
             }
         )
     }
 }
 
-fun NavController.navOnboardingSignin() {
-    navigate(SigninNav) {
+fun NavController.navOnboardingSignIn() {
+    navigate(SignInNav) {
         launchSingleTop = true
         restoreState = true
     }

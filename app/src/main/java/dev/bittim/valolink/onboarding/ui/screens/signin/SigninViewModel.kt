@@ -23,6 +23,7 @@ import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.user.domain.error.EmailError
+import dev.bittim.valolink.user.domain.usecase.auth.SignInUseCase
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,13 +39,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SigninViewModel @Inject constructor(
+class SignInViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authRepository: AuthRepository,
+    private val signInUseCase: SignInUseCase,
     private val sprayRepository: SprayRepository,
     private val validateEmailUseCase: ValidateEmailUseCase
 ) : ViewModel() {
-    private val _state = MutableStateFlow(SigninState())
+    private val _state = MutableStateFlow(SignInState())
     val state = _state.asStateFlow()
 
     private var snackbarHostState: SnackbarHostState? = null
@@ -53,7 +54,7 @@ class SigninViewModel @Inject constructor(
     init {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch(Dispatchers.IO) {
-            sprayRepository.getByUuid(SigninScreen.SPRAY_UUID)
+            sprayRepository.getByUuid(SignInScreen.SPRAY_UUID)
                 .onStart { _state.update { it.copy(loading = true) } }
                 .stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { spray ->
@@ -90,7 +91,7 @@ class SigninViewModel @Inject constructor(
         if (emailResult != null) return
 
         viewModelScope.launch(Dispatchers.IO) {
-            val error = authRepository.signIn(email, password)
+            val error = signInUseCase(email, password)
 
             withContext(Dispatchers.Main) {
                 if (error == null) {

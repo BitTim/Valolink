@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       LandingNav.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 03:44
+ Modified:   30.03.26, 02:46
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
 object LandingNav
 
 fun NavGraphBuilder.landingScreen(
-    navSignin: () -> Unit,
+    navSignIn: () -> Unit,
 ) {
     composable<LandingNav> {
         val viewModel: LandingViewModel = hiltViewModel()
@@ -32,10 +32,9 @@ fun NavGraphBuilder.landingScreen(
 
         LandingScreen(
             state = state.value,
-            onLocalMode = viewModel::setLocal,
             onGoogleClicked = { },
             onRiotClicked = { },
-            onEmailClicked = navSignin
+            onEmailClicked = navSignIn
         )
     }
 }

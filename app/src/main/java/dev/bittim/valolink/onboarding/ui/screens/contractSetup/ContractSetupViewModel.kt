@@ -7,7 +7,7 @@
  File:       ContractSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   29.01.26, 15:30
+ Modified:   30.03.26, 03:06
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.contractSetup
@@ -18,10 +18,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.contract.ContractRepository
 import dev.bittim.valolink.content.domain.model.Season
 import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
+import dev.bittim.valolink.user.data.keys.UserContractKey
 import dev.bittim.valolink.user.data.repository.auth.AuthRepository
 import dev.bittim.valolink.user.data.repository.synced.UserContractRepository
 import dev.bittim.valolink.user.data.repository.synced.UserLevelRepository
 import dev.bittim.valolink.user.data.repository.synced.UserRepository
+import dev.bittim.valolink.user.domain.usecase.entitites.WatchEntitiesUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -35,10 +37,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalUuidApi::class)
 @HiltViewModel
 class ContractSetupViewModel @Inject constructor(
+    private val watchEntitiesUseCase: WatchEntitiesUseCase,
     private val contractRepository: ContractRepository,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
@@ -68,8 +73,8 @@ class ContractSetupViewModel @Inject constructor(
                 .map { contracts -> contracts.firstOrNull { it.content.relation is Season } }
                 .filterNotNull()
                 .flatMapLatest { contract ->
-                    userContractRepository.getWithCurrentUser(contract.uuid)
-                }.firstOrNull() ?: return@launch
+                    watchEntitiesUseCase(userContractRepository, UserContractKey(contract = Uuid.parse(contract.uuid)))
+                }.firstOrNull()?.firstOrNull() ?: return@launch
 
             val level = if (userContract.levels.isEmpty()) 0 else userContract.levels.lastIndex
             val xp =

@@ -22,7 +22,7 @@ import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.PasswordForgotNa
 import dev.bittim.valolink.onboarding.ui.screens.passwordReset.PasswordResetNav
 import dev.bittim.valolink.onboarding.ui.screens.profileSetup.ProfileSetupNav
 import dev.bittim.valolink.onboarding.ui.screens.rankSetup.RankSetupNav
-import dev.bittim.valolink.onboarding.ui.screens.signin.SigninNav
+import dev.bittim.valolink.onboarding.ui.screens.signin.SignInNav
 
 enum class OnboardingScreen(
     val route: String,
@@ -38,7 +38,7 @@ enum class OnboardingScreen(
     ),
 
     Signin(
-        route = SigninNav::class.java.name,
+        route = SignInNav::class.java.name,
         title = UiText.StringResource(R.string.onboarding_signin_title),
         description = UiText.StringResource(R.string.onboarding_signin_description),
         step = 1

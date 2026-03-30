@@ -28,7 +28,7 @@ class CreateSupabaseClientUseCase {
     operator fun invoke(): SupabaseClient {
         return createSupabaseClient(
             BuildConfig.SUPABASE_URL,
-            BuildConfig.SUPABASE_ANON_KEY
+            BuildConfig.SUPABASE_KEY
         ) {
             install(Postgrest) {
                 propertyConversionMethod = PropertyConversionMethod.NONE

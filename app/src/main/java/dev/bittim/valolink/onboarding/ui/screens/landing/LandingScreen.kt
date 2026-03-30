@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       LandingScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   22.04.25, 19:01
+ Modified:   30.03.26, 02:46
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -21,12 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -40,7 +35,6 @@ import dev.bittim.valolink.core.ui.util.UiText
 import dev.bittim.valolink.core.ui.util.annotations.ScreenPreviewAnnotations
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.screens.landing.components.OutlinedSocialButton
-import dev.bittim.valolink.onboarding.ui.screens.landing.dialogs.LocalAccountDialog
 
 data object LandingScreen {
     const val SPRAY_UUID: String = "40cc1645-43f4-4db3-ebb2-fdb46f8e9bf3"
@@ -49,13 +43,10 @@ data object LandingScreen {
 @Composable
 fun LandingScreen(
     state: LandingState,
-    onLocalMode: () -> Unit,
     onGoogleClicked: () -> Unit,
     onRiotClicked: () -> Unit,
     onEmailClicked: () -> Unit
 ) {
-    var showLocalAccountDialog by remember { mutableStateOf(false) }
-
     OnboardingLayout(
         modifier = Modifier
             .fillMaxSize(),
@@ -108,13 +99,6 @@ fun LandingScreen(
                     modifier = Modifier.padding(vertical = Spacing.s)
                 )
 
-                TextButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { showLocalAccountDialog = true }
-                ) {
-                    Text(UiText.StringResource(R.string.onboarding_landing_button_local).asString())
-                }
-
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onEmailClicked
@@ -126,17 +110,6 @@ fun LandingScreen(
             }
         }
     )
-
-    // ================================
-    //  Alerts
-    // ================================
-
-    if (showLocalAccountDialog) {
-        LocalAccountDialog(
-            onDismiss = { showLocalAccountDialog = false },
-            onConfirm = onLocalMode
-        )
-    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -147,7 +120,6 @@ fun LandingScreenPreview() {
         Surface {
             LandingScreen(
                 state = LandingState(),
-                onLocalMode = {},
                 onGoogleClicked = {},
                 onRiotClicked = {},
                 onEmailClicked = {}

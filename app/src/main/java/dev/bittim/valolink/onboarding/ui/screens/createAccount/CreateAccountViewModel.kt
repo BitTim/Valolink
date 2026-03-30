@@ -7,7 +7,7 @@
  File:       CreateAccountViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   29.01.26, 15:30
+ Modified:   30.03.26, 02:44
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.createAccount
@@ -22,10 +22,9 @@ import dev.bittim.valolink.R
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
 import dev.bittim.valolink.core.domain.util.Result
 import dev.bittim.valolink.core.ui.util.UiText
-import dev.bittim.valolink.user.data.repository.synced.UserRepository
-import dev.bittim.valolink.user.data.repository.auth.AuthRepository
 import dev.bittim.valolink.user.domain.error.EmailError
 import dev.bittim.valolink.user.domain.error.PasswordError
+import dev.bittim.valolink.user.domain.usecase.auth.CreateAccountUseCase
 import dev.bittim.valolink.user.domain.usecase.validator.ValidateEmailUseCase
 import dev.bittim.valolink.user.domain.usecase.validator.ValidatePasswordUseCase
 import kotlinx.coroutines.Dispatchers
@@ -44,10 +43,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateAccountViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authRepository: AuthRepository,
+    private val createAccountUseCase: CreateAccountUseCase,
     private val sprayRepository: SprayRepository,
-    private val sessionRepository: AuthRepository,
-    private val userRepository: UserRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
 ) : ViewModel() {
@@ -78,8 +75,7 @@ class CreateAccountViewModel @Inject constructor(
     }
 
     fun validateEmail(email: String): UiText? {
-        val emailResult = validateEmailUseCase(email)
-        val emailError = when (emailResult) {
+        val emailError = when (val emailResult = validateEmailUseCase(email)) {
             is Result.Ok -> null
             is Result.Err -> {
                 when (emailResult.error) {
@@ -94,8 +90,7 @@ class CreateAccountViewModel @Inject constructor(
     }
 
     fun validatePassword(password: String): UiText? {
-        val passwordResult = validatePasswordUseCase(password)
-        val passwordError = when (passwordResult) {
+        val passwordError = when (val passwordResult = validatePasswordUseCase(password)) {
             is Result.Ok -> null
             is Result.Err -> {
                 when (passwordResult.error) {
@@ -126,12 +121,9 @@ class CreateAccountViewModel @Inject constructor(
         if (emailResult != null || passwordResult != null) return
 
         viewModelScope.launch {
-            val error = authRepository.createAccount(email, password)
+            val error = createAccountUseCase(email, password)
 
-            if (error == null) {
-                sessionRepository.setLocal(false)
-                userRepository.createEmptyForCurrentUser()
-            } else {
+            if (error != null) {
                 snackbarHostState?.showSnackbar(error.asString(context))
             }
         }

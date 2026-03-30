@@ -49,19 +49,19 @@ import dev.bittim.valolink.onboarding.ui.components.OnboardingButtons
 import dev.bittim.valolink.onboarding.ui.components.OnboardingLayout
 import dev.bittim.valolink.onboarding.ui.screens.signin.components.SigninButtons
 
-data object SigninScreen {
+data object SignInScreen {
     const val SPRAY_UUID: String = "dc5edd15-455d-1782-7ee3-a294a6a3d293"
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SigninScreen(
-    state: SigninState,
+fun SignInScreen(
+    state: SignInState,
     validateEmail: (email: String) -> Unit,
     onForgotPassword: () -> Unit,
     onCreateAccount: () -> Unit,
     onCancel: () -> Unit,
-    signin: (email: String, password: String) -> Unit,
+    signIn: (email: String, password: String) -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -135,7 +135,7 @@ fun SigninScreen(
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { signin(email, password) }
+                        onDone = { signIn(email, password) }
                     )
                 )
 
@@ -150,7 +150,7 @@ fun SigninScreen(
                 OnboardingButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onDismiss = onCancel,
-                    onContinue = { signin(email, password) },
+                    onContinue = { signIn(email, password) },
                     disableContinueButton = state.emailError != null,
                     dismissText = UiText.StringResource(R.string.button_cancel)
                 )
@@ -162,16 +162,16 @@ fun SigninScreen(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @ScreenPreviewAnnotations
 @Composable
-fun SigninScreenPreview() {
+fun SignInScreenPreview() {
     ValolinkTheme {
         Surface {
-            SigninScreen(
-                state = SigninState(),
+            SignInScreen(
+                state = SignInState(),
                 validateEmail = {},
                 onForgotPassword = {},
                 onCreateAccount = {},
                 onCancel = {},
-                signin = { _, _ -> },
+                signIn = { _, _ -> },
             )
         }
     }

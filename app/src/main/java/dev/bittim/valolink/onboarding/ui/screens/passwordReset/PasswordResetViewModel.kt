@@ -7,7 +7,7 @@
  File:       PasswordResetViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   29.01.26, 15:30
+ Modified:   30.03.26, 03:10
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.passwordReset
@@ -40,7 +40,6 @@ import javax.inject.Inject
 @HiltViewModel
 class PasswordResetViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authRepository: AuthRepository,
     private val sprayRepository: SprayRepository,
     private val validatePasswordUseCase: ValidatePasswordUseCase
 ) : ViewModel() {

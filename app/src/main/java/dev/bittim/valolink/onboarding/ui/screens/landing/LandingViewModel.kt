@@ -7,7 +7,7 @@
  File:       LandingViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   29.01.26, 15:30
+ Modified:   30.03.26, 02:45
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.landing
@@ -16,8 +16,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
-import dev.bittim.valolink.user.data.repository.auth.AuthRepository
-import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +31,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LandingViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val userRepository: UserRepository,
     private val sprayRepository: SprayRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(LandingState())
@@ -59,13 +55,6 @@ class LandingViewModel @Inject constructor(
                         }
                 }
             }
-        }
-    }
-
-    fun setLocal() {
-        viewModelScope.launch {
-            authRepository.setLocal(true)
-            userRepository.createEmptyForCurrentUser()
         }
     }
 }

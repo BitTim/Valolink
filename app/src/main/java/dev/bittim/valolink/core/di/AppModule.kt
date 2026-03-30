@@ -57,8 +57,6 @@ import dev.bittim.valolink.content.data.repository.weapon.WeaponRepository
 import dev.bittim.valolink.content.domain.usecase.QueueFullSyncUseCase
 import dev.bittim.valolink.core.data.local.converter.StringListConverter
 import dev.bittim.valolink.core.domain.usecase.supabase.CreateSupabaseClientUseCase
-import dev.bittim.valolink.user.data.flags.UserFlags
-import dev.bittim.valolink.user.data.local.UserDatabase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
@@ -144,24 +142,6 @@ object AppModule {
         return Room.databaseBuilder(
             context, ContentDatabase::class.java, "game.db"
         ).addTypeConverter(StringListConverter(moshi)).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserFlags(
-        @ApplicationContext context: Context,
-    ): UserFlags {
-        return UserFlags(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserDatabase(
-        @ApplicationContext context: Context,
-    ): UserDatabase {
-        return Room.databaseBuilder(
-            context, UserDatabase::class.java, "user.db"
-        ).build()
     }
 
     // --------------------------------

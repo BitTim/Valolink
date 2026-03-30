@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       Contract.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   02.05.25, 06:47
+ Modified:   30.03.26, 03:33
  */
 
 package dev.bittim.valolink.content.domain.model.contract
@@ -17,9 +17,11 @@ import dev.bittim.valolink.user.domain.model.UserContract
 import dev.bittim.valolink.user.domain.model.UserLevel
 import java.util.Random
 import java.util.UUID
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-data class Contract(
-    val uuid: String,
+data class Contract @OptIn(ExperimentalUuidApi::class) constructor(
+    val uuid: Uuid,
     val displayName: String,
     val useLevelVPCostOverride: Boolean,
     val levelVPCostOverride: Int,

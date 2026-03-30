@@ -7,7 +7,7 @@
  File:       ProfileSetupViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   29.01.26, 15:30
+ Modified:   30.03.26, 03:06
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.profileSetup
@@ -60,13 +60,6 @@ class ProfileSetupViewModel @Inject constructor(
             authRepository.isAuthenticated().stateIn(viewModelScope, WhileSubscribed(5000), null)
                 .collectLatest { isAuthenticated ->
                     _state.update { it.copy(isAuthenticated = isAuthenticated) }
-                }
-        }
-
-        viewModelScope.launch {
-            authRepository.isLocal().stateIn(viewModelScope, WhileSubscribed(5000), null)
-                .collectLatest { isLocal ->
-                    _state.update { it.copy(isLocal = isLocal) }
                 }
         }
 

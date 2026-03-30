@@ -7,7 +7,7 @@
  File:       OnboardingContainerScreen.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   29.01.26, 15:30
+ Modified:   30.03.26, 02:46
  */
 
 
@@ -48,8 +48,8 @@ import dev.bittim.valolink.onboarding.ui.screens.passwordForgot.passwordForgotSc
 import dev.bittim.valolink.onboarding.ui.screens.passwordReset.passwordResetScreen
 import dev.bittim.valolink.onboarding.ui.screens.profileSetup.profileSetupScreen
 import dev.bittim.valolink.onboarding.ui.screens.rankSetup.rankSetupScreen
-import dev.bittim.valolink.onboarding.ui.screens.signin.navOnboardingSignin
-import dev.bittim.valolink.onboarding.ui.screens.signin.signinScreen
+import dev.bittim.valolink.onboarding.ui.screens.signin.navOnboardingSignIn
+import dev.bittim.valolink.onboarding.ui.screens.signin.signInScreen
 import kotlinx.serialization.InternalSerializationApi
 
 @OptIn(ExperimentalSharedTransitionApi::class, InternalSerializationApi::class)
@@ -115,12 +115,12 @@ fun OnboardingContainerScreen(
                 popExitTransition = { Transition.ForwardBackward.popExit }
             ) {
                 landingScreen(
-                    navSignin = {
-                        navController.navOnboardingSignin()
+                    navSignIn = {
+                        navController.navOnboardingSignIn()
                     },
                 )
 
-                signinScreen(
+                signInScreen(
                     navBack = { navController.navigateUp() },
                     navMain = navContent,
                     navPasswordForgot = { navController.navOnboardingPasswordForgot() },

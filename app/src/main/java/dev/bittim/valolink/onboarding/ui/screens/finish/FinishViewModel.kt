@@ -7,7 +7,7 @@
  File:       FinishViewModel.kt
  Module:     Valolink.app.main
  Author:     Tim Anhalt (BitTim)
- Modified:   29.01.26, 15:30
+ Modified:   30.03.26, 03:11
  */
 
 package dev.bittim.valolink.onboarding.ui.screens.finish
@@ -16,16 +16,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.bittim.valolink.content.data.repository.spray.SprayRepository
-import dev.bittim.valolink.onboarding.ui.screens.OnboardingScreen
-import dev.bittim.valolink.user.data.repository.auth.AuthRepository
-import dev.bittim.valolink.user.data.repository.synced.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -36,8 +32,6 @@ import javax.inject.Inject
 @HiltViewModel
 class FinishViewModel @Inject constructor(
     private val sprayRepository: SprayRepository,
-    private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(FinishState())
     val state = _state.asStateFlow()
@@ -61,28 +55,6 @@ class FinishViewModel @Inject constructor(
                         }
                 }
             }
-        }
-    }
-
-    fun navBack() {
-        viewModelScope.launch {
-            val userData = userRepository.getWithCurrentUser().firstOrNull() ?: return@launch
-            userRepository.setWithCurrentUser(
-                userData.copy(
-                    onboardingStep = OnboardingScreen.Finish.step - OnboardingScreen.STEP_OFFSET - 1
-                )
-            )
-        }
-    }
-
-    fun finish() {
-        viewModelScope.launch {
-            val userData = userRepository.getWithCurrentUser().firstOrNull() ?: return@launch
-            userRepository.setWithCurrentUser(
-                userData.copy(
-                    onboardingStep = OnboardingScreen.Finish.step - OnboardingScreen.STEP_OFFSET + 1
-                )
-            )
         }
     }
 }

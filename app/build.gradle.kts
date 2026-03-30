@@ -70,7 +70,9 @@ android {
 
     // Retrieve supabase credentials
     val supabaseUrl: String
-    val supabaseAnonKey: String
+    val supabaseKey: String
+    val supabaseBucket: String
+    val powersyncUrl: String
 
     val supabasePropertiesFile = file("supabase.properties")
     if (supabasePropertiesFile.canRead()) {
@@ -78,11 +80,16 @@ android {
         supabaseProperties.load(FileInputStream(supabasePropertiesFile))
 
         supabaseUrl = supabaseProperties.getProperty("SUPABASE_URL")
-        supabaseAnonKey = supabaseProperties.getProperty("SUPABASE_KEY")
+        supabaseKey = supabaseProperties.getProperty("SUPABASE_KEY")
+        supabaseBucket = supabaseProperties.getProperty("SUPABASE_BUCKET")
+        powersyncUrl = supabaseProperties.getProperty("POWERSYNC_URL")
+
     } else {
         println("Could not read supabase.properties file, using environment variables instead")
         supabaseUrl = System.getenv("SUPABASE_URL") ?: ""
-        supabaseAnonKey = System.getenv("SUPABAS_KEY") ?: ""
+        supabaseKey = System.getenv("SUPABAS_KEY") ?: ""
+        supabaseBucket = System.getenv("SUPABAS_BUCKET") ?: ""
+        powersyncUrl = System.getenv("POWERSYNC_URL") ?: ""
     }
 
     defaultConfig {
@@ -100,7 +107,17 @@ android {
         buildConfigField(
             "String",
             "SUPABASE_KEY",
-            supabaseAnonKey
+            supabaseKey
+        )
+        buildConfigField(
+            "String",
+            "SUPABASE_BUCKET",
+            supabaseBucket
+        )
+        buildConfigField(
+            "String",
+            "POWERSYNC_URL",
+            powersyncUrl
         )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
