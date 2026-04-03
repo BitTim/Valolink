@@ -1,3 +1,4 @@
+-- region:      functions
 create or replace function public.visible_users()
 returns setof uuid
 language sql
@@ -5,49 +6,70 @@ security definer
 stable
 set search_path = public
 as $$
+    select auth.uid()
+    union
     select id from users where is_private = false
     union
     select following from follows
     where follower = (select auth.uid())
     and accepted = true
 $$;
+-- endregion:   functions
 
+-- region:      users
 alter table users enable row level security;
 
-create policy "Authenticated user has full access to own profile"
-on users
-to authenticated
-using ((select auth.uid()) = id)
-with check ((select auth.uid()) = id);
-
-create policy "Authenticated users can view all profiles"
+create policy "Users can view all profiles"
 on users for select
 to authenticated
 using (true);
 
+create policy "User can insert own profile"
+on users for insert
+to authenticated
+with check ((select auth.uid()) = id);
+
+create policy "User can update own profile"
+on users for update
+to authenticated
+using ((select auth.uid()) = id)
+with check ((select auth.uid()) = id);
+
+create policy "User can delete own profile"
+on users for delete
+to authenticated
+using ((select auth.uid()) = id);
+-- endregion:   users
+
+-- region:      flags
 alter table flags enable row level security;
 
-create policy "Authenticated user has full access to own flags"
-on flags to authenticated
+create policy "Users can view flags of visible users"
+on flags for select
+to authenticated
+using (uid in (select public.visible_users()));
+
+create policy "User can insert own flags"
+on flags for insert
+to authenticated
+with check ((select auth.uid()) = uid);
+
+create policy "User can update own flags"
+on flags for update
+to authenticated
 using ((select auth.uid()) = uid)
 with check ((select auth.uid()) = uid);
 
-create policy "Authenticated users can view flags of public or followed users"
-on flags for select
+create policy "User can delete own flags"
+on flags for delete
 to authenticated
-using (
-    uid in (select public.visible_users())
-);
+using ((select auth.uid()) = uid);
+-- endregion:   flags
 
+-- region:      follows
 alter table follows enable row level security;
 
-create policy "Authenticated user has full access to own following"
-on follows
-to authenticated
-using ((select auth.uid()) = follower)
-with check ((select auth.uid()) = follower);
-
-create policy "Authenticated users can view follows of public or followed users"
+create policy "Users can view follows of visible users"
 on follows for select
 to authenticated
 using (
@@ -55,55 +77,121 @@ using (
     following in (select public.visible_users())
 );
 
+create policy "User can insert own following"
+on follows for insert
+to authenticated
+with check ((select auth.uid()) = follower);
+
+create policy "User can update own following"
+on follows for update
+to authenticated
+using ((select auth.uid()) = follower)
+with check ((select auth.uid()) = follower);
+
+create policy "User can delete own following"
+on follows for delete
+to authenticated
+using ((select auth.uid()) = follower);
+-- endregion:   follows
+
+-- region:      agents
 alter table agents enable row level security;
 
-create policy "Authenticated user has full access to own agents"
-on agents
-to authenticated
-using ((select auth.uid()) = uid)
-with check ((select auth.uid()) = uid);
-
-create policy "Authenticated users can view agents of public or followed users"
+create policy "Users can view agents of visible users"
 on agents for select
 to authenticated
-using (
-    uid in (select public.visible_users())
-);
+using (uid in (select public.visible_users()));
 
+create policy "User can insert own agents"
+on agents for insert
+to authenticated
+with check ((select auth.uid()) = uid);
+
+create policy "User can update own agents"
+on agents for update
+to authenticated
+using ((select auth.uid()) = uid)
+with check ((select auth.uid()) = uid);
+
+create policy "User can delete own agents"
+on agents for delete
+to authenticated
+using ((select auth.uid()) = uid);
+
+-- endregion:   agents
+
+-- region:      contracts
 alter table contracts enable row level security;
 
-create policy "Authenticated user has full access to own contracts"
-on contracts
-to authenticated
-using ((select auth.uid()) = uid)
-with check ((select auth.uid()) = uid);
-
-create policy "Authenticated users can view contracts of public or followed users"
+create policy "Users can view contracts of visible users"
 on contracts for select
 to authenticated
-using(
-    uid in (select public.visible_users())
-);
+using(uid in (select public.visible_users()));
 
-alter table levels enable row level security;
+create policy "User can insert own contracts"
+on contracts for insert
+to authenticated
+with check ((select auth.uid()) = uid);
 
-create policy "Authenticated user has full access to own levels"
-on levels
+create policy "User can update own contracts"
+on contracts for update
 to authenticated
 using ((select auth.uid()) = uid)
 with check ((select auth.uid()) = uid);
 
-create policy "Authenticated users can view levels of public or followed users"
+create policy "User can delete own contracts"
+on contracts for delete
+to authenticated
+using ((select auth.uid()) = uid);
+-- endregion: contracts
+
+-- region:      levels
+alter table levels enable row level security;
+
+create policy "Users can view levels of visible users"
 on levels for select
 to authenticated
-using (
-    uid in (select public.visible_users())
-);
+using (uid in (select public.visible_users()));
 
+create policy "User can insert own levels"
+on levels for insert
+to authenticated
+with check ((select auth.uid()) = uid);
+
+create policy "User can update own levels"
+on levels for update
+to authenticated
+using ((select auth.uid()) = uid)
+with check ((select auth.uid()) = uid);
+
+create policy "User can delete own levels"
+on levels for delete
+to authenticated
+using ((select auth.uid()) = uid);
+-- endregion:   levels
+
+-- region:      match_details
 alter table match_details enable row level security;
 
-create policy "Authenticated user has full access to owned match details"
-on match_details
+create policy "Users can view all match details"
+on match_details for select
+to authenticated
+using (true);
+
+create policy "Owner can insert own match details"
+on match_details for insert
+to authenticated
+with check (
+    exists (
+        select 1 from matches
+        where uid = (select auth.uid())
+        and details = match_details.id
+        and is_owner = true
+    )
+);
+
+create policy "Owner can update own match details"
+on match_details for update
 to authenticated
 using (
     exists (
@@ -121,44 +209,56 @@ with check (
         and is_owner = true
     )
 );
+-- endregion:   match_details
 
-create policy "Authenticated users can view match_details depending on the most permissive visibility of all participants"
-on match_details for select
-to authenticated
-using (
-    id in (
-        select details from matches where uid in (
-            select public.visible_users()
-        )
-    )
-);
-
+-- region:      matches
 alter table matches enable row level security;
 
-create policy "Authenticated user has full access to owned matches"
-on matches
-to authenticated
-using ((select auth.uid()) = uid)
-with check ((select auth.uid()) = uid);
-
-create policy "Authenticated users can view matches of public or followed users"
+create policy "Users can view matches of visible users"
 on matches for select
 to authenticated
-using (
-    uid in (select public.visible_users())
-);
+using (uid in (select public.visible_users()));
 
-alter table rel_match_contract enable row level security;
+create policy "User can insert own matches"
+on matches for insert
+to authenticated
+with check((select auth.uid()) = uid);
 
-create policy "Authenticated user has full access to owned match-contract junction"
-on rel_match_contract
+create policy "User can update own matches"
+on matches for update
 to authenticated
 using ((select auth.uid()) = uid)
 with check ((select auth.uid()) = uid);
 
-create policy "Authenticated users can view match-contract junctions of public or followed users"
+create policy "User can delete own matches"
+on matches for delete
+to authenticated
+using ((select auth.uid()) = uid);
+-- endregion:   matches
+
+-- region:      rel_match_contract
+alter table rel_match_contract enable row level security;
+
+create policy "Users can view match-contract junctions of visible users"
 on rel_match_contract for select
 to authenticated
 using (
     uid in (select public.visible_users())
 );
+
+create policy "User can insert own match-contract junctions"
+on rel_match_contract for insert
+to authenticated
+with check ((select auth.uid()) = uid);
+
+create policy "User can update own match-contract junctions"
+on rel_match_contract for update
+to authenticated
+using ((select auth.uid()) = uid)
+with check ((select auth.uid()) = uid);
+
+create policy "User can delete own match-contract junctions"
+on rel_match_contract for delete
+to authenticated
+using ((select auth.uid()) = uid);
+-- endregion:   rel_match_contract

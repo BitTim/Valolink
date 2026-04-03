@@ -91,12 +91,26 @@ create or replace function cleanup_match_details()
 returns trigger
 set search_path = public
 as $$
+declare
+    next_owner uuid;
 begin
-    delete from match_details
-    where id = old.details
-    and not exists (
-        select 1 from matches where details = old.details
-    );
+    if not exists (select 1 from matches where details = old.details) then
+        -- No matches linked to details, delete orphaned match details
+        delete from match_details where id = old.details;
+    elsif old.is_owner = true then
+        -- Owner deleted their match, assign to the oldest remaining match
+        select uid into next_owner
+        from matches
+        where details = old.details
+        order by created_at asc
+        limit 1;
+
+        update matches
+        set is_owner = true
+        where uid = next_owner
+        and details = old.details;
+    end if;
+
     return old;
 end;
 $$ language plpgsql;
