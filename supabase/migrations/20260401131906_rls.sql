@@ -93,8 +93,22 @@ alter table match_details enable row level security;
 create policy "Authenticated user has full access to owned match details"
 on match_details
 to authenticated
-using ((select auth.uid()) = owner)
-with check ((select auth.uid()) = owner);
+using (
+    exists (
+        select 1 from matches
+        where uid = (select auth.uid())
+        and details = match_details.id
+        and is_owner = true
+    )
+)
+with check (
+    exists (
+        select 1 from matches
+        where uid = (select auth.uid())
+        and details = match_details.id
+        and is_owner = true
+    )
+);
 
 create policy "Authenticated users can view match_details depending on the most permissive visibility of all participants"
 on match_details for select

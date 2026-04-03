@@ -60,7 +60,6 @@ create table levels (
 
 create table match_details (
     id uuid not null default gen_random_uuid(),
-    owner uuid not null default auth.uid(),
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
     score_a integer not null default 0 check (score_a >= 0),
@@ -70,8 +69,7 @@ create table match_details (
     map uuid not null,
     mode uuid not null,
 
-    constraint match_details_pkey primary key (id),
-    constraint match_details_owner_fkey foreign key (owner) references users(id)
+    constraint match_details_pkey primary key (id)
 );
 
 create table matches (
@@ -82,12 +80,17 @@ create table matches (
     xp integer,
     rr integer,
     rr_offset integer,
+    is_owner boolean not null default false,
     is_team_b boolean not null default false,
 
     constraint matches_pkey primary key (uid, details),
     constraint matches_user_fkey foreign key (uid) references users(id),
     constraint matches_details_fkey foreign key (details) references match_details(id)
 );
+
+create unique index matches_one_owner_per_detail
+on matches (details)
+where is_owner = true;
 
 create table rel_match_contract (
     uid uuid not null default auth.uid(),

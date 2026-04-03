@@ -1,0 +1,87 @@
+-- Automatically updated updated_at when row is inserted or modified
+create or replace function update_updated_at()
+returns trigger
+set search_path = public
+as $$
+begin
+    new.updated_at = now();
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger set_updated_at_users
+    before update on users
+    for each row execute function update_updated_at();
+
+create trigger set_updated_at_follows
+    before update on follows
+    for each row execute function update_updated_at();
+
+create trigger set_updated_at_contracts
+    before update on contracts
+    for each row execute function update_updated_at();
+
+create trigger set_updated_at_levels
+    before update on levels
+    for each row execute function update_updated_at();
+
+create trigger set_updated_at_match_details
+    before update on match_details
+    for each row execute function update_updated_at();
+
+create trigger set_updated_at_matches
+    before update on matches
+    for each row execute function update_updated_at();
+
+-- Automatically accept follows if profile is public
+create or replace function set_follow_accepted()
+returns trigger
+set search_path = public
+as $$
+begin
+    select not is_private into new.accepted
+    from users where id = new.following;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger on_follow_insert
+    before insert on follows
+    for each row execute function set_follow_accepted();
+
+-- Bulk accept pending follows when profile goes public
+create or replace function accept_pending_follows_on_unprivate()
+returns trigger
+set search_path = public
+as $$
+begin
+    if old.is_private = true and new.is_private = false then
+        update follows set accepted = true
+        where following = new.id and accepted = false;
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger on_user_unprivate
+    after update on users
+    for each row execute function accept_pending_follows_on_unprivate();
+
+-- Clean up match_details when last match referencing an entry is deleted
+create or replace function cleanup_match_details()
+returns trigger
+set search_path = public
+as $$
+begin
+    delete from match_details
+    where id = old.details
+    and not exists (
+        select 1 from matches where details = old.details
+    );
+    return old;
+end;
+$$ language plpgsql;
+
+create trigger on_match_delete
+    after delete on matches
+    for each row execute function cleanup_match_details();

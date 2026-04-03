@@ -88,42 +88,42 @@ values
 -- Match Details
 -- Fake map and mode UUIDs simulating valorant-api.com UUIDs
 -- =====================
-insert into public.match_details (id, owner, score_a, score_b, end_reason, time, map, mode)
+insert into public.match_details (id, score_a, score_b, end_reason, time, map, mode)
 values
     -- match 1: Alice owns, completed, team a wins 13-7
-    ('ccc00000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 13, 7,  'COMPLETED',   now() - interval '2 days', 'ddd00000-0000-0000-0000-000000000001', 'eee00000-0000-0000-0000-000000000001'),
+    ('ccc00000-0000-0000-0000-000000000001', 13, 7,  'COMPLETED',   now() - interval '2 days', 'ddd00000-0000-0000-0000-000000000001', 'eee00000-0000-0000-0000-000000000001'),
     -- match 2: Alice owns, team b surrenders
-    ('ccc00000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 6, 3,  'SURRENDER_B', now() - interval '1 day',  'ddd00000-0000-0000-0000-000000000002', 'eee00000-0000-0000-0000-000000000001'),
+    ('ccc00000-0000-0000-0000-000000000002', 6, 3,  'SURRENDER_B', now() - interval '1 day',  'ddd00000-0000-0000-0000-000000000002', 'eee00000-0000-0000-0000-000000000001'),
     -- match 3: Bob owns, completed, close game
-    ('ccc00000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000002', 13, 11, 'COMPLETED',   now() - interval '3 days', 'ddd00000-0000-0000-0000-000000000001', 'eee00000-0000-0000-0000-000000000002'),
+    ('ccc00000-0000-0000-0000-000000000003', 13, 11, 'COMPLETED',   now() - interval '3 days', 'ddd00000-0000-0000-0000-000000000001', 'eee00000-0000-0000-0000-000000000002'),
     -- match 4: Carol owns (private user)
-    ('ccc00000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000003', 8,  13, 'COMPLETED',   now() - interval '4 days', 'ddd00000-0000-0000-0000-000000000003', 'eee00000-0000-0000-0000-000000000001'),
+    ('ccc00000-0000-0000-0000-000000000004', 8,  13, 'COMPLETED',   now() - interval '4 days', 'ddd00000-0000-0000-0000-000000000003', 'eee00000-0000-0000-0000-000000000001'),
     -- match 5: Alice owns, Bob tags on
-    ('ccc00000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001', 13, 9,  'COMPLETED',   now() - interval '5 days', 'ddd00000-0000-0000-0000-000000000002', 'eee00000-0000-0000-0000-000000000002'),
+    ('ccc00000-0000-0000-0000-000000000005', 13, 9,  'COMPLETED',   now() - interval '5 days', 'ddd00000-0000-0000-0000-000000000002', 'eee00000-0000-0000-0000-000000000002'),
     -- match 6: Carol owns (private user), Bob tags on
-    ('ccc00000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000003', 2, 7,  'SURRENDER_A',   now(), 'ddd00000-0000-0000-0000-000000000002', 'eee00000-0000-0000-0000-000000000002');
+    ('ccc00000-0000-0000-0000-000000000006', 2, 7,  'SURRENDER_A',   now() - interval '6 days', 'ddd00000-0000-0000-0000-000000000002', 'eee00000-0000-0000-0000-000000000002');
 
 -- =====================
 -- Matches
 -- =====================
-insert into public.matches (uid, details, xp, rr, rr_offset, is_team_b)
+insert into public.matches (uid, details, xp, rr, rr_offset, is_owner, is_team_b)
 values
-    -- Alice in match 1 (team a, won)
-    ('00000000-0000-0000-0000-000000000001', 'ccc00000-0000-0000-0000-000000000001', 4200, 22,  0,  false),
-    -- Alice in match 2 (team a, won via surrender)
-    ('00000000-0000-0000-0000-000000000001', 'ccc00000-0000-0000-0000-000000000002', 3100, 18,  0,  false),
-    -- Bob in match 3 (team a, won)
-    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000003', 3800, 15,  0,  false),
-    -- Carol in match 4 (team b, lost)
-    ('00000000-0000-0000-0000-000000000003', 'ccc00000-0000-0000-0000-000000000004', 2900, -12, 0,  true),
+    -- Alice in match 1 (team a, won) — Alice owns the match_details
+    ('00000000-0000-0000-0000-000000000001', 'ccc00000-0000-0000-0000-000000000001', 4200, 22,  0,  true, false),
+    -- Alice in match 2 (team a, won via surrender) — Alice owns the match_details
+    ('00000000-0000-0000-0000-000000000001', 'ccc00000-0000-0000-0000-000000000002', 3100, 18,  0,  true, false),
+    -- Bob in match 3 (team a, won) — Bob owns the match_details
+    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000003', 3800, 15,  0,  true, false),
+    -- Carol in match 4 (team b, lost) — Carol owns the match_details
+    ('00000000-0000-0000-0000-000000000003', 'ccc00000-0000-0000-0000-000000000004', 2900, -12, 0,  true, true),
     -- Alice in match 5 (team a, won) — Alice owns the match_details
-    ('00000000-0000-0000-0000-000000000001', 'ccc00000-0000-0000-0000-000000000005', 3500, 20,  0,  false),
-    -- Bob tags onto match 5 (team b, lost)
-    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000005', 2100, -8,  0,  true),
-    -- Carol in match 6 (team a, lost) — Carol owns the match_details
-    ('00000000-0000-0000-0000-000000000003', 'ccc00000-0000-0000-0000-000000000006', 1500, -18,  0,  false),
-    -- Bob tags onto match 5 (team b, won)
-    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000006', 2100, 17,  0,  true);
+    ('00000000-0000-0000-0000-000000000001', 'ccc00000-0000-0000-0000-000000000005', 3500, 20,  0,  true, false),
+    -- Bob tags onto match 5 (team b, lost) — Alice owns the match_details
+    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000005', 2100, -8,  0,  false, true),
+    -- Carol in match 6 (team a, lost via surrender) — Carol owns the match_details
+    ('00000000-0000-0000-0000-000000000003', 'ccc00000-0000-0000-0000-000000000006', 1500, -18,  0,  true, false),
+    -- Bob tags onto match 6 (team b, won via surrender) — Carol owns the match_details
+    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000006', 2100, 17,  0,  false, true);
 
 -- =====================
 -- Rel Match Contract
