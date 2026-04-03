@@ -3,13 +3,22 @@ create table users (
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
     username text not null default '',
-    is_private boolean not null default false,
     avatar text,
-    has_onboarded boolean not null default false,
-    has_rank boolean not null default false,
+    is_private boolean not null default false,
 
     constraint users_pkey primary key (id),
     constraint users_id_fkey foreign key (id) references auth.users(id)
+);
+
+create table flags (
+    uid uuid not null default auth.uid(),
+    created_at timestamp with time zone not null default now(),
+    updated_at timestamp with time zone not null default now(),
+    has_onboarded boolean not null default false,
+    has_rank boolean not null default false,
+
+    constraint flags_pkey primary key (uid),
+    constraint flags_uid_fkey foreign key (uid) references users(id)
 );
 
 create table follows (
@@ -31,7 +40,7 @@ create table agents (
     created_at timestamp with time zone not null default now(),
 
     constraint agents_pkey primary key (uid, agent),
-    constraint agents_user_fkey foreign key (uid) references users(id)
+    constraint agents_uid_fkey foreign key (uid) references users(id)
 );
 
 create table contracts (
@@ -43,7 +52,7 @@ create table contracts (
     xp_offset integer not null default 0,
 
     constraint contracts_pkey primary key (uid, contract),
-    constraint contracts_user_fkey foreign key (uid) references users(id)
+    constraint contracts_uid_fkey foreign key (uid) references users(id)
 );
 
 create table levels (
@@ -55,7 +64,7 @@ create table levels (
     is_purchased boolean not null default false,
 
     constraint levels_pkey primary key (uid, contract, level),
-    constraint levels_user_contract_fkey foreign key (uid, contract) references contracts(uid, contract)
+    constraint levels_uid_contract_fkey foreign key (uid, contract) references contracts(uid, contract)
 );
 
 create table match_details (
@@ -84,7 +93,7 @@ create table matches (
     is_team_b boolean not null default false,
 
     constraint matches_pkey primary key (uid, details),
-    constraint matches_user_fkey foreign key (uid) references users(id),
+    constraint matches_uid_fkey foreign key (uid) references users(id),
     constraint matches_details_fkey foreign key (details) references match_details(id)
 );
 
@@ -99,6 +108,6 @@ create table rel_match_contract (
     created_at timestamp with time zone not null default now(),
 
     constraint rel_match_contract_pkey primary key (uid, contract, details),
-    constraint rel_match_contract_user_contract_fkey foreign key (uid, contract) references contracts(uid, contract),
-    constraint rel_match_contract_user_details_fkey foreign key (uid, details) references matches(uid, details)
+    constraint rel_match_contract_uid_contract_fkey foreign key (uid, contract) references contracts(uid, contract),
+    constraint rel_match_contract_uid_details_fkey foreign key (uid, details) references matches(uid, details)
 );

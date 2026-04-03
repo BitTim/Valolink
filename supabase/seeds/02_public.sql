@@ -1,18 +1,37 @@
 -- =====================
 -- Users
 -- =====================
-insert into public.users (id, username, is_private, has_onboarded, has_rank)
+insert into public.users (id, username, is_private)
 values
     -- public, fully onboarded with rank
-    ('00000000-0000-0000-0000-000000000001', 'Alice', false, true, true),
+    ('00000000-0000-0000-0000-000000000001', 'Alice', false),
     -- public, fully onboarded no rank
-    ('00000000-0000-0000-0000-000000000002', 'Bob', false, true, false),
+    ('00000000-0000-0000-0000-000000000002', 'Bob', false),
     -- private, fully onboarded with rank
-    ('00000000-0000-0000-0000-000000000003', 'Carol', true, true, true),
+    ('00000000-0000-0000-0000-000000000003', 'Carol', true),
     -- private, not yet onboarded
-    ('00000000-0000-0000-0000-000000000004', 'Dave', true, false, false),
+    ('00000000-0000-0000-0000-000000000004', 'Dave', true),
     -- public, fully onboarded with rank
-    ('00000000-0000-0000-0000-000000000005', 'Erin', false, true, true);
+    ('00000000-0000-0000-0000-000000000005', 'Erin', false);
+    
+-- =====================
+-- Flags
+-- =====================
+insert into public.flags (uid, has_onboarded, has_rank)
+values
+    -- public, fully onboarded with rank
+    ('00000000-0000-0000-0000-000000000001', true, true),
+    -- public, fully onboarded no rank
+    ('00000000-0000-0000-0000-000000000002', true, false),
+    -- private, fully onboarded with rank
+    ('00000000-0000-0000-0000-000000000003', true, true),
+    -- private, not yet onboarded
+    ('00000000-0000-0000-0000-000000000004', false, false),
+    -- public, fully onboarded with rank
+    ('00000000-0000-0000-0000-000000000005', true, true)
+on conflict (uid) do update
+    set has_onboarded = excluded.has_onboarded,
+        has_rank = excluded.has_rank;
 
 -- =====================
 -- Follows

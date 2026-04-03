@@ -13,6 +13,10 @@ create trigger set_updated_at_users
     before update on users
     for each row execute function update_updated_at();
 
+create trigger set_updated_at_flags
+    before update on flags
+    for each row execute function update_updated_at();
+
 create trigger set_updated_at_follows
     before update on follows
     for each row execute function update_updated_at();
@@ -32,6 +36,21 @@ create trigger set_updated_at_match_details
 create trigger set_updated_at_matches
     before update on matches
     for each row execute function update_updated_at();
+
+-- Automatically create flags when user gets created
+create or replace function create_user_flags()
+returns trigger
+set search_path = public
+as $$
+begin
+    insert into flags (uid) values (new.id);
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger on_user_created
+    after insert on users
+    for each row execute function create_user_flags();
 
 -- Automatically accept follows if profile is public
 create or replace function set_follow_accepted()

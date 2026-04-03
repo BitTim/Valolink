@@ -20,11 +20,23 @@ to authenticated
 using ((select auth.uid()) = id)
 with check ((select auth.uid()) = id);
 
-create policy "Authenticated users can view public or followed profiles"
+create policy "Authenticated users can view all profiles"
 on users for select
 to authenticated
+using (true);
+
+alter table flags enable row level security;
+
+create policy "Authenticated user has full access to own flags"
+on flags to authenticated
+using ((select auth.uid()) = uid)
+with check ((select auth.uid()) = uid);
+
+create policy "Authenticated users can view flags of public or followed users"
+on flags for select
+to authenticated
 using (
-    id in (select public.visible_users())
+    uid in (select public.visible_users())
 );
 
 alter table follows enable row level security;
