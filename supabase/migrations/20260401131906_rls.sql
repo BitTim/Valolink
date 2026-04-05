@@ -34,11 +34,6 @@ on users for update
 to authenticated
 using ((select auth.uid()) = id)
 with check ((select auth.uid()) = id);
-
-create policy "User can delete own profile"
-on users for delete
-to authenticated
-using ((select auth.uid()) = id);
 -- endregion:   users
 
 -- region:      flags

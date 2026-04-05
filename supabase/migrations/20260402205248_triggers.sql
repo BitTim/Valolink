@@ -1,4 +1,4 @@
--- Automatically updated updated_at when row is inserted or modified
+-- Automatically update updated_at when row is inserted or modified
 create or replace function update_updated_at()
 returns trigger
 set search_path = public
@@ -37,20 +37,21 @@ create trigger set_updated_at_matches
     before update on matches
     for each row execute function update_updated_at();
 
--- Automatically create flags when user gets created
-create or replace function create_user_flags()
+-- Automatically create user and flags when auth user gets created
+create or replace function create_user_and_flags()
 returns trigger
 set search_path = public
 as $$
 begin
+    insert into users (id) values (new.id);
     insert into flags (uid) values (new.id);
     return new;
 end;
 $$ language plpgsql;
 
 create trigger on_user_created
-    after insert on users
-    for each row execute function create_user_flags();
+    after insert on auth.users
+    for each row execute function create_user_and_flags();
 
 -- Automatically accept follows if profile is public
 create or replace function set_follow_accepted()
