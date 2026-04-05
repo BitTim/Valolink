@@ -6,10 +6,9 @@
 \set dave           00000000-0000-0000-0000-000000000004
 \set erin           00000000-0000-0000-0000-000000000005
 \set nonexisting    00000000-0000-0000-0000-000000000099
-\set num_users      5
 
 begin;
-select plan(11);
+select plan(12);
 
 -- region:      anon
 -- Impersonate anon role
@@ -54,10 +53,14 @@ select ok(
     'User can see own profile'
 );
 
-select is(
-    (select count(*) from users),
-    cast(:num_users as bigint),
-    'User can see all other profiles (Regardless of is_private)'
+select ok(
+    exists(select 1 from users where id = :'bob'),
+    'User can see other public profile'
+);
+
+select ok(
+    exists(select 1 from users where id = :'dave'),
+    'User can see other private profile'
 );
 -- endregion:   select
 

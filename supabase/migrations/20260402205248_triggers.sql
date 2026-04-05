@@ -40,6 +40,7 @@ create trigger set_updated_at_matches
 -- Automatically create user and flags when auth user gets created
 create or replace function create_user_and_flags()
 returns trigger
+security definer
 set search_path = public
 as $$
 begin
