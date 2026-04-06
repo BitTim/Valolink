@@ -14,7 +14,11 @@ values
     -- public, fully onboarded with rank
     ('00000000-0000-0000-0000-000000000005', 'Erin', false),
     -- private, fully onboarded without rank
-    ('00000000-0000-0000-0000-000000000006', 'Fred', true)
+    ('00000000-0000-0000-0000-000000000006', 'Fred', true),
+    -- private, fully onboarded with rank
+    ('00000000-0000-0000-0000-000000000007', 'Grace', true),
+    -- private, fully onboarded with rank
+    ('00000000-0000-0000-0000-000000000008', 'Hans', true)
 on conflict (id) do update
     set username = excluded.username,
         is_private = excluded.is_private;
@@ -35,7 +39,11 @@ values
     -- public, fully onboarded with rank
     ('00000000-0000-0000-0000-000000000005', true, true),
     -- private, fully onboarded without rank
-    ('00000000-0000-0000-0000-000000000006', true, false)
+    ('00000000-0000-0000-0000-000000000006', true, false),
+    -- private, fully onboarded with rank
+    ('00000000-0000-0000-0000-000000000007', true, true),
+    -- private, fully onboarded with rank
+    ('00000000-0000-0000-0000-000000000008', true, true)
 on conflict (uid) do update
     set has_onboarded = excluded.has_onboarded,
         has_rank = excluded.has_rank;
@@ -56,7 +64,31 @@ values
     -- Carol follows Alice (public, auto-accepted) → Alice and Carol are mutuals
     ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', true),
     -- Erin follows Carol (private, pending)
-    ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000003', false);
+    ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000003', false),
+    -- Bob follows Dave (private, accepted)
+    ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000004', true),
+    -- Bob follows Erin (public, auto-accepted)
+    ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000005', true),
+    -- Bob follows Fred (private, pending)
+    ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000006', false),
+    -- Carol follows Bob (public, auto-accepted)
+    ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000002', true),
+    -- Alice follows Grace (private, accepted)
+    ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000007', true),
+    -- Carol follows Grace (private, accepted)
+    ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000007', true),
+    -- Carol follows Dave (private, accepted)
+    ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000004', true),
+    -- Carol follows Fred (private, accepted)
+    ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000006', true),
+    -- Dave follows Bob (public, auto-accepted)
+    ('00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000002', true),
+    -- Fred follows Alice (public, auto-accepted)
+    ('00000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000001', true),
+    -- Fred follows Bob (public, auto-accepted)
+    ('00000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000002', true),
+    -- Hans follows Grace (private, pending)
+    ('00000000-0000-0000-0000-000000000008', '00000000-0000-0000-0000-000000000007', false);
 
 -- =====================
 -- Agents

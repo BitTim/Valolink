@@ -14,6 +14,30 @@ as $$
     where follower = (select auth.uid())
     and accepted = true
 $$;
+
+create or replace function check_follow_update(p_follower uuid, p_following uuid)
+returns boolean
+language sql
+security definer
+stable
+as $$
+    select exists (
+        select 1 from follows
+        where follower = p_follower
+        and following = p_following
+    );
+$$;
+
+CREATE OR REPLACE FUNCTION get_follow(p_follower uuid, p_following uuid)
+RETURNS follows
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+AS $$
+  SELECT * FROM follows
+  WHERE follower = p_follower
+    AND following = p_following;
+$$;
 -- endregion:   functions
 
 -- region:      users
@@ -59,12 +83,15 @@ with check ((select auth.uid()) = uid);
 -- region:      follows
 alter table follows enable row level security;
 
-create policy "Users can view follows of visible users"
+create policy "Users can view own follows and of visible users"
 on follows for select
 to authenticated
 using (
-    follower in (select public.visible_users()) and
-    following in (select public.visible_users())
+    follower = (select auth.uid()) or
+    following = (select auth.uid()) or (
+        follower in (select public.visible_users()) and
+        following in (select public.visible_users())
+    )
 );
 
 create policy "User can insert own following"
@@ -72,16 +99,19 @@ on follows for insert
 to authenticated
 with check ((select auth.uid()) = follower);
 
-create policy "User can update own following"
+create policy "User can update accepted when being followed"
 on follows for update
 to authenticated
-using ((select auth.uid()) = follower)
-with check ((select auth.uid()) = follower);
+using ((select auth.uid()) = following)
+with check (
+    following = (select auth.uid()) and
+    check_follow_update(follower, following)
+);
 
-create policy "User can delete own following"
+create policy "User can delete own following or if being followed"
 on follows for delete
 to authenticated
-using ((select auth.uid()) = follower);
+using ((select auth.uid()) = follower or (select auth.uid()) = following);
 -- endregion:   follows
 
 -- region:      agents

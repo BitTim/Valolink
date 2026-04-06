@@ -104,6 +104,8 @@ DECLARE
   dave_id UUID;
   erin_id UUID;
   fred_id UUID;
+  grace_id UUID;
+  hans_id UUID;
 BEGIN
   -- Only run in development environment
   IF current_database() = 'postgres' THEN
@@ -157,7 +159,23 @@ BEGIN
       'Fred'
     );
     RAISE NOTICE 'Created Fred with id %', fred_id;
-    
+
+    grace_id := add_test_user(
+      'grace@example.com',
+      '00000000-0000-0000-0000-000000000007'::UUID, -- Use a fixed UUID for inactive user
+      test_password,
+      'Grace'
+    );
+    RAISE NOTICE 'Created Grace with id %', grace_id;
+
+    hans_id := add_test_user(
+      'hans@example.com',
+      '00000000-0000-0000-0000-000000000008'::UUID, -- Use a fixed UUID for inactive user
+      test_password,
+      'Hans'
+    );
+    RAISE NOTICE 'Created Hans with id %', hans_id;
+
     -- Add additional seed data here (e.g., carees, care teams)
     -- You could create additional functions for those if needed
     
