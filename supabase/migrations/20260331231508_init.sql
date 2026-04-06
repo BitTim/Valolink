@@ -94,7 +94,7 @@ create table matches (
 
     constraint matches_pkey primary key (uid, details),
     constraint matches_uid_fkey foreign key (uid) references users(id) on update cascade on delete cascade,
-    constraint matches_details_fkey foreign key (details) references match_details(id) on update cascade on delete cascade
+    constraint matches_details_fkey foreign key (details) references match_details(id) on update cascade on delete cascade deferrable initially deferred
 );
 
 create unique index matches_one_owner_per_detail

@@ -131,7 +131,6 @@ create policy "User can delete own agents"
 on agents for delete
 to authenticated
 using ((select auth.uid()) = uid);
-
 -- endregion:   agents
 
 -- region:      contracts

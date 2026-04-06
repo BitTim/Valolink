@@ -193,7 +193,11 @@ values
     -- Carol in match 6 (team a, lost via surrender) — Carol owns the match_details
     ('00000000-0000-0000-0000-000000000003', 'ccc00000-0000-0000-0000-000000000006', 1500, -18,  0,  true, false),
     -- Bob tags onto match 6 (team b, won via surrender) — Carol owns the match_details
-    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000006', 2100, 17,  0,  false, true);
+    ('00000000-0000-0000-0000-000000000002', 'ccc00000-0000-0000-0000-000000000006', 2100, 17,  0,  false, true),
+    -- Dave in match 2 (team b, lost via surrender) — Alice owns the match_details
+    ('00000000-0000-0000-0000-000000000004', 'ccc00000-0000-0000-0000-000000000002', 2800, -18, 0,  false, true),
+    -- Fred in match 4 (team a, won) — Carol owns the match_details
+    ('00000000-0000-0000-0000-000000000006', 'ccc00000-0000-0000-0000-000000000004', 3200, 12, 0,  false, false);
 
 -- =====================
 -- Rel Match Contract
