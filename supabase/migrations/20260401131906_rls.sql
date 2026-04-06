@@ -127,12 +127,6 @@ on agents for insert
 to authenticated
 with check ((select auth.uid()) = uid);
 
-create policy "User can update own agents"
-on agents for update
-to authenticated
-using ((select auth.uid()) = uid)
-with check ((select auth.uid()) = uid);
-
 create policy "User can delete own agents"
 on agents for delete
 to authenticated
