@@ -264,12 +264,6 @@ on rel_match_contract for insert
 to authenticated
 with check ((select auth.uid()) = uid);
 
-create policy "User can update own match-contract junctions"
-on rel_match_contract for update
-to authenticated
-using ((select auth.uid()) = uid)
-with check ((select auth.uid()) = uid);
-
 create policy "User can delete own match-contract junctions"
 on rel_match_contract for delete
 to authenticated
