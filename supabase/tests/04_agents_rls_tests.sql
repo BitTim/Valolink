@@ -1,4 +1,4 @@
--- Tests for RLS policies on the follows table using seed data
+-- Tests for RLS policies on the agents table using seed data
 
 \set alice          00000000-0000-0000-0000-000000000001
 \set bob            00000000-0000-0000-0000-000000000002
