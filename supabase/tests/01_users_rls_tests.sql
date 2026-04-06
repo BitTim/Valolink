@@ -5,6 +5,7 @@
 \set carol          00000000-0000-0000-0000-000000000003
 \set dave           00000000-0000-0000-0000-000000000004
 \set erin           00000000-0000-0000-0000-000000000005
+\set fred           00000000-0000-0000-0000-000000000006
 \set nonexisting    00000000-0000-0000-0000-000000000099
 
 begin;
@@ -16,14 +17,14 @@ set local role anon;
 
 select is_empty(
     $$ select * from users $$,
-    'Anon cannot see any profile'
+    'Anon cannot read any profile'
 );
 
 select throws_ok(
     $$ insert into users (id, username) values ('$$  || :'nonexisting' || $$' , 'Test') $$,
     42501, -- RLS violation
     null,
-    'Anon cannot insert a user profile'
+    'Anon cannot insert a profile'
 );
 
 update users set username = 'Anon Updated' where id = :'alice';
@@ -33,12 +34,12 @@ set local role postgres;
 select is(
     (select username from users where id = :'alice'),
     'Alice',
-    'Anon cannot update user profiles'
+    'Anon cannot update any profile'
 );
 
 select ok(
     exists(select 1 from users where id = :'bob'),
-    'Anon cannot delete user profiles'
+    'Anon cannot delete any profile'
 );
 --- endregion:  anon
 
@@ -50,17 +51,17 @@ set local request.jwt.claims to '{"sub": "00000000-0000-0000-0000-000000000001"}
 -- region:      select
 select ok(
     exists(select 1 from users where id = :'alice'),
-    'User can see own profile'
+    'Can read own profile'
 );
 
 select ok(
     exists(select 1 from users where id = :'bob'),
-    'User can see other public profile'
+    'Can read any other public profile'
 );
 
 select ok(
     exists(select 1 from users where id = :'dave'),
-    'User can see other private profile'
+    'Can read any other private profile'
 );
 -- endregion:   select
 
@@ -69,7 +70,7 @@ select throws_ok(
     $$ insert into users (id, username) values ('$$  || :'nonexisting' || $$', 'Test') $$,
     42501, -- RLS violation
     null,
-    'User cannot insert a profile for another user'
+    'Cannot insert a profile on behalf of another user'
 );
 -- endregion:   insert
 
@@ -78,14 +79,14 @@ update users set username = 'Alice Updated' where id = :'alice';
 select is(
     (select username from users where id = :'alice'),
     'Alice Updated',
-    'User can update own profile'
+    'Can update own profile'
 );
 
 update users set username = 'Bob Updated' where id = :'bob';
 select is(
     (select username from users where id = :'bob'),
     'Bob',
-    'User cannot update other profiles'
+    'Cannot update another users profile'
 );
 -- endregion:   update
 
@@ -93,13 +94,13 @@ select is(
 delete from users where id = :'alice';
 select ok(
     exists(select 1 from users where id = :'alice'),
-    'User cannot delete own profile'
+    'Cannot delete own profile'
 );
 
 delete from users where id = :'bob';
 select ok(
     exists(select 1 from users where id = :'bob'),
-    'User cannot delete other profiles'
+    'Cannot delete another users profile'
 );
 -- endregion:   delete
 -- endregion:   authenticated

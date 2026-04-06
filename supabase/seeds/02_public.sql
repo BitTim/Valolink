@@ -12,7 +12,9 @@ values
     -- private, not yet onboarded
     ('00000000-0000-0000-0000-000000000004', 'Dave', true),
     -- public, fully onboarded with rank
-    ('00000000-0000-0000-0000-000000000005', 'Erin', false)
+    ('00000000-0000-0000-0000-000000000005', 'Erin', false),
+    -- private, fully onboarded without rank
+    ('00000000-0000-0000-0000-000000000006', 'Fred', true)
 on conflict (id) do update
     set username = excluded.username,
         is_private = excluded.is_private;
@@ -31,7 +33,9 @@ values
     -- private, not yet onboarded
     ('00000000-0000-0000-0000-000000000004', false, false),
     -- public, fully onboarded with rank
-    ('00000000-0000-0000-0000-000000000005', true, true)
+    ('00000000-0000-0000-0000-000000000005', true, true),
+    -- private, fully onboarded without rank
+    ('00000000-0000-0000-0000-000000000006', true, false)
 on conflict (uid) do update
     set has_onboarded = excluded.has_onboarded,
         has_rank = excluded.has_rank;

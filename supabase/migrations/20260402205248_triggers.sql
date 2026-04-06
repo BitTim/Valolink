@@ -59,10 +59,17 @@ create or replace function set_follow_accepted()
 returns trigger
 set search_path = public
 as $$
+declare
+  v_is_private boolean;
 begin
-    select not is_private into new.accepted
-    from users where id = new.following;
-    return new;
+  select is_private into v_is_private
+  from users where id = new.following;
+
+  if not v_is_private then
+    new.accepted := true;
+  end if;
+
+  return new;
 end;
 $$ language plpgsql;
 

@@ -54,11 +54,6 @@ on flags for update
 to authenticated
 using ((select auth.uid()) = uid)
 with check ((select auth.uid()) = uid);
-
-create policy "User can delete own flags"
-on flags for delete
-to authenticated
-using ((select auth.uid()) = uid);
 -- endregion:   flags
 
 -- region:      follows
