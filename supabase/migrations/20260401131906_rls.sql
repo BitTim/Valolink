@@ -97,7 +97,7 @@ using (
 create policy "User can insert own following"
 on follows for insert
 to authenticated
-with check ((select auth.uid()) = follower);
+with check ((select auth.uid()) = follower and accepted = false);
 
 create policy "User can update accepted when being followed"
 on follows for update

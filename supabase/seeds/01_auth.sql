@@ -191,5 +191,5 @@ EXCEPTION
 END $$;
 
 -- Drop the function after use (optional)
-DROP FUNCTION IF EXISTS add_test_user(TEXT, UUID, TEXT, TEXT, BOOLEAN);
+-- DROP FUNCTION IF EXISTS add_test_user(TEXT, UUID, TEXT, TEXT, BOOLEAN);
 

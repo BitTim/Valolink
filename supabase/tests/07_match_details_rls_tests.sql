@@ -75,7 +75,8 @@ select ok(
 
 -- region:      insert
 select lives_ok(
-    $$ insert into matches (uid, details, is_owner) values ('$$ || :'alice' || $$', '$$ || :'details7' || $$', true);
+    $$ set constraints matches_details_fkey deferred;
+    insert into matches (uid, details, is_owner) values ('$$ || :'alice' || $$', '$$ || :'details7' || $$', true);
     insert into match_details (id, map, mode) values ('$$ || :'details7' || $$', '$$ || :'map2' || $$', '$$ || :'mode2' || $$'); $$,
     'Can insert match details'
 );

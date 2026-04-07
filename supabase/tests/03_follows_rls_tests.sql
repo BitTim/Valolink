@@ -11,7 +11,7 @@
 \set nonexisting    00000000-0000-0000-0000-000000000099
 
 begin;
-select plan(26);
+select plan(27);
 
 -- region:      anon
 -- Impersonate anon role
@@ -116,6 +116,13 @@ select ok(
 select lives_ok(
     $$ insert into follows (follower, following) values ('$$ || :'alice' || $$', '$$ || :'fred' || $$') $$,
     'Can insert own follows'
+);
+
+select throws_ok(
+    $$ insert into follows (follower, following, accepted) values ('$$ || :'alice' || $$', '$$ || :'hans' || $$', true) $$,
+    42501, -- RLS violation
+    null,
+    'Cannot insert accepted as true'
 );
 
 select throws_ok(

@@ -83,7 +83,7 @@ create table match_details (
 
 create table matches (
     uid uuid not null default auth.uid(),
-    details uuid not null,
+    details uuid,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
     xp integer,
@@ -94,7 +94,7 @@ create table matches (
 
     constraint matches_pkey primary key (uid, details),
     constraint matches_uid_fkey foreign key (uid) references users(id) on update cascade on delete cascade,
-    constraint matches_details_fkey foreign key (details) references match_details(id) on update cascade on delete cascade deferrable initially deferred
+    constraint matches_details_fkey foreign key (details) references match_details(id) on update cascade on delete cascade deferrable
 );
 
 create unique index matches_one_owner_per_detail
