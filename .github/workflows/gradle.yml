@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: 34-add-match-tracking
 
       - name: Get latest commit SHA
         id: latestsha
@@ -65,6 +66,8 @@ jobs:
     steps:
       - name: Checking out branch
         uses: actions/checkout@v4
+        with: 
+          ref: 34-add-match-tracking
 
       - name: Setup Java
         uses: actions/setup-java@main
@@ -163,6 +166,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: 34-add-match-tracking
 
       - name: Get current date
         id: date
@@ -197,6 +201,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with: 
+          ref: 34-add-match-tracking
 
       - name: Generate Changelog
         id: changelog
