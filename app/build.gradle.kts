@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024-2025 Tim Anhalt (BitTim)
+ Copyright (c) 2024-2026 Tim Anhalt (BitTim)
 
  Project:    Valolink
  License:    GPLv3
@@ -7,7 +7,7 @@
  File:       build.gradle.kts
  Module:     Valolink.app
  Author:     Tim Anhalt (BitTim)
- Modified:   15.06.25, 16:00
+ Modified:   19.04.26, 02:11
  */
 
 import java.io.FileInputStream
@@ -69,21 +69,21 @@ android {
     val versionName = "v$majorVersion.$minorVersion.$patchVersion-$buildVersion"
 
     // Retrieve supabase credentials
-    val supabaseUrl: String
-    val supabaseAnonKey: String
+    val supabaseUrl: String = "\"PLACEHOLDER\""
+    val supabaseAnonKey: String = "\"PLACEHOLDER\""
 
-    val supabasePropertiesFile = file("supabase.properties")
-    if (supabasePropertiesFile.canRead()) {
-        val supabaseProperties = Properties()
-        supabaseProperties.load(FileInputStream(supabasePropertiesFile))
-
-        supabaseUrl = supabaseProperties.getProperty("SUPABASE_URL")
-        supabaseAnonKey = supabaseProperties.getProperty("SUPABASE_ANON_KEY")
-    } else {
-        println("Could not read supabase.properties file, using environment variables instead")
-        supabaseUrl = System.getenv("SUPABASE_URL") ?: ""
-        supabaseAnonKey = System.getenv("SUPABASE_ANON_KEY") ?: ""
-    }
+//    val supabasePropertiesFile = file("supabase.properties")
+//    if (supabasePropertiesFile.canRead()) {
+//        val supabaseProperties = Properties()
+//        supabaseProperties.load(FileInputStream(supabasePropertiesFile))
+//
+//        supabaseUrl = supabaseProperties.getProperty("SUPABASE_URL")
+//        supabaseAnonKey = supabaseProperties.getProperty("SUPABASE_ANON_KEY")
+//    } else {
+//        println("Could not read supabase.properties file, using environment variables instead")
+//        supabaseUrl = System.getenv("SUPABASE_URL") ?: ""
+//        supabaseAnonKey = System.getenv("SUPABASE_ANON_KEY") ?: ""
+//    }
 
     defaultConfig {
         applicationId = "dev.bittim.valolink"
