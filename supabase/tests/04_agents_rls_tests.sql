@@ -28,24 +28,24 @@ select is_empty(
 );
 
 select throws_ok(
-    $$ insert into agents (uid, agent) values ('$$ || :'fred' || $$', '$$ || :'jett' || $$') $$,
+    $$ insert into agents (user_id, agent) values ('$$ || :'fred' || $$', '$$ || :'jett' || $$') $$,
     42501, -- RLS violation
     null,
     'Anon cannot insert agents'
 );
 
-update agents set agent = :'jett' where uid = :'alice' and agent = :'sage';
-delete from agents where uid = :'alice' and agent = :'jett';
+update agents set agent = :'jett' where user_id = :'alice' and agent = :'sage';
+delete from agents where user_id = :'alice' and agent = :'jett';
 set local role postgres;
 
 select is(
-    (select agent from agents where uid = :'alice' and agent = :'sage'),
+    (select agent from agents where user_id = :'alice' and agent = :'sage'),
     :'sage',
     'Anon cannot update any agents'
 );
 
 select ok(
-    exists(select 1 from agents where uid = :'alice' and agent = :'jett'),
+    exists(select 1 from agents where user_id = :'alice' and agent = :'jett'),
     'Anon cannot delete any agents'
 );
 -- endregion:   anon
@@ -57,39 +57,39 @@ set local request.jwt.claims to '{"sub": "00000000-0000-0000-0000-000000000001"}
 
 -- region:      select
 select ok(
-    exists(select 1 from agents where uid = :'alice'),
+    exists(select 1 from agents where user_id = :'alice'),
     'Can read own agents'
 );
 
 select ok(
-    exists(select 1 from agents where uid = :'bob'),
+    exists(select 1 from agents where user_id = :'bob'),
     'Can read public profiles agents'
 );
 
 select ok(
-    exists(select 1 from agents where uid = :'carol'),
+    exists(select 1 from agents where user_id = :'carol'),
     'Can read accepted private profiles agents'
 );
 
 select ok(
-    not exists(select 1 from agents where uid = :'dave'),
+    not exists(select 1 from agents where user_id = :'dave'),
     'Cannot read pending private profiles agents'
 );
 
 select ok(
-    not exists(select 1 from agents where uid = :'fred'),
+    not exists(select 1 from agents where user_id = :'fred'),
     'Cannot read unfollowed private profiles agents'
 );
 -- endregion:   select
 
 -- region:      insert
 select lives_ok(
-    $$ insert into agents (uid, agent) values ('$$ || :'alice' || $$', '$$ || :'phoenix' || $$') $$,
+    $$ insert into agents (user_id, agent) values ('$$ || :'alice' || $$', '$$ || :'phoenix' || $$') $$,
     'Can insert own agents'
 );
 
 select throws_ok(
-    $$ insert into agents (uid, agent) values ('$$ || :'bob' || $$', '$$ || :'jett' || $$') $$,
+    $$ insert into agents (user_id, agent) values ('$$ || :'bob' || $$', '$$ || :'jett' || $$') $$,
     42501, -- RLS violation
     null,
     'Cannot insert agents for other users'
@@ -97,29 +97,29 @@ select throws_ok(
 -- endregion:   insert
 
 -- region:      update
-update agents set agent = :'reyna' where uid = :'alice' and agent = :'jett';
+update agents set agent = :'reyna' where user_id = :'alice' and agent = :'jett';
 select ok(
-    not exists(select 1 from agents where uid = :'alice' and agent = :'reyna'),
+    not exists(select 1 from agents where user_id = :'alice' and agent = :'reyna'),
     'Cannot update own agents'
 );
 
-update agents set agent = :'reyna' where uid = :'bob' and agent = :'phoenix';
+update agents set agent = :'reyna' where user_id = :'bob' and agent = :'phoenix';
 select ok(
-    not exists(select 1 from agents where uid = :'bob' and agent = :'reyna'),
+    not exists(select 1 from agents where user_id = :'bob' and agent = :'reyna'),
     'Cannot update agents on behalf of another user'
 );
 -- endregion:   update
 
 -- region:      delete
-delete from agents where uid = :'alice' and agent = :'sage';
+delete from agents where user_id = :'alice' and agent = :'sage';
 select ok(
-    not exists(select 1 from agents where uid = :'alice' and agent = :'sage'),
+    not exists(select 1 from agents where user_id = :'alice' and agent = :'sage'),
     'Can delete own agents'
 );
 
-delete from agents where uid = :'bob' and agent = :'phoenix';
+delete from agents where user_id = :'bob' and agent = :'phoenix';
 select ok(
-    exists(select 1 from agents where uid = :'bob' and agent = :'phoenix'),
+    exists(select 1 from agents where user_id = :'bob' and agent = :'phoenix'),
     'Cannot delete agents on behalf of another user'
 );
 -- endregion:   delete

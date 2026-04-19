@@ -50,7 +50,7 @@ on conflict (user_id) do update
 -- =====================
 -- Follows
 -- =====================
-insert into public.follows (follower, following, status)
+insert into public.follows (follower, following, relation_status)
 values
     -- Alice follows Bob (public, auto-accepted)
     ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'ACCEPTED'),

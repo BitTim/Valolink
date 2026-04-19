@@ -70,7 +70,7 @@ begin
   from users where id = new.following;
 
   if not v_is_private then
-    new.status := 'ACCEPTED';
+    new.relation_status := 'ACCEPTED';
   end if;
 
   return new;
@@ -88,8 +88,8 @@ set search_path = public
 as $$
 begin
     if old.is_private = true and new.is_private = false then
-        update follows set status = 'ACCEPTED'
-        where following = new.id and status = 'PENDING';
+        update follows set relation_status = 'ACCEPTED'
+        where following = new.id and relation_status = 'PENDING';
     end if;
     return new;
 end;

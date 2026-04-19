@@ -13,7 +13,7 @@ as $$
     union
     select following from follows
     where follower = (select auth.uid())
-    and status = 'ACCEPTED'
+    and relation_status = 'ACCEPTED'
 $$;
 
 create or replace function check_follow_update(p_follower uuid, p_following uuid)
@@ -101,7 +101,7 @@ using (
 create policy "User can insert own following"
 on follows for insert
 to authenticated
-with check ((select auth.uid()) = follower and status = 'PENDING');
+with check ((select auth.uid()) = follower and relation_status = 'PENDING');
 
 create policy "User can update accepted when being followed"
 on follows for update
@@ -176,12 +176,6 @@ using (user_id in (select public.visible_users()));
 create policy "User can insert own purchased levels"
 on purchased_levels for insert
 to authenticated
-with check ((select auth.uid()) = user_id);
-
-create policy "User can update own purchased levels"
-on purchased_levels for update
-to authenticated
-using ((select auth.uid()) = user_id)
 with check ((select auth.uid()) = user_id);
 
 create policy "User can delete own purchased levels"

@@ -10,15 +10,25 @@
 \set hans           00000000-0000-0000-0000-000000000008
 \set nonexisting    00000000-0000-0000-0000-000000000099
 
-\set details1       ccc00000-0000-0000-0000-000000000001
-\set details2       ccc00000-0000-0000-0000-000000000002
-\set details3       ccc00000-0000-0000-0000-000000000003
-\set details4       ccc00000-0000-0000-0000-000000000004
-\set details5       ccc00000-0000-0000-0000-000000000005
-\set details6       ccc00000-0000-0000-0000-000000000006
+\set activity18     fff00000-0000-0000-0000-000000000012
+
+\set match1       ccc00000-0000-0000-0000-000000000001
+\set match2       ccc00000-0000-0000-0000-000000000002
+\set match3       ccc00000-0000-0000-0000-000000000003
+\set match4       ccc00000-0000-0000-0000-000000000004
+\set match5       ccc00000-0000-0000-0000-000000000005
+\set match6       ccc00000-0000-0000-0000-000000000006
+\set match7       ccc00000-0000-0000-0000-000000000007
+
+\set map1           ddd00000-0000-0000-0000-000000000001
+\set map2           ddd00000-0000-0000-0000-000000000002
+\set map3           ddd00000-0000-0000-0000-000000000003
+
+\set mode1          eee00000-0000-0000-0000-000000000001
+\set mode2          eee00000-0000-0000-0000-000000000002
 
 begin;
-select plan(15);
+select plan(10);
 
 -- region:      anon
 -- Impersonate anon role
@@ -26,30 +36,31 @@ set local role anon;
 
 select is_empty(
     $$ select * from matches $$,
-    'Anon cannot read any matches'
+    'Anon cannot read any match'
 );
 
 select throws_ok(
-    $$ insert into matches (uid, details) values ('$$ || :'alice' || $$', '$$ || :'details1' || $$') $$,
+    $$ insert into matches (id, map, mode) values ('$$ || :'match1' || $$', '$$ || :'map1' || $$', '$$ || :'mode1' || $$') $$,
     42501, -- RLS violation
     null,
-    'Anon cannot insert matches'
+    'Anon cannot insert match'
 );
 
-update matches set xp = 100 where uid = :'alice' and details = :'details1';
-delete from matches where uid = :'alice' and details = :'details2';
+update matches set score_a = 1 where id = :'match1';
+delete from matches where id = :'match2';
 set local role postgres;
 
 select is(
-    (select xp from matches where uid = :'alice' and details = :'details1'),
-    4200,
-    'Anon cannot update any matches'
+    (select score_a from matches where id = :'match1'),
+    13,
+    'Anon cannot update any match'
 );
 
 select ok(
-    exists(select 1 from matches where uid = :'alice' and details = :'details2'),
-    'Anon cannot delete any matches'
+    exists(select 1 from matches where id = :'match2'),
+    'Anon cannot delete any match'
 );
+
 -- endregion:   anon
 
 -- region:      authenticated
@@ -59,72 +70,48 @@ set local request.jwt.claims to '{"sub": "00000000-0000-0000-0000-000000000001"}
 
 -- region:      select
 select ok(
-    exists(select 1 from matches where uid = :'alice'),
-    'Can read own matches'
-);
-
-select ok(
-    exists(select 1 from matches where uid = :'bob'),
-    'Can read public profiles matches'
-);
-
-select ok(
-    exists(select 1 from matches where uid = :'carol'),
-    'Can read accepted private profiles matches'
-);
-
-select ok(
-    not exists(select 1 from matches where uid = :'dave'),
-    'Cannot read pending private profiles matches'
-);
-
-select ok(
-    not exists(select 1 from matches where uid = :'fred'),
-    'Cannot read private profiles matches'
+    exists(select 1 from matches),
+    'Can read all matches'
 );
 -- endregion:   select
 
 -- region:      insert
 select lives_ok(
-    $$ insert into matches (uid, details) values ('$$ || :'alice' || $$', '$$ || :'details4' || $$') $$,
-    'Can insert own matches'
-);
-
-select throws_ok(
-    $$ insert into matches (uid, details) values ('$$ || :'bob' || $$', '$$ || :'details4' || $$') $$,
-    42501, -- RLS violation
-    null,
-    'Cannot insert matches on behalf of another user'
+    $$ set constraints match_participants_match_fkey deferred;
+    insert into activities (id, user_id, type) values ('$$ || :'activity18' || $$', '$$ || :'alice' || $$', 'MATCH');
+    insert into match_participants (user_id, match, activity, is_owner) values ('$$ || :'alice' || $$', '$$ || :'match7' || $$', '$$ || :'activity18' || $$', true);
+    insert into matches (id, map, mode) values ('$$ || :'match7' || $$', '$$ || :'map2' || $$', '$$ || :'mode2' || $$'); $$,
+    'Can insert match'
 );
 -- endregion:   insert
 
 -- region:      update
-update matches set xp = 100 where uid = :'alice' and details = :'details1';
+update matches set score_a = 999 where id = :'match1';
 select is(
-    (select xp from matches where uid = :'alice' and details = :'details1'),
-    100,
-    'Can update own matches'
+    (select score_a from matches where id = :'match1'),
+    999,
+    'Can update match as owner'
 );
 
-update matches set xp = 100 where uid = :'bob' and details = :'details3';
+update matches set score_a = 888 where id = :'match3';
 select is(
-    (select xp from matches where uid = :'bob' and details = :'details3'),
-    3800,
-    'Cannot update matches on behalf of another user'
+    (select score_a from matches where id = :'match3'),
+    13,
+    'Cannot update match if not owner'
 );
 -- endregion:   update
 
 -- region:      delete
-delete from matches where uid = :'alice' and details = :'details2';
+delete from matches where id = :'match1';
 select ok(
-    not exists(select 1 from matches where uid = :'alice' and details = :'details2'),
-    'Can delete own matches'
+    exists(select 1 from matches where id = :'match1'),
+    'Cannot delete match as owner'
 );
 
-delete from matches where uid = :'bob' and details = :'details3';
+delete from matches where id = :'match3';
 select ok(
-    exists(select 1 from matches where uid = :'bob' and details = :'details3'),
-    'Cannot delete matches on behalf of another user'
+    exists(select 1 from matches where id = :'match3'),
+    'Cannot delete match if not owner'
 );
 -- endregion:   delete
 -- endregion:   authenticated

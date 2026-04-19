@@ -16,22 +16,27 @@
 \set phoenix        eb93336a-449b-9c1e-0a7d-5bae39493506
 \set reyna          f94c3b30-42be-e959-889c-5aa313dba261
 
-\set contract1      aaa00000-0000-0000-0000-000000000001
-\set contract2      aaa00000-0000-0000-0000-000000000002
-\set contract3      aaa00000-0000-0000-0000-000000000003
+\set progression1      aaa00000-0000-0000-0000-000000000001
+\set progression2      aaa00000-0000-0000-0000-000000000002
+\set progression3      aaa00000-0000-0000-0000-000000000003
 
 \set level1         bbb00000-0000-0000-0000-000000000001
 \set level2         bbb00000-0000-0000-0000-000000000002
 \set level3         bbb00000-0000-0000-0000-000000000003
 \set level4         bbb00000-0000-0000-0000-000000000004
 
-\set details1       ccc00000-0000-0000-0000-000000000001
-\set details2       ccc00000-0000-0000-0000-000000000002
-\set details3       ccc00000-0000-0000-0000-000000000003
-\set details4       ccc00000-0000-0000-0000-000000000004
-\set details5       ccc00000-0000-0000-0000-000000000005
-\set details6       ccc00000-0000-0000-0000-000000000006
-\set details7       ccc00000-0000-0000-0000-000000000007
+\set activity18     fff00000-0000-0000-0000-000000000012
+\set activity19     fff00000-0000-0000-0000-000000000013
+\set activity20     fff00000-0000-0000-0000-000000000014
+\set activity21     fff00000-0000-0000-0000-000000000015
+
+\set match1       ccc00000-0000-0000-0000-000000000001
+\set match2       ccc00000-0000-0000-0000-000000000002
+\set match3       ccc00000-0000-0000-0000-000000000003
+\set match4       ccc00000-0000-0000-0000-000000000004
+\set match5       ccc00000-0000-0000-0000-000000000005
+\set match6       ccc00000-0000-0000-0000-000000000006
+\set match7       ccc00000-0000-0000-0000-000000000007
 
 \set map1           ddd00000-0000-0000-0000-000000000001
 \set map2           ddd00000-0000-0000-0000-000000000002
@@ -59,7 +64,7 @@ select ok(
 );
 
 select ok(
-    exists(select 1 from flags where uid = :'new'),
+    exists(select 1 from flags where user_id = :'new'),
     'Trigger created flags for the new user'
 );
 
@@ -73,90 +78,100 @@ select ok(
 insert into follows (follower, following) values (:'alice', :'new');
 
 select is(
-    (select accepted from follows where follower = :'alice' and following = :'new'),
-    false,
+    (select relation_status from follows where follower = :'alice' and following = :'new'),
+    'PENDING',
     'Trigger did not accept the follow since the profile is private'
 );
 
 insert into follows (follower, following) values (:'new', :'bob');
 
-select ok(
-    (select accepted from follows where follower = :'new' and following = :'bob'),
+select is(
+    (select relation_status from follows where follower = :'new' and following = :'bob'),
+    'ACCEPTED',
     'Trigger accepted the follow since the profile is public'
 );
 
 update users set is_private = false where id = :'new';
 
-select ok(
-    (select accepted from follows where follower = :'alice' and following = :'new'),
+select is(
+    (select relation_status from follows where follower = :'alice' and following = :'new'),
+    'ACCEPTED',
     'Trigger accepted the pending follow when profile was set to public'
 );
 
-set constraints matches_details_fkey deferred;
-insert into matches (uid, details, is_owner) values (:'new', :'details7', true);
-insert into matches (uid, details) values (:'bob', :'details7');
-insert into matches (uid, details) values (:'carol', :'details7');
-insert into matches (uid, details) values (:'alice', :'details7');
-insert into match_details (id, map, mode) values (:'details7', :'map1', :'mode1');
+set constraints match_participants_match_fkey deferred;
+insert into activities (id, user_id, type) values (:'activity18', :'new', 'MATCH');
+insert into match_participants (user_id, match, activity, is_owner) values (:'new', :'match7', :'activity18', true);
 
-delete from matches where details = :'details7' and uid = :'new';
+insert into activities (id, user_id, type) values (:'activity19', :'bob', 'MATCH');
+insert into match_participants (user_id, match, activity) values (:'bob', :'match7', :'activity19');
+
+insert into activities (id, user_id, type) values (:'activity20', :'carol', 'MATCH');
+insert into match_participants (user_id, match, activity) values (:'carol', :'match7', :'activity20');
+
+insert into activities (id, user_id, type) values (:'activity21', :'alice', 'MATCH');
+insert into match_participants (user_id, match, activity) values (:'alice', :'match7', :'activity21');
+
+insert into matches (id, map, mode) values (:'match7', :'map1', :'mode1');
+
+delete from match_participants where match = :'match7' and user_id = :'new';
 select ok(
-    not exists(select 1 from matches where details = :'details7' and uid = :'new'),
+    not exists(select 1 from match_participants where match = :'match7' and user_id = :'new'),
     'Original owner deleted a match'
 );
 
 select ok(
-    exists(select 1 from match_details where id = :'details7'),
-    'Trigger did not delete match details since there is still an existing match referencing it'
+    exists(select 1 from matches where id = :'match7'),
+    'Trigger did not delete match match since there is still an existing match referencing it'
 );
 
 select is(
-    (select is_owner from matches where details = :'details7' and uid = :'bob'),
+    (select is_owner from match_participants where match = :'match7' and user_id = :'bob'),
     true,
-    'Trigger made Bob the owner of the match since it is the oldest match referencing the details after the original owner was deleted'
+    'Trigger made Bob the owner of the match since it is the oldest match referencing the match after the original owner was deleted'
 );
 
-delete from matches where details = :'details7' and uid = :'carol';
+delete from match_participants where match = :'match7' and user_id = :'carol';
 select ok(
-    not exists(select 1 from matches where details = :'details7' and uid = :'carol'),
+    not exists(select 1 from match_participants where match = :'match7' and user_id = :'carol'),
     'Carol deleted a match'
 );
 
 select ok(
-    exists(select 1 from match_details where id = :'details7'),
-    'Trigger did not delete match details since there is still an existing match referencing it'
+    exists(select 1 from matches where id = :'match7'),
+    'Trigger did not delete match match since there is still an existing match referencing it'
 );
 
 select is(
-    (select is_owner from matches where details = :'details7' and uid = :'bob'),
+    (select is_owner from match_participants where match = :'match7' and user_id = :'bob'),
     true,
     'Bob is still the owner of the match after Carol deleted her match'
 );
 
-delete from matches where details = :'details7' and uid = :'bob';
+delete from match_participants where match = :'match7' and user_id = :'bob';
 select ok(
-    not exists(select 1 from matches where details = :'details7' and uid = :'new'),
+    not exists(select 1 from match_participants where match = :'match7' and user_id = :'new'),
     'Bob deleted a match'
 );
 
 select ok(
-    exists(select 1 from match_details where id = :'details7'),
-    'Trigger did not delete match details since there is still an existing match referencing it'
+    exists(select 1 from matches where id = :'match7'),
+    'Trigger did not delete match match since there is still an existing match referencing it'
 );
 
 select is(
-    (select is_owner from matches where details = :'details7' and uid = :'alice'),
+    (select is_owner from match_participants where match = :'match7' and user_id = :'alice'),
     true,
-    'Trigger made Alice the owner of the match since bob deleted his match and Alice is now the oldest match referencing the details'
+    'Trigger made Alice the owner of the match since bob deleted his match and Alice is now the oldest match referencing the match'
 );
 
-delete from matches where details = :'details7' and uid = :'alice';
+delete from match_participants where match = :'match7' and user_id = :'alice';
 select ok(
-    not exists(select 1 from matches where details = :'details7'),
-    'Alice deleted the last match referencing the details'
+    not exists(select 1 from match_participants where match = :'match7'),
+    'Alice deleted the last match referencing the match'
 );
 
 select ok(
-    not exists(select 1 from match_details where id = :'details7'),
-    'Trigger deleted match details since there are no matches referencing it'
+    not exists(select 1 from matches where id = :'match7'),
+    'Trigger deleted match match since there are no match_participants referencing it'
 );

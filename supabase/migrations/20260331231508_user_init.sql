@@ -25,7 +25,7 @@ create table public.follows (
     following uuid not null,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
-    status text not null default 'PENDING' check (status in ('PENDING', 'ACCEPTED', 'BLOCKED')),
+    relation_status text not null default 'PENDING' check (relation_status in ('PENDING', 'ACCEPTED', 'BLOCKED')),
 
     constraint follows_pkey primary key (follower, following),
     constraint follows_no_self check (follower != following),
@@ -74,7 +74,7 @@ create table public.activities (
     xp integer not null default 0,
     rr integer default null,
 
-    constraint activities_pkey primary key (id),
+    constraint activities_pkey primary key (user_id, id),
     constraint activities_user_id_fkey foreign key (user_id) references users(id) on update cascade on delete cascade
 );
 
@@ -102,8 +102,7 @@ create table public.match_participants (
     is_team_b boolean not null default false,
 
     constraint match_participants_pkey primary key (user_id, activity),
-    constraint match_participants_user_id_fkey foreign key (user_id) references users(id) on update cascade on delete cascade,
-    constraint match_participants_activity_fkey foreign key (activity) references activities(id) on update cascade on delete cascade,
+    constraint match_participants_activity_fkey foreign key (user_id, activity) references activities(user_id, id) on update cascade on delete cascade,
     constraint match_participants_match_fkey foreign key (match) references matches(id) on update cascade on delete cascade deferrable
 );
 

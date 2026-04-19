@@ -29,13 +29,13 @@ select throws_ok(
     'Anon cannot insert follows'
 );
 
-update follows set accepted = true where follower = :'alice' and following = :'dave';
+update follows set relation_status = 'ACCEPTED' where follower = :'alice' and following = :'dave';
 delete from follows where follower = :'bob' and following = :'alice';
 set local role postgres;
 
 select is(
-    (select accepted from follows where follower = :'alice' and following = :'dave'),
-    false,
+    (select relation_status from follows where follower = :'alice' and following = :'dave'),
+    'PENDING',
     'Anon cannot update any follows'
 );
 
@@ -119,10 +119,10 @@ select lives_ok(
 );
 
 select throws_ok(
-    $$ insert into follows (follower, following, accepted) values ('$$ || :'alice' || $$', '$$ || :'hans' || $$', true) $$,
+    $$ insert into follows (follower, following, relation_status) values ('$$ || :'alice' || $$', '$$ || :'hans' || $$', 'ACCEPTED') $$,
     42501, -- RLS violation
     null,
-    'Cannot insert accepted as true'
+    'Cannot insert relation_status as ACCEPTED'
 );
 
 select throws_ok(
@@ -134,11 +134,11 @@ select throws_ok(
 -- endregion:   insert
 
 -- region:      update
-update follows set accepted = true where follower = :'alice' and following = :'dave';
+update follows set relation_status = 'ACCEPTED' where follower = :'alice' and following = :'dave';
 select is(
-    (select accepted from follows where follower = :'alice' and following = :'dave'),
-    false,
-    'Cannot update accepted in own follows'
+    (select relation_status from follows where follower = :'alice' and following = :'dave'),
+    'PENDING',
+    'Cannot update relation_status in own follows'
 );
 
 update follows set follower = :'grace' where follower = :'alice' and following = :'bob';
@@ -148,11 +148,11 @@ select ok(
     'Cannot update follower or following in own follows'
 );
 
-update follows set accepted = false where follower = :'carol' and following = :'alice';
+update follows set relation_status = 'BLOCKED' where follower = :'carol' and following = :'alice';
 select is(
-    (select accepted from follows where follower = :'carol' and following = :'alice'),
-    false,
-    'Can update accepted in another users follows when being followed'
+    (select relation_status from follows where follower = :'carol' and following = :'alice'),
+    'BLOCKED',
+    'Can update relation_status in another users follows when being followed'
 );
 
 select throws_ok(
@@ -163,11 +163,11 @@ select throws_ok(
     'Cannot update follower or following in another users follows when being followed'
 );
 
-update follows set accepted = false where follower = :'bob' and following = :'erin';
+update follows set relation_status = 'BLOCKED' where follower = :'bob' and following = :'erin';
 select is(
-    (select accepted from follows where follower = :'bob' and following = :'erin'),
-    true,
-    'Cannot update accepted in another users follows when not being followed'
+    (select relation_status from follows where follower = :'bob' and following = :'erin'),
+    'ACCEPTED',
+    'Cannot update relation_status in another users follows when not being followed'
 );
 -- endregion:   update
 

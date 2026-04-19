@@ -23,24 +23,24 @@ select is_empty(
 );
 
 select throws_ok(
-    $$ insert into flags (uid) values ('$$ || :'nonexisting' || $$') $$,
+    $$ insert into flags (user_id) values ('$$ || :'nonexisting' || $$') $$,
     42501, -- RLS violation
     null,
     'Anon cannot insert flags'
 );
 
-update flags set has_onboarded = true where uid = :'dave';
-delete from flags where uid = :'bob';
+update flags set has_onboarded = true where user_id = :'dave';
+delete from flags where user_id = :'bob';
 set local role postgres;
 
 select is(
-    (select has_onboarded from flags where uid = :'dave'),
+    (select has_onboarded from flags where user_id = :'dave'),
     false,
     'Anon cannot update any flags'
 );
 
 select ok(
-    exists(select 1 from flags where uid = :'bob'),
+    exists(select 1 from flags where user_id = :'bob'),
     'Anon cannot delete any flags'
 );
 -- endregion:  anon
@@ -52,34 +52,34 @@ set local request.jwt.claims to '{"sub": "00000000-0000-0000-0000-000000000001"}
 
 -- region:      select
 select ok(
-    exists(select 1 from flags where uid = :'alice'),
+    exists(select 1 from flags where user_id = :'alice'),
     'Can read own flags'
 );
 
 select ok(
-    exists(select 1 from flags where uid = :'bob'),
+    exists(select 1 from flags where user_id = :'bob'),
     'Can read a public profiles flags'
 );
 
 select ok(
-    exists(select 1 from flags where uid = :'carol'),
+    exists(select 1 from flags where user_id = :'carol'),
     'Can read an accepted private profiles flags'
 );
 
 select ok(
-    not exists(select 1 from flags where uid = :'dave'),
+    not exists(select 1 from flags where user_id = :'dave'),
     'Cannot read a pending private profiles flags'
 );
 
 select ok(
-    not exists(select 1 from flags where uid = :'fred'),
+    not exists(select 1 from flags where user_id = :'fred'),
     'Cannot read an unfollowed private profiles flags'
 );
 -- endregion:   select
 
 -- region:      insert
 select throws_ok(
-    $$ insert into flags (uid) values ('$$ || :'nonexisting' || $$') $$,
+    $$ insert into flags (user_id) values ('$$ || :'nonexisting' || $$') $$,
     42501, -- RLS violation
     null,
     'Cannot insert flags on behalf of another user'
@@ -87,31 +87,31 @@ select throws_ok(
 -- endregion:   insert
 
 -- region:      update
-update flags set has_rank = false where uid = :'alice';
+update flags set has_onboarded = false where user_id = :'alice';
 select is(
-    (select has_rank from flags where uid = :'alice'),
+    (select has_onboarded from flags where user_id = :'alice'),
     false,
     'Can update own flags'
 );
 
-update flags set has_rank = true where uid = :'bob';
+update flags set has_onboarded = false where user_id = :'bob';
 select is(
-    (select has_rank from flags where uid = :'bob'),
-    false,
+    (select has_onboarded from flags where user_id = :'bob'),
+    true,
     'Cannot update another users flags'
 );
 -- endregion:   update
 
 -- region:      delete
-delete from flags where uid = :'alice';
+delete from flags where user_id = :'alice';
 select ok(
-    exists(select 1 from flags where uid = :'alice'),
+    exists(select 1 from flags where user_id = :'alice'),
     'Cannot delete own flags'
 );
 
-delete from flags where uid = :'bob';
+delete from flags where user_id = :'bob';
 select ok(
-    exists(select 1 from flags where uid = :'bob'),
+    exists(select 1 from flags where user_id = :'bob'),
     'Cannot delete another users flags'
 );
 -- endregion:   authenticated
