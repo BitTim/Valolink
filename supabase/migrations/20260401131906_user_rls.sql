@@ -21,6 +21,7 @@ returns boolean
 language sql
 security definer
 stable
+set search_path = public
 as $$
     select exists (
         select 1 from follows
@@ -29,15 +30,16 @@ as $$
     );
 $$;
 
-CREATE OR REPLACE FUNCTION get_follow(p_follower uuid, p_following uuid)
-RETURNS follows
-LANGUAGE sql
-SECURITY DEFINER
-STABLE
-AS $$
-  SELECT * FROM follows
-  WHERE follower = p_follower
-    AND following = p_following;
+create or replace function get_follow(p_follower uuid, p_following uuid)
+returns follows
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select * from follows
+  where follower = p_follower
+    and following = p_following;
 $$;
 
 -- endregion:   functions

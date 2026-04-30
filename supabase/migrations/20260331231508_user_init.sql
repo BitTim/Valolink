@@ -37,6 +37,12 @@ create table public.agents (
     user_id uuid not null default auth.uid(),
     agent uuid not null,
     created_at timestamp with time zone not null default now(),
+    updated_at timestamp with time zone not null default now(),
+    owned_state text not null default 'LOCKED' check (owned_state in ('LOCKED', 'BASE', 'PURCHASED', 'RECRUITED')),
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
+    xp_offset integer not null default 0,
+    total_xp integer not null default 0 check (total_xp >= 0),
 
     constraint agents_pkey primary key (user_id, agent),
     constraint agents_user_id_fkey foreign key (user_id) references users(id) on update cascade on delete cascade
@@ -48,6 +54,9 @@ create table public.progressions (
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
     free_only boolean not null default false,
+    track_xp boolean not null default true,
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
     xp_offset integer not null default 0,
     total_xp integer not null default 0 check (total_xp >= 0),
 
@@ -70,6 +79,7 @@ create table public.activities (
     user_id uuid not null default auth.uid(),
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
+    time timestamp with time zone not null default now(),
     type text not null check (type in ('MATCH', 'PLACEMENT', 'RR_REFUND', 'XP_CORRECTION')),
     xp integer not null default 0,
     rr integer default null,
@@ -85,7 +95,7 @@ create table public.matches (
     score_a integer not null default 0 check (score_a >= 0),
     score_b integer check (score_b >= 0),
     end_reason text not null default 'COMPLETED' check (end_reason in ('COMPLETED', 'SURRENDER_A', 'SURRENDER_B')),
-    time timestamp with time zone not null default now(),
+    is_ranked boolean not null default false,
     map uuid not null,
     mode uuid not null,
 
