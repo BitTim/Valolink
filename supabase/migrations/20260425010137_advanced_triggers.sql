@@ -60,6 +60,8 @@ begin
     from users
     left join valo_agent_recruitments on valo_agent_recruitments.agent = new.uuid
     on conflict (user_id, agent) do nothing;
+
+    return new;
 end;
 $$;
 
