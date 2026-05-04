@@ -40,9 +40,10 @@ async function main() {
     lines.push('-- Generated at: ' + new Date().toISOString());
     lines.push('');
 
-    // region:      -- Agents
+    // region:      -- agents
 
-    lines.push('-- resion:\t\tAgents');
+    lines.push('-- resion:\t\tagents');
+    lines.push('');
     
     console.error('Fetching agents');
     const agents = await fetchJson(`${API}/agents?isPlayableCharacter=true&language=all`);
@@ -51,7 +52,7 @@ async function main() {
         .map((agent: any) => [agent.role.uuid, agent.role] as [string, any])
     ).values()] as any[];
 
-    console.error('Mapping roles');
+    console.error('Mapping agent roles');
     for (const role of roles) {
         lines.push(insert('valo_agent_roles', {
             uuid:                           sqlUuid(role.uuid),
@@ -63,7 +64,7 @@ async function main() {
 
     lines.push('');
 
-    console.error('Mapping Agents');
+    console.error('Mapping agents');
     for(const agent of agents) {
         lines.push(insert('valo_agents', {
             uuid:                           sqlUuid(agent.uuid),
@@ -85,11 +86,107 @@ async function main() {
             is_base_content:                sqlBoolean(agent.isBaseContent),
             role:                           sqlUuid(agent.role.uuid)
         }));
+
+        for (const ability of agent.abilities ?? []) {
+            if (ability.displayIcon == null) continue;
+            lines.push(insert('valo_agent_abilities', {
+                agent:                      sqlUuid(agent.uuid),
+                slot:                       sqlString(ability.slot),
+                display_name:               sqlJsonb(ability.displayName),
+                description:                sqlJsonb(ability.description),
+                display_icon:               sqlJsonb(ability.displayIcon)
+            }));
+        }
+
+        if (agent.recruitmentData != null) {
+            const recruitment = agent.recruitmentData;
+            lines.push(insert('valo_agent_recruitments', {
+                agent:                      sqlUuid(agent.uuid),
+                xp:                         sqlNumber(recruitment.milestoneThreshold),
+                start_time:                 sqlTimestampz(recruitment.startDate),
+                end_time:                   sqlTimestampz(recruitment.endDate)
+            }));
+        }
     }
 
-    lines.push('-- endregion:\tAgents');
+    lines.push('');
+    lines.push('-- endregion:\tagents');
 
-    // endregion:   -- Agents
+    // endregion:   -- agents
+    // region:      -- themes
+
+    lines.push('-- region:\t\tthemes');
+    lines.push('');
+
+    console.error('Fetching themes');
+    const themes = await fetchJson(`${API}/themes?language=all`);
+
+    console.error('Mapping themes');
+    for (const theme of themes) {
+        lines.push(insert('valo_themes', {
+            uuid:                           sqlUuid(theme.uuid),
+            display_name:                   sqlJsonb(theme.displayName),
+            display_icon:                   sqlString(theme.displayIcon),
+            store_featured_image:           sqlString(theme.storeFeaturedImage)
+        }));
+    }
+
+    lines.push('');
+    lines.push('-- endregion:\tthemes');
+
+    // endregion:   -- themes
+    // region:      -- content tiers
+
+    lines.push('-- region:\t\content tiers');
+    lines.push('');
+
+    console.error('Fetching content tiers');
+    const contentTiers = await fetchJson(`${API}/contenttiers?language=all`);
+
+    console.error('Mapping content tiers');
+    for (const contentTier of contentTiers) {
+        lines.push(insert('valo_content_tiers', {
+            uuid:                           sqlUuid(contentTier.uuid),
+            display_name:                   sqlJsonb(contentTier.displayName),
+            developer_name:                 sqlString(contentTier.developerName),
+            display_icon:                   sqlString(contentTier.displayIcon),
+            juice_cost:                     sqlNumber(contentTier.juiceCost),
+            juice_value:                    sqlNumber(contentTier.juiceValue),
+            highlight_color:                sqlString(contentTier.highlightColor),
+            rank:                           sqlNumber(contentTier.rank)
+        }));                      
+    }
+    
+    lines.push('');
+    lines.push('-- endregion:\tcontent tiers');
+
+    // endregion:   -- content tiers
+    // region:      -- buddies
+
+    lines.push('-- region:\t\tbuddies');
+    lines.push('');
+
+    console.error('Fetching buddies');
+    const buddies = await fetchJson(`${API}/buddies?language=all`);
+
+    console.error('Mapping buddies');
+    for (const buddy of buddies) {
+        const buddyLevel = buddy.levels[0];
+        lines.push(insert('valo_buddies', {
+            uuid:                           sqlUuid(buddyLevel.uuid),
+            parent:                         sqlUuid(buddy.uuid),
+            theme:                          sqlUuid(buddy.theme),
+            display_name:                   sqlJsonb(buddy.displayName),
+            charm_level:                    sqlNumber(buddyLevel.charmLevel),
+            display_icon:                   sqlString(buddyLevel.displayIcon),
+            hide_if_not_owned:              sqlBoolean(buddyLevel.hideIfNotOwned)
+        }));
+    }
+    
+    lines.push('');
+    lines.push('-- endregion:\tbuddies');
+
+    // endregion:   -- buddies
 
     console.error('Done, printing')
     console.log(lines.join('\n'));
