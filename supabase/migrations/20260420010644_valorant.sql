@@ -24,7 +24,7 @@ create table public.valo_agents (
     full_portrait_v2 text not null,
     killfeed_portrait text not null,
     minimap_portrait text not null,
-    home_screen_promo_title_image text,
+    home_screen_promo_tile_image text,
     background text not null,
     background_gradient_colors text[] not null,
     is_full_portrait_right_facing boolean not null,
@@ -50,7 +50,7 @@ create table public.valo_agent_abilities (
     slot text not null,
     display_name jsonb not null,    -- mapped lang codes to strings
     description jsonb not null,     -- mapped lang codes to strings
-    display_icon text not null,
+    display_icon text,
 
     constraint valo_agent_abilities_pkey primary key (agent, slot),
     constraint valo_agent_abilities_agent_fkey foreign key (agent) references valo_agents(uuid) on update cascade on delete cascade

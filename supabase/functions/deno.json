@@ -1,0 +1,9 @@
+{
+  "workspace": [
+    "./sync-content"
+  ],
+  "imports": {
+    "@supabase/supabase-js": "jsr:@supabase/supabase-js@^2.105.3",
+    "@zod/zod": "jsr:@zod/zod@^4.4.3"
+  }
+}
