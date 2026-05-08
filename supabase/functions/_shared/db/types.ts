@@ -870,31 +870,34 @@ export type Database = {
       }
       valo_modes: {
         Row: {
+          can_be_ranked: boolean
           category: string
-          description: Json
+          description: Json | null
           display_icon: string | null
           display_name: Json
-          duration: Json
+          duration: Json | null
           list_view_icon_tall: string | null
           rounds_per_half: number
           uuid: string
         }
         Insert: {
+          can_be_ranked: boolean
           category: string
-          description: Json
+          description?: Json | null
           display_icon?: string | null
           display_name: Json
-          duration: Json
+          duration?: Json | null
           list_view_icon_tall?: string | null
           rounds_per_half: number
           uuid: string
         }
         Update: {
+          can_be_ranked?: boolean
           category?: string
-          description?: Json
+          description?: Json | null
           display_icon?: string | null
           display_name?: Json
-          duration?: Json
+          duration?: Json | null
           list_view_icon_tall?: string | null
           rounds_per_half?: number
           uuid?: string
@@ -985,24 +988,24 @@ export type Database = {
           display_icon: string | null
           display_name: Json
           premium_vp_cost: number
-          relation_type: string
-          relation_uuid: string
+          relation_type: string | null
+          relation_uuid: string | null
           uuid: string
         }
         Insert: {
           display_icon?: string | null
           display_name: Json
           premium_vp_cost: number
-          relation_type: string
-          relation_uuid: string
+          relation_type?: string | null
+          relation_uuid?: string | null
           uuid: string
         }
         Update: {
           display_icon?: string | null
           display_name?: Json
           premium_vp_cost?: number
-          relation_type?: string
-          relation_uuid?: string
+          relation_type?: string | null
+          relation_uuid?: string | null
           uuid?: string
         }
         Relationships: []
@@ -1073,25 +1076,25 @@ export type Database = {
         Row: {
           display_name: Json
           end_time: string
-          episode_display_name: Json
+          episode_display_name: Json | null
           start_time: string
-          title: Json
+          title: Json | null
           uuid: string
         }
         Insert: {
           display_name: Json
           end_time: string
-          episode_display_name: Json
+          episode_display_name?: Json | null
           start_time: string
-          title: Json
+          title?: Json | null
           uuid: string
         }
         Update: {
           display_name?: Json
           end_time?: string
-          episode_display_name?: Json
+          episode_display_name?: Json | null
           start_time?: string
-          title?: Json
+          title?: Json | null
           uuid?: string
         }
         Relationships: []
@@ -1163,21 +1166,21 @@ export type Database = {
       }
       valo_titles: {
         Row: {
-          display_name: Json
+          display_name: Json | null
           hide_if_not_owned: boolean
-          title_text: Json
+          title_text: Json | null
           uuid: string
         }
         Insert: {
-          display_name: Json
+          display_name?: Json | null
           hide_if_not_owned: boolean
-          title_text: Json
+          title_text?: Json | null
           uuid: string
         }
         Update: {
-          display_name?: Json
+          display_name?: Json | null
           hide_if_not_owned?: boolean
-          title_text?: Json
+          title_text?: Json | null
           uuid?: string
         }
         Relationships: []
@@ -1225,7 +1228,7 @@ export type Database = {
           category_text: Json
           cost: number
           grid_position: Json | null
-          image: string
+          image: string | null
           shop_order_priority: number
           weapon: string
         }
@@ -1235,7 +1238,7 @@ export type Database = {
           category_text: Json
           cost: number
           grid_position?: Json | null
-          image: string
+          image?: string | null
           shop_order_priority: number
           weapon: string
         }
@@ -1245,7 +1248,7 @@ export type Database = {
           category_text?: Json
           cost?: number
           grid_position?: Json | null
-          image?: string
+          image?: string | null
           shop_order_priority?: number
           weapon?: string
         }

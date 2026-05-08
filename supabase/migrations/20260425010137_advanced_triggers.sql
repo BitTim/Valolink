@@ -32,7 +32,7 @@ begin
             when valo_progressions.relation_type = 'EVENT' then valo_events.end_time
             else null
         end,
-        valo_progressions.relation_type != 'AGENT'
+        valo_progressions.relation_type is distinct from 'AGENT'
     from valo_progressions
     left join valo_seasons on valo_seasons.uuid = valo_progressions.relation_uuid and valo_progressions.relation_type = 'SEASON'
     left join valo_events on valo_events.uuid = valo_progressions.relation_uuid and valo_progressions.relation_type = 'EVENT'
@@ -92,9 +92,9 @@ begin
     end if;
 
     insert into progressions (user_id, progression, start_time, end_time, track_xp)
-    select users.id, new.uuid, v_start_time, v_end_time, new.relation_type != 'AGENT'
+    select users.id, new.uuid, v_start_time, v_end_time, new.relation_type is distinct from 'AGENT'
     from users
-    on conflict (user_id, progressions) do nothing;
+    on conflict (user_id, progression) do nothing;
 
     return new;
 end;

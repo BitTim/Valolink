@@ -172,12 +172,13 @@ create table public.valo_flex (
 create table public.valo_modes (
     uuid uuid not null,
     display_name jsonb not null,        -- mapped lang codes to strings
-    description jsonb not null,         -- mapped lang codes to strings
-    duration jsonb not null,            -- mapped lang codes to strings
-    category text not null check (category in ('STANDARD', 'TUTORIAL', 'DEATHMATCH', 'TDM', 'SKIRMISH')),
+    description jsonb,         -- mapped lang codes to strings
+    duration jsonb,            -- mapped lang codes to strings
+    category text not null check (category in ('STANDARD', 'TUTORIAL', 'RANGE', 'DEATHMATCH', 'TDM', 'SKIRMISH')),
     display_icon text,
     list_view_icon_tall text,
     rounds_per_half integer not null,
+    can_be_ranked boolean not null,
 
     constraint valo_modes_pkey primary key (uuid)
 );
@@ -190,7 +191,7 @@ create table public.valo_maps (
     display_name jsonb not null,    -- mapped lang codes to strings
     tactical_description jsonb,     -- mapped lang codes to strings
     coordinates jsonb,              -- mapped lang codes to strings
-    category text not null check (category in ('STANDARD', 'TUTORIAL', 'TDM', 'SKIRMISH')),
+    category text not null check (category in ('STANDARD', 'TUTORIAL', 'RANGE', 'TDM', 'SKIRMISH')),
     list_view_icon text not null,
     list_view_icon_tall text not null,
     splash text not null,
@@ -228,8 +229,8 @@ create table public.valo_cards (
 
 create table public.valo_titles (
     uuid uuid not null,
-    display_name jsonb not null,    -- mapped lang codes to strings
-    title_text jsonb not null,      -- mapped lang codes to strings
+    display_name jsonb,    -- mapped lang codes to strings
+    title_text jsonb,      -- mapped lang codes to strings
     hide_if_not_owned boolean not null,
 
     constraint valo_titles_pkey primary key (uuid)
@@ -241,8 +242,8 @@ create table public.valo_titles (
 create table public.valo_seasons (
     uuid uuid not null,
     display_name jsonb not null,            -- mapped lang codes to strings
-    episode_display_name jsonb not null,    -- mapped lang codes to strings
-    title jsonb not null,                   -- mapped lang codes to strings (Constructed from episode and act display_names)
+    episode_display_name jsonb,    -- mapped lang codes to strings
+    title jsonb,                   -- mapped lang codes to strings (Constructed from episode and act display_names)
     start_time timestamp with time zone not null,
     end_time timestamp with time zone not null,
 
@@ -314,8 +315,8 @@ create table public.valo_weapon_stats (
     reload_time_seconds float not null,
     first_bullet_accuracy float not null,
     shotgun_pellet_count integer not null,
-    wall_penetration text not null check (wall_penetration in ('LOW', 'HIGH', 'MEDIUM')),
-    feature text check (feature in ('SILENCED', 'ROF_INCREASED', 'DUAL_ZOOM')),
+    wall_penetration text not null check (wall_penetration in ('LOW', 'HIGH', 'MEDIUM', 'UNDEFINED')),
+    feature text check (feature in ('SILENCED', 'ROF_INCREASE', 'DUAL_ZOOM')),
     fire_mode text check (fire_mode in ('SEMI_AUTOMATIC')),
     alt_fire_type text check (alt_fire_type in ('ADS', 'AIR_BURST', 'SHOTGUN')),
     ads_stats jsonb,
@@ -335,7 +336,7 @@ create table public.valo_weapon_shop_data (
     category_text jsonb not null,   -- mapped lang codes to strings
     grid_position jsonb,
     can_be_trashed boolean not null,
-    image text not null,
+    image text,
 
     constraint valo_weapon_shop_data_pkey primary key (weapon),
     constraint valo_weapon_shop_data_weapon_fkey foreign key (weapon) references valo_weapons(uuid) on update cascade on delete cascade
@@ -387,8 +388,8 @@ create table public.valo_progressions (
     uuid uuid not null,
     display_name jsonb not null,    -- mapped lang codes to strings
     display_icon text,
-    relation_type text not null check (relation_type in ('SEASON', 'EVENT', 'AGENT')),
-    relation_uuid uuid not null,
+    relation_type text check (relation_type in ('SEASON', 'EVENT', 'AGENT')),
+    relation_uuid uuid,
     premium_vp_cost integer not null,
 
     constraint valo_progressions_pkey primary key (uuid)
@@ -412,7 +413,7 @@ create table public.valo_progression_level_rewards (
     progression uuid not null,
     level_index integer not null,
     sort_order integer not null,
-    relation_type text not null check (relation_type in ('SPRAY', 'CURRENCY', 'SKIN', 'CARD', 'BUDDY', 'TITLE', 'FLEX')),
+    relation_type text not null check (relation_type in ('SPRAY', 'CURRENCY', 'SKIN', 'CARD', 'BUDDY', 'TITLE', 'FLEX', 'UNDEFINED')),
     relation_uuid uuid not null,
     amount integer not null,
     is_free boolean not null,
