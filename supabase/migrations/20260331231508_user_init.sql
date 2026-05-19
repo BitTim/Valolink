@@ -67,10 +67,10 @@ create table public.progressions (
 create table public.purchased_levels (
     user_id uuid not null default auth.uid(),
     progression uuid not null,
-    level uuid not null,
+    level_index integer not null,
     created_at timestamp with time zone not null default now(),
 
-    constraint purchased_levels_pkey primary key (user_id, progression, level),
+    constraint purchased_levels_pkey primary key (user_id, progression, level_index),
     constraint purchased_levels_user_id_progression_fkey foreign key (user_id, progression) references progressions(user_id, progression) on update cascade on delete cascade
 );
 
