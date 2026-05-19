@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink.composeApp
  * Author:     Tim Anhalt (BitTim)
- * Modified:   09.04.26, 03:22
+ * Modified:   09.04.26, 07:37
  */
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -47,6 +47,7 @@ kotlin {
     sourceSets {
         all {
             languageSettings.optIn("kotlin.time.ExperimentalTime")
+            languageSettings.optIn("kotlin.uuid.ExperimentalUuidApi")
         }
 
         androidMain.dependencies {
