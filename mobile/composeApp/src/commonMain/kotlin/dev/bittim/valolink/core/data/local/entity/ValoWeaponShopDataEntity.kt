@@ -7,14 +7,14 @@
  * File:       ValoWeaponShopDataEntity.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.05.26, 01:35
+ * Modified:   19.05.26, 11:39
  */
 
 package dev.bittim.valolink.core.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import dev.bittim.valolink.core.domain.model.GridPosition
+import dev.bittim.valolink.core.data.local.embedded.GridPosition
 import kotlin.uuid.Uuid
 
 @Entity(

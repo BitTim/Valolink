@@ -7,13 +7,13 @@
  * File:       ValoMapEntity.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.05.26, 01:03
+ * Modified:   19.05.26, 11:39
  */
 
 package dev.bittim.valolink.core.data.local.entity
 
 import androidx.room.Entity
-import dev.bittim.valolink.core.domain.model.ValoMapCallout
+import dev.bittim.valolink.core.data.local.embedded.ValoMapCallout
 import kotlin.uuid.Uuid
 
 @Entity(

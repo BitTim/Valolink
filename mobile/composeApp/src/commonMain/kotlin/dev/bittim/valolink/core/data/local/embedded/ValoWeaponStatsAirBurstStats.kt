@@ -7,11 +7,14 @@
  * File:       ValoWeaponStatsAirBurstStats.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.05.26, 02:30
+ * Modified:   19.05.26, 11:40
  */
 
-package dev.bittim.valolink.core.domain.model
+package dev.bittim.valolink.core.data.local.embedded
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ValoWeaponStatsAirBurstStats(
     val shotgunPelletCount: Int,
     val burstDistance: Float

@@ -7,7 +7,7 @@
  * File:       PurchasedLevelEntity.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.05.26, 14:15
+ * Modified:   19.05.26, 12:03
  */
 
 package dev.bittim.valolink.core.data.local.entity
@@ -19,7 +19,7 @@ import kotlin.uuid.Uuid
 
 @Entity(
     tableName = "purchased_levels",
-    primaryKeys = ["userId", "progression", "level"],
+    primaryKeys = ["userId", "progression", "levelIndex"],
     foreignKeys = [
         ForeignKey(
             entity = UserEntity::class,

@@ -4,28 +4,28 @@
  * Project:    Valolink
  * License:    GPLv3
  *
- * File:       ValoMapCalloutConverter.kt
+ * File:       ValoWeaponStatsDamageRangesConverter.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.05.26, 11:45
+ * Modified:   19.05.26, 11:48
  */
 
 package dev.bittim.valolink.core.data.local.converter
 
 import androidx.room.TypeConverter
-import dev.bittim.valolink.core.data.local.embedded.ValoMapCallout
+import dev.bittim.valolink.core.data.local.embedded.ValoWeaponStatsDamageRange
 import kotlinx.serialization.json.Json
 
-class ValoMapCalloutConverter {
+class ValoWeaponStatsDamageRangesConverter {
     private val json = Json { ignoreUnknownKeys = true }
 
     @TypeConverter
-    fun toValoMapCallouts(value: String?): List<ValoMapCallout>? {
+    fun toValoWeaponStatsDamageRanges(value: String?): List<ValoWeaponStatsDamageRange>? {
         return value?.let { json.decodeFromString(it) }
     }
 
     @TypeConverter
-    fun fromValoMapCallouts(values: List<ValoMapCallout>?): String? {
+    fun fromValoWeaponStatsDamageRanges(values: List<ValoWeaponStatsDamageRange>?): String? {
         return values?.let { json.encodeToString(it) }
     }
 }

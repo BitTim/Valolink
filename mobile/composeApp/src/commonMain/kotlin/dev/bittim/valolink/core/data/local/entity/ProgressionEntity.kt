@@ -7,7 +7,7 @@
  * File:       ProgressionEntity.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.05.26, 13:35
+ * Modified:   19.05.26, 12:09
  */
 
 package dev.bittim.valolink.core.data.local.entity
@@ -30,7 +30,7 @@ import kotlin.uuid.Uuid
         ),
         ForeignKey(
             entity = ValoProgressionEntity::class,
-            parentColumns = ["id"],
+            parentColumns = ["uuid"],
             childColumns = ["progression"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE

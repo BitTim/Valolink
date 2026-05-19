@@ -7,17 +7,32 @@
  * File:       ValoWeaponStatsEntity.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.05.26, 02:39
+ * Modified:   19.05.26, 12:06
  */
 
 package dev.bittim.valolink.core.data.local.entity
 
-import dev.bittim.valolink.core.domain.model.ValoWeaponStatsAdsStats
-import dev.bittim.valolink.core.domain.model.ValoWeaponStatsAirBurstStats
-import dev.bittim.valolink.core.domain.model.ValoWeaponStatsAltShotgunStats
-import dev.bittim.valolink.core.domain.model.ValoWeaponStatsDamageRange
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import dev.bittim.valolink.core.data.local.embedded.ValoWeaponStatsAdsStats
+import dev.bittim.valolink.core.data.local.embedded.ValoWeaponStatsAirBurstStats
+import dev.bittim.valolink.core.data.local.embedded.ValoWeaponStatsAltShotgunStats
+import dev.bittim.valolink.core.data.local.embedded.ValoWeaponStatsDamageRange
 import kotlin.uuid.Uuid
 
+@Entity(
+    tableName = "valo_weapon_stats",
+    primaryKeys = ["weapon"],
+    foreignKeys = [
+        ForeignKey(
+            entity = ValoWeaponEntity::class,
+            parentColumns = ["uuid"],
+            childColumns = ["weapon"],
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class ValoWeaponStatsEntity(
     val weapon: Uuid,
     val fireRate: Float,

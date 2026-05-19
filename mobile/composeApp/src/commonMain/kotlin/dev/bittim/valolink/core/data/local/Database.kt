@@ -7,7 +7,7 @@
  * File:       Database.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.05.26, 02:41
+ * Modified:   19.05.26, 12:07
  */
 
 package dev.bittim.valolink.core.data.local
@@ -32,16 +32,53 @@ import dev.bittim.valolink.core.data.local.entity.*
         ProgressionEntity::class,
         PurchasedLevelEntity::class,
 
-
+        ValoAgentAbilityEntity::class,
+        ValoAgentEntity::class,
+        ValoAgentRecruitmentEntity::class,
+        ValoAgentRoleEntity::class,
+        ValoBuddyEntity::class,
+        ValoCardEntity::class,
+        ValoCompetitiveSeasonBorderEntity::class,
+        ValoCompetitiveSeasonEntity::class,
+        ValoContentTierEntity::class,
+        ValoCurrencyEntity::class,
+        ValoEventEntity::class,
+        ValoFlexEntity::class,
+        ValoMapEntity::class,
+        ValoModeEntity::class,
+        ValoProgressionEntity::class,
+        ValoProgressionLevelEntity::class,
+        ValoProgressionLevelRewardEntity::class,
+        ValoRankEntity::class,
+        ValoRankTableEntity::class,
+        ValoSeasonEntity::class,
+        ValoSprayEntity::class,
+        ValoThemeEntity::class,
+        ValoTitleEntity::class,
+        ValoVersionEntity::class,
+        ValoWeaponEntity::class,
+        ValoWeaponShopDataEntity::class,
+        ValoWeaponSkinChromaEntity::class,
+        ValoWeaponSkinEntity::class,
+        ValoWeaponSkinLevelEntity::class,
+        ValoWeaponStatsEntity::class
     ]
 )
 @ConstructedBy(UserDatabaseConstructor::class)
 @TypeConverters(
     UuidConverter::class,
+    InstantConverter::class,
     ActivityTypeConverter::class,
     AgentOwnedStateConverter::class,
     MatchEndReasonConverter::class,
-    StringMapConverter::class
+    StringListConverter::class,
+    StringMapConverter::class,
+    GridPositionConverter::class,
+    ValoMapCalloutConverter::class,
+    ValoWeaponStatsAdsStatsConverter::class,
+    ValoWeaponStatsAirBurstStatsConverter::class,
+    ValoWeaponStatsAltShotgunStatsConverter::class,
+    ValoWeaponStatsDamageRangesConverter::class
 )
 abstract class Database : RoomDatabase() {
 }

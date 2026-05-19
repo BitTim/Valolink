@@ -7,7 +7,7 @@
  * File:       MatchParticipantEntity.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.05.26, 13:29
+ * Modified:   19.05.26, 12:08
  */
 
 package dev.bittim.valolink.core.data.local.entity
@@ -30,8 +30,8 @@ import kotlin.uuid.Uuid
         ),
         ForeignKey(
             entity = ActivityEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["activity"],
+            parentColumns = ["id", "userId"],
+            childColumns = ["activity", "userId"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         ),
