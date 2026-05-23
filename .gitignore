@@ -34,3 +34,6 @@ supabase.properties
 # Android Profiling
 *.hprof
 /app/release/
+
+# Junie
+.junie/

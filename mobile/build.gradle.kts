@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink
  * Author:     Tim Anhalt (BitTim)
- * Modified:   09.04.26, 03:22
+ * Modified:   23.05.26, 17:59
  */
 
 plugins {
@@ -15,6 +15,7 @@ plugins {
     // in each subproject's classloader
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.androidKotlinMultiplatformLibrary) apply false
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
