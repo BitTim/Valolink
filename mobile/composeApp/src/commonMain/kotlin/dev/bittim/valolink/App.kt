@@ -7,7 +7,7 @@
  * File:       App.kt
  * Module:     Valolink.composeApp.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   09.04.26, 02:08
+ * Modified:   23.05.26, 13:36
  */
 
 package dev.bittim.valolink
@@ -15,11 +15,23 @@ package dev.bittim.valolink
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import dev.bittim.valolink.core.di.appModule
+import dev.bittim.valolink.core.nav.NavRoot
+import dev.bittim.valolink.feature.home.di.homeModule
+import org.koin.compose.KoinApplication
+import org.koin.dsl.koinConfiguration
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-
+    KoinApplication(configuration = koinConfiguration {
+        modules(
+            appModule,
+            homeModule,
+        )
+    }) {
+        MaterialTheme {
+            NavRoot()
+        }
     }
 }

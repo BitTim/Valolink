@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink.composeApp
  * Author:     Tim Anhalt (BitTim)
- * Modified:   09.04.26, 07:37
+ * Modified:   23.05.26, 13:27
  */
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -63,12 +63,14 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.compose.material.icons.extended)
 
             // Koin
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.compose.viewmodel.navigation)
+            implementation(libs.koin.compose.navigation3)
 
             // Navigation 3
             implementation(libs.jetbrains.navigation3.ui)
