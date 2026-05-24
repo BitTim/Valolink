@@ -7,7 +7,7 @@
  * File:       LandingScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 17:04
+ * Modified:   24.05.26, 22:43
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen.landing
@@ -30,7 +30,7 @@ import valolink.shared.generated.resources.*
 @Composable
 @Preview
 fun LandingScreen(
-    navHome: () -> Unit = {}
+    navEmail: () -> Unit = {}
 ) {
     Surface {
         Column(
@@ -49,16 +49,16 @@ fun LandingScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
                 Text(
-                    text = stringResource(Res.string.onboarding_landing_title),
+                    text = stringResource(Res.string.auth_landing_title),
                     style = MaterialTheme.typography.headlineSmall
                 )
 
-                Text(text = stringResource(Res.string.onboarding_landing_description))
+                Text(text = stringResource(Res.string.auth_landing_description))
 
                 Column() {
                     Button(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = navHome,
+                        onClick = { navEmail() },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -69,7 +69,7 @@ fun LandingScreen(
                                 contentDescription = "",
                             )
 
-                            Text(text = stringResource(Res.string.onboarding_landing_button_email))
+                            Text(text = stringResource(Res.string.auth_landing_button_email))
                         }
                     }
 
@@ -78,7 +78,7 @@ fun LandingScreen(
                         onClick = {},
                         painter = painterResource(Res.drawable.ic_google_logo),
                         contentDescription = "Google",
-                        text = stringResource(Res.string.onboarding_landing_button_google)
+                        text = stringResource(Res.string.auth_landing_button_google)
                     )
                 }
             }
