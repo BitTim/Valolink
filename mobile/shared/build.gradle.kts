@@ -7,10 +7,13 @@
  * File:       build.gradle.kts
  * Module:     Valolink.shared
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 18:01
+ * Modified:   24.05.26, 15:48
  */
 
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.*
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -21,6 +24,8 @@ plugins {
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+
+    id("com.codingfeline.buildkonfig") version "+"
 }
 
 room {
@@ -59,6 +64,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(libs.koin.android)
             implementation(libs.compose.uiToolingPreview)
         }
         commonMain.dependencies {
@@ -121,4 +127,38 @@ dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
+}
+
+buildkonfig {
+    packageName = "dev.bittim.valolink"
+
+    defaultConfigs {
+        // Extract Supabase credentials from .env file or environment variables
+        val supabaseUrl: String
+        val supabaseKey: String
+
+        val propertiesFile = file("../../.env")
+        if (propertiesFile.canRead()) {
+            val properties = Properties()
+            properties.load(FileInputStream(propertiesFile))
+
+            supabaseUrl = properties.getProperty("SUPABASE_URL")
+            supabaseKey = properties.getProperty("SUPABASE_KEY")
+        } else {
+            println("Could not read .env file, using environment variables instead")
+            supabaseUrl = System.getenv("SUPABASE_URL") ?: ""
+            supabaseKey = System.getenv("SUPABASE_KEY") ?: ""
+        }
+
+        require(supabaseUrl.isNotEmpty()) {
+            "Supabase Url not set. Please set add SUPABASE_URL to .env file at repo root or set the SUPABASE_URL environment variable. You can find your project URL in your project's dashboard."
+        }
+
+        require(supabaseKey.isNotEmpty()) {
+            "Supabase Key not set. Please set add SUPABASE_KEY to .env file at repo root or set the SUPABASE_KEY environment variable. You can find your sharable key in your project's dashboard."
+        }
+
+        buildConfigField(FieldSpec.Type.STRING, "SUPABASE_URL", supabaseUrl)
+        buildConfigField(FieldSpec.Type.STRING, "SUPABASE_KEY", supabaseKey)
+    }
 }

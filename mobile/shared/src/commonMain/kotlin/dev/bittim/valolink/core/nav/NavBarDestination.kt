@@ -7,7 +7,7 @@
  * File:       NavBarDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 02:53
+ * Modified:   24.05.26, 17:37
  */
 
 package dev.bittim.valolink.core.nav
@@ -20,7 +20,7 @@ import dev.bittim.valolink.feature.home.nav.HomeScreenNav
 enum class NavBarDestination(
     val title: String,
     val icon: ImageVector,
-    val destination: AppDestination
+    val destination: AuthenticatedDestination
 ) {
     HOME (
         title = "Home",

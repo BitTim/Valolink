@@ -7,11 +7,14 @@
  * File:       MainViewController.kt
  * Module:     Valolink.shared.iosMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   24.05.26, 15:39
  */
 
 package dev.bittim.valolink
 
 import androidx.compose.ui.window.ComposeUIViewController
+import dev.bittim.valolink.core.di.initKoin
 
-fun MainViewController() = ComposeUIViewController { App() }
+fun MainViewController() = ComposeUIViewController(
+    configure = { initKoin() }
+) { App() }

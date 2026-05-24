@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink.androidApp
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 18:01
+ * Modified:   24.05.26, 18:11
  */
 
 plugins {
@@ -46,6 +46,7 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.koin.android)
     debugImplementation(libs.compose.uiTooling)
 
     constraints {

@@ -1,3 +1,6 @@
+# Environment (Secrets)
+.env
+
 # Gradle files
 .gradle/
 .kotlin/

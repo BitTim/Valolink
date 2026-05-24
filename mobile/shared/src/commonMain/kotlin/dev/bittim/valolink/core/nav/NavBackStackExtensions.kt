@@ -7,7 +7,7 @@
  * File:       NavBackStackExtensions.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 11:31
+ * Modified:   24.05.26, 17:50
  */
 
 package dev.bittim.valolink.core.nav
@@ -15,7 +15,7 @@ package dev.bittim.valolink.core.nav
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 
-fun NavBackStack<NavKey>.navigateTo(destination: AppDestination) {
+fun NavBackStack<NavKey>.navigateTo(destination: NavKey) {
     add(destination)
 }
 
@@ -23,13 +23,13 @@ fun NavBackStack<NavKey>.navigateBack() {
     removeLastOrNull()
 }
 
-fun NavBackStack<NavKey>.navigateToTopLevel(destination: AppDestination) {
+fun NavBackStack<NavKey>.navigateToTopLevel(destination: NavKey) {
     clear()
     add(destination)
 }
 
 fun NavBackStack<NavKey>.navigateAndClearUpTo(
-    destination: AppDestination,
+    destination: NavKey,
     inclusive: Boolean = false
 ) {
     val index = indexOfLast { it::class == destination::class }
@@ -41,7 +41,7 @@ fun NavBackStack<NavKey>.navigateAndClearUpTo(
 }
 
 fun NavBackStack<NavKey>.popUpTo(
-    destination: AppDestination,
+    destination: NavKey,
     inclusive: Boolean = false
 ) {
     val index = indexOfLast { it::class == destination::class }
@@ -51,7 +51,7 @@ fun NavBackStack<NavKey>.popUpTo(
     }
 }
 
-fun NavBackStack<NavKey>.replace(destination: AppDestination) {
+fun NavBackStack<NavKey>.replace(destination: NavKey) {
     removeLastOrNull()
     add(destination)
 }

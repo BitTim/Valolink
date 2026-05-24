@@ -32,6 +32,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilNetworkKtor3" }
 coil3-integration = { module = "io.github.jan-tennert.supabase:coil3-integration" }
+koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose-navigation3 = { module = "io.insert-koin:koin-compose-navigation3", version.ref = "koinBom" }
 realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt" }

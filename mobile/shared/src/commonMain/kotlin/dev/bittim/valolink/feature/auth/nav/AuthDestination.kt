@@ -4,41 +4,39 @@
  * Project:    Valolink
  * License:    GPLv3
  *
- * File:       OnboardingDestination.kt
+ * File:       AuthDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 11:33
+ * Modified:   24.05.26, 17:49
  */
 
-package dev.bittim.valolink.feature.onboarding.nav
+package dev.bittim.valolink.feature.auth.nav
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import dev.bittim.valolink.core.nav.AppDestination
-import dev.bittim.valolink.core.nav.navigateToTopLevel
-import dev.bittim.valolink.feature.home.nav.HomeScreenNav
-import dev.bittim.valolink.feature.onboarding.ui.screen.landing.LandingScreen
+import dev.bittim.valolink.core.nav.UnauthenticatedDestination
+import dev.bittim.valolink.feature.auth.ui.screen.landing.LandingScreen
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
-interface OnboardingDestination : AppDestination
+interface AuthDestination : UnauthenticatedDestination
 
-val onboardingSerializersModule = SerializersModule {
+val authSerializersModule = SerializersModule {
     polymorphic(NavKey::class) {
         subclass(LandingScreenNav::class)
     }
 }
 
 @Serializable
-data object LandingScreenNav : OnboardingDestination
+data object LandingScreenNav : AuthDestination
 
-fun EntryProviderScope<NavKey>.onboardingDestination(
+fun EntryProviderScope<NavKey>.authDestination(
     backStack: NavBackStack<NavKey>
 ) {
     entry<LandingScreenNav> {
-        LandingScreen(navHome = { backStack.navigateToTopLevel(HomeScreenNav) })
+        LandingScreen(navHome = {  })
     }
 }

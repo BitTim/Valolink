@@ -7,10 +7,10 @@
  * File:       LandingScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 13:00
+ * Modified:   24.05.26, 17:04
  */
 
-package dev.bittim.valolink.feature.onboarding.ui.screen.landing
+package dev.bittim.valolink.feature.auth.ui.screen.landing
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
-import dev.bittim.valolink.feature.onboarding.ui.screen.landing.components.OutlinedSocialButton
+import dev.bittim.valolink.feature.auth.ui.screen.landing.components.OutlinedSocialButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.*
