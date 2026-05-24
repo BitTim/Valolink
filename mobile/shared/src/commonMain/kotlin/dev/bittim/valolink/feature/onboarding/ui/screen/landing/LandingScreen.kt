@@ -7,7 +7,7 @@
  * File:       LandingScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   24.05.26, 13:00
  */
 
 package dev.bittim.valolink.feature.onboarding.ui.screen.landing
@@ -17,47 +17,69 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import dev.bittim.valolink.core.ui.Spacing
+import dev.bittim.valolink.feature.onboarding.ui.screen.landing.components.OutlinedSocialButton
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import valolink.shared.generated.resources.*
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @Preview
-fun LandingScreen() {
-    Column (
-        modifier = Modifier.fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Box(
+fun LandingScreen(
+    navHome: () -> Unit = {}
+) {
+    Surface {
+        Column(
             modifier = Modifier.fillMaxSize()
-                .weight(1f)
-        ) {}
-
-        Column (
-            modifier = Modifier.fillMaxSize()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(Spacing.l),
+            verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
-            Text(
-                text = "Welcome to Valolink!",
-                style = MaterialTheme.typography.headlineSmall
-            )
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .weight(1f)
+            ) {}
 
-            Text(text = "Start your journey with Valolink by signing up or logging in")
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {},
+            Column(
+                modifier = Modifier.fillMaxSize()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
-                Row() {
-                    Icon(
-                        Icons.Outlined.Email,
-                        contentDescription = "",
-                    )
+                Text(
+                    text = stringResource(Res.string.onboarding_landing_title),
+                    style = MaterialTheme.typography.headlineSmall
+                )
 
-                    Text(text = "Continue with E-Mail")
+                Text(text = stringResource(Res.string.onboarding_landing_description))
+
+                Column() {
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = navHome,
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.s)
+                        ) {
+                            Icon(
+                                Icons.Outlined.Email,
+                                contentDescription = "",
+                            )
+
+                            Text(text = stringResource(Res.string.onboarding_landing_button_email))
+                        }
+                    }
+
+                    OutlinedSocialButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {},
+                        painter = painterResource(Res.drawable.ic_google_logo),
+                        contentDescription = "Google",
+                        text = stringResource(Res.string.onboarding_landing_button_google)
+                    )
                 }
             }
         }

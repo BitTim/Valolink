@@ -1,0 +1,21 @@
+<!--
+  ~ Copyright (c) 2026 Tim Anhalt (BitTim)
+  ~
+  ~ Project:    Valolink
+  ~ License:    GPLv3
+  ~
+  ~ File:       strings.xml
+  ~ Module:     Valolink.shared.commonMain
+  ~ Author:     Tim Anhalt (BitTim)
+  ~ Modified:   24.05.26, 11:35
+  -->
+
+<resources>
+    <string name="app_name">Valolink</string>
+
+    <string name="onboarding_landing_title">Willkommen zu Valolink!</string>
+    <string name="onboarding_landing_description">Jetzt anmelden um deine Valorant Matches zu Verfolgen und deine Statistiken zu sehen</string>
+    <string name="onboarding_landing_button_email">Weiter mit E-Mail</string>
+    <string name="onboarding_landing_button_google">Weiter mit Google</string>
+    <string name="onboarding_landing_image_description">Valorant Logo</string>
+</resources>
