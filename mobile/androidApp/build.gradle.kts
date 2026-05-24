@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink.androidApp
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 18:11
+ * Modified:   24.05.26, 19:00
  */
 
 plugins {
@@ -48,19 +48,4 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
     debugImplementation(libs.compose.uiTooling)
-
-    constraints {
-        implementation("androidx.compose.material3.adaptive:adaptive") {
-            version { strictly("1.3.0-alpha07") }
-        }
-        implementation("androidx.compose.material3.adaptive:adaptive-layout") {
-            version { strictly("1.3.0-alpha07") }
-        }
-        implementation("androidx.compose.material3.adaptive:adaptive-navigation") {
-            version { strictly("1.3.0-alpha07") }
-        }
-        implementation("androidx.compose.material3.adaptive:adaptive-navigation3") {
-            version { strictly("1.3.0-alpha07") }
-        }
-    }
 }

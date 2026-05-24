@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink.shared
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 15:48
+ * Modified:   24.05.26, 19:06
  */
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec
