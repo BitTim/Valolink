@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   24.05.26, 22:39
+  ~ Modified:   28.05.26, 21:06
   -->
 
 <resources>
@@ -15,6 +15,9 @@
 
     <string name="generic_button_back">Back</string>
     <string name="generic_button_continue">Continue</string>
+
+    <string name="iconcd_email">E-Mail</string>
+    <string name="iconcd_password">Password</string>
 
     <string name="auth_landing_title">Welcome to Valolink!</string>
     <string name="auth_landing_description">Sign in now to track your Valorant matches and view your statistics</string>
@@ -26,4 +29,14 @@
     <string name="auth_email_description">If you don't have an account yet, we will create one for you in the next step. If you do, you will be able to sign in to your account in the next step</string>
     <string name="auth_email_textField_label">E-Mail</string>
     <string name="auth_email_textField_placeholder">test@example.com</string>
+    <string name="auth_email_error_empty">E-Mail cannot be empty</string>
+    <string name="auth_email_error_invalid">Invalid E-Mail</string>
+
+    <string name="auth_password_title_login">Welcome back!</string>
+    <string name="auth_password_title_signup">Create a password</string>
+    <string name="auth_password_description_login">Enter your password to log in</string>
+    <string name="auth_password_description_signup">Create a password and get started with Valolink!</string>
+    <string name="auth_password_textField_label">Password</string>
+    <string name="auth_password_error_empty">Password cannot be empty</string>
+    <string name="auth_password_error_invalid">Invalid Password</string>
 </resources>

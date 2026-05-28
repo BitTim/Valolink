@@ -4,18 +4,19 @@
  * Project:    Valolink
  * License:    GPLv3
  *
- * File:       EmailScreen.kt
+ * File:       PasswordScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
  * Modified:   28.05.26, 21:17
  */
 
-package dev.bittim.valolink.feature.auth.ui.screen.email
+package dev.bittim.valolink.feature.auth.ui.screen.password
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -28,13 +29,14 @@ import valolink.shared.generated.resources.*
 
 @Composable
 @Preview
-fun EmailScreen(
-    state: EmailScreenState = EmailScreenState(),
-    validateEmail: (email: String) -> Unit = {},
+fun PasswordScreen(
+    state: PasswordScreenState = PasswordScreenState(),
+    validatePassword: (password: String) -> Unit = {},
     navBack: () -> Unit = {},
-    navNext: () -> Unit = {}
+    navNext: () -> Unit = {},
 ) {
-    var email: String by remember { mutableStateOf("") }
+    var password: String by remember { mutableStateOf("") }
+    var passwordVisibility by remember { mutableStateOf(false) }
 
     Surface {
         Column(
@@ -53,26 +55,30 @@ fun EmailScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
                 Text(
-                    text = stringResource(resource = Res.string.auth_email_title),
+                    text = stringResource(resource = Res.string.auth_password_title_login),
                     style = MaterialTheme.typography.headlineSmall
                 )
 
                 Text(
-                    text = stringResource(resource = Res.string.auth_email_description),
+                    text = stringResource(resource = Res.string.auth_password_description_login),
                     style = MaterialTheme.typography.bodyMedium
                 )
 
                 OutlinedTextFieldWithError(
                     modifier = Modifier.fillMaxWidth(),
-                    label = stringResource(resource = Res.string.auth_email_textField_label),
-                    value = email,
+                    label = stringResource(resource = Res.string.auth_password_textField_label),
+                    value = password,
                     error = state.error?.let { stringResource(it) },
                     onValueChange = {
-                        email = it
-                        validateEmail(it)
+                        password = it
+                        validatePassword(it)
                     },
-                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = stringResource(Res.string.iconcd_email))},
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    leadingIcon = { Icon(Icons.Default.Password, contentDescription = stringResource(Res.string.iconcd_password))},
+                    enableVisibilityToggle = true,
+                    visibility = passwordVisibility,
+                    onVisibilityChange = { passwordVisibility = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardActions = KeyboardActions(onNext = { navNext() })
                 )
 
                 Row(
@@ -88,7 +94,7 @@ fun EmailScreen(
                     }
 
                     Button(
-                        enabled = state.error == null && email.isNotEmpty(),
+                        enabled = state.error == null && password.isNotEmpty(),
                         onClick = { navNext() }
                     ) {
                         Text(

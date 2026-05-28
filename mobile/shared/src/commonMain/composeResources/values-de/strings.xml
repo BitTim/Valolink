@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   24.05.26, 22:39
+  ~ Modified:   28.05.26, 21:06
   -->
 
 <resources>
@@ -15,6 +15,9 @@
 
     <string name="generic_button_back">Zurück</string>
     <string name="generic_button_continue">Weiter</string>
+
+    <string name="iconcd_email">E-Mail</string>
+    <string name="iconcd_password">Passwort</string>
 
     <string name="auth_landing_title">Willkommen zu Valolink!</string>
     <string name="auth_landing_description">Jetzt anmelden um deine Valorant Matches zu Verfolgen und deine Statistiken zu sehen</string>
@@ -25,5 +28,14 @@
     <string name="auth_email_title">Gib deine E-Mail ein</string>
     <string name="auth_email_description">Wenn du noch kein Konto hast, erstellen wir dir im nächsten Schritt eins. Falls doch kannst du dich im nächsten Schritt anmleden</string>
     <string name="auth_email_textField_label">E-Mail</string>
-    <string name="auth_email_textField_placeholder">test@example.com</string>
+    <string name="auth_email_error_empty">E-Mail darf nicht leer sein</string>
+    <string name="auth_email_error_invalid">Ungültige E-Mail</string>
+
+    <string name="auth_password_title_login">Willkommen zurück!</string>
+    <string name="auth_password_title_signup">Erstelle ein Passwort</string>
+    <string name="auth_password_description_login">Gib dein Passwort ein um dich anzumelden</string>
+    <string name="auth_password_description_signup">Such dir ein Passwort für dein Konto aus, danach kannst du direkt loslegen!</string>
+    <string name="auth_password_textField_label">Passwort</string>
+    <string name="auth_password_error_empty">Passwort darf nicht leer sein</string>
+    <string name="auth_password_error_invalid">Ungültiges Passwort</string>
 </resources>
