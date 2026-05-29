@@ -7,7 +7,7 @@
  * File:       AuthDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.05.26, 21:13
+ * Modified:   29.05.26, 15:52
  */
 
 package dev.bittim.valolink.feature.auth.nav
@@ -62,8 +62,8 @@ fun EntryProviderScope<NavKey>.authDestination(
         EmailScreen(
             state = emailScreenState,
             validateEmail = { emailScreenViewModel.validateEmail(it) },
-            navBack = { backStack.navigateBack() },
-            navNext = { backStack.navigateTo(PasswordScreenNav) }
+            onNext = { emailScreenViewModel.onNext(email = it, navNext = { backStack.navigateTo(PasswordScreenNav) })},
+            navBack = { backStack.navigateBack() }
         )
     }
 

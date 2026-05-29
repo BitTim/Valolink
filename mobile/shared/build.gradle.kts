@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink.shared
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.05.26, 14:39
+ * Modified:   29.05.26, 20:13
  */
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec
@@ -66,6 +66,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.koin.android)
             implementation(libs.compose.uiToolingPreview)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -97,7 +98,7 @@ kotlin {
 
             // Ktor
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.content.negotiation)
 
             // Coil
             implementation(libs.coil.compose)
@@ -117,6 +118,9 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 }

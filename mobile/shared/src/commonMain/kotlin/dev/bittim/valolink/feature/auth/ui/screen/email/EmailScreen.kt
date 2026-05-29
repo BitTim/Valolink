@@ -7,7 +7,7 @@
  * File:       EmailScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.05.26, 21:17
+ * Modified:   29.05.26, 15:52
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen.email
@@ -31,8 +31,8 @@ import valolink.shared.generated.resources.*
 fun EmailScreen(
     state: EmailScreenState = EmailScreenState(),
     validateEmail: (email: String) -> Unit = {},
-    navBack: () -> Unit = {},
-    navNext: () -> Unit = {}
+    onNext: (email: String) -> Unit = {},
+    navBack: () -> Unit = {}
 ) {
     var email: String by remember { mutableStateOf("") }
 
@@ -89,7 +89,7 @@ fun EmailScreen(
 
                     Button(
                         enabled = state.error == null && email.isNotEmpty(),
-                        onClick = { navNext() }
+                        onClick = { onNext(email) }
                     ) {
                         Text(
                             stringResource(resource = Res.string.generic_button_continue)

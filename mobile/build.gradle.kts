@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:59
+ * Modified:   29.05.26, 20:13
  */
 
 plugins {
