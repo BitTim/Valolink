@@ -7,7 +7,7 @@
  * File:       build.gradle.kts
  * Module:     Valolink.shared
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 19:06
+ * Modified:   29.05.26, 14:39
  */
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec
@@ -108,12 +108,12 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
 
             // Supabase
-            implementation(project.dependencies.platform(libs.supabase.bom))
-            implementation(libs.auth.kt)
-            implementation(libs.postgrest.kt)
-            implementation(libs.storage.kt)
-            implementation(libs.realtime.kt)
-            implementation(libs.coil3.integration)
+            api(project.dependencies.platform(libs.supabase.bom))
+            api(libs.auth.kt)
+            api(libs.postgrest.kt)
+            api(libs.storage.kt)
+            api(libs.realtime.kt)
+            api(libs.coil3.integration)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
