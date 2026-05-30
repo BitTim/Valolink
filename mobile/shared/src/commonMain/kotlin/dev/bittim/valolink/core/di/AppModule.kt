@@ -7,7 +7,7 @@
  * File:       AppModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.05.26, 16:12
+ * Modified:   30.05.26, 01:51
  */
 
 package dev.bittim.valolink.core.di
@@ -17,6 +17,7 @@ import dev.bittim.valolink.core.data.repo.SupabaseAuthRepo
 import dev.bittim.valolink.core.domain.repo.AuthRepo
 import dev.bittim.valolink.core.domain.usecase.ObserverSessionStatusUseCase
 import dev.bittim.valolink.core.domain.usecase.SignInWithOtpUseCase
+import dev.bittim.valolink.core.domain.usecase.SubmitOtpUseCase
 import dev.bittim.valolink.core.ui.screen.root.RootScreenViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
@@ -47,6 +48,7 @@ val appModule = module {
 
     singleOf(::ObserverSessionStatusUseCase)
     singleOf(::SignInWithOtpUseCase)
+    singleOf(::SubmitOtpUseCase)
 
     viewModelOf(::RootScreenViewModel)
 }

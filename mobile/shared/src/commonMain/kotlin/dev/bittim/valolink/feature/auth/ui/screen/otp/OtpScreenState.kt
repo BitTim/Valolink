@@ -4,16 +4,17 @@
  * Project:    Valolink
  * License:    GPLv3
  *
- * File:       PasswordScreenState.kt
+ * File:       OtpScreenState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.05.26, 20:52
+ * Modified:   30.05.26, 02:09
  */
 
-package dev.bittim.valolink.feature.auth.ui.screen.password
+package dev.bittim.valolink.feature.auth.ui.screen.otp
 
 import org.jetbrains.compose.resources.StringResource
 
-data class PasswordScreenState(
+data class OtpScreenState(
+    val otp: String = "",
     val error: StringResource? = null
 )

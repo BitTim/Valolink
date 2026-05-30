@@ -7,12 +7,13 @@
  * File:       AuthDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.05.26, 15:52
+ * Modified:   30.05.26, 02:27
  */
 
 package dev.bittim.valolink.feature.auth.nav
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
@@ -23,19 +24,22 @@ import dev.bittim.valolink.core.nav.navigateTo
 import dev.bittim.valolink.feature.auth.ui.screen.email.EmailScreen
 import dev.bittim.valolink.feature.auth.ui.screen.email.EmailScreenViewModel
 import dev.bittim.valolink.feature.auth.ui.screen.landing.LandingScreen
-import dev.bittim.valolink.feature.auth.ui.screen.password.PasswordScreen
-import dev.bittim.valolink.feature.auth.ui.screen.password.PasswordScreenViewModel
+import dev.bittim.valolink.feature.auth.ui.screen.otp.OtpScreen
+import dev.bittim.valolink.feature.auth.ui.screen.otp.OtpScreenViewModel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.getKoin
+import org.koin.core.qualifier.named
 
 interface AuthDestination : UnauthenticatedDestination
 
 val authSerializersModule = SerializersModule {
     polymorphic(NavKey::class) {
         subclass(LandingScreenNav::class)
+        subclass(EmailScreenNav::class)
+        subclass(OtpScreenNav::class)
     }
 }
 
@@ -46,7 +50,7 @@ data object LandingScreenNav : AuthDestination
 data object EmailScreenNav : AuthDestination
 
 @Serializable
-data object PasswordScreenNav : AuthDestination
+data object OtpScreenNav : AuthDestination
 
 fun EntryProviderScope<NavKey>.authDestination(
     backStack: NavBackStack<NavKey>
@@ -56,26 +60,32 @@ fun EntryProviderScope<NavKey>.authDestination(
     }
 
     entry<EmailScreenNav> {
-        val emailScreenViewModel = koinViewModel<EmailScreenViewModel>()
+        val koin = getKoin()
+        val scope = remember { koin.getOrCreateScope("auth_flow_id", named("AuthFlowScope")) }
+
+        val emailScreenViewModel = remember(scope) { scope.get<EmailScreenViewModel>() }
         val emailScreenState by emailScreenViewModel.state.collectAsStateWithLifecycle()
 
         EmailScreen(
             state = emailScreenState,
-            validateEmail = { emailScreenViewModel.validateEmail(it) },
-            onNext = { emailScreenViewModel.onNext(email = it, navNext = { backStack.navigateTo(PasswordScreenNav) })},
+            onEmailChange = { emailScreenViewModel.onEmailChange(it) },
+            onNext = { emailScreenViewModel.onNext(navNext = { backStack.navigateTo(OtpScreenNav) })},
             navBack = { backStack.navigateBack() }
         )
     }
 
-    entry<PasswordScreenNav> {
-        val passwordScreenViewModel = koinViewModel<PasswordScreenViewModel>()
-        val passwordScreenState by passwordScreenViewModel.state.collectAsStateWithLifecycle()
+    entry<OtpScreenNav> {
+        val koin = getKoin()
+        val scope = remember { koin.getOrCreateScope("auth_flow_id", named("AuthFlowScope")) }
 
-        PasswordScreen(
-            state = passwordScreenState,
-            validatePassword = { passwordScreenViewModel.validatePassword(it) },
+        val otpScreenViewModel = remember(scope) { scope.get<OtpScreenViewModel>() }
+        val otpScreenState by otpScreenViewModel.state.collectAsStateWithLifecycle()
+
+        OtpScreen(
+            state = otpScreenState,
+            onOtpChange = { otpScreenViewModel.onOtpChange(it) },
+            onComplete = { otpScreenViewModel.onComplete() },
             navBack = { backStack.navigateBack() },
-            navNext = { }
         )
     }
 }

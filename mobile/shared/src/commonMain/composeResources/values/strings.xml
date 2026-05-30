@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   28.05.26, 21:06
+  ~ Modified:   30.05.26, 01:49
   -->
 
 <resources>
@@ -15,6 +15,7 @@
 
     <string name="generic_button_back">Back</string>
     <string name="generic_button_continue">Continue</string>
+    <string name="generic_button_finish">Finish</string>
 
     <string name="iconcd_email">E-Mail</string>
     <string name="iconcd_password">Password</string>

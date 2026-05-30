@@ -7,7 +7,7 @@
  * File:       EmailScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.05.26, 15:52
+ * Modified:   30.05.26, 02:30
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen.email
@@ -17,7 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,12 +30,10 @@ import valolink.shared.generated.resources.*
 @Preview
 fun EmailScreen(
     state: EmailScreenState = EmailScreenState(),
-    validateEmail: (email: String) -> Unit = {},
-    onNext: (email: String) -> Unit = {},
+    onEmailChange: (email: String) -> Unit = {},
+    onNext: () -> Unit = {},
     navBack: () -> Unit = {}
 ) {
-    var email: String by remember { mutableStateOf("") }
-
     Surface {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -65,12 +63,9 @@ fun EmailScreen(
                 OutlinedTextFieldWithError(
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(resource = Res.string.auth_email_textField_label),
-                    value = email,
+                    value = state.email,
                     error = state.error?.let { stringResource(it) },
-                    onValueChange = {
-                        email = it
-                        validateEmail(it)
-                    },
+                    onValueChange = { onEmailChange(it) },
                     leadingIcon = { Icon(Icons.Default.Email, contentDescription = stringResource(Res.string.iconcd_email))},
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 )
@@ -88,8 +83,8 @@ fun EmailScreen(
                     }
 
                     Button(
-                        enabled = state.error == null && email.isNotEmpty(),
-                        onClick = { onNext(email) }
+                        enabled = state.error == null && state.email.isNotEmpty(),
+                        onClick = { onNext() }
                     ) {
                         Text(
                             stringResource(resource = Res.string.generic_button_continue)
