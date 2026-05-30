@@ -7,7 +7,7 @@
  * File:       AuthDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.05.26, 02:27
+ * Modified:   30.05.26, 02:46
  */
 
 package dev.bittim.valolink.feature.auth.nav
@@ -30,8 +30,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import org.koin.compose.getKoin
-import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 
 interface AuthDestination : UnauthenticatedDestination
 
@@ -53,16 +52,14 @@ data object EmailScreenNav : AuthDestination
 data object OtpScreenNav : AuthDestination
 
 fun EntryProviderScope<NavKey>.authDestination(
-    backStack: NavBackStack<NavKey>
+    backStack: NavBackStack<NavKey>,
+    scope: Scope
 ) {
     entry<LandingScreenNav> {
         LandingScreen(navEmail = { backStack.navigateTo(EmailScreenNav) })
     }
 
     entry<EmailScreenNav> {
-        val koin = getKoin()
-        val scope = remember { koin.getOrCreateScope("auth_flow_id", named("AuthFlowScope")) }
-
         val emailScreenViewModel = remember(scope) { scope.get<EmailScreenViewModel>() }
         val emailScreenState by emailScreenViewModel.state.collectAsStateWithLifecycle()
 
@@ -75,9 +72,6 @@ fun EntryProviderScope<NavKey>.authDestination(
     }
 
     entry<OtpScreenNav> {
-        val koin = getKoin()
-        val scope = remember { koin.getOrCreateScope("auth_flow_id", named("AuthFlowScope")) }
-
         val otpScreenViewModel = remember(scope) { scope.get<OtpScreenViewModel>() }
         val otpScreenState by otpScreenViewModel.state.collectAsStateWithLifecycle()
 
