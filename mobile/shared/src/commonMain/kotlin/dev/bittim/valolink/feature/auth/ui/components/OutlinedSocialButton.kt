@@ -7,10 +7,10 @@
  * File:       OutlinedSocialButton.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 17:04
+ * Modified:   31.05.26, 20:37
  */
 
-package dev.bittim.valolink.feature.auth.ui.screen.landing.components
+package dev.bittim.valolink.feature.auth.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer

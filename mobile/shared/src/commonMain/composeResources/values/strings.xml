@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   30.05.26, 01:49
+  ~ Modified:   31.05.26, 21:40
   -->
 
 <resources>
@@ -18,26 +18,27 @@
     <string name="generic_button_finish">Finish</string>
 
     <string name="iconcd_email">E-Mail</string>
-    <string name="iconcd_password">Password</string>
+    <string name="iconcd_key">Key</string>
 
-    <string name="auth_landing_title">Welcome to Valolink!</string>
-    <string name="auth_landing_description">Sign in now to track your Valorant matches and view your statistics</string>
     <string name="auth_landing_button_email">Continue with E-Mail</string>
     <string name="auth_landing_button_google">Continue with Google</string>
-    <string name="auth_landing_image_description">Valorant Logo</string>
 
-    <string name="auth_email_title">Enter your E-Mail</string>
-    <string name="auth_email_description">If you don't have an account yet, we will create one for you in the next step. If you do, you will be able to sign in to your account in the next step</string>
-    <string name="auth_email_textField_label">E-Mail</string>
-    <string name="auth_email_textField_placeholder">test@example.com</string>
-    <string name="auth_email_error_empty">E-Mail cannot be empty</string>
-    <string name="auth_email_error_invalid">Invalid E-Mail</string>
+    <string name="auth_landing_title">Welcome to Valolink!</string>
+    <string name="auth_landing_description">Sign in to get started. When using E-Mail we will send you a magic link and a code you will be able to log in with.</string>
+    <string name="auth_landing_text_field_label">E-Mail</string>
+    <string name="auth_landing_error_empty">E-Mail cannot be empty</string>
+    <string name="auth_landing_error_invalid">Invalid E-Mail</string>
 
-    <string name="auth_password_title_login">Welcome back!</string>
-    <string name="auth_password_title_signup">Create a password</string>
-    <string name="auth_password_description_login">Enter your password to log in</string>
-    <string name="auth_password_description_signup">Create a password and get started with Valolink!</string>
-    <string name="auth_password_textField_label">Password</string>
-    <string name="auth_password_error_empty">Password cannot be empty</string>
-    <string name="auth_password_error_invalid">Invalid Password</string>
+    <string name="auth_otp_title">Enter your code</string>
+    <string name="auth_otp_description">Please enter the code you received or use the magic link</string>
+    <string name="auth_otp_label">One Time Code</string>
+    <string name="auth_otp_error_empty">Code cannot be empty</string>
+    <string name="auth_otp_error_length">Code must be 8 digits long</string>
+    <string name="auth_otp_error_invalid">Invalid characters. Only numbers are allowed</string>
+    <string name="iconcd_close">Close</string>
+    <string name="iconcd_back">Back</string>
+    <string name="iconcd_waving_hand">Waving Hand</string>
+    <string name="auth_landing_button_apple">Continue with Apple</string>
+    <string name="iconcd_google">Google</string>
+    <string name="iconcd_apple">Apple</string>
 </resources>
