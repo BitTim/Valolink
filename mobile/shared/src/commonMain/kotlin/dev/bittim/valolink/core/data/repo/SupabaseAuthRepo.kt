@@ -7,7 +7,7 @@
  * File:       SupabaseAuthRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.05.26, 20:34
+ * Modified:   01.06.26, 16:31
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -20,11 +20,16 @@ import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.OTP
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class SupabaseAuthRepo(
     private val auth: Auth,
     private val scope: CoroutineScope
 ) : AuthRepo {
+    override val emailCooldown: Duration
+        get() = 60.seconds
+
     override fun signInWithOtp(email: String) {
         scope.launch {
             auth.signUpWith(OTP) { this.email = email }

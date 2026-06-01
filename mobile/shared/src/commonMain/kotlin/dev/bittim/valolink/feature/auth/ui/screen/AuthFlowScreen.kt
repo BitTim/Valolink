@@ -7,7 +7,7 @@
  * File:       AuthFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.05.26, 21:25
+ * Modified:   01.06.26, 19:26
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen
@@ -60,8 +60,7 @@ fun AuthFlowScreen(
                     AuthFlowStep.LandingStep -> stringResource(Res.string.iconcd_waving_hand)
                     AuthFlowStep.OtpStep -> stringResource(Res.string.iconcd_email)
                 },
-                spinTrigger = state,
-                spinDirection = state.heroIconSpinDirection
+                targetRotation = state.heroIconRotation
             )
         },
         content = { _, padding ->
@@ -74,8 +73,10 @@ fun AuthFlowScreen(
                 )
                 AuthFlowStep.OtpStep -> OtpStep(
                     modifier = Modifier.padding(padding),
+                    email = state.email,
                     otp = state.otp,
                     error = state.otpError,
+                    cooldownSecondsLeft = state.cooldownSecondsLeft,
                     onAction = { onAction(it) }
                 )
             }

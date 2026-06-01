@@ -7,7 +7,7 @@
  * File:       AnimatedHeroIcon.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.05.26, 17:33
+ * Modified:   01.06.26, 19:33
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -25,7 +25,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,12 +37,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.sqrt
 
-enum class SpinDirection {
-    Clockwise,
-    CounterClockwise,
-    None
-}
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnimatedHeroIcon(
@@ -49,22 +44,11 @@ fun AnimatedHeroIcon(
     shape: Shape,
     icon: ImageVector,
     contentDescription: String?,
-    spinTrigger: Any,
-    spinDirection: SpinDirection,
+    targetRotation: Float = 0f,
     spinDurationMillis: Int = 600,
     backgroundColor: Color = MaterialTheme.colorScheme.primaryContainer,
     foregroundColor: Color = MaterialTheme.colorScheme.onPrimaryContainer
 ) {
-    var targetRotation by remember { mutableFloatStateOf(0f) }
-
-    LaunchedEffect(spinTrigger) {
-        when(spinDirection) {
-            SpinDirection.Clockwise -> targetRotation += 360f
-            SpinDirection.CounterClockwise -> targetRotation -= 360f
-            SpinDirection.None -> {}
-        }
-    }
-
     val rotationAngle by animateFloatAsState(
         targetValue = targetRotation,
         animationSpec = tween(durationMillis = spinDurationMillis),
@@ -109,8 +93,6 @@ fun AnimatedHeroIconPreview() {
                 shape = MaterialShapes.Cookie12Sided.toShape(),
                 icon = Icons.Default.Android,
                 contentDescription = null,
-                spinTrigger = remember { mutableStateOf(Unit) },
-                spinDirection = SpinDirection.Clockwise,
             )
         }
     }

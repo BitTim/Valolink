@@ -7,14 +7,11 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   31.05.26, 21:40
+  ~ Modified:   01.06.26, 19:28
   -->
 
 <resources>
-    <string name="app_name">Valolink</string>
 
-    <string name="generic_button_back">Back</string>
-    <string name="generic_button_continue">Continue</string>
     <string name="generic_button_finish">Finish</string>
 
     <string name="iconcd_email">E-Mail</string>
@@ -30,7 +27,7 @@
     <string name="auth_landing_error_invalid">Invalid E-Mail</string>
 
     <string name="auth_otp_title">Enter your code</string>
-    <string name="auth_otp_description">Please enter the code you received or use the magic link</string>
+    <string name="auth_otp_description">We sent a magic link and a code to the following E-Mail address. Please use the link or enter the code below to continue.</string>
     <string name="auth_otp_label">One Time Code</string>
     <string name="auth_otp_error_empty">Code cannot be empty</string>
     <string name="auth_otp_error_length">Code must be 8 digits long</string>
@@ -41,4 +38,6 @@
     <string name="auth_landing_button_apple">Continue with Apple</string>
     <string name="iconcd_google">Google</string>
     <string name="iconcd_apple">Apple</string>
+    <string name="auth_otp_resend">Resend</string>
+    <string name="auth_otp_cooldown">in %1$d seconds</string>
 </resources>

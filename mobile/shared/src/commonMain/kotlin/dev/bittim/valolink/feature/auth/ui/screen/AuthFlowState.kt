@@ -7,21 +7,23 @@
  * File:       AuthFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.05.26, 21:25
+ * Modified:   01.06.26, 19:21
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen
 
-import dev.bittim.valolink.core.ui.components.SpinDirection
 import org.jetbrains.compose.resources.StringResource
 
 data class AuthFlowState(
     val step: AuthFlowStep = AuthFlowStep.LandingStep,
-    val heroIconSpinDirection: SpinDirection = SpinDirection.None,
+    val heroIconRotation: Float = 0f,
 
     val email: String = "",
     val emailError: StringResource? = null,
 
     val otp: String = "",
-    val otpError: StringResource? = null
+    val otpError: StringResource? = null,
+
+    val cooldownSecondsLeft: Int? = null,
+    val lastSentEmail: String? = null
 )

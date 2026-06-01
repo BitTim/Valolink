@@ -7,14 +7,11 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   31.05.26, 21:40
+  ~ Modified:   01.06.26, 19:28
   -->
 
 <resources>
-    <string name="app_name">Valolink</string>
 
-    <string name="generic_button_back">Zurück</string>
-    <string name="generic_button_continue">Weiter</string>
     <string name="generic_button_finish">Abschließen</string>
 
     <string name="iconcd_email">E-Mail</string>
@@ -30,7 +27,7 @@
     <string name="auth_email_error_invalid">Ungültige E-Mail</string>
 
     <string name="auth_otp_title">Gib deinen Code ein</string>
-    <string name="auth_otp_description">Bitte gib jetzt den Code ein, den wir dir gesendet haben, oder benutze den Link</string>
+    <string name="auth_otp_description">Wir haben dir einen Anmeldelink und einen Code an die untenstehende E-Mail Adresse gesendet. Bitte benutz den Link oder gib den Code ein um dich anzumelden.</string>
     <string name="auth_otp_label">Einmalcode</string>
     <string name="auth_otp_error_empty">Code darf nicht leer sein</string>
     <string name="auth_otp_error_length">Code muss 8 Ziffern lang sein</string>
@@ -47,4 +44,7 @@
     <string name="auth_landing_text_field_label">E-Mail</string>
     <string name="auth_landing_title">Willkommen zu Valolink!</string>
     <string name="auth_landing_description">Melde dich jetzt an um anzufangen. Wenn du deine E-Mail verwendest, senden wir dir einen Link und einen Code mit denen du dich anmelden kannst.</string>
+    <string name="auth_otp_resend">Nochmal senden</string>
+    <string name="auth_otp_cooldown_in">in</string>
+    <string name="auth_otp_cooldown">in %1$d Sekunden</string>
 </resources>

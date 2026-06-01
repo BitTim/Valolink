@@ -7,22 +7,17 @@
  * File:       OtpStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.05.26, 21:42
+ * Modified:   01.06.26, 19:29
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen.steps
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Key
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,13 +29,16 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.*
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @Preview
 fun OtpStep(
     modifier: Modifier = Modifier,
+    email: String = "",
     otp: String = "",
     error: StringResource? = null,
-    onAction: (action: AuthFlowAction) -> Unit = {}
+    cooldownSecondsLeft: Int? = 0,
+    onAction: (AuthFlowAction) -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -56,6 +54,11 @@ fun OtpStep(
             style = MaterialTheme.typography.bodyMedium
         )
 
+        Text(
+            text = email,
+            style = MaterialTheme.typography.labelLarge
+        )
+
         // TODO: Replace with a segmented umber input field
         OutlinedTextFieldWithError(
             modifier = Modifier.fillMaxWidth(),
@@ -69,6 +72,24 @@ fun OtpStep(
             leadingIcon = { Icon(Icons.Default.Key, contentDescription = stringResource(Res.string.iconcd_key)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
         )
+
+        TextButton(
+            modifier = Modifier.fillMaxWidth(),
+            enabled = cooldownSecondsLeft == 0,
+            onClick = { onAction(AuthFlowAction.OtpResend) }
+        ) {
+            Row {
+                Text(
+                    stringResource(resource = Res.string.auth_otp_resend)
+                )
+
+                AnimatedVisibility(cooldownSecondsLeft?.let { it > 0 } ?: false) {
+                    Text(
+                        " " + stringResource(Res.string.auth_otp_cooldown, cooldownSecondsLeft ?: 0)
+                    )
+                }
+            }
+        }
 
         Button(
             modifier = Modifier.fillMaxWidth(),
