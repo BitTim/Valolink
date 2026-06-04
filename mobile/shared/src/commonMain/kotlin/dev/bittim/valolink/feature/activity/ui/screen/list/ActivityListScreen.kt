@@ -7,7 +7,7 @@
  * File:       ActivityListScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 12:17
+ * Modified:   04.06.26, 12:19
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
@@ -49,7 +49,6 @@ fun ActivityListScreen() {
                 style = MaterialTheme.typography.headlineLarge
             )
 
-            val outcome = MatchOutcome.Win
             val mapImageUrl = "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/splash.png"
             val modeIconUrl = "https://media.valorant-api.com/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/displayicon.png"
 
@@ -57,14 +56,54 @@ fun ActivityListScreen() {
                 modifier = Modifier.fillMaxWidth(),
                 state = MatchCardState(
                     iconState = MatchIconState(
-                        outcome = outcome,
+                        outcome = MatchOutcome.Win,
                         mapImageUrl = mapImageUrl,
                         modeIconUrl = modeIconUrl
                     ),
                     scoreChipState = ScoreChipState(
-                        outcome = outcome,
+                        outcome = MatchOutcome.Win,
                         wasSurrender = true,
                         score = "6 - 2"
+                    ),
+                    modeName = "Standard",
+                    mapName = "Bind",
+                    time = Clock.System.now().toLocalizedString(),
+                    xp = 1000
+                )
+            )
+
+            MatchCard(
+                modifier = Modifier.fillMaxWidth(),
+                state = MatchCardState(
+                    iconState = MatchIconState(
+                        outcome = MatchOutcome.Draw,
+                        mapImageUrl = mapImageUrl,
+                        modeIconUrl = modeIconUrl
+                    ),
+                    scoreChipState = ScoreChipState(
+                        outcome = MatchOutcome.Draw,
+                        wasSurrender = false,
+                        score = "18 - 18"
+                    ),
+                    modeName = "Standard",
+                    mapName = "Bind",
+                    time = Clock.System.now().toLocalizedString(),
+                    xp = 1000
+                )
+            )
+
+            MatchCard(
+                modifier = Modifier.fillMaxWidth(),
+                state = MatchCardState(
+                    iconState = MatchIconState(
+                        outcome = MatchOutcome.Loss,
+                        mapImageUrl = mapImageUrl,
+                        modeIconUrl = modeIconUrl
+                    ),
+                    scoreChipState = ScoreChipState(
+                        outcome = MatchOutcome.Loss,
+                        wasSurrender = false,
+                        score = "7 - 13"
                     ),
                     modeName = "Standard",
                     mapName = "Bind",

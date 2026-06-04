@@ -7,7 +7,7 @@
  * File:       ActivityDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 02:30
+ * Modified:   04.06.26, 12:28
  */
 
 package dev.bittim.valolink.feature.activity.nav
@@ -16,6 +16,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import dev.bittim.valolink.core.nav.AuthenticatedDestination
+import dev.bittim.valolink.core.nav.fadeThrough
 import dev.bittim.valolink.feature.activity.ui.screen.list.ActivityListScreen
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
@@ -38,7 +39,7 @@ data object ActivityListScreenNav : ActivityDestination
 fun EntryProviderScope<NavKey>.activityDestination(
     backStack: NavBackStack<NavKey>
 ) {
-    entry<ActivityListScreenNav> {
+    entry<ActivityListScreenNav>(metadata = fadeThrough) {
         ActivityListScreen()
     }
 }

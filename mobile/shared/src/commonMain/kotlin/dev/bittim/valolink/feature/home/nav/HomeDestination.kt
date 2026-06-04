@@ -7,7 +7,7 @@
  * File:       HomeDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 17:49
+ * Modified:   04.06.26, 12:29
  */
 
 package dev.bittim.valolink.feature.home.nav
@@ -16,6 +16,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import dev.bittim.valolink.core.nav.AuthenticatedDestination
+import dev.bittim.valolink.core.nav.fadeThrough
 import dev.bittim.valolink.feature.home.ui.screen.home.HomeScreen
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
@@ -38,7 +39,7 @@ data object HomeScreenNav : HomeDestination
 fun EntryProviderScope<NavKey>.homeDestination(
     backStack: NavBackStack<NavKey>
 ) {
-    entry<HomeScreenNav> {
+    entry<HomeScreenNav>(metadata = fadeThrough) {
         HomeScreen(navLanding = {  })
     }
 }
