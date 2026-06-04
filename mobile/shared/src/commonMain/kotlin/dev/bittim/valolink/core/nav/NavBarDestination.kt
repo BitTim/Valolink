@@ -7,14 +7,16 @@
  * File:       NavBarDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 17:37
+ * Modified:   04.06.26, 01:19
  */
 
 package dev.bittim.valolink.core.nav
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
+import dev.bittim.valolink.feature.activity.nav.ActivityListScreenNav
 import dev.bittim.valolink.feature.home.nav.HomeScreenNav
 
 enum class NavBarDestination(
@@ -22,9 +24,15 @@ enum class NavBarDestination(
     val icon: ImageVector,
     val destination: AuthenticatedDestination
 ) {
-    HOME (
+    Home (
         title = "Home",
         icon = Icons.Default.Home,
         destination = HomeScreenNav
-    )
+    ),
+
+    Activity (
+        title = "Activity",
+        icon = Icons.Default.History,
+        destination = ActivityListScreenNav
+    ),
 }

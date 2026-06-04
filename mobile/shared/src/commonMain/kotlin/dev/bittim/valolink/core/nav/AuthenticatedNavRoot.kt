@@ -7,7 +7,7 @@
  * File:       AuthenticatedNavRoot.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 17:48
+ * Modified:   04.06.26, 01:18
  */
 
 package dev.bittim.valolink.core.nav
@@ -20,6 +20,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import dev.bittim.valolink.core.ui.components.AppScaffold
+import dev.bittim.valolink.feature.activity.nav.activityDestination
 import dev.bittim.valolink.feature.home.nav.HomeScreenNav
 import dev.bittim.valolink.feature.home.nav.homeDestination
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -47,6 +48,7 @@ fun AuthenticatedNavRoot() {
             ),
             entryProvider = entryProvider {
                 homeDestination(backStack)
+                activityDestination(backStack)
             }
         )
     }

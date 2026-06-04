@@ -7,7 +7,7 @@
  * File:       FlowScaffold.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.05.26, 21:43
+ * Modified:   04.06.26, 12:17
  */
 
 package dev.bittim.valolink.core.ui.components.flowScaffold
@@ -19,8 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,9 +42,12 @@ fun <S: FlowStep> FlowScaffold(
     step: S,
     cancellable: Boolean = true,
     onBack: () -> Unit = {},
+    menuContent: (@Composable () -> Unit)? = null,
     hero: @Composable () -> Unit = {},
     content: @Composable AnimatedContentScope.(S, padding: PaddingValues) -> Unit
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     NavigationBackHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
         onBackCompleted = onBack
@@ -92,6 +96,29 @@ fun <S: FlowStep> FlowScaffold(
                         .align(Alignment.Center),
                     progress = { step.progress }
                 )
+
+                this@Column.AnimatedVisibility (
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    visible = (menuContent != null && step.index == 0)
+                ) {
+                    Box {
+                        IconButton(
+                            onClick = { menuExpanded = true },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = null
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false }
+                        ) {
+                            menuContent?.invoke()
+                        }
+                    }
+                }
             }
 
             Column(
@@ -143,6 +170,7 @@ fun FlowScaffoldPreview() {
             modifier = Modifier.fillMaxSize(),
             step = PreviewStep(0f, 0),
             cancellable = false,
+            menuContent = {},
             hero = {
                 Box(
                     modifier = Modifier.aspectRatio(1f)

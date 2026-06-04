@@ -7,7 +7,7 @@
  * File:       AppScaffold.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.05.26, 17:37
+ * Modified:   04.06.26, 01:19
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -31,7 +31,7 @@ fun AppScaffold(
     onNavigateTopLevel: (AuthenticatedDestination) -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    var currentDestinationIndex by rememberSaveable { mutableIntStateOf(NavBarDestination.HOME.ordinal) }
+    var currentDestinationIndex by rememberSaveable { mutableIntStateOf(NavBarDestination.Home.ordinal) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
