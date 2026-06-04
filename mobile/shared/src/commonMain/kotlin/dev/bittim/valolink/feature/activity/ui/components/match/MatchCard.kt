@@ -7,7 +7,7 @@
  * File:       MatchCard.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 12:15
+ * Modified:   04.06.26, 18:44
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -109,7 +109,11 @@ fun MatchCardPreview() {
                     iconState = MatchIconState(
                         outcome = outcome,
                         mapImageUrl = null,
-                        modeIconUrl = null
+                        iconUrl = null,
+                        rrChipState = RrChipState(
+                            rr = 23,
+                            rankChanged = true
+                        )
                     ),
                     scoreChipState = ScoreChipState(
                         outcome = outcome,

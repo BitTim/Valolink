@@ -7,15 +7,13 @@
  * File:       ActivityListScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 12:19
+ * Modified:   04.06.26, 19:24
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,10 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.domain.extension.toLocalizedString
 import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.core.ui.Spacing
-import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
-import dev.bittim.valolink.feature.activity.ui.components.match.MatchCardState
-import dev.bittim.valolink.feature.activity.ui.components.match.MatchIconState
-import dev.bittim.valolink.feature.activity.ui.components.match.ScoreChipState
+import dev.bittim.valolink.feature.activity.ui.components.match.*
 import kotlin.time.Clock
 
 @Composable
@@ -42,15 +37,11 @@ fun ActivityListScreen() {
             modifier = Modifier.fillMaxSize()
                 .padding(horizontal = Spacing.l),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Spacing.m)
+            verticalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
-            Text(
-                "Activity",
-                style = MaterialTheme.typography.headlineLarge
-            )
-
             val mapImageUrl = "https://media.valorant-api.com/maps/2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba/splash.png"
             val modeIconUrl = "https://media.valorant-api.com/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/displayicon.png"
+            val rankUrl = "https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/13/largeicon.png"
 
             MatchCard(
                 modifier = Modifier.fillMaxWidth(),
@@ -58,7 +49,11 @@ fun ActivityListScreen() {
                     iconState = MatchIconState(
                         outcome = MatchOutcome.Win,
                         mapImageUrl = mapImageUrl,
-                        modeIconUrl = modeIconUrl
+                        iconUrl = rankUrl,
+                        rrChipState = RrChipState(
+                            rr = 23,
+                            rankChanged = true
+                        )
                     ),
                     scoreChipState = ScoreChipState(
                         outcome = MatchOutcome.Win,
@@ -78,7 +73,11 @@ fun ActivityListScreen() {
                     iconState = MatchIconState(
                         outcome = MatchOutcome.Draw,
                         mapImageUrl = mapImageUrl,
-                        modeIconUrl = modeIconUrl
+                        iconUrl = rankUrl,
+                        rrChipState = RrChipState(
+                            rr = 0,
+                            rankChanged = false
+                        )
                     ),
                     scoreChipState = ScoreChipState(
                         outcome = MatchOutcome.Draw,
@@ -98,7 +97,8 @@ fun ActivityListScreen() {
                     iconState = MatchIconState(
                         outcome = MatchOutcome.Loss,
                         mapImageUrl = mapImageUrl,
-                        modeIconUrl = modeIconUrl
+                        iconUrl = modeIconUrl,
+                        rrChipState = null
                     ),
                     scoreChipState = ScoreChipState(
                         outcome = MatchOutcome.Loss,
