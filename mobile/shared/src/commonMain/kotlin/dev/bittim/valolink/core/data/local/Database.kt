@@ -7,7 +7,7 @@
  * File:       Database.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   06.06.26, 23:19
  */
 
 package dev.bittim.valolink.core.data.local
@@ -17,6 +17,7 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import dev.bittim.valolink.core.data.local.converter.*
+import dev.bittim.valolink.core.data.local.dao.ValoVersionDao
 import dev.bittim.valolink.core.data.local.entity.*
 
 @androidx.room.Database(
@@ -64,7 +65,7 @@ import dev.bittim.valolink.core.data.local.entity.*
         ValoWeaponStatsEntity::class
     ]
 )
-@ConstructedBy(UserDatabaseConstructor::class)
+@ConstructedBy(DatabaseConstructor::class)
 @TypeConverters(
     UuidConverter::class,
     InstantConverter::class,
@@ -81,9 +82,15 @@ import dev.bittim.valolink.core.data.local.entity.*
     ValoWeaponStatsDamageRangesConverter::class
 )
 abstract class Database : RoomDatabase() {
+    abstract fun valoVersionDao(): ValoVersionDao
 }
 
-@Suppress("KotlinNoActualForExpect")
-expect object UserDatabaseConstructor: RoomDatabaseConstructor<Database> {
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+expect object DatabaseConstructor: RoomDatabaseConstructor<Database> {
     override fun initialize(): Database
+}
+
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+expect class DatabaseBuilder {
+    fun get(): RoomDatabase.Builder<Database>
 }

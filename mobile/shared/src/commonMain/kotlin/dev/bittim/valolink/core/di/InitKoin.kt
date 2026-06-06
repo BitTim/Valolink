@@ -7,7 +7,7 @@
  * File:       InitKoin.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.05.26, 20:37
+ * Modified:   06.06.26, 14:27
  */
 
 package dev.bittim.valolink.core.di
@@ -20,7 +20,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
         config?.invoke(this)
         modules(
-            appModule,
+            sharedModule,
+            platformModule,
             featureAuthModule
         )
     }
