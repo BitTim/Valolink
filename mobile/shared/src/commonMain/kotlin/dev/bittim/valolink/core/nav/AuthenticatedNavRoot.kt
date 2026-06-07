@@ -7,7 +7,7 @@
  * File:       AuthenticatedNavRoot.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 01:18
+ * Modified:   07.06.26, 20:21
  */
 
 package dev.bittim.valolink.core.nav
@@ -20,6 +20,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import dev.bittim.valolink.core.ui.components.AppScaffold
+import dev.bittim.valolink.feature.activity.nav.ActivityAddFlow
 import dev.bittim.valolink.feature.activity.nav.activityDestination
 import dev.bittim.valolink.feature.home.nav.HomeScreenNav
 import dev.bittim.valolink.feature.home.nav.homeDestination
@@ -37,7 +38,10 @@ fun AuthenticatedNavRoot() {
         showNavBar = current is AuthenticatedDestination && current.showBottomNav,
         onNavigateTopLevel = { destination ->
             backStack.navigateToTopLevel(destination)
-        }
+        },
+        onFabClick = {
+            backStack.navigateTo(ActivityAddFlow)
+        },
     ) {
         NavDisplay(
             backStack = backStack,

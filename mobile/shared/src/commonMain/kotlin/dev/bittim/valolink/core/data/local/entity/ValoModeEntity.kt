@@ -7,7 +7,7 @@
  * File:       ValoModeEntity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   06.06.26, 13:47
+ * Modified:   07.06.26, 16:23
  */
 
 package dev.bittim.valolink.core.data.local.entity
@@ -32,7 +32,7 @@ data class ValoModeEntity(
     val roundsPerHalf: Int,
     val canBeRanked: Boolean
 ) {
-    fun toModel(locale: String): ValoMode {
+    fun toModel(locale: String?): ValoMode {
         return ValoMode(
             uuid = uuid,
             displayName = displayName.localized(locale),

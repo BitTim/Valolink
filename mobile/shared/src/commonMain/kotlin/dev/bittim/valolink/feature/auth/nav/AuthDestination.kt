@@ -7,7 +7,7 @@
  * File:       AuthDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.05.26, 20:33
+ * Modified:   07.06.26, 17:27
  */
 
 package dev.bittim.valolink.feature.auth.nav
@@ -47,8 +47,7 @@ fun EntryProviderScope<NavKey>.authDestination(
 
         AuthFlowScreen (
             state = authFlowState,
-            onAction = { authFlowViewModel.onAction(it) },
-            navBack = { backStack.navigateBack() }
+            onAction = { authFlowViewModel.onAction(it, { backStack.navigateBack() }) },
         )
     }
 }

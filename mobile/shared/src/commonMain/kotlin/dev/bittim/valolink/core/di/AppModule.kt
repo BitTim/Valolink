@@ -7,7 +7,7 @@
  * File:       AppModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   06.06.26, 23:31
+ * Modified:   07.06.26, 16:16
  */
 
 package dev.bittim.valolink.core.di
@@ -17,9 +17,11 @@ import dev.bittim.valolink.core.data.local.Database
 import dev.bittim.valolink.core.data.local.DatabaseBuilder
 import dev.bittim.valolink.core.data.remote.createSupabaseClient
 import dev.bittim.valolink.core.data.repo.SupabaseAuthRepo
+import dev.bittim.valolink.core.data.repo.SupabaseValoModeRepo
 import dev.bittim.valolink.core.data.repo.SupabaseValoVersionRepo
 import dev.bittim.valolink.core.data.sync.SyncManager
 import dev.bittim.valolink.core.domain.repo.AuthRepo
+import dev.bittim.valolink.core.domain.repo.ValoModeRepo
 import dev.bittim.valolink.core.domain.repo.ValoVersionRepo
 import dev.bittim.valolink.core.domain.usecase.ObserverSessionStatusUseCase
 import dev.bittim.valolink.core.domain.usecase.SignInWithOtpUseCase
@@ -68,8 +70,9 @@ val sharedModule = module {
 
     single<AuthRepo> { SupabaseAuthRepo(get(), get(named("AppScope"))) }
     singleOf(::SupabaseValoVersionRepo).bind<ValoVersionRepo>()
+    singleOf(::SupabaseValoModeRepo).bind<ValoModeRepo>()
 
-    single<SyncManager> { SyncManager(get(named("SyncScope")), get()) }
+    single<SyncManager> { SyncManager(get(named("SyncScope")), get(), get()) }
 
     singleOf(::ObserverSessionStatusUseCase)
     singleOf(::SignInWithOtpUseCase)

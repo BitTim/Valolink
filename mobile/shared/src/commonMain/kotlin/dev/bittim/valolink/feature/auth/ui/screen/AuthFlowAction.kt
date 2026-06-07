@@ -7,13 +7,13 @@
  * File:       AuthFlowAction.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.05.26, 22:56
+ * Modified:   07.06.26, 17:28
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen
 
 sealed interface AuthFlowAction {
-    data class Back(val navBack: () -> Unit): AuthFlowAction
+    data object Back: AuthFlowAction
     data class EmailChange(val email: String): AuthFlowAction
     data object EmailContinue: AuthFlowAction
     data class OtpChange(val otp: String): AuthFlowAction

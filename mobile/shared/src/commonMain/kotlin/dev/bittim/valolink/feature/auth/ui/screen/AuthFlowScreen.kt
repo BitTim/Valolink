@@ -7,7 +7,7 @@
  * File:       AuthFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.06.26, 19:26
+ * Modified:   07.06.26, 20:21
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen
@@ -38,7 +38,6 @@ import valolink.shared.generated.resources.iconcd_waving_hand
 fun AuthFlowScreen(
     state: AuthFlowState = AuthFlowState(),
     onAction: (action: AuthFlowAction) -> Unit = {},
-    navBack: () -> Unit = {},
 ) {
     FlowScaffold(
         modifier = Modifier
@@ -48,7 +47,7 @@ fun AuthFlowScreen(
         padding = PaddingValues(horizontal = Spacing.l),
         step = state.step,
         cancellable = false,
-        onBack = { onAction(AuthFlowAction.Back(navBack)) },
+        onBack = { onAction(AuthFlowAction.Back) },
         hero = {
             AnimatedHeroIcon(
                 shape = MaterialShapes.Cookie12Sided.toShape(),

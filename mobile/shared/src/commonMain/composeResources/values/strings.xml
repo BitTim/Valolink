@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   04.06.26, 11:55
+  ~ Modified:   07.06.26, 17:04
   -->
 
 <resources>
@@ -41,4 +41,5 @@
     <string name="auth_otp_resend">Resend</string>
     <string name="auth_otp_cooldown">in %1$d seconds</string>
     <string name="unit_xp">XP</string>
+    <string name="iconcd_add">Add</string>
 </resources>

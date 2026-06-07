@@ -7,38 +7,38 @@
  * File:       ValoVersionDto.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   06.06.26, 23:30
+ * Modified:   07.06.26, 16:57
  */
 
 package dev.bittim.valolink.core.data.remote.dto
 
 import dev.bittim.valolink.core.domain.model.ValoVersion
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
-@Suppress("PropertyName")
 @Serializable
 data class ValoVersionDto(
     val id: Int,
     val branch: String,
-    val build_version: String,
-    val manifest_id: String,
-    val riot_client_build: String,
-    val riot_client_version: String,
-    val engine_version: String,
+    @SerialName("build_version") val buildVersion: String,
+    @SerialName("manifest_id") val manifestId: String,
+    @SerialName("riot_client_build") val riotClientBuild: String,
+    @SerialName("riot_client_version") val riotClientVersion: String,
+    @SerialName("engine_version") val engineVersion: String,
     val version: String,
-    val build_date: Instant
+    @SerialName("build_date") val buildDate: Instant
 ) {
     fun toModel(): ValoVersion {
         return ValoVersion(
             branch = branch,
-            buildVersion = build_version,
-            manifestId = manifest_id,
-            riotClientBuild = riot_client_build,
-            riotClientVersion = riot_client_version,
-            engineVersion = engine_version,
+            buildVersion = buildVersion,
+            manifestId = manifestId,
+            riotClientBuild = riotClientBuild,
+            riotClientVersion = riotClientVersion,
+            engineVersion = engineVersion,
             version = version,
-            buildDate = build_date
+            buildDate = buildDate
         )
     }
 

@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 12:17
+ * Modified:   07.06.26, 19:27
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -19,13 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.flowScaffold.FlowScaffold
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ModeStep
 
 @Composable
 @Preview
 fun ActivityAddFlowScreen(
     state: ActivityAddFlowState = ActivityAddFlowState(),
     onAction: (ActivityAddFlowAction) -> Unit = {},
-    navBack: () -> Unit = {},
 ) {
     FlowScaffold(
         modifier = Modifier
@@ -34,8 +34,8 @@ fun ActivityAddFlowScreen(
             .windowInsetsPadding(WindowInsets.ime),
         padding = PaddingValues(horizontal = Spacing.l),
         step = state.step,
-        cancellable = false,
-        onBack = { onAction(ActivityAddFlowAction.Back(navBack)) },
+        cancellable = true,
+        onBack = { onAction(ActivityAddFlowAction.Back) },
         menuContent = {
             DropdownMenuItem(
                 leadingIcon = {},
@@ -44,8 +44,19 @@ fun ActivityAddFlowScreen(
             )
         },
         hero = {},
-        content = { _, padding ->
+        content = { step, padding ->
+            when (step) {
+                ActivityAddFlowStep.ModeStep -> {
+                    ModeStep(
+                        modifier = Modifier.padding(padding),
+                        modeStates = state.modeStates,
+                        onAction = onAction
+                    )
+                }
+                ActivityAddFlowStep.MapStep -> {
 
+                }
+            }
         }
     )
 }

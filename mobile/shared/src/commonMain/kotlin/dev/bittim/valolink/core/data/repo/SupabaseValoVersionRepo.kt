@@ -7,7 +7,7 @@
  * File:       SupabaseValoVersionRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   06.06.26, 14:04
+ * Modified:   07.06.26, 19:51
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -24,7 +24,6 @@ import io.github.jan.supabase.realtime.selectSingleValueAsFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
@@ -34,7 +33,6 @@ class SupabaseValoVersionRepo(
 ) : ValoVersionRepo {
     override fun observe(): Flow<ValoVersion?> {
         return database.valoVersionDao().observe()
-            .distinctUntilChanged()
             .map { it?.toModel() }
             .flowOn(Dispatchers.IO)
     }

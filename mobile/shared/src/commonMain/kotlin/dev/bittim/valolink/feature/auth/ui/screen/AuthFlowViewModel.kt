@@ -7,7 +7,7 @@
  * File:       AuthFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.06.26, 19:31
+ * Modified:   07.06.26, 17:30
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen
@@ -91,9 +91,12 @@ class AuthFlowViewModel(
         monitorCooldown()
     }
 
-    fun onAction(action: AuthFlowAction) {
+    fun onAction(
+        action: AuthFlowAction,
+        navBack: () -> Unit
+    ) {
         when (action) {
-            is AuthFlowAction.Back -> if(!internalNavBack()) action.navBack()
+            is AuthFlowAction.Back -> if(!internalNavBack()) navBack()
             is AuthFlowAction.EmailChange -> {
                 _state.update {
                     it.copy(

@@ -7,7 +7,7 @@
  * File:       MatchCard.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 18:44
+ * Modified:   07.06.26, 20:22
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -16,16 +16,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.domain.extension.toLocalizedString
 import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.core.ui.Spacing
+import dev.bittim.valolink.core.ui.components.IconCardLayout
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.unit_xp
@@ -36,26 +35,17 @@ fun MatchCard(
     modifier: Modifier = Modifier,
     state: MatchCardState
 ) {
-    var iconSize by remember { mutableStateOf(0) }
-
-    Surface(
-        modifier = modifier.clip(MaterialTheme.shapes.medium),
-        tonalElevation = Spacing.xxs
-    ) {
-        Row(
-            modifier = Modifier.height(IntrinsicSize.Min),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.s)
-        ) {
+    IconCardLayout(
+        modifier = modifier,
+        icon = { iconModifier ->
             MatchIcon(
-                modifier = Modifier.size(with(LocalDensity.current) { iconSize.toDp() })
-                    .clip(MaterialTheme.shapes.medium),
+                modifier = iconModifier.clip(MaterialTheme.shapes.medium),
                 state = state.iconState
             )
-
+        },
+        content = { contentModifier ->
             Box(
-                modifier = Modifier.fillMaxWidth()
-                    .onSizeChanged { iconSize = it.height }
+                modifier = contentModifier.fillMaxWidth()
                     .padding(Spacing.s)
             ) {
                 Column(
@@ -92,7 +82,7 @@ fun MatchCard(
                 }
             }
         }
-    }
+    )
 }
 
 @Composable
