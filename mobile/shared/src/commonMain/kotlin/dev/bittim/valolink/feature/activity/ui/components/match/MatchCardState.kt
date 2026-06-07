@@ -7,7 +7,7 @@
  * File:       MatchCardState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:32
+ * Modified:   07.06.26, 20:53
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -35,9 +35,9 @@ data class MatchCardState(
                 wasSurrender = false,
                 score = "0 - 0"
             ),
-            modeName = "Please select a mode",
-            mapName = "",
-            time = "",
+            modeName = "No mode selected", // TODO: Localize
+            mapName = "No map",
+            time = "No time",
             xp = 0
         )
     }
