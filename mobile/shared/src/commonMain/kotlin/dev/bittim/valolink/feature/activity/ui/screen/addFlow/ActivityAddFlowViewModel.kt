@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:20
+ * Modified:   07.06.26, 20:46
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -52,7 +52,16 @@ class ActivityAddFlowViewModel(
             is ActivityAddFlowAction.Back -> if (!internalNavBack()) navBack()
             is ActivityAddFlowAction.ModeSelected -> {
                 _state.update {
-                    it.copy(selectedMode = action.uuid)
+                    it.copy(
+                        selectedModeUuid = action.modeState.uuid,
+                        matchCardState = it.matchCardState.copy(
+                            modeName = action.modeState.title,
+                            iconState = it.matchCardState.iconState.copy(
+                                iconUrl = action.modeState.iconUrl
+                            )
+                        ),
+                        step = ActivityAddFlowStep.MapStep
+                    )
                 }
             }
         }

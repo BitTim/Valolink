@@ -7,7 +7,7 @@
  * File:       FlowScaffold.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 12:17
+ * Modified:   07.06.26, 20:49
  */
 
 package dev.bittim.valolink.core.ui.components.flowScaffold
@@ -130,7 +130,8 @@ fun <S: FlowStep> FlowScaffold(
                 Box(
                     modifier = Modifier.weight(0.25f)
                         .padding(padding)
-                        .align(Alignment.CenterHorizontally)
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
                 ) {
                     hero()
                 }

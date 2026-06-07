@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 19:27
+ * Modified:   07.06.26, 20:46
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.flowScaffold.FlowScaffold
+import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ModeStep
 
 @Composable
@@ -43,12 +44,18 @@ fun ActivityAddFlowScreen(
                 onClick = {}
             )
         },
-        hero = {},
+        hero = {
+            MatchCard(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.matchCardState
+            )
+        },
         content = { step, padding ->
             when (step) {
                 ActivityAddFlowStep.ModeStep -> {
                     ModeStep(
                         modifier = Modifier.padding(padding),
+                        selectedModeUuid = state.selectedModeUuid,
                         modeStates = state.modeStates,
                         onAction = onAction
                     )

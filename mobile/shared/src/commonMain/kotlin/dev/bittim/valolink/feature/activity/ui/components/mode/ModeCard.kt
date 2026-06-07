@@ -7,7 +7,7 @@
  * File:       ModeCard.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:08
+ * Modified:   07.06.26, 20:24
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.mode
