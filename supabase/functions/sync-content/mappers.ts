@@ -10,7 +10,7 @@ function extractCategoryFromAssetPath(assetPath: string): string {
 	if (assetPath.includes("ShootingRange") || assetPath.includes("Poveglia")) return "RANGE";
 	if (assetPath.includes("Deathmatch")) return "DEATHMATCH";
 	if (assetPath.includes("HURM")) return "TDM";
-	if (assetPath.includes("Skirmish")) return "SKIRMISH"
+	if (assetPath.includes("Duel")) return "SKIRMISH"
 
 	return "STANDARD";
 }
