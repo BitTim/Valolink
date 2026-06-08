@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:46
+ * Modified:   08.06.26, 21:50
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -15,20 +15,24 @@ package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.bittim.valolink.core.data.util.fallbackLocale
+import dev.bittim.valolink.core.domain.model.ValoMapCategory
+import dev.bittim.valolink.core.domain.model.ValoModeCategory
+import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
 import dev.bittim.valolink.feature.auth.ui.screen.AuthFlowStep
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ActivityAddFlowViewModel(
-    private val valoModeRepo: ValoModeRepo
+    private val valoModeRepo: ValoModeRepo,
+    private val valoMapRepo: ValoMapRepo
 ) : ViewModel() {
     private val _state = MutableStateFlow(ActivityAddFlowState())
     val state = _state.asStateFlow()
 
     private var modeObserveJob: Job? = null
+    private var mapObserveJob: Job? = null
 
     private fun internalNavBack(): Boolean {
         val oldIndex = _state.value.step.index
@@ -53,14 +57,28 @@ class ActivityAddFlowViewModel(
             is ActivityAddFlowAction.ModeSelected -> {
                 _state.update {
                     it.copy(
-                        selectedModeUuid = action.modeState.uuid,
+                        selectedModeUuid = action.mode.uuid,
                         matchCardState = it.matchCardState.copy(
-                            modeName = action.modeState.title,
+                            modeName = action.mode.displayName,
                             iconState = it.matchCardState.iconState.copy(
-                                iconUrl = action.modeState.iconUrl
+                                iconUrl = action.mode.displayIcon
                             )
                         ),
                         step = ActivityAddFlowStep.MapStep
+                    )
+                }
+            }
+            is ActivityAddFlowAction.MapSelected -> {
+                _state.update {
+                    it.copy(
+                        selectedMapUuid = action.map.uuid,
+                        matchCardState = it.matchCardState.copy(
+                            mapName = action.map.displayName,
+                            iconState = it.matchCardState.iconState.copy(
+                                mapImageUrl = action.map.splash
+                            )
+                        ),
+                        step = ActivityAddFlowStep.DetailsStep
                     )
                 }
             }
@@ -72,19 +90,24 @@ class ActivityAddFlowViewModel(
         modeObserveJob = viewModelScope.launch {
             valoModeRepo.observeAll(fallbackLocale).map { modeList ->
                 modeList.filter {
-                    it.displayIcon != null && it.duration != null
-                }.map { mode ->
-                    ModeCardState(
-                        uuid = mode.uuid,
-                        iconUrl = mode.displayIcon,
-                        title = mode.displayName,
-                        duration = mode.duration,
-                        canBeRanked = mode.canBeRanked
-                    )
+                    it.category !in setOf(ValoModeCategory.Unknown, ValoModeCategory.Tutorial, ValoModeCategory.Range)
                 }.sortedByDescending { it.duration?.split('-')?.firstOrNull()?.toInt() ?: 0 }
-            }.collectLatest { modeStates ->
+            }.collectLatest { modes ->
                 _state.update {
-                    it.copy(modeStates = modeStates)
+                    it.copy(modes = modes)
+                }
+            }
+        }
+
+        mapObserveJob?.cancel()
+        mapObserveJob = viewModelScope.launch {
+            valoMapRepo.observeAll(fallbackLocale).map { mapList ->
+                mapList.filter {
+                    it.category !in setOf(ValoMapCategory.Unknown, ValoMapCategory.Tutorial, ValoMapCategory.Range)
+                }
+            }.collectLatest { maps ->
+                _state.update {
+                    it.copy(maps = maps)
                 }
             }
         }

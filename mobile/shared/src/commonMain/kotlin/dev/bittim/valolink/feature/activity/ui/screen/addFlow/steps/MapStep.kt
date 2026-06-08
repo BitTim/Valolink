@@ -4,10 +4,10 @@
  * Project:    Valolink
  * License:    GPLv3
  *
- * File:       ModeStep.kt
+ * File:       MapStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 21:44
+ * Modified:   08.06.26, 21:52
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -26,35 +26,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import dev.bittim.valolink.core.domain.model.ValoMode
-import dev.bittim.valolink.core.domain.model.ValoModeCategory
+import dev.bittim.valolink.core.domain.model.SimpleValoMap
+import dev.bittim.valolink.core.domain.model.ValoMapCategory
 import dev.bittim.valolink.core.ui.Spacing
-import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCard
-import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
+import dev.bittim.valolink.feature.activity.ui.components.map.MapCard
+import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import kotlin.uuid.Uuid
 
 @Composable
-fun ModeStep(
+fun MapStep(
     modifier: Modifier = Modifier,
-    selectedModeUuid: Uuid?,
-    modes: List<ValoMode>?,
+    selectedMapUuid: Uuid?,
+    maps: List<SimpleValoMap>?,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.s)
     ) {
-        items(modes ?: emptyList()) { mode ->
-            ModeCard(
+        items(maps ?: emptyList()) { map ->
+            MapCard(
                 modifier = Modifier.fillMaxWidth()
                     .clip(MaterialTheme.shapes.medium)
                     .border(
                         width = Spacing.xxs,
-                        color = if(mode.uuid == selectedModeUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
+                        color = if(map.uuid == selectedMapUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
                         shape = MaterialTheme.shapes.medium)
-                    .clickable { onAction(ActivityAddFlowAction.ModeSelected(mode)) },
-                state = ModeCardState.from(mode)
+                    .clickable { onAction(ActivityAddFlowAction.MapSelected(map)) },
+                state = MapCardState.from(map)
             )
         }
     }
@@ -62,46 +62,46 @@ fun ModeStep(
 
 @Composable
 @Preview
-fun ModeStepPreview() {
+fun MapStepPreview() {
     MaterialTheme {
         Surface {
-            ModeStep(
+            MapStep(
                 modifier = Modifier.fillMaxSize(),
-                selectedModeUuid = Uuid.random(),
-                modes = listOf(
-                    ValoMode(
+                selectedMapUuid = Uuid.random(),
+                maps = listOf(
+                    SimpleValoMap(
                         uuid = Uuid.random(),
-                        displayName = "Sample Mode",
-                        description = "",
-                        duration = "10-15 MINS",
-                        category = ValoModeCategory.Standard,
-                        displayIcon = "",
+                        displayName = "Sample Map",
+                        coordinates = "123.4567E, 89.1234S",
+                        category = ValoMapCategory.Standard,
+                        listViewIcon = "",
                         listViewIconTall = "",
-                        roundsPerHalf = 0,
-                        canBeRanked = true
+                        splash = "",
+                        premierBackgroundImage = "",
+                        stylizedBackgroundImage = ""
                     ),
-                    ValoMode(
+                    SimpleValoMap(
                         uuid = Uuid.random(),
-                        displayName = "Sample Mode",
-                        description = "",
-                        duration = "10-15 MINS",
-                        category = ValoModeCategory.Standard,
-                        displayIcon = "",
+                        displayName = "Sample Map",
+                        coordinates = "123.4567E, 89.1234S",
+                        category = ValoMapCategory.Standard,
+                        listViewIcon = "",
                         listViewIconTall = "",
-                        roundsPerHalf = 0,
-                        canBeRanked = true
+                        splash = "",
+                        premierBackgroundImage = "",
+                        stylizedBackgroundImage = ""
                     ),
-                    ValoMode(
+                    SimpleValoMap(
                         uuid = Uuid.random(),
-                        displayName = "Sample Mode",
-                        description = "",
-                        duration = "10-15 MINS",
-                        category = ValoModeCategory.Standard,
-                        displayIcon = "",
+                        displayName = "Sample Map",
+                        coordinates = "123.4567E, 89.1234S",
+                        category = ValoMapCategory.Standard,
+                        listViewIcon = "",
                         listViewIconTall = "",
-                        roundsPerHalf = 0,
-                        canBeRanked = true
-                    ),
+                        splash = "",
+                        premierBackgroundImage = "",
+                        stylizedBackgroundImage = ""
+                    )
                 ),
                 onAction = {}
             )

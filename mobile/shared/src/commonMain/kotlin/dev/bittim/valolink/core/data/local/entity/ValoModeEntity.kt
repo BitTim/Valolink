@@ -7,7 +7,7 @@
  * File:       ValoModeEntity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 16:23
+ * Modified:   08.06.26, 21:09
  */
 
 package dev.bittim.valolink.core.data.local.entity
@@ -15,6 +15,7 @@ package dev.bittim.valolink.core.data.local.entity
 import androidx.room.Entity
 import dev.bittim.valolink.core.data.util.localized
 import dev.bittim.valolink.core.domain.model.ValoMode
+import dev.bittim.valolink.core.domain.model.ValoModeCategory
 import kotlin.uuid.Uuid
 
 @Entity(
@@ -38,7 +39,7 @@ data class ValoModeEntity(
             displayName = displayName.localized(locale),
             description = description?.localized(locale),
             duration = duration?.localized(locale),
-            category = category,
+            category = ValoModeCategory.parse(category),
             displayIcon = displayIcon,
             listViewIconTall = listViewIconTall,
             roundsPerHalf = roundsPerHalf,

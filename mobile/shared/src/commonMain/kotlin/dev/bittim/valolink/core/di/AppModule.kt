@@ -7,7 +7,7 @@
  * File:       AppModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 16:16
+ * Modified:   08.06.26, 20:22
  */
 
 package dev.bittim.valolink.core.di
@@ -17,10 +17,12 @@ import dev.bittim.valolink.core.data.local.Database
 import dev.bittim.valolink.core.data.local.DatabaseBuilder
 import dev.bittim.valolink.core.data.remote.createSupabaseClient
 import dev.bittim.valolink.core.data.repo.SupabaseAuthRepo
+import dev.bittim.valolink.core.data.repo.SupabaseValoMapRepo
 import dev.bittim.valolink.core.data.repo.SupabaseValoModeRepo
 import dev.bittim.valolink.core.data.repo.SupabaseValoVersionRepo
 import dev.bittim.valolink.core.data.sync.SyncManager
 import dev.bittim.valolink.core.domain.repo.AuthRepo
+import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
 import dev.bittim.valolink.core.domain.repo.ValoVersionRepo
 import dev.bittim.valolink.core.domain.usecase.ObserverSessionStatusUseCase
@@ -71,8 +73,9 @@ val sharedModule = module {
     single<AuthRepo> { SupabaseAuthRepo(get(), get(named("AppScope"))) }
     singleOf(::SupabaseValoVersionRepo).bind<ValoVersionRepo>()
     singleOf(::SupabaseValoModeRepo).bind<ValoModeRepo>()
+    singleOf(::SupabaseValoMapRepo).bind<ValoMapRepo>()
 
-    single<SyncManager> { SyncManager(get(named("SyncScope")), get(), get()) }
+    single<SyncManager> { SyncManager(get(named("SyncScope")), get(), get(), get()) }
 
     singleOf(::ObserverSessionStatusUseCase)
     singleOf(::SignInWithOtpUseCase)

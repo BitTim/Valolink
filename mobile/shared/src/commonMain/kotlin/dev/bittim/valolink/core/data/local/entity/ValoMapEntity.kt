@@ -7,13 +7,16 @@
  * File:       ValoMapEntity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   08.06.26, 19:56
  */
 
 package dev.bittim.valolink.core.data.local.entity
 
 import androidx.room.Entity
 import dev.bittim.valolink.core.data.local.embedded.ValoMapCallout
+import dev.bittim.valolink.core.data.util.localized
+import dev.bittim.valolink.core.domain.model.SimpleValoMap
+import dev.bittim.valolink.core.domain.model.ValoMapCategory
 import kotlin.uuid.Uuid
 
 @Entity(
@@ -37,4 +40,18 @@ data class ValoMapEntity(
     val yMultiplier: Float,
     val yScalarToAdd: Float,
     val callouts: List<ValoMapCallout>?
-)
+) {
+    fun toSimpleModel(locale: String?): SimpleValoMap {
+        return SimpleValoMap(
+            uuid = uuid,
+            displayName = displayName.localized(locale),
+            coordinates = coordinates?.localized(locale),
+            category = ValoMapCategory.parse(category),
+            listViewIcon = listViewIcon,
+            listViewIconTall = listViewIconTall,
+            splash = splash,
+            premierBackgroundImage = premierBackgroundImage,
+            stylizedBackgroundImage = stylizedBackgroundImage
+        )
+    }
+}

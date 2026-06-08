@@ -7,14 +7,16 @@
  * File:       ActivityAddFlowAction.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:35
+ * Modified:   08.06.26, 21:39
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 
-import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
+import dev.bittim.valolink.core.domain.model.SimpleValoMap
+import dev.bittim.valolink.core.domain.model.ValoMode
 
 sealed interface ActivityAddFlowAction {
     data object Back: ActivityAddFlowAction
-    data class ModeSelected(val modeState: ModeCardState): ActivityAddFlowAction
+    data class ModeSelected(val mode: ValoMode): ActivityAddFlowAction
+    data class MapSelected(val map: SimpleValoMap): ActivityAddFlowAction
 }

@@ -7,19 +7,22 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:46
+ * Modified:   08.06.26, 21:48
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 
+import dev.bittim.valolink.core.domain.model.SimpleValoMap
+import dev.bittim.valolink.core.domain.model.ValoMode
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCardState
-import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
 import kotlin.uuid.Uuid
 
 data class ActivityAddFlowState(
     val step: ActivityAddFlowStep = ActivityAddFlowStep.ModeStep,
-    val modeStates: List<ModeCardState>? = null,
+    val modes: List<ValoMode>? = null,
+    val maps: List<SimpleValoMap>? = null,
 
     val matchCardState: MatchCardState = MatchCardState.Empty,
-    val selectedModeUuid: Uuid? = null
+    val selectedModeUuid: Uuid? = null,
+    val selectedMapUuid: Uuid? = null
 )
