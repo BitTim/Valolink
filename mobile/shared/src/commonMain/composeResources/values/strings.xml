@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   09.06.26, 21:25
+  ~ Modified:   10.06.26, 01:48
   -->
 
 <resources>
@@ -42,7 +42,7 @@
     <string name="auth_otp_cooldown">in %1$d seconds</string>
     <string name="unit_xp">XP</string>
     <string name="iconcd_add">Add</string>
-    <string name="activity_add_flow_map_step_title">Pick a map</string>
+    <string name="activity_add_flow_map_step_title">What map was played on?</string>
     <string name="activity_add_flow_mode_step_title">What mode was played?</string>
     <string name="generic_button_continue">Continue</string>
 </resources>

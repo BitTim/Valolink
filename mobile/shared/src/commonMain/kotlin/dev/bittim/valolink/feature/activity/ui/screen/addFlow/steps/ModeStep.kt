@@ -7,33 +7,31 @@
  * File:       ModeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   10.06.26, 01:04
+ * Modified:   10.06.26, 01:54
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.domain.model.ValoMode
 import dev.bittim.valolink.core.domain.model.ValoModeCategory
 import dev.bittim.valolink.core.ui.Spacing
+import dev.bittim.valolink.core.ui.components.SeamlessLazyColumn
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCard
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
@@ -50,8 +48,6 @@ fun ModeStep(
     modes: List<ValoMode>?,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
-
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -61,61 +57,20 @@ fun ModeStep(
             style = MaterialTheme.typography.titleLarge
         )
 
-        Box(
+        SeamlessLazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = lazyListState,
-                contentPadding = PaddingValues(bottom = Spacing.xxl),
-                verticalArrangement = Arrangement.spacedBy(Spacing.s)
-            ) {
-                items(modes ?: emptyList()) { mode ->
-                    ModeCard(
-                        modifier = Modifier.fillMaxWidth()
-                            .clip(MaterialTheme.shapes.medium)
-                            .border(
-                                width = Spacing.xxs,
-                                color = if (mode.uuid == selectedModeUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = MaterialTheme.shapes.medium
-                            )
-                            .clickable { onAction(ActivityAddFlowAction.ModeSelected(mode)) },
-                        state = ModeCardState.from(mode)
-                    )
-                }
-            }
-
-            this@Column.AnimatedVisibility(
-                modifier = Modifier.align(Alignment.TopCenter),
-                visible = lazyListState.canScrollBackward
-            ) {
-                Box(
-                    modifier = Modifier.aspectRatio(5f/1f)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.surface,
-                                    Color.Transparent
-                                )
-                            )
+            items(modes ?: emptyList()) { mode ->
+                ModeCard(
+                    modifier = Modifier.fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .border(
+                            width = Spacing.xxs,
+                            color = if (mode.uuid == selectedModeUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            shape = MaterialTheme.shapes.medium
                         )
-                )
-            }
-
-            this@Column.AnimatedVisibility(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                visible = lazyListState.canScrollForward
-            ) {
-                Box(
-                    modifier = Modifier.aspectRatio(5f/1f)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    MaterialTheme.colorScheme.surface
-                                )
-                            )
-                        )
+                        .clickable { onAction(ActivityAddFlowAction.ModeSelected(mode)) },
+                    state = ModeCardState.from(mode)
                 )
             }
         }

@@ -7,33 +7,31 @@
  * File:       MapStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   09.06.26, 21:34
+ * Modified:   10.06.26, 01:54
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.domain.model.SimpleValoMap
 import dev.bittim.valolink.core.domain.model.ValoMapCategory
 import dev.bittim.valolink.core.ui.Spacing
+import dev.bittim.valolink.core.ui.components.SeamlessLazyColumn
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCard
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
@@ -50,8 +48,6 @@ fun MapStep(
     maps: List<SimpleValoMap>?,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
-
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -61,61 +57,20 @@ fun MapStep(
             style = MaterialTheme.typography.titleLarge
         )
 
-        Box(
+        SeamlessLazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = lazyListState,
-                contentPadding = PaddingValues(bottom = Spacing.xxl),
-                verticalArrangement = Arrangement.spacedBy(Spacing.s)
-            ) {
-                items(maps ?: emptyList()) { map ->
-                    MapCard(
-                        modifier = Modifier.fillMaxWidth()
-                            .clip(MaterialTheme.shapes.medium)
-                            .border(
-                                width = Spacing.xxs,
-                                color = if (map.uuid == selectedMapUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = MaterialTheme.shapes.medium
-                            )
-                            .clickable { onAction(ActivityAddFlowAction.MapSelected(map)) },
-                        state = MapCardState.from(map)
-                    )
-                }
-            }
-
-            this@Column.AnimatedVisibility(
-                modifier = Modifier.align(Alignment.TopCenter),
-                visible = lazyListState.canScrollBackward
-            ) {
-                Box(
-                    modifier = Modifier.aspectRatio(5f/1f)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.surface,
-                                    Color.Transparent
-                                )
-                            )
+            items(maps ?: emptyList()) { map ->
+                MapCard(
+                    modifier = Modifier.fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .border(
+                            width = Spacing.xxs,
+                            color = if (map.uuid == selectedMapUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            shape = MaterialTheme.shapes.medium
                         )
-                )
-            }
-
-            this@Column.AnimatedVisibility(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                visible = lazyListState.canScrollForward
-            ) {
-                Box(
-                    modifier = Modifier.aspectRatio(5f/1f)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    MaterialTheme.colorScheme.surface
-                                )
-                            )
-                        )
+                        .clickable { onAction(ActivityAddFlowAction.MapSelected(map)) },
+                    state = MapCardState.from(map)
                 )
             }
         }
