@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 21:50
+ * Modified:   09.06.26, 21:22
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -63,7 +63,13 @@ class ActivityAddFlowViewModel(
                             iconState = it.matchCardState.iconState.copy(
                                 iconUrl = action.mode.displayIcon
                             )
-                        ),
+                        )
+                    )
+                }
+            }
+            is ActivityAddFlowAction.ModeProceed -> {
+                _state.update {
+                    it.copy(
                         step = ActivityAddFlowStep.MapStep
                     )
                 }
@@ -77,7 +83,13 @@ class ActivityAddFlowViewModel(
                             iconState = it.matchCardState.iconState.copy(
                                 mapImageUrl = action.map.splash
                             )
-                        ),
+                        )
+                    )
+                }
+            }
+            is ActivityAddFlowAction.MapProceed -> {
+                _state.update {
+                    it.copy(
                         step = ActivityAddFlowStep.DetailsStep
                     )
                 }
@@ -104,7 +116,7 @@ class ActivityAddFlowViewModel(
             valoMapRepo.observeAll(fallbackLocale).map { mapList ->
                 mapList.filter {
                     it.category !in setOf(ValoMapCategory.Unknown, ValoMapCategory.Tutorial, ValoMapCategory.Range)
-                }
+                }.sortedBy { it.displayName }
             }.collectLatest { maps ->
                 _state.update {
                     it.copy(maps = maps)

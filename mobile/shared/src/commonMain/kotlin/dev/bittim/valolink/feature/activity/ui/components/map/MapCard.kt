@@ -7,7 +7,7 @@
  * File:       MapCard.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   09.06.26, 01:57
+ * Modified:   09.06.26, 19:54
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.map
@@ -28,25 +28,19 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import dev.bittim.valolink.core.ui.Spacing
 import kotlin.uuid.Uuid
-
-data object MapCard {
-    val height = 128.dp
-}
 
 @Composable
 fun MapCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
-    height: Dp = MapCard.height,
     elevation: Dp = Spacing.xxs,
     state: MapCardState
 ) {
     Surface(
-        modifier = modifier.height(height),
+        modifier = modifier.aspectRatio(4f/1f),
         shape = shape,
         tonalElevation = elevation
     ) {
@@ -58,7 +52,7 @@ fun MapCard(
             contentScale = ContentScale.Crop
         )
 
-        Row(
+        Column(
             modifier = Modifier.fillMaxSize()
                 .background(Brush.verticalGradient(
                     colors = listOf(
@@ -67,8 +61,8 @@ fun MapCard(
                     )
                 ))
                 .padding(Spacing.s),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = state.title,
@@ -80,7 +74,7 @@ fun MapCard(
                 Text(
                     text = state.coordinates ?: "",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.5f)
+                    color = Color.White.copy(alpha = 0.7f)
                 )
             }
         }
