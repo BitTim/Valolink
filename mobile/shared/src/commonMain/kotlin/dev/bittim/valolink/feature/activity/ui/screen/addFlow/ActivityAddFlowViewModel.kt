@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   09.06.26, 21:22
+ * Modified:   10.06.26, 11:17
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -15,11 +15,12 @@ package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.bittim.valolink.core.data.util.fallbackLocale
+import dev.bittim.valolink.core.domain.model.SimpleValoMap
 import dev.bittim.valolink.core.domain.model.ValoMapCategory
+import dev.bittim.valolink.core.domain.model.ValoMode
 import dev.bittim.valolink.core.domain.model.ValoModeCategory
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.feature.auth.ui.screen.AuthFlowStep
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -34,18 +35,53 @@ class ActivityAddFlowViewModel(
     private var modeObserveJob: Job? = null
     private var mapObserveJob: Job? = null
 
-    private fun internalNavBack(): Boolean {
-        val oldIndex = _state.value.step.index
-        val newIndex = oldIndex.minus(1).coerceIn(0, AuthFlowStep.entries.lastIndex)
-        if (newIndex == oldIndex) return false
+    private fun handleBack(
+        navBack: () -> Unit
+    ) {
+        when(_state.value.step) {
+            ActivityAddFlowStep.ModeStep -> navBack()
+            ActivityAddFlowStep.MapStep -> {
+                _state.update { it.copy(step = ActivityAddFlowStep.ModeStep) }
+                selectMap(null)
+            }
+            ActivityAddFlowStep.DetailsStep -> _state.update {
+                it.copy(step = ActivityAddFlowStep.MapStep)
+            }
+            ActivityAddFlowStep.XpCorrectionStep -> _state.update {
+                it.copy(step = ActivityAddFlowStep.ModeStep)
+            }
+            ActivityAddFlowStep.RrRefundStep -> _state.update {
+                it.copy(step = ActivityAddFlowStep.ModeStep)
+            }
+        }
+    }
 
+    private fun selectMode(mode: ValoMode?) {
         _state.update {
             it.copy(
-                step = ActivityAddFlowStep.entries[newIndex],
+                selectedModeUuid = mode?.uuid,
+                matchCardState = it.matchCardState.copy(
+                    modeName = mode?.displayName ?: "No mode selected",
+                    iconState = it.matchCardState.iconState.copy(
+                        iconUrl = mode?.displayIcon
+                    )
+                )
             )
         }
+    }
 
-        return true
+    private fun selectMap(map: SimpleValoMap?) {
+        _state.update {
+            it.copy(
+                selectedMapUuid = map?.uuid,
+                matchCardState = it.matchCardState.copy(
+                    mapName = map?.displayName ?: "No map",
+                    iconState = it.matchCardState.iconState.copy(
+                        mapImageUrl = map?.splash
+                    )
+                )
+            )
+        }
     }
 
     fun onAction(
@@ -53,46 +89,18 @@ class ActivityAddFlowViewModel(
         navBack: () -> Unit
     ) {
         when (action) {
-            is ActivityAddFlowAction.Back -> if (!internalNavBack()) navBack()
+            is ActivityAddFlowAction.Back -> handleBack(navBack)
             is ActivityAddFlowAction.ModeSelected -> {
-                _state.update {
-                    it.copy(
-                        selectedModeUuid = action.mode.uuid,
-                        matchCardState = it.matchCardState.copy(
-                            modeName = action.mode.displayName,
-                            iconState = it.matchCardState.iconState.copy(
-                                iconUrl = action.mode.displayIcon
-                            )
-                        )
-                    )
-                }
+                selectMode(action.mode)
             }
-            is ActivityAddFlowAction.ModeProceed -> {
-                _state.update {
-                    it.copy(
-                        step = ActivityAddFlowStep.MapStep
-                    )
-                }
+            is ActivityAddFlowAction.ModeContinue -> {
+                _state.update { it.copy(step = ActivityAddFlowStep.MapStep) }
             }
             is ActivityAddFlowAction.MapSelected -> {
-                _state.update {
-                    it.copy(
-                        selectedMapUuid = action.map.uuid,
-                        matchCardState = it.matchCardState.copy(
-                            mapName = action.map.displayName,
-                            iconState = it.matchCardState.iconState.copy(
-                                mapImageUrl = action.map.splash
-                            )
-                        )
-                    )
-                }
+                selectMap(action.map)
             }
-            is ActivityAddFlowAction.MapProceed -> {
-                _state.update {
-                    it.copy(
-                        step = ActivityAddFlowStep.DetailsStep
-                    )
-                }
+            is ActivityAddFlowAction.MapContinue -> {
+                _state.update { it.copy(step = ActivityAddFlowStep.DetailsStep) }
             }
         }
     }
