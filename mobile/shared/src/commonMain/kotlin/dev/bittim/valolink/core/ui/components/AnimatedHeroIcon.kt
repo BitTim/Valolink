@@ -7,7 +7,7 @@
  * File:       AnimatedHeroIcon.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.06.26, 19:33
+ * Modified:   15.06.26, 21:41
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -63,7 +63,7 @@ fun AnimatedHeroIcon(
         contentAlignment = Alignment.Center
     ) {
         val diameter = maxWidth
-        val safeAreaSize = diameter / sqrt(2f)
+        val safeAreaSize = diameter / sqrt(3f)
 
         AnimatedContent(
             targetState = icon,

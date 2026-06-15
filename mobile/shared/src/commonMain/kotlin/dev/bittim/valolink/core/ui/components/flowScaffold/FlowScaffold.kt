@@ -7,7 +7,7 @@
  * File:       FlowScaffold.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:49
+ * Modified:   15.06.26, 21:41
  */
 
 package dev.bittim.valolink.core.ui.components.flowScaffold
@@ -44,6 +44,7 @@ fun <S: FlowStep> FlowScaffold(
     onBack: () -> Unit = {},
     menuContent: (@Composable () -> Unit)? = null,
     hero: @Composable () -> Unit = {},
+    heroAspectRatio: Float = 3f/1f,
     content: @Composable AnimatedContentScope.(S, padding: PaddingValues) -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -128,7 +129,7 @@ fun <S: FlowStep> FlowScaffold(
                 verticalArrangement = Arrangement.spacedBy(Spacing.s),
             ) {
                 Box(
-                    modifier = Modifier.weight(0.25f)
+                    modifier = Modifier.aspectRatio(heroAspectRatio)
                         .padding(padding)
                         .align(Alignment.CenterHorizontally),
                     contentAlignment = Alignment.Center
