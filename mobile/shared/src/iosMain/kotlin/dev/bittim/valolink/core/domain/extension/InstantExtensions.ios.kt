@@ -7,7 +7,7 @@
  * File:       InstantExtensions.ios.kt
  * Module:     Valolink.shared.iosMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 12:02
+ * Modified:   15.06.26, 18:12
  */
 
 package dev.bittim.valolink.core.domain.extension
@@ -20,5 +20,5 @@ actual fun Instant.toLocalizedString(): String {
     formatter.dateStyle = NSDateFormatterShortStyle
     formatter.timeStyle = NSDateFormatterShortStyle
     formatter.timeZone = NSTimeZone.localTimeZone
-    return formatter.stringFromDate(NSDate(this.epochSeconds.toDouble()))
+    return formatter.stringFromDate(NSDate.dateWithTimeIntervalSince1970(this.epochSeconds.toDouble()))
 }

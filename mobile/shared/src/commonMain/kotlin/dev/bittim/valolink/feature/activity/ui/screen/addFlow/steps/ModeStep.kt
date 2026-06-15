@@ -7,7 +7,7 @@
  * File:       ModeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   10.06.26, 11:12
+ * Modified:   15.06.26, 20:51
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -28,8 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import dev.bittim.valolink.core.domain.model.ValoMode
-import dev.bittim.valolink.core.domain.model.ValoModeCategory
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.SeamlessLazyColumn
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCard
@@ -45,7 +43,7 @@ import kotlin.uuid.Uuid
 fun ModeStep(
     modifier: Modifier = Modifier,
     selectedModeUuid: Uuid?,
-    modes: List<ValoMode>?,
+    modeCardStates: List<ModeCardState>?,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
     Column(
@@ -60,17 +58,17 @@ fun ModeStep(
         SeamlessLazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(modes ?: emptyList()) { mode ->
+            items(modeCardStates ?: emptyList()) { modeCardState ->
                 ModeCard(
                     modifier = Modifier.fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
                         .border(
                             width = Spacing.xxs,
-                            color = if (mode.uuid == selectedModeUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            color = if (modeCardState.uuid == selectedModeUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
                             shape = MaterialTheme.shapes.medium
                         )
-                        .clickable { onAction(ActivityAddFlowAction.ModeSelected(mode)) },
-                    state = ModeCardState.from(mode)
+                        .clickable { onAction(ActivityAddFlowAction.ModeSelected(modeCardState.uuid)) },
+                    state = modeCardState
                 )
             }
         }
@@ -94,40 +92,28 @@ fun ModeStepPreview() {
             ModeStep(
                 modifier = Modifier.fillMaxSize(),
                 selectedModeUuid = Uuid.random(),
-                modes = listOf(
-                    ValoMode(
+                modeCardStates = listOf(
+                    ModeCardState(
                         uuid = Uuid.random(),
-                        displayName = "Sample Mode",
-                        description = "",
-                        duration = "10-15 MINS",
-                        category = ValoModeCategory.Standard,
-                        displayIcon = "",
-                        listViewIconTall = "",
-                        roundsPerHalf = 0,
+                        iconUrl = "",
+                        title = "Sample Mode",
+                        duration = "10-15 MIN",
                         canBeRanked = true
                     ),
-                    ValoMode(
+                    ModeCardState(
                         uuid = Uuid.random(),
-                        displayName = "Sample Mode",
-                        description = "",
-                        duration = "10-15 MINS",
-                        category = ValoModeCategory.Standard,
-                        displayIcon = "",
-                        listViewIconTall = "",
-                        roundsPerHalf = 0,
-                        canBeRanked = true
+                        iconUrl = "",
+                        title = "Sample Mode",
+                        duration = "10-15 MIN",
+                        canBeRanked = false
                     ),
-                    ValoMode(
+                    ModeCardState(
                         uuid = Uuid.random(),
-                        displayName = "Sample Mode",
-                        description = "",
-                        duration = "10-15 MINS",
-                        category = ValoModeCategory.Standard,
-                        displayIcon = "",
-                        listViewIconTall = "",
-                        roundsPerHalf = 0,
+                        iconUrl = "",
+                        title = "Sample Mode",
+                        duration = "10-15 MIN",
                         canBeRanked = true
-                    ),
+                    )
                 ),
                 onAction = {}
             )

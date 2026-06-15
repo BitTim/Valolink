@@ -7,7 +7,7 @@
  * File:       MatchCardState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:53
+ * Modified:   15.06.26, 19:12
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -20,7 +20,7 @@ data class MatchCardState(
     val modeName: String,
     val mapName: String,
     val time: String,
-    val xp: Int,
+    val xp: Int?,
 ) {
     companion object {
         val Empty = MatchCardState(
@@ -33,12 +33,12 @@ data class MatchCardState(
             scoreChipState = ScoreChipState(
                 outcome = MatchOutcome.Draw,
                 wasSurrender = false,
-                score = "0 - 0"
+                score = ""
             ),
-            modeName = "No mode selected", // TODO: Localize
-            mapName = "No map",
-            time = "No time",
-            xp = 0
+            modeName = "",
+            mapName = "",
+            time = "",
+            xp = null
         )
     }
 }

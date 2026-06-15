@@ -7,12 +7,12 @@
  * File:       SeamlessLazyColumn.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   10.06.26, 01:35
+ * Modified:   15.06.26, 19:30
  */
 
 package dev.bittim.valolink.core.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,6 +46,8 @@ fun SeamlessLazyColumn(
 
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.TopCenter),
+            enter = fadeIn() + expandVertically(),
+            exit = shrinkVertically() + fadeOut(),
             visible = lazyListState.canScrollBackward
         ) {
             Box(
@@ -63,6 +65,8 @@ fun SeamlessLazyColumn(
 
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.BottomCenter),
+            enter = fadeIn() + expandVertically(),
+            exit = shrinkVertically() + fadeOut(),
             visible = lazyListState.canScrollForward
         ) {
             Box(

@@ -7,11 +7,12 @@
  * File:       ScoreChip.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 18:52
+ * Modified:   15.06.26, 20:51
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -87,14 +88,18 @@ fun ScoreChip(
                 ))
                 .background(color = bgColor)
         ) {
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = Spacing.s, vertical = Spacing.xs)
-                    .align(Alignment.Center),
-                text = state.score,
-                color = fgColor,
-                style = MaterialTheme.typography.labelMedium,
-            )
+            AnimatedContent(
+                targetState = state.score ?: ""
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = Spacing.s, vertical = Spacing.xs)
+                        .align(Alignment.Center),
+                    text = it,
+                    color = fgColor,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
         }
     }
 }

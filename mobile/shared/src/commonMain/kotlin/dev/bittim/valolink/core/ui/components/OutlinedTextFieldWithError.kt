@@ -7,13 +7,14 @@
  * File:       OutlinedTextFieldWithError.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.05.26, 19:57
+ * Modified:   15.06.26, 14:23
  */
 
 package dev.bittim.valolink.core.ui.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -44,9 +45,11 @@ fun OutlinedTextFieldWithError(
 ) {
     var visibilityState by remember { mutableStateOf(visibility) }
 
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         OutlinedTextField(
-            modifier = modifier,
+            modifier = Modifier.fillMaxWidth(),
             value = value,
             isError = error != null,
             onValueChange = onValueChange,

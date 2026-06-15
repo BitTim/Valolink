@@ -7,7 +7,7 @@
  * File:       MapStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   10.06.26, 11:12
+ * Modified:   15.06.26, 20:51
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -28,8 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import dev.bittim.valolink.core.domain.model.SimpleValoMap
-import dev.bittim.valolink.core.domain.model.ValoMapCategory
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.SeamlessLazyColumn
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCard
@@ -45,7 +43,7 @@ import kotlin.uuid.Uuid
 fun MapStep(
     modifier: Modifier = Modifier,
     selectedMapUuid: Uuid?,
-    maps: List<SimpleValoMap>?,
+    mapCardStates: List<MapCardState>?,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
     Column(
@@ -60,17 +58,17 @@ fun MapStep(
         SeamlessLazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(maps ?: emptyList()) { map ->
+            items(mapCardStates ?: emptyList()) { mapCardState ->
                 MapCard(
                     modifier = Modifier.fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
                         .border(
                             width = Spacing.xxs,
-                            color = if (map.uuid == selectedMapUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            color = if (mapCardState.uuid == selectedMapUuid) MaterialTheme.colorScheme.primary else Color.Transparent,
                             shape = MaterialTheme.shapes.medium
                         )
-                        .clickable { onAction(ActivityAddFlowAction.MapSelected(map)) },
-                    state = MapCardState.from(map)
+                        .clickable { onAction(ActivityAddFlowAction.MapSelected(mapCardState.uuid)) },
+                    state = mapCardState
                 )
             }
         }
@@ -94,39 +92,24 @@ fun MapStepPreview() {
             MapStep(
                 modifier = Modifier.fillMaxSize(),
                 selectedMapUuid = Uuid.random(),
-                maps = listOf(
-                    SimpleValoMap(
+                mapCardStates = listOf(
+                    MapCardState(
                         uuid = Uuid.random(),
-                        displayName = "Sample Map",
+                        title = "Sample Map",
                         coordinates = "123.4567E, 89.1234S",
-                        category = ValoMapCategory.Standard,
-                        listViewIcon = "",
-                        listViewIconTall = "",
-                        splash = "",
-                        premierBackgroundImage = "",
-                        stylizedBackgroundImage = ""
+                        imageUrl = ""
                     ),
-                    SimpleValoMap(
+                    MapCardState(
                         uuid = Uuid.random(),
-                        displayName = "Sample Map",
+                        title = "Sample Map",
                         coordinates = "123.4567E, 89.1234S",
-                        category = ValoMapCategory.Standard,
-                        listViewIcon = "",
-                        listViewIconTall = "",
-                        splash = "",
-                        premierBackgroundImage = "",
-                        stylizedBackgroundImage = ""
+                        imageUrl = ""
                     ),
-                    SimpleValoMap(
+                    MapCardState(
                         uuid = Uuid.random(),
-                        displayName = "Sample Map",
+                        title = "Sample Map",
                         coordinates = "123.4567E, 89.1234S",
-                        category = ValoMapCategory.Standard,
-                        listViewIcon = "",
-                        listViewIconTall = "",
-                        splash = "",
-                        premierBackgroundImage = "",
-                        stylizedBackgroundImage = ""
+                        imageUrl = ""
                     )
                 ),
                 onAction = {}

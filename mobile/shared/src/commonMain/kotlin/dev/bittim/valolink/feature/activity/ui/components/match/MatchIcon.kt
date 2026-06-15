@@ -7,12 +7,13 @@
  * File:       MatchIcon.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 19:24
+ * Modified:   15.06.26, 20:53
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -46,18 +47,21 @@ fun MatchIcon(
 ) {
     val colors = state.outcome.colors()
     val bgColor by animateColorAsState(colors.bg)
-    val fgColor by animateColorAsState(colors.fg)
 
     Box(
         modifier = modifier.aspectRatio(1f, matchHeightConstraintsFirst = true)
     ) {
-        AsyncImage(
-            modifier = Modifier.fillMaxSize()
-                .blur(Spacing.xxs),
-            model = state.mapImageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
+        Crossfade(
+            targetState = state.mapImageUrl
+        ) {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize()
+                    .blur(Spacing.xxs),
+                model = it,
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+        }
 
         Box(
             modifier = Modifier.fillMaxSize()
@@ -80,13 +84,17 @@ fun MatchIcon(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            AsyncImage(
-                modifier = Modifier.fillMaxSize()
-                    .padding(Spacing.m),
-                model = state.iconUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Fit
-            )
+            Crossfade(
+                targetState = state.iconUrl
+            ) {
+                AsyncImage(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(Spacing.m),
+                    model = it,
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit
+                )
+            }
 
             AnimatedVisibility(
                 modifier = Modifier.align(Alignment.BottomCenter)

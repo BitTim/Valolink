@@ -7,11 +7,12 @@
  * File:       MatchCard.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:22
+ * Modified:   15.06.26, 19:21
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,6 +28,7 @@ import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.IconCardLayout
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.Res
+import valolink.shared.generated.resources.match_card_xp_placeholder
 import valolink.shared.generated.resources.unit_xp
 import kotlin.time.Clock
 
@@ -51,24 +53,54 @@ fun MatchCard(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(Spacing.xs)
                 ) {
-                    Text(
-                        text = state.modeName,
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    AnimatedContent(
+                        targetState = state.modeName
+                    ) {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
 
                     Column(
                         verticalArrangement = Arrangement.spacedBy(Spacing.xxs)
                     ) {
-                        Text(
-                            text = "${state.mapName} • ${state.time}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Row {
+                            AnimatedContent(
+                                targetState = state.mapName
+                            ) {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
 
-                        Text(
-                            text = "${state.xp} ${stringResource(Res.string.unit_xp)}",
-                            style = MaterialTheme.typography.labelLarge
-                        )
+                            Text(
+                                text = " • ",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            AnimatedContent(
+                                targetState = state.time
+                            ) {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+
+                        AnimatedContent(
+                            targetState = "${state.xp ?: stringResource(Res.string.match_card_xp_placeholder)} ${stringResource(Res.string.unit_xp)}"
+                        ) {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
                     }
                 }
 

@@ -7,7 +7,7 @@
  * File:       ValoModeCategory.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 21:09
+ * Modified:   15.06.26, 19:52
  */
 
 package dev.bittim.valolink.core.domain.model
@@ -20,6 +20,18 @@ enum class ValoModeCategory {
     Deathmatch,
     TDM,
     Skirmish;
+
+    enum class ScoreType {
+        Default,
+        Placement
+    }
+
+    fun getScoreType(): ScoreType {
+        return when (this) {
+            Deathmatch -> ScoreType.Placement
+            else -> ScoreType.Default
+        }
+    }
 
     companion object {
         fun parse(value: String): ValoModeCategory {

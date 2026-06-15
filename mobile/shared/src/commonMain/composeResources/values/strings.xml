@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   10.06.26, 01:48
+  ~ Modified:   15.06.26, 19:17
   -->
 
 <resources>
@@ -45,4 +45,18 @@
     <string name="activity_add_flow_map_step_title">What map was played on?</string>
     <string name="activity_add_flow_mode_step_title">What mode was played?</string>
     <string name="generic_button_continue">Continue</string>
+    <string name="activity_add_flow_score_step_title">What was the final score?</string>
+    <string name="activity_add_flow_score_step_place_label">Place</string>
+    <string name="activity_add_flow_score_step_you_label">You</string>
+    <string name="activity_add_flow_score_step_enemy_label">Enemy</string>
+    <string name="activity_add_flow_score_step_surrendered_by_label">Surrendered by</string>
+    <string name="activity_add_flow_score_step_surrendered_by_no_one_label">No one</string>
+    <string name="activity_add_flow_score_step_surrendered_by_you_label">You</string>
+    <string name="activity_add_flow_score_step_surrendered_by_enemy_label">Enemy</string>
+    <string name="activity_add_flow_score_step_score_error_empty">Score cannot be empty</string>
+    <string name="activity_add_flow_score_step_score_error_invalid">Invalid input</string>
+    <string name="activity_add_flow_score_step_score_error_negative">Score cannot be negative</string>
+    <string name="match_card_xp_placeholder">-</string>
+    <string name="activity_add_flow_mode_placeholder">No mode</string>
+    <string name="activity_add_flow_map_placeholder">No map</string>
 </resources>

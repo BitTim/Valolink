@@ -7,18 +7,21 @@
  * File:       ActivityAddFlowAction.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   10.06.26, 11:14
+ * Modified:   15.06.26, 20:19
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 
-import dev.bittim.valolink.core.domain.model.SimpleValoMap
-import dev.bittim.valolink.core.domain.model.ValoMode
+import dev.bittim.valolink.core.domain.model.MatchEndReason
+import kotlin.uuid.Uuid
 
 sealed interface ActivityAddFlowAction {
     data object Back: ActivityAddFlowAction
-    data class ModeSelected(val mode: ValoMode) : ActivityAddFlowAction
+    data class ModeSelected(val uuid: Uuid) : ActivityAddFlowAction
     data object ModeContinue : ActivityAddFlowAction
-    data class MapSelected(val map: SimpleValoMap) : ActivityAddFlowAction
+    data class MapSelected(val uuid: Uuid) : ActivityAddFlowAction
     data object MapContinue : ActivityAddFlowAction
+    data class ScoreAChanged(val rawScore: String?) : ActivityAddFlowAction
+    data class ScoreBChanged(val rawScore: String?) : ActivityAddFlowAction
+    data class SurrenderChanged(val reason: MatchEndReason) : ActivityAddFlowAction
 }
