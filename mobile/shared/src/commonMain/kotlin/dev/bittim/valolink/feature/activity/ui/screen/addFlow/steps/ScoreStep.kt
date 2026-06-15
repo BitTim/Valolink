@@ -7,7 +7,7 @@
  * File:       ScoreStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:19
+ * Modified:   15.06.26, 23:03
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -45,6 +45,7 @@ fun ScoreStep(
     scoreAError: String?,
     scoreBError: String?,
     isPlacementScoreType: Boolean,
+    maxScoreDigits: Int = 3,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
     var rawScoreA by rememberSaveable { mutableStateOf(scoreA?.toString() ?: "") }
@@ -66,8 +67,8 @@ fun ScoreStep(
                 OutlinedTextFieldWithError(
                     value = rawScoreA,
                     onValueChange = {
-                        rawScoreA = it
-                        onAction(ActivityAddFlowAction.ScoreAChanged(it))
+                        rawScoreA = it.take(maxScoreDigits)
+                        onAction(ActivityAddFlowAction.ScoreAChanged(rawScoreA))
                     },
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(Res.string.activity_add_flow_score_step_place_label),
@@ -87,8 +88,8 @@ fun ScoreStep(
                         OutlinedTextFieldWithError(
                             value = rawScoreA,
                             onValueChange = {
-                                rawScoreA = it
-                                onAction(ActivityAddFlowAction.ScoreAChanged(it))
+                                rawScoreA = it.take(maxScoreDigits)
+                                onAction(ActivityAddFlowAction.ScoreAChanged(rawScoreA))
                             },
                             modifier = Modifier.weight(1f),
                             label = stringResource(Res.string.activity_add_flow_score_step_you_label),
@@ -100,8 +101,8 @@ fun ScoreStep(
                         OutlinedTextFieldWithError(
                             value = rawScoreB,
                             onValueChange = {
-                                rawScoreB = it
-                                onAction(ActivityAddFlowAction.ScoreBChanged(it))
+                                rawScoreB = it.take(maxScoreDigits)
+                                onAction(ActivityAddFlowAction.ScoreBChanged(rawScoreB))
                             },
                             modifier = Modifier.weight(1f),
                             label = stringResource(Res.string.activity_add_flow_score_step_enemy_label),
