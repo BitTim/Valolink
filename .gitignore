@@ -40,3 +40,4 @@ supabase.properties
 
 # Junie
 .junie/
+.ai/
