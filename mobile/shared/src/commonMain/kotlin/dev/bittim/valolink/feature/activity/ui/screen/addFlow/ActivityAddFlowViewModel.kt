@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 04:20
+ * Modified:   17.06.26, 14:21
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -223,8 +223,8 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
-    private fun updateRanked(enabled: Boolean) {
-        _state.update { it.copy(isRankedEnabled = enabled) }
+    private fun updateRanked(selected: Boolean) {
+        _state.update { it.copy(isRankedSelected = selected) }
         updateUiState()
     }
 
@@ -264,6 +264,9 @@ class ActivityAddFlowViewModel(
             is ActivityAddFlowAction.ModeSelected -> {
                 selectMode(action.uuid)
             }
+            is ActivityAddFlowAction.RankedChanged -> {
+                updateRanked(action.selected)
+            }
             is ActivityAddFlowAction.ModeContinue -> {
                 _state.update { it.copy(step = ActivityAddFlowStep.MapStep) }
             }
@@ -284,9 +287,6 @@ class ActivityAddFlowViewModel(
             }
             is ActivityAddFlowAction.ScoreContinue -> {
                 _state.update { it.copy(step = ActivityAddFlowStep.XpStep) }
-            }
-            is ActivityAddFlowAction.RankedChanged -> {
-                updateRanked(action.enabled)
             }
             is ActivityAddFlowAction.RrChanged -> {
                 updateRr(action.rawRr)

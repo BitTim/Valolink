@@ -7,11 +7,12 @@
  * File:       ModeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   16.06.26, 02:16
+ * Modified:   17.06.26, 14:16
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,24 +20,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MilitaryTech
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
+import dev.bittim.valolink.core.ui.components.ButtonGroupStyle
+import dev.bittim.valolink.core.ui.components.ConnectedButtonGroupEntry
 import dev.bittim.valolink.core.ui.components.SeamlessLazyColumn
+import dev.bittim.valolink.core.ui.components.SingleConnectedButtonGroup
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCard
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import org.jetbrains.compose.resources.stringResource
-import valolink.shared.generated.resources.Res
-import valolink.shared.generated.resources.activity_add_flow_mode_step_title
-import valolink.shared.generated.resources.generic_button_continue
+import valolink.shared.generated.resources.*
 import kotlin.uuid.Uuid
 
 @Composable
@@ -44,6 +45,7 @@ fun ModeStep(
     modifier: Modifier = Modifier,
     selectedModeUuid: Uuid?,
     modeCardStates: List<ModeCardState>?,
+    isRankedSelected: Boolean,
     enableContinueButton: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
@@ -74,13 +76,39 @@ fun ModeStep(
             }
         }
 
-        Button(
-            modifier = Modifier.fillMaxWidth()
-                .padding(top = Spacing.m),
-            enabled = enableContinueButton,
-            onClick = { onAction(ActivityAddFlowAction.ModeContinue) }
+        Column(
+            modifier = Modifier.padding(top = Spacing.m)
         ) {
-            Text(text = stringResource(Res.string.generic_button_continue))
+            AnimatedVisibility(
+                visible = modeCardStates?.firstOrNull { it.uuid == selectedModeUuid }?.canBeRanked ?: false
+            ) {
+                SingleConnectedButtonGroup(
+                    modifier = Modifier.fillMaxWidth(),
+                    entries = listOf(
+                        ConnectedButtonGroupEntry(
+                            label = stringResource(Res.string.activity_add_flow_mode_step_unranked),
+                            icon = {},
+                            weight = 1f
+                        ),
+                        ConnectedButtonGroupEntry(
+                            label = stringResource(Res.string.activity_add_flow_mode_step_ranked),
+                            icon = { Icon(imageVector = Icons.Default.MilitaryTech, contentDescription = null) },
+                            weight = 1f
+                        )
+                    ),
+                    style = ButtonGroupStyle.Tonal,
+                    initialSelection = if (isRankedSelected) 1 else 0,
+                    onSelectionChange = { onAction(ActivityAddFlowAction.RankedChanged(it > 0)) }
+                )
+            }
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = enableContinueButton,
+                onClick = { onAction(ActivityAddFlowAction.ModeContinue) }
+            ) {
+                Text(text = stringResource(Res.string.generic_button_continue))
+            }
         }
     }
 }
@@ -90,12 +118,14 @@ fun ModeStep(
 fun ModeStepPreview() {
     MaterialTheme {
         Surface {
+            val selectedUuid = Uuid.random()
+
             ModeStep(
                 modifier = Modifier.fillMaxSize(),
-                selectedModeUuid = Uuid.random(),
+                selectedModeUuid = selectedUuid,
                 modeCardStates = listOf(
                     ModeCardState(
-                        uuid = Uuid.random(),
+                        uuid = selectedUuid,
                         iconUrl = "",
                         title = "Sample Mode",
                         duration = "10-15 MIN",
@@ -116,6 +146,7 @@ fun ModeStepPreview() {
                         canBeRanked = true
                     )
                 ),
+                isRankedSelected = true,
                 enableContinueButton = true,
                 onAction = {}
             )

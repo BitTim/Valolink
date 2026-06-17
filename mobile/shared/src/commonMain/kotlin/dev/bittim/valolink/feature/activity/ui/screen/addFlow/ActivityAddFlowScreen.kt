@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 04:22
+ * Modified:   17.06.26, 14:21
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -62,6 +62,7 @@ fun ActivityAddFlowScreen(
                         selectedModeUuid = state.modeUuid,
                         modeCardStates = state.modeCardStates,
                         enableContinueButton = state.enableModeContinueButton,
+                        isRankedSelected = state.isRankedSelected,
                         onAction = onAction
                     )
                 }

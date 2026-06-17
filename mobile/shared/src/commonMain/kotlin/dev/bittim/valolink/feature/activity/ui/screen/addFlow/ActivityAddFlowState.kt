@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 03:39
+ * Modified:   17.06.26, 14:21
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -47,7 +47,7 @@ data class ActivityAddFlowState(
     val scoreB: Int? = null,
     val surrender: MatchEndReason = MatchEndReason.COMPLETED,
     val xp: Int? = null,
-    val isRankedEnabled: Boolean = false,
+    val isRankedSelected: Boolean = false,
     val rr: Int? = null,
     val time: Instant = Clock.System.now()
 )
