@@ -7,7 +7,7 @@
  * File:       MapStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:51
+ * Modified:   16.06.26, 02:16
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -44,6 +44,7 @@ fun MapStep(
     modifier: Modifier = Modifier,
     selectedMapUuid: Uuid?,
     mapCardStates: List<MapCardState>?,
+    enableContinueButton: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
     Column(
@@ -76,7 +77,7 @@ fun MapStep(
         Button(
             modifier = Modifier.fillMaxWidth()
                 .padding(top = Spacing.m),
-            enabled = selectedMapUuid != null,
+            enabled = enableContinueButton,
             onClick = { onAction(ActivityAddFlowAction.MapContinue) }
         ) {
             Text(text = stringResource(Res.string.generic_button_continue))
@@ -112,6 +113,7 @@ fun MapStepPreview() {
                         imageUrl = ""
                     )
                 ),
+                enableContinueButton = true,
                 onAction = {}
             )
         }

@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   15.06.26, 19:17
+  ~ Modified:   17.06.26, 04:14
   -->
 
 <resources>
@@ -59,4 +59,18 @@
     <string name="match_card_xp_placeholder">-</string>
     <string name="activity_add_flow_mode_placeholder">No mode</string>
     <string name="activity_add_flow_map_placeholder">No map</string>
+    <string name="activity_add_flow_xp_step_title">How much XP did you gain?</string>
+    <string name="activity_add_flow_xp_step_xp_label">XP</string>
+    <string name="activity_add_flow_xp_step_change_time">Change Date and Time</string>
+    <string name="activity_add_flow_mode_step_unranked">Unranked</string>
+    <string name="activity_add_flow_mode_step_ranked">Ranked</string>
+    <string name="activity_add_flow_rank_step_rr_label">RR</string>
+    <string name="activity_add_flow_xp_step_xp_error_empty">XP cannot be empty</string>
+    <string name="activity_add_flow_xp_step_xp_error_invalid">Invalid input</string>
+    <string name="activity_add_flow_xp_step_xp_error_negative">XP cannot be negative</string>
+    <string name="generic_button_cancel">Cancel</string>
+    <string name="dialog_time_picker_title">Select Time</string>
+    <string name="iconcd_time_picker_toggle_keyboard">Toggle time input mode to keyboard</string>
+    <string name="iconcd_time_picker_toggle_dial">Toggle time input mode to dial</string>
+    <string name="generic_button_back">Back</string>
 </resources>

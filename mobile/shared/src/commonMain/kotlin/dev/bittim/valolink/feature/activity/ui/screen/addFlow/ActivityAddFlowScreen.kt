@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   13.06.26, 20:29
+ * Modified:   17.06.26, 04:22
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -23,6 +23,7 @@ import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.MapStep
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ModeStep
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ScoreStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.XpStep
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -60,6 +61,7 @@ fun ActivityAddFlowScreen(
                         modifier = Modifier.padding(padding),
                         selectedModeUuid = state.modeUuid,
                         modeCardStates = state.modeCardStates,
+                        enableContinueButton = state.enableModeContinueButton,
                         onAction = onAction
                     )
                 }
@@ -68,6 +70,7 @@ fun ActivityAddFlowScreen(
                         modifier = Modifier.padding(padding),
                         selectedMapUuid = state.mapUuid,
                         mapCardStates = state.mapCardStates,
+                        enableContinueButton = state.enableMapContinueButton,
                         onAction = onAction
                     )
                 }
@@ -79,11 +82,20 @@ fun ActivityAddFlowScreen(
                         scoreAError = state.scoreAError?.let { stringResource(it) },
                         scoreBError = state.scoreBError?.let { stringResource(it) },
                         isPlacementScoreType = state.isPlacementScoreType,
+                        enableContinueButton = state.enableScoreContinueButton,
                         onAction = onAction
                     )
                 }
-                ActivityAddFlowStep.OutcomeStep -> {
-
+                ActivityAddFlowStep.XpStep -> {
+                    XpStep(
+                        modifier = Modifier.padding(padding),
+                        xp = state.xp,
+                        xpError = state.xpError?.let { stringResource(it) },
+                        time = state.time,
+                        dateTimePickerVisible = state.dateTimePickerVisible,
+                        enableContinueButton = state.enableResultContinueButton,
+                        onAction = onAction
+                    )
                 }
                 ActivityAddFlowStep.XpCorrectionStep -> {
 

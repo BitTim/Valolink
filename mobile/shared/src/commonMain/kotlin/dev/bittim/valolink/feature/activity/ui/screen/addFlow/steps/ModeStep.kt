@@ -7,7 +7,7 @@
  * File:       ModeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:51
+ * Modified:   16.06.26, 02:16
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -44,6 +44,7 @@ fun ModeStep(
     modifier: Modifier = Modifier,
     selectedModeUuid: Uuid?,
     modeCardStates: List<ModeCardState>?,
+    enableContinueButton: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
     Column(
@@ -76,7 +77,7 @@ fun ModeStep(
         Button(
             modifier = Modifier.fillMaxWidth()
                 .padding(top = Spacing.m),
-            enabled = selectedModeUuid != null,
+            enabled = enableContinueButton,
             onClick = { onAction(ActivityAddFlowAction.ModeContinue) }
         ) {
             Text(text = stringResource(Res.string.generic_button_continue))
@@ -115,6 +116,7 @@ fun ModeStepPreview() {
                         canBeRanked = true
                     )
                 ),
+                enableContinueButton = true,
                 onAction = {}
             )
         }

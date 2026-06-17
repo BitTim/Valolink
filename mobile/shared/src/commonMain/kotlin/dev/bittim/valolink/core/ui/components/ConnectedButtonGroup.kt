@@ -7,7 +7,7 @@
  * File:       ConnectedButtonGroup.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:16
+ * Modified:   16.06.26, 03:34
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -16,7 +16,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 data class ConnectedButtonGroupEntry(
@@ -31,9 +35,10 @@ fun SingleConnectedButtonGroup(
     modifier: Modifier = Modifier,
     entries: List<ConnectedButtonGroupEntry>,
     horizontalArrangement: Arrangement.Horizontal = ButtonGroupDefaults.HorizontalArrangement,
+    initialSelection: Int = 0,
     onSelectionChange: (index: Int) -> Unit
 ) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by rememberSaveable { mutableIntStateOf(initialSelection) }
 
     ButtonGroup(
         modifier = modifier,

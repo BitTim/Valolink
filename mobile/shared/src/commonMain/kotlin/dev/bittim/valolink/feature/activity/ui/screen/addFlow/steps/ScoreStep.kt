@@ -7,7 +7,7 @@
  * File:       ScoreStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 23:03
+ * Modified:   16.06.26, 02:38
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -15,10 +15,7 @@ package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +42,7 @@ fun ScoreStep(
     scoreAError: String?,
     scoreBError: String?,
     isPlacementScoreType: Boolean,
+    enableContinueButton: Boolean,
     maxScoreDigits: Int = 3,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
@@ -61,6 +59,7 @@ fun ScoreStep(
         )
 
         AnimatedContent(
+            modifier = Modifier.weight(1f),
             targetState = isPlacementScoreType
         ) { isPlacementScoreType ->
             if(isPlacementScoreType) {
@@ -138,6 +137,15 @@ fun ScoreStep(
                 }
             }
         }
+
+        Button(
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = Spacing.m),
+            enabled = enableContinueButton,
+            onClick = { onAction(ActivityAddFlowAction.ScoreContinue) }
+        ) {
+            Text(text = stringResource(Res.string.generic_button_continue))
+        }
     }
 }
 
@@ -153,6 +161,7 @@ fun ScoreStepPreview() {
                 scoreAError = null,
                 scoreBError = "Sample Error",
                 isPlacementScoreType = false,
+                enableContinueButton = false,
                 onAction = {}
             )
         }

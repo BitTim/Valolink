@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:37
+ * Modified:   17.06.26, 04:20
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -24,12 +24,16 @@ import dev.bittim.valolink.feature.activity.domain.usecase.FormatScoreUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.MatchOutcomeFromScoreUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.ParseIntUseCase
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
+import dev.bittim.valolink.feature.activity.ui.components.match.RrChipState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.*
 import org.jetbrains.compose.resources.getString
 import valolink.shared.generated.resources.*
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class ActivityAddFlowViewModel(
@@ -42,6 +46,8 @@ class ActivityAddFlowViewModel(
 ) : ViewModel() {
     private val _state = MutableStateFlow(ActivityAddFlowState())
     val state = _state.asStateFlow()
+
+    val timeZone = TimeZone.currentSystemDefault()
 
     private var placeholderFetchJob: Job? = null
     private var modeObserveJob: Job? = null
@@ -64,7 +70,7 @@ class ActivityAddFlowViewModel(
             ActivityAddFlowStep.ScoreStep -> {
                 _state.update { it.copy(step = ActivityAddFlowStep.MapStep) }
             }
-            ActivityAddFlowStep.OutcomeStep -> _state.update {
+            ActivityAddFlowStep.XpStep -> _state.update {
                 it.copy(step = ActivityAddFlowStep.ScoreStep)
             }
             ActivityAddFlowStep.XpCorrectionStep -> _state.update {
@@ -90,6 +96,13 @@ class ActivityAddFlowViewModel(
         val matchOutcome = matchOutcomeFromScoreUseCase(scoreA, scoreB, surrender, modeCategory) ?: MatchOutcome.Draw
 
         val time = _state.value.time.toLocalizedString()
+        val xp = _state.value.xp
+        val rr = _state.value.rr
+
+        val enableModeContinueButton = modes != null && _state.value.modeUuid != null
+        val enableMapContinueButton = maps != null && _state.value.mapUuid != null
+        val enableScoreContinueButton = scoreA != null && _state.value.scoreAError == null && (isPlacementScoreType || scoreB != null && _state.value.scoreBError == null)
+        val enableResultContinueButton = false
 
         _state.update { it.copy(
             modeCardStates = modes?.map { mode -> ModeCardState.from(mode) },
@@ -97,6 +110,12 @@ class ActivityAddFlowViewModel(
                 map.category == currentMode?.category?.let { modeCategory ->  ValoMapCategory.from(modeCategory) }
             }?.map { map -> MapCardState.from(map) },
             isPlacementScoreType = isPlacementScoreType,
+            supportsRanked = currentMode?.canBeRanked ?: false,
+
+            enableModeContinueButton = enableModeContinueButton,
+            enableMapContinueButton = enableMapContinueButton,
+            enableScoreContinueButton = enableScoreContinueButton,
+            enableResultContinueButton = enableResultContinueButton,
 
             matchCardState = it.matchCardState.copy(
                 modeName = currentMode?.displayName ?: modePlaceholder,
@@ -104,14 +123,21 @@ class ActivityAddFlowViewModel(
                 iconState = it.matchCardState.iconState.copy(
                     iconUrl = currentMode?.displayIcon,
                     mapImageUrl = currentMap?.splash,
-                    outcome = matchOutcome
+                    outcome = matchOutcome,
+                    rrChipState = rr?.let { rr ->
+                        RrChipState(
+                            rr = rr,
+                            rankChanged = false
+                        )
+                    },
                 ),
                 scoreChipState = it.matchCardState.scoreChipState.copy(
                     score = score,
                     outcome = matchOutcome,
                     wasSurrender = surrender in listOf(MatchEndReason.SURRENDER_A, MatchEndReason.SURRENDER_B)
                 ),
-                time = time
+                time = time,
+                xp = xp,
             ),
         ) }
     }
@@ -179,6 +205,56 @@ class ActivityAddFlowViewModel(
         _state.update { it.copy(scoreA = null, scoreB = null, scoreAError = null, scoreBError = null, surrender = MatchEndReason.COMPLETED) }
     }
 
+    private fun updateRr(rawRr: String?) {
+        when(val result = parseIntUseCase(rawRr, allowNegative = true)) {
+            is Result.Ok -> {
+                _state.update { it.copy(rr = result.data, rrError = null) }
+            }
+            is Result.Err -> {
+                val error = when (result.error) {
+                    ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
+                    ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
+                    ParseIntUseCase.IntParseError.NEGATIVE -> null
+                }
+
+                _state.update { it.copy(rrError = error) }
+            }
+        }
+        updateUiState()
+    }
+
+    private fun updateRanked(enabled: Boolean) {
+        _state.update { it.copy(isRankedEnabled = enabled) }
+        updateUiState()
+    }
+
+    private fun updateXp(rawXp: String?) {
+        when(val result = parseIntUseCase(rawXp, allowNegative = false)) {
+            is Result.Ok -> {
+                _state.update { it.copy(xp = result.data, xpError = null) }
+            }
+            is Result.Err -> {
+                val error = when (result.error) {
+                    ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
+                    ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
+                    ParseIntUseCase.IntParseError.NEGATIVE -> Res.string.activity_add_flow_xp_step_xp_error_negative
+                }
+
+                _state.update { it.copy(xpError = error) }
+            }
+        }
+        updateUiState()
+    }
+
+    private fun updateTime(dateMillis: Long, hour: Int, minute: Int) {
+        val localDate = Instant.fromEpochMilliseconds(dateMillis).toLocalDateTime(timeZone).date
+        val localTime = LocalTime(hour, minute)
+        val newTime = LocalDateTime(localDate, localTime).toInstant(timeZone)
+
+        _state.update { it.copy(time = newTime) }
+        updateUiState()
+    }
+
     fun onAction(
         action: ActivityAddFlowAction,
         navBack: () -> Unit
@@ -206,10 +282,39 @@ class ActivityAddFlowViewModel(
             is ActivityAddFlowAction.SurrenderChanged -> {
                 updateSurrender(action.reason)
             }
+            is ActivityAddFlowAction.ScoreContinue -> {
+                _state.update { it.copy(step = ActivityAddFlowStep.XpStep) }
+            }
+            is ActivityAddFlowAction.RankedChanged -> {
+                updateRanked(action.enabled)
+            }
+            is ActivityAddFlowAction.RrChanged -> {
+                updateRr(action.rawRr)
+            }
+            is ActivityAddFlowAction.XpChanged -> {
+                updateXp(action.rawXp)
+            }
+            is ActivityAddFlowAction.ChangeTime -> {
+                _state.update { it.copy(dateTimePickerVisible = true) }
+            }
+            is ActivityAddFlowAction.DateTimePickerDismiss -> {
+                _state.update { it.copy(dateTimePickerVisible = false) }
+            }
+            is ActivityAddFlowAction.DateTimeSelected -> {
+                updateTime(action.dateMillis, action.hour, action.minute)
+                _state.update { it.copy(dateTimePickerVisible = false) }
+            }
+            is ActivityAddFlowAction.XpFinish -> {
+                // TODO: Implement
+            }
         }
     }
 
     init {
+        val currentLocalDateTime = Clock.System.now().toLocalDateTime(timeZone)
+        val currentTimeInstant = currentLocalDateTime.date.atTime(currentLocalDateTime.hour, currentLocalDateTime.minute).toInstant(timeZone)
+        _state.update { it.copy(time = currentTimeInstant) }
+
         placeholderFetchJob?.cancel()
         placeholderFetchJob = viewModelScope.launch {
             modePlaceholder = getString(Res.string.activity_add_flow_mode_placeholder)

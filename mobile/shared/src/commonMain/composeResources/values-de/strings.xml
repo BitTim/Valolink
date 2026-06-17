@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   15.06.26, 19:18
+  ~ Modified:   17.06.26, 04:17
   -->
 
 <resources>
@@ -66,4 +66,21 @@
     <string name="match_card_xp_placeholder">-</string>
     <string name="activity_add_flow_mode_placeholder">Kein Modus</string>
     <string name="activity_add_flow_map_placeholder">Keine Map</string>
+    <string name="activity_add_flow_xp_step_title">Wie viele EP hast du bekommen?</string>
+    <string name="activity_add_flow_xp_step_xp_label">EP</string>
+    <string name="activity_add_flow_xp_step_change_time">Datum und Uhrzeit ändern</string>
+    <string name="activity_add_flow_result_step_unranked">Ungewertet</string>
+    <string name="activity_add_flow_result_step_ranked">Gewertet</string>
+    <string name="activity_add_flow_result_step_rr_label">RR</string>
+    <string name="activity_add_flow_xp_step_xp_error_empty">EP darf nich leer sein</string>
+    <string name="activity_add_flow_xp_step_xp_error_invalid">Ungültige Eingabe</string>
+    <string name="activity_add_flow_xp_step_xp_error_negative">EP darf nicht negativ sein</string>
+    <string name="generic_button_cancel">Abbrechen</string>
+    <string name="activity_add_flow_mode_step_unranked">Ungewertet</string>
+    <string name="activity_add_flow_mode_step_ranked">Gewertet</string>
+    <string name="activity_add_flow_rank_step_rr_label">RR</string>
+    <string name="dialog_time_picker_title">Uhrzeit auswählen</string>
+    <string name="iconcd_time_picker_toggle_keyboard">Tastatur für Zeiteingabe verwenden</string>
+    <string name="iconcd_time_picker_toggle_dial">Wählscheibe für Zeiteingabe verwenden</string>
+    <string name="generic_button_back">Zurück</string>
 </resources>

@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowAction.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:19
+ * Modified:   17.06.26, 04:22
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -24,4 +24,12 @@ sealed interface ActivityAddFlowAction {
     data class ScoreAChanged(val rawScore: String?) : ActivityAddFlowAction
     data class ScoreBChanged(val rawScore: String?) : ActivityAddFlowAction
     data class SurrenderChanged(val reason: MatchEndReason) : ActivityAddFlowAction
+    data object ScoreContinue : ActivityAddFlowAction
+    data class RankedChanged(val enabled: Boolean) : ActivityAddFlowAction
+    data class RrChanged(val rawRr: String?) : ActivityAddFlowAction
+    data class XpChanged(val rawXp: String?) : ActivityAddFlowAction
+    data object ChangeTime : ActivityAddFlowAction
+    data object DateTimePickerDismiss : ActivityAddFlowAction
+    data class DateTimeSelected(val dateMillis: Long, val hour: Int, val minute: Int) : ActivityAddFlowAction
+    data object XpFinish : ActivityAddFlowAction
 }

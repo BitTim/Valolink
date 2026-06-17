@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:21
+ * Modified:   17.06.26, 03:39
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -26,9 +26,19 @@ data class ActivityAddFlowState(
     val modeCardStates: List<ModeCardState>? = null,
     val mapCardStates: List<MapCardState>? = null,
     val isPlacementScoreType: Boolean = false,
+    val supportsRanked: Boolean = false,
+
+    val enableModeContinueButton: Boolean = false,
+    val enableMapContinueButton: Boolean = false,
+    val enableScoreContinueButton: Boolean = false,
+    val enableResultContinueButton: Boolean = false,
+
+    val dateTimePickerVisible: Boolean = false,
 
     val scoreAError: StringResource? = null,
     val scoreBError: StringResource? = null,
+    val xpError: StringResource? = null,
+    val rrError: StringResource? = null,
 
     val matchCardState: MatchCardState = MatchCardState.Empty,
     val modeUuid: Uuid? = null,
@@ -36,5 +46,8 @@ data class ActivityAddFlowState(
     val scoreA: Int? = null,
     val scoreB: Int? = null,
     val surrender: MatchEndReason = MatchEndReason.COMPLETED,
+    val xp: Int? = null,
+    val isRankedEnabled: Boolean = false,
+    val rr: Int? = null,
     val time: Instant = Clock.System.now()
 )
