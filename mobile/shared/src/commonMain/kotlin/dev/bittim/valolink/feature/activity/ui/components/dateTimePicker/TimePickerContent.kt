@@ -7,12 +7,13 @@
  * File:       TimePickerContent.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 04:12
+ * Modified:   19.06.26, 02:25
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.dateTimePicker
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -21,6 +22,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.*
@@ -28,16 +30,13 @@ import valolink.shared.generated.resources.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerContent(
-    initialHour: Int = 0,
-    initialMinute: Int = 0,
+    timePickerState: TimePickerState,
+    enableFinish: Boolean,
+    error: String?,
     onDismiss: () -> Unit,
     onTimeSelected: (hour: Int, minute: Int) -> Unit,
 ) {
     var showDial by remember { mutableStateOf(true) }
-    val timePickerState = rememberTimePickerState(
-        initialHour = initialHour,
-        initialMinute = initialMinute
-    )
 
     Column(
         modifier = Modifier.padding(24.dp)
@@ -66,6 +65,19 @@ fun TimePickerContent(
             }
         }
 
+        AnimatedVisibility(
+            visible = error != null
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                text = error ?: "",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
         Row(
             modifier = Modifier
                 .height(40.dp)
@@ -91,6 +103,7 @@ fun TimePickerContent(
             Spacer(modifier = Modifier.weight(1f))
             TextButton(onClick = onDismiss) { Text(stringResource(Res.string.generic_button_back)) }
             TextButton(
+                enabled = enableFinish,
                 onClick = {
                     onTimeSelected(timePickerState.hour, timePickerState.minute)
                 }

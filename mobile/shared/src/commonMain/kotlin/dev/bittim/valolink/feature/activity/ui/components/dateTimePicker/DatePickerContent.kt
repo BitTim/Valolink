@@ -7,16 +7,16 @@
  * File:       DatePickerContent.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 04:16
+ * Modified:   19.06.26, 01:20
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.dateTimePicker
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,12 +28,10 @@ import valolink.shared.generated.resources.generic_button_continue
 
 @Composable
 fun DatePickerContent(
-    dateMillis: Long? = null,
+    datePickerState: DatePickerState,
     onDismiss: () -> Unit,
     onDateSelected: (dateMillis: Long) -> Unit,
 ) {
-    val datePickerState = rememberDatePickerState(dateMillis)
-
     Column(
         modifier = Modifier.padding(top = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally

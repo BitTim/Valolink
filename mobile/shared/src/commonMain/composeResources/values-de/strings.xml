@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   17.06.26, 04:17
+  ~ Modified:   19.06.26, 02:25
   -->
 
 <resources>
@@ -83,4 +83,5 @@
     <string name="iconcd_time_picker_toggle_keyboard">Tastatur für Zeiteingabe verwenden</string>
     <string name="iconcd_time_picker_toggle_dial">Wählscheibe für Zeiteingabe verwenden</string>
     <string name="generic_button_back">Zurück</string>
+    <string name="date_time_picker_error_out_of_range">Datum und Uhrzeit sind außerhalb des gültigen Zeitraums</string>
 </resources>

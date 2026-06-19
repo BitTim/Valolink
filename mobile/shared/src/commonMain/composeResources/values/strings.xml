@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   17.06.26, 04:14
+  ~ Modified:   19.06.26, 02:25
   -->
 
 <resources>
@@ -73,4 +73,5 @@
     <string name="iconcd_time_picker_toggle_keyboard">Toggle time input mode to keyboard</string>
     <string name="iconcd_time_picker_toggle_dial">Toggle time input mode to dial</string>
     <string name="generic_button_back">Back</string>
+    <string name="date_time_picker_error_out_of_range">Date and time is outside the valid range</string>
 </resources>
