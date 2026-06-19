@@ -79,8 +79,11 @@ create table public.activities (
     user_id uuid not null default auth.uid(),
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
-    time timestamp with time zone not null default now(),
-    type text not null check (type in ('MATCH', 'PLACEMENT', 'RR_REFUND', 'XP_CORRECTION')),
+    time timestamp with time zone check (
+        (type = 'MATCH' and time is null) or
+        (type != 'MATCH' and time is not null)
+    ),
+    type text not null check (type in ('MATCH', 'RR_REFUND', 'XP_CORRECTION')),
     xp integer not null default 0,
     rr integer default null,
 
@@ -96,6 +99,7 @@ create table public.matches (
     score_b integer check (score_b >= 0),
     end_reason text not null default 'COMPLETED' check (end_reason in ('COMPLETED', 'SURRENDER_A', 'SURRENDER_B')),
     is_ranked boolean not null default false,
+    time timestamp with time zone not null default now(),
     map uuid not null,
     mode uuid not null,
 
@@ -108,6 +112,7 @@ create table public.match_participants (
     match uuid not null,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
+    visible_rr integer default null,
     is_owner boolean not null default false,
     is_team_b boolean not null default false,
 

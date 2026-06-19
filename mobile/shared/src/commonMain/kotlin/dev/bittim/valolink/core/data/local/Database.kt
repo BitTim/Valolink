@@ -7,7 +7,7 @@
  * File:       Database.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 20:13
+ * Modified:   19.06.26, 15:27
  */
 
 package dev.bittim.valolink.core.data.local
@@ -25,16 +25,6 @@ import dev.bittim.valolink.core.data.local.entity.*
 @androidx.room.Database(
     version = 1,
     entities = [
-        UserEntity::class,
-        ActivityEntity::class,
-        AgentEntity::class,
-        FlagEntity::class,
-        FollowEntity::class,
-        MatchEntity::class,
-        MatchParticipantEntity::class,
-        ProgressionEntity::class,
-        PurchasedLevelEntity::class,
-
         ValoAgentAbilityEntity::class,
         ValoAgentEntity::class,
         ValoAgentRecruitmentEntity::class,
