@@ -1,0 +1,181 @@
+{
+  "main": {
+    "id": "f4ea688b18b37f47",
+    "type": "split",
+    "children": [
+      {
+        "id": "d05c97836a6e66c1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c3ffe42a836ba0cd",
+            "type": "leaf",
+            "state": {
+              "type": "bases",
+              "state": {
+                "file": "Decisions/Overview.base",
+                "viewName": "Table"
+              },
+              "icon": "lucide-table",
+              "title": "Overview"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "bde6c37b01c228a5",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "f08d5802cdf5d509",
+        "type": "leaf",
+        "state": {
+          "type": "file-explorer",
+          "state": {
+            "sortOrder": "alphabetical",
+            "autoReveal": false
+          },
+          "icon": "lucide-folder-closed",
+          "title": "Files"
+        }
+      },
+      {
+        "id": "ba74a82dbb3fde0c",
+        "type": "leaf",
+        "state": {
+          "type": "search",
+          "state": {
+            "query": "",
+            "matchingCase": false,
+            "explainSearch": false,
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical"
+          },
+          "icon": "lucide-search",
+          "title": "Suchen"
+        }
+      },
+      {
+        "id": "740546f216892b43",
+        "type": "leaf",
+        "state": {
+          "type": "tag",
+          "state": {
+            "sortOrder": "frequency",
+            "useHierarchy": true,
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-tags",
+          "title": "Tags"
+        }
+      },
+      {
+        "id": "d29bb6a4863fe90b",
+        "type": "leaf",
+        "state": {
+          "type": "all-properties",
+          "state": {
+            "sortOrder": "frequency",
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-archive",
+          "title": "Alle Eigenschaften"
+        }
+      },
+      {
+        "id": "0c724f321ce8b009",
+        "type": "leaf",
+        "state": {
+          "type": "bookmarks",
+          "state": {},
+          "icon": "lucide-bookmark",
+          "title": "Lesezeichen"
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "right": {
+    "id": "f4796880113b7d94",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "92d31511fa86bd39",
+        "type": "leaf",
+        "state": {
+          "type": "backlink",
+          "state": {
+            "file": "Decisions/(ADR-001) Use KMP instead of Flutter.md",
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical",
+            "showSearch": false,
+            "searchQuery": "",
+            "backlinkCollapsed": false,
+            "unlinkedCollapsed": true
+          },
+          "icon": "links-coming-in",
+          "title": "Backlinks"
+        }
+      },
+      {
+        "id": "18076009d2b554a8",
+        "type": "leaf",
+        "state": {
+          "type": "outgoing-link",
+          "state": {
+            "linksCollapsed": false,
+            "unlinkedCollapsed": true
+          },
+          "icon": "links-going-out",
+          "title": "Ausgehende Links"
+        }
+      },
+      {
+        "id": "0e9cc9a9d9ed12a5",
+        "type": "leaf",
+        "state": {
+          "type": "outline",
+          "state": {
+            "followCursor": false,
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-list",
+          "title": "Gliederung"
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "c3ffe42a836ba0cd",
+  "lastOpenFiles": [
+    "Decisions/(ADR-003) Web as separate React project.md",
+    "Decisions/Overview.base",
+    "Decisions/(ADR-002) Follows instead of Friends.md",
+    "Untitled.base",
+    "Decisions/(ADR-001) Use KMP instead of Flutter.md",
+    "Templates/Architecture Decision Record.md",
+    "Decisions/Overview.md",
+    "Templates",
+    "Decisions/ADR-001.md",
+    "Decisions"
+  ]
+}
