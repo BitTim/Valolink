@@ -1,0 +1,195 @@
+{
+  "main": {
+    "id": "59a04330d00b5ab9",
+    "type": "split",
+    "children": [
+      {
+        "id": "49a59b96e50a6a87",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e4f6e7e93a9b9ec6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Decisions/(ADR-005) Split users into users and flags.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "(ADR-005) Split users into users and flags"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "3ba094bb6f46307b",
+    "type": "split",
+    "children": [
+      {
+        "id": "2165a7bc49be1f34",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "04471d20e1010a10",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "7b57572cfa14a918",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "ff65daffb309718a",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "96becfe795b0eda0",
+    "type": "split",
+    "children": [
+      {
+        "id": "4db78790a5b8e9bd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "71abb2d3d1383cec",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Decisions/(ADR-005) Split users into users and flags.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for (ADR-005) Split users into users and flags"
+            }
+          },
+          {
+            "id": "ad0160dde1f2ca16",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Decisions/(ADR-005) Split users into users and flags.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from (ADR-005) Split users into users and flags"
+            }
+          },
+          {
+            "id": "a81a9055e0ec1040",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "3a8e984f20fb6efb",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "80683b5970f812f4",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Decisions/(ADR-005) Split users into users and flags.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of (ADR-005) Split users into users and flags"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "e4f6e7e93a9b9ec6",
+  "lastOpenFiles": [
+    "Decisions/(ADR-004) Ownership lives on match_participants not matches.md",
+    "Decisions/(ADR-005) Split users into users and flags.md",
+    "Decisions/(ADR-001) Use KMP instead of Flutter.md",
+    "Decisions/(ADR-003) Web as separate React project.md",
+    "Decisions/(ADR-002) Follows instead of Friends.md",
+    "Decisions/Overview.base"
+  ]
+}

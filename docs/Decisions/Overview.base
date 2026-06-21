@@ -11,3 +11,5 @@ views:
     order:
       - file.name
       - formula.Status
+    columnSize:
+      file.name: 293
