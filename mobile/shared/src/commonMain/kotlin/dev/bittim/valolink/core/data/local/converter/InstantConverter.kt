@@ -7,7 +7,7 @@
  * File:       InstantConverter.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   22.06.26, 04:11
  */
 
 package dev.bittim.valolink.core.data.local.converter
@@ -17,12 +17,12 @@ import kotlin.time.Instant
 
 class InstantConverter {
     @TypeConverter
-    fun toInstant(value: String?): Instant? {
-        return value?.let { Instant.parseOrNull(it) }
+    fun toInstant(value: Long?): Instant? {
+        return value?.let { Instant.fromEpochMilliseconds(it) }
     }
 
     @TypeConverter
-    fun fromInstant(value: Instant?): String? {
-        return value?.toString()
+    fun fromInstant(value: Instant?): Long? {
+        return value?.toEpochMilliseconds()
     }
 }

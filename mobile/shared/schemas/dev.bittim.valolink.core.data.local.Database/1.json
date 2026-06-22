@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "70ff9bd20363e8b4338da9cf2bac238c",
+    "identityHash": "960e4a341da2ad7195d569f79539c2d1",
     "entities": [
       {
         "tableName": "valo_agent_abilities",
@@ -61,7 +61,7 @@
       },
       {
         "tableName": "valo_agents",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `developerName` TEXT NOT NULL, `releaseDate` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `displayIconSmall` TEXT NOT NULL, `bustPortrait` TEXT NOT NULL, `fullPortrait` TEXT NOT NULL, `fullPortraitV2` TEXT NOT NULL, `killfeedPortrait` TEXT NOT NULL, `minimapPortrait` TEXT NOT NULL, `homeScreenPromoTileImage` TEXT, `background` TEXT NOT NULL, `backgroundGradientColors` TEXT NOT NULL, `isFullPortraitRightFacing` INTEGER NOT NULL, `isBaseContent` INTEGER NOT NULL, `role` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`role`) REFERENCES `valo_agent_roles`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `developerName` TEXT NOT NULL, `releaseDate` INTEGER NOT NULL, `displayIcon` TEXT NOT NULL, `displayIconSmall` TEXT NOT NULL, `bustPortrait` TEXT NOT NULL, `fullPortrait` TEXT NOT NULL, `fullPortraitV2` TEXT NOT NULL, `killfeedPortrait` TEXT NOT NULL, `minimapPortrait` TEXT NOT NULL, `homeScreenPromoTileImage` TEXT, `background` TEXT NOT NULL, `backgroundGradientColors` TEXT NOT NULL, `isFullPortraitRightFacing` INTEGER NOT NULL, `isBaseContent` INTEGER NOT NULL, `role` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`role`) REFERENCES `valo_agent_roles`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -90,7 +90,7 @@
           {
             "fieldPath": "releaseDate",
             "columnName": "releaseDate",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -193,7 +193,7 @@
       },
       {
         "tableName": "valo_agent_recruitments",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`agent` TEXT NOT NULL, `xp` INTEGER NOT NULL, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, PRIMARY KEY(`agent`), FOREIGN KEY(`agent`) REFERENCES `valo_agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`agent` TEXT NOT NULL, `xp` INTEGER NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`agent`), FOREIGN KEY(`agent`) REFERENCES `valo_agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "agent",
@@ -210,13 +210,13 @@
           {
             "fieldPath": "startTime",
             "columnName": "startTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "endTime",
             "columnName": "endTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -475,7 +475,7 @@
       },
       {
         "tableName": "valo_competitive_seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `season` TEXT NOT NULL, `rankTable` TEXT NOT NULL, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`season`) REFERENCES `valo_seasons`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`rankTable`) REFERENCES `valo_rank_tables`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `season` TEXT NOT NULL, `rankTable` TEXT NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`season`) REFERENCES `valo_seasons`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`rankTable`) REFERENCES `valo_rank_tables`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -498,13 +498,13 @@
           {
             "fieldPath": "startTime",
             "columnName": "startTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "endTime",
             "columnName": "endTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -649,7 +649,7 @@
       },
       {
         "tableName": "valo_events",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT, `shortDisplayName` TEXT, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT, `shortDisplayName` TEXT, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -670,13 +670,13 @@
           {
             "fieldPath": "startTime",
             "columnName": "startTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "endTime",
             "columnName": "endTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -1185,7 +1185,7 @@
       },
       {
         "tableName": "valo_seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `episodeDisplayName` TEXT, `title` TEXT, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `episodeDisplayName` TEXT, `title` TEXT, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -1212,13 +1212,13 @@
           {
             "fieldPath": "startTime",
             "columnName": "startTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "endTime",
             "columnName": "endTime",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -1373,7 +1373,7 @@
       },
       {
         "tableName": "valo_version",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `branch` TEXT NOT NULL, `buildVersion` TEXT NOT NULL, `manifestId` TEXT NOT NULL, `riotClientBuild` TEXT NOT NULL, `riotClientVersion` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `version` TEXT NOT NULL, `buildDate` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `branch` TEXT NOT NULL, `buildVersion` TEXT NOT NULL, `manifestId` TEXT NOT NULL, `riotClientBuild` TEXT NOT NULL, `riotClientVersion` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `version` TEXT NOT NULL, `buildDate` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -1426,7 +1426,7 @@
           {
             "fieldPath": "buildDate",
             "columnName": "buildDate",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -1877,7 +1877,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '70ff9bd20363e8b4338da9cf2bac238c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '960e4a341da2ad7195d569f79539c2d1')"
     ]
   }
 }

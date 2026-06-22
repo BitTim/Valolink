@@ -7,7 +7,7 @@
  * File:       Database.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.06.26, 15:27
+ * Modified:   22.06.26, 05:15
  */
 
 package dev.bittim.valolink.core.data.local
@@ -19,6 +19,7 @@ import androidx.room.TypeConverters
 import dev.bittim.valolink.core.data.local.converter.*
 import dev.bittim.valolink.core.data.local.dao.ValoMapDao
 import dev.bittim.valolink.core.data.local.dao.ValoModeDao
+import dev.bittim.valolink.core.data.local.dao.ValoSeasonDao
 import dev.bittim.valolink.core.data.local.dao.ValoVersionDao
 import dev.bittim.valolink.core.data.local.entity.*
 
@@ -77,9 +78,10 @@ abstract class Database : RoomDatabase() {
     abstract fun valoVersionDao(): ValoVersionDao
     abstract fun valoModeDao(): ValoModeDao
     abstract fun valoMapDao(): ValoMapDao
+    abstract fun valoSeasonDao(): ValoSeasonDao
 }
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", "KotlinNoActualForExpect")
 expect object DatabaseConstructor: RoomDatabaseConstructor<Database> {
     override fun initialize(): Database
 }

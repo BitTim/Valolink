@@ -7,7 +7,7 @@
  * File:       AppModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 20:22
+ * Modified:   22.06.26, 04:18
  */
 
 package dev.bittim.valolink.core.di
@@ -16,15 +16,9 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import dev.bittim.valolink.core.data.local.Database
 import dev.bittim.valolink.core.data.local.DatabaseBuilder
 import dev.bittim.valolink.core.data.remote.createSupabaseClient
-import dev.bittim.valolink.core.data.repo.SupabaseAuthRepo
-import dev.bittim.valolink.core.data.repo.SupabaseValoMapRepo
-import dev.bittim.valolink.core.data.repo.SupabaseValoModeRepo
-import dev.bittim.valolink.core.data.repo.SupabaseValoVersionRepo
+import dev.bittim.valolink.core.data.repo.*
 import dev.bittim.valolink.core.data.sync.SyncManager
-import dev.bittim.valolink.core.domain.repo.AuthRepo
-import dev.bittim.valolink.core.domain.repo.ValoMapRepo
-import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.core.domain.repo.ValoVersionRepo
+import dev.bittim.valolink.core.domain.repo.*
 import dev.bittim.valolink.core.domain.usecase.ObserverSessionStatusUseCase
 import dev.bittim.valolink.core.domain.usecase.SignInWithOtpUseCase
 import dev.bittim.valolink.core.domain.usecase.SubmitOtpUseCase
@@ -74,8 +68,15 @@ val sharedModule = module {
     singleOf(::SupabaseValoVersionRepo).bind<ValoVersionRepo>()
     singleOf(::SupabaseValoModeRepo).bind<ValoModeRepo>()
     singleOf(::SupabaseValoMapRepo).bind<ValoMapRepo>()
+    singleOf(::SupabaseValoSeasonRepo).bind<ValoSeasonRepo>()
 
-    single<SyncManager> { SyncManager(get(named("SyncScope")), get(), get(), get()) }
+    single<SyncManager> { SyncManager(
+        get(named("SyncScope")),
+        get(),
+        get(),
+        get(),
+        get()
+    ) }
 
     singleOf(::ObserverSessionStatusUseCase)
     singleOf(::SignInWithOtpUseCase)
