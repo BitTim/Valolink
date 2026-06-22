@@ -1,0 +1,15 @@
+filters:
+  and:
+    - file.folder == "Decisions"
+    - file.ext != "base"
+formulas:
+  Status: |
+    if (this.superseded_by.isEmpty(), "Approved", "Superseded")
+views:
+  - type: table
+    name: Table
+    order:
+      - file.name
+      - formula.Status
+    columnSize:
+      file.name: 293

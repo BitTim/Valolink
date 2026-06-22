@@ -1,0 +1,1883 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "960e4a341da2ad7195d569f79539c2d1",
+    "entities": [
+      {
+        "tableName": "valo_agent_abilities",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`agent` TEXT NOT NULL, `slot` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `displayIcon` TEXT, PRIMARY KEY(`agent`, `slot`), FOREIGN KEY(`agent`) REFERENCES `valo_agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "agent",
+            "columnName": "agent",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "slot",
+            "columnName": "slot",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "agent",
+            "slot"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_agents",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "agent"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_agents",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `developerName` TEXT NOT NULL, `releaseDate` INTEGER NOT NULL, `displayIcon` TEXT NOT NULL, `displayIconSmall` TEXT NOT NULL, `bustPortrait` TEXT NOT NULL, `fullPortrait` TEXT NOT NULL, `fullPortraitV2` TEXT NOT NULL, `killfeedPortrait` TEXT NOT NULL, `minimapPortrait` TEXT NOT NULL, `homeScreenPromoTileImage` TEXT, `background` TEXT NOT NULL, `backgroundGradientColors` TEXT NOT NULL, `isFullPortraitRightFacing` INTEGER NOT NULL, `isBaseContent` INTEGER NOT NULL, `role` TEXT NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`role`) REFERENCES `valo_agent_roles`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "developerName",
+            "columnName": "developerName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "releaseDate",
+            "columnName": "releaseDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIconSmall",
+            "columnName": "displayIconSmall",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bustPortrait",
+            "columnName": "bustPortrait",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fullPortrait",
+            "columnName": "fullPortrait",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fullPortraitV2",
+            "columnName": "fullPortraitV2",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "killfeedPortrait",
+            "columnName": "killfeedPortrait",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minimapPortrait",
+            "columnName": "minimapPortrait",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "homeScreenPromoTileImage",
+            "columnName": "homeScreenPromoTileImage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "background",
+            "columnName": "background",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backgroundGradientColors",
+            "columnName": "backgroundGradientColors",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFullPortraitRightFacing",
+            "columnName": "isFullPortraitRightFacing",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isBaseContent",
+            "columnName": "isBaseContent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_agent_roles",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "role"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_agent_recruitments",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`agent` TEXT NOT NULL, `xp` INTEGER NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`agent`), FOREIGN KEY(`agent`) REFERENCES `valo_agents`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "agent",
+            "columnName": "agent",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xp",
+            "columnName": "xp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "agent"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_agents",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "agent"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_agent_roles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_buddies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `parent` TEXT NOT NULL, `theme` TEXT, `displayName` TEXT NOT NULL, `charmLevel` INTEGER NOT NULL, `displayIcon` TEXT NOT NULL, `hideIfNotOwned` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`theme`) REFERENCES `valo_themes`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parent",
+            "columnName": "parent",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "charmLevel",
+            "columnName": "charmLevel",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hideIfNotOwned",
+            "columnName": "hideIfNotOwned",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_themes",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "theme"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_cards",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `theme` TEXT, `displayName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `largeArt` TEXT, `wideArt` TEXT NOT NULL, `smallArt` TEXT NOT NULL, `hideIfNotOwned` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`theme`) REFERENCES `valo_themes`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "largeArt",
+            "columnName": "largeArt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "wideArt",
+            "columnName": "wideArt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "smallArt",
+            "columnName": "smallArt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hideIfNotOwned",
+            "columnName": "hideIfNotOwned",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_themes",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "theme"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_competitive_season_borders",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `competitiveSeason` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `smallIcon` TEXT, `level` INTEGER NOT NULL, `winsRequired` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`competitiveSeason`) REFERENCES `valo_competitive_seasons`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "competitiveSeason",
+            "columnName": "competitiveSeason",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "smallIcon",
+            "columnName": "smallIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "level",
+            "columnName": "level",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "winsRequired",
+            "columnName": "winsRequired",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_competitive_seasons",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "competitiveSeason"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_competitive_seasons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `season` TEXT NOT NULL, `rankTable` TEXT NOT NULL, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`season`) REFERENCES `valo_seasons`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`rankTable`) REFERENCES `valo_rank_tables`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "season",
+            "columnName": "season",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rankTable",
+            "columnName": "rankTable",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_seasons",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "season"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          },
+          {
+            "table": "valo_rank_tables",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "rankTable"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_content_tiers",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `developerName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `juiceCost` INTEGER NOT NULL, `juiceValue` INTEGER NOT NULL, `highlightColor` TEXT NOT NULL, `rank` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "developerName",
+            "columnName": "developerName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "juiceCost",
+            "columnName": "juiceCost",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "juiceValue",
+            "columnName": "juiceValue",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "highlightColor",
+            "columnName": "highlightColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rank",
+            "columnName": "rank",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_currencies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayNameSingular` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `largeIcon` TEXT NOT NULL, `rewardPreviewIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayNameSingular",
+            "columnName": "displayNameSingular",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "largeIcon",
+            "columnName": "largeIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rewardPreviewIcon",
+            "columnName": "rewardPreviewIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT, `shortDisplayName` TEXT, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "shortDisplayName",
+            "columnName": "shortDisplayName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_flex",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayNameAllCaps` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayNameAllCaps",
+            "columnName": "displayNameAllCaps",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_maps",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `tacticalDescription` TEXT, `coordinates` TEXT, `category` TEXT NOT NULL, `listViewIcon` TEXT NOT NULL, `listViewIconTall` TEXT NOT NULL, `splash` TEXT NOT NULL, `premierBackgroundImage` TEXT, `stylizedBackgroundImage` TEXT, `displayIcon` TEXT, `xMultiplier` REAL NOT NULL, `xScalarToAdd` REAL NOT NULL, `yMultiplier` REAL NOT NULL, `yScalarToAdd` REAL NOT NULL, `callouts` TEXT, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tacticalDescription",
+            "columnName": "tacticalDescription",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "coordinates",
+            "columnName": "coordinates",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "listViewIcon",
+            "columnName": "listViewIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "listViewIconTall",
+            "columnName": "listViewIconTall",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "splash",
+            "columnName": "splash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "premierBackgroundImage",
+            "columnName": "premierBackgroundImage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "stylizedBackgroundImage",
+            "columnName": "stylizedBackgroundImage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "xMultiplier",
+            "columnName": "xMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xScalarToAdd",
+            "columnName": "xScalarToAdd",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yMultiplier",
+            "columnName": "yMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yScalarToAdd",
+            "columnName": "yScalarToAdd",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "callouts",
+            "columnName": "callouts",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_modes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `description` TEXT, `duration` TEXT, `category` TEXT NOT NULL, `displayIcon` TEXT, `listViewIconTall` TEXT, `roundsPerHalf` INTEGER NOT NULL, `canBeRanked` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "listViewIconTall",
+            "columnName": "listViewIconTall",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "roundsPerHalf",
+            "columnName": "roundsPerHalf",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canBeRanked",
+            "columnName": "canBeRanked",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_progressions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT, `relationType` TEXT, `relationUuid` TEXT, `premiumVpCost` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "relationType",
+            "columnName": "relationType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "relationUuid",
+            "columnName": "relationUuid",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "premiumVpCost",
+            "columnName": "premiumVpCost",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_progression_levels",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`progression` TEXT NOT NULL, `levelIndex` INTEGER NOT NULL, `xp` INTEGER NOT NULL, `isPurchasableVp` INTEGER NOT NULL, `isPurchasableKc` INTEGER NOT NULL, `vpCost` INTEGER NOT NULL, `kcCost` INTEGER NOT NULL, `isEpilogue` INTEGER NOT NULL, PRIMARY KEY(`progression`, `levelIndex`), FOREIGN KEY(`progression`) REFERENCES `valo_progressions`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "progression",
+            "columnName": "progression",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "levelIndex",
+            "columnName": "levelIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xp",
+            "columnName": "xp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPurchasableVp",
+            "columnName": "isPurchasableVp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPurchasableKc",
+            "columnName": "isPurchasableKc",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vpCost",
+            "columnName": "vpCost",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kcCost",
+            "columnName": "kcCost",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEpilogue",
+            "columnName": "isEpilogue",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "progression",
+            "levelIndex"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_progressions",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "progression"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_progression_level_rewards",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`progression` TEXT NOT NULL, `levelIndex` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `relationType` TEXT NOT NULL, `relationUuid` TEXT NOT NULL, `amount` INTEGER NOT NULL, `isFree` INTEGER NOT NULL, PRIMARY KEY(`progression`, `levelIndex`, `sortOrder`), FOREIGN KEY(`progression`, `levelIndex`) REFERENCES `valo_progression_levels`(`progression`, `levelIndex`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "progression",
+            "columnName": "progression",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "levelIndex",
+            "columnName": "levelIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relationType",
+            "columnName": "relationType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relationUuid",
+            "columnName": "relationUuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFree",
+            "columnName": "isFree",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "progression",
+            "levelIndex",
+            "sortOrder"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_progression_levels",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "progression",
+              "levelIndex"
+            ],
+            "referencedColumns": [
+              "progression",
+              "levelIndex"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_ranks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rankTable` TEXT NOT NULL, `tier` INTEGER NOT NULL, `tierName` TEXT NOT NULL, `smallIcon` TEXT, `largeIcon` TEXT, `rankTriangleDownIcon` TEXT, `rankTriangleUpIcon` TEXT, `color` TEXT NOT NULL, `backgroundColor` TEXT NOT NULL, `division` TEXT NOT NULL, `divisionName` TEXT NOT NULL, PRIMARY KEY(`rankTable`, `tier`), FOREIGN KEY(`rankTable`) REFERENCES `valo_rank_tables`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "rankTable",
+            "columnName": "rankTable",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tier",
+            "columnName": "tier",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tierName",
+            "columnName": "tierName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "smallIcon",
+            "columnName": "smallIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "largeIcon",
+            "columnName": "largeIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rankTriangleDownIcon",
+            "columnName": "rankTriangleDownIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rankTriangleUpIcon",
+            "columnName": "rankTriangleUpIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "backgroundColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "division",
+            "columnName": "division",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "divisionName",
+            "columnName": "divisionName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "rankTable",
+            "tier"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_rank_tables",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "rankTable"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_rank_tables",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_seasons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `episodeDisplayName` TEXT, `title` TEXT, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "episodeDisplayName",
+            "columnName": "episodeDisplayName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_sprays",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `theme` TEXT, `displayName` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `fullIcon` TEXT, `fullTransparentIcon` TEXT, `animationPng` TEXT, `animationGif` TEXT, `hideIfNotOwned` INTEGER NOT NULL, PRIMARY KEY(`uuid`), FOREIGN KEY(`theme`) REFERENCES `valo_themes`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fullIcon",
+            "columnName": "fullIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fullTransparentIcon",
+            "columnName": "fullTransparentIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "animationPng",
+            "columnName": "animationPng",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "animationGif",
+            "columnName": "animationGif",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "hideIfNotOwned",
+            "columnName": "hideIfNotOwned",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_themes",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "theme"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_themes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT, `storeFeaturedImage` TEXT, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "storeFeaturedImage",
+            "columnName": "storeFeaturedImage",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_titles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT, `titleText` TEXT, `hideIfNotOwned` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "titleText",
+            "columnName": "titleText",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "hideIfNotOwned",
+            "columnName": "hideIfNotOwned",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_version",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `branch` TEXT NOT NULL, `buildVersion` TEXT NOT NULL, `manifestId` TEXT NOT NULL, `riotClientBuild` TEXT NOT NULL, `riotClientVersion` TEXT NOT NULL, `engineVersion` TEXT NOT NULL, `version` TEXT NOT NULL, `buildDate` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "branch",
+            "columnName": "branch",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buildVersion",
+            "columnName": "buildVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manifestId",
+            "columnName": "manifestId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "riotClientBuild",
+            "columnName": "riotClientBuild",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "riotClientVersion",
+            "columnName": "riotClientVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "engineVersion",
+            "columnName": "engineVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "buildDate",
+            "columnName": "buildDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_weapons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `displayName` TEXT NOT NULL, `category` TEXT NOT NULL, `defaultSkin` TEXT NOT NULL, `displayIcon` TEXT NOT NULL, `killStreamIcon` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defaultSkin",
+            "columnName": "defaultSkin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "killStreamIcon",
+            "columnName": "killStreamIcon",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        }
+      },
+      {
+        "tableName": "valo_weapon_shop_data",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`weapon` TEXT NOT NULL, `cost` INTEGER NOT NULL, `category` TEXT NOT NULL, `shopOrderPriority` INTEGER NOT NULL, `categoryText` TEXT NOT NULL, `gridPosition` TEXT, `canBeTrashed` INTEGER NOT NULL, `image` TEXT, PRIMARY KEY(`weapon`), FOREIGN KEY(`weapon`) REFERENCES `valo_weapons`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "weapon",
+            "columnName": "weapon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cost",
+            "columnName": "cost",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shopOrderPriority",
+            "columnName": "shopOrderPriority",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoryText",
+            "columnName": "categoryText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gridPosition",
+            "columnName": "gridPosition",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "canBeTrashed",
+            "columnName": "canBeTrashed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "weapon"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_weapons",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "weapon"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_weapon_skin_chromas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `skin` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT, `fullRender` TEXT NOT NULL, `swatch` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`skin`) REFERENCES `valo_weapon_skins`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "skin",
+            "columnName": "skin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fullRender",
+            "columnName": "fullRender",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "swatch",
+            "columnName": "swatch",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "streamedVideo",
+            "columnName": "streamedVideo",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_weapon_skins",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "skin"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_weapon_skins",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `weapon` TEXT NOT NULL, `displayName` TEXT NOT NULL, `theme` TEXT NOT NULL, `contentTier` TEXT, `displayIcon` TEXT, `wallpaper` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`weapon`) REFERENCES `valo_weapons`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`theme`) REFERENCES `valo_themes`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`contentTier`) REFERENCES `valo_content_tiers`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weapon",
+            "columnName": "weapon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentTier",
+            "columnName": "contentTier",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "wallpaper",
+            "columnName": "wallpaper",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_weapons",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "weapon"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          },
+          {
+            "table": "valo_themes",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "theme"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          },
+          {
+            "table": "valo_content_tiers",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "contentTier"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_weapon_skin_levels",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `skin` TEXT NOT NULL, `displayName` TEXT NOT NULL, `displayIcon` TEXT, `streamedVideo` TEXT, PRIMARY KEY(`uuid`), FOREIGN KEY(`skin`) REFERENCES `valo_weapon_skins`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "skin",
+            "columnName": "skin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayIcon",
+            "columnName": "displayIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "streamedVideo",
+            "columnName": "streamedVideo",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uuid"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_weapon_skins",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "skin"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "valo_weapon_stats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`weapon` TEXT NOT NULL, `fireRate` REAL NOT NULL, `magazineSize` INTEGER NOT NULL, `runSpeedMultiplier` REAL NOT NULL, `equipTimeSeconds` REAL NOT NULL, `reloadTimeSeconds` REAL NOT NULL, `firstBulletAccuracy` REAL NOT NULL, `shotgunPelletCount` INTEGER NOT NULL, `wallPenetration` TEXT NOT NULL, `feature` TEXT, `fireMode` TEXT, `altFireType` TEXT, `adsStats` TEXT, `altShotgunStats` TEXT, `airBurstStats` TEXT, `damageRanges` TEXT NOT NULL, PRIMARY KEY(`weapon`), FOREIGN KEY(`weapon`) REFERENCES `valo_weapons`(`uuid`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "weapon",
+            "columnName": "weapon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fireRate",
+            "columnName": "fireRate",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "magazineSize",
+            "columnName": "magazineSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "runSpeedMultiplier",
+            "columnName": "runSpeedMultiplier",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "equipTimeSeconds",
+            "columnName": "equipTimeSeconds",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reloadTimeSeconds",
+            "columnName": "reloadTimeSeconds",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstBulletAccuracy",
+            "columnName": "firstBulletAccuracy",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shotgunPelletCount",
+            "columnName": "shotgunPelletCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wallPenetration",
+            "columnName": "wallPenetration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "feature",
+            "columnName": "feature",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fireMode",
+            "columnName": "fireMode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "altFireType",
+            "columnName": "altFireType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "adsStats",
+            "columnName": "adsStats",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "altShotgunStats",
+            "columnName": "altShotgunStats",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "airBurstStats",
+            "columnName": "airBurstStats",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "damageRanges",
+            "columnName": "damageRanges",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "weapon"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "valo_weapons",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "weapon"
+            ],
+            "referencedColumns": [
+              "uuid"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '960e4a341da2ad7195d569f79539c2d1')"
+    ]
+  }
+}

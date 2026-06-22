@@ -1,0 +1,77 @@
+<!--
+  ~ Copyright (c) 2026 Tim Anhalt (BitTim)
+  ~
+  ~ Project:    Valolink
+  ~ License:    GPLv3
+  ~
+  ~ File:       strings.xml
+  ~ Module:     Valolink.shared.commonMain
+  ~ Author:     Tim Anhalt (BitTim)
+  ~ Modified:   19.06.26, 02:25
+  -->
+
+<resources>
+
+    <string name="generic_button_finish">Finish</string>
+
+    <string name="iconcd_email">E-Mail</string>
+    <string name="iconcd_key">Key</string>
+
+    <string name="auth_landing_button_email">Continue with E-Mail</string>
+    <string name="auth_landing_button_google">Continue with Google</string>
+
+    <string name="auth_landing_title">Welcome to Valolink!</string>
+    <string name="auth_landing_description">Sign in to get started. When using E-Mail we will send you a magic link and a code you will be able to log in with.</string>
+    <string name="auth_landing_text_field_label">E-Mail</string>
+    <string name="auth_landing_error_empty">E-Mail cannot be empty</string>
+    <string name="auth_landing_error_invalid">Invalid E-Mail</string>
+
+    <string name="auth_otp_title">Enter your code</string>
+    <string name="auth_otp_description">We sent a magic link and a code to the following E-Mail address. Please use the link or enter the code below to continue.</string>
+    <string name="auth_otp_label">One Time Code</string>
+    <string name="auth_otp_error_empty">Code cannot be empty</string>
+    <string name="auth_otp_error_length">Code must be 8 digits long</string>
+    <string name="auth_otp_error_invalid">Invalid characters. Only numbers are allowed</string>
+    <string name="iconcd_close">Close</string>
+    <string name="iconcd_back">Back</string>
+    <string name="iconcd_waving_hand">Waving Hand</string>
+    <string name="auth_landing_button_apple">Continue with Apple</string>
+    <string name="iconcd_google">Google</string>
+    <string name="iconcd_apple">Apple</string>
+    <string name="auth_otp_resend">Resend</string>
+    <string name="auth_otp_cooldown">in %1$d seconds</string>
+    <string name="unit_xp">XP</string>
+    <string name="iconcd_add">Add</string>
+    <string name="activity_add_flow_map_step_title">What map was played on?</string>
+    <string name="activity_add_flow_mode_step_title">What mode was played?</string>
+    <string name="generic_button_continue">Continue</string>
+    <string name="activity_add_flow_score_step_title">What was the final score?</string>
+    <string name="activity_add_flow_score_step_place_label">Place</string>
+    <string name="activity_add_flow_score_step_you_label">You</string>
+    <string name="activity_add_flow_score_step_enemy_label">Enemy</string>
+    <string name="activity_add_flow_score_step_surrendered_by_label">Surrendered by</string>
+    <string name="activity_add_flow_score_step_surrendered_by_no_one_label">No one</string>
+    <string name="activity_add_flow_score_step_surrendered_by_you_label">You</string>
+    <string name="activity_add_flow_score_step_surrendered_by_enemy_label">Enemy</string>
+    <string name="activity_add_flow_score_step_score_error_empty">Score cannot be empty</string>
+    <string name="activity_add_flow_score_step_score_error_invalid">Invalid input</string>
+    <string name="activity_add_flow_score_step_score_error_negative">Score cannot be negative</string>
+    <string name="match_card_xp_placeholder">-</string>
+    <string name="activity_add_flow_mode_placeholder">No mode</string>
+    <string name="activity_add_flow_map_placeholder">No map</string>
+    <string name="activity_add_flow_xp_step_title">How much XP did you gain?</string>
+    <string name="activity_add_flow_xp_step_xp_label">XP</string>
+    <string name="activity_add_flow_xp_step_change_time">Change Date and Time</string>
+    <string name="activity_add_flow_mode_step_unranked">Unranked</string>
+    <string name="activity_add_flow_mode_step_ranked">Ranked</string>
+    <string name="activity_add_flow_rank_step_rr_label">RR</string>
+    <string name="activity_add_flow_xp_step_xp_error_empty">XP cannot be empty</string>
+    <string name="activity_add_flow_xp_step_xp_error_invalid">Invalid input</string>
+    <string name="activity_add_flow_xp_step_xp_error_negative">XP cannot be negative</string>
+    <string name="generic_button_cancel">Cancel</string>
+    <string name="dialog_time_picker_title">Select Time</string>
+    <string name="iconcd_time_picker_toggle_keyboard">Toggle time input mode to keyboard</string>
+    <string name="iconcd_time_picker_toggle_dial">Toggle time input mode to dial</string>
+    <string name="generic_button_back">Back</string>
+    <string name="date_time_picker_error_out_of_range">Date and time is outside the valid range</string>
+</resources>

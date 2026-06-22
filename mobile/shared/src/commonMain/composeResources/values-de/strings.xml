@@ -1,0 +1,87 @@
+<!--
+  ~ Copyright (c) 2026 Tim Anhalt (BitTim)
+  ~
+  ~ Project:    Valolink
+  ~ License:    GPLv3
+  ~
+  ~ File:       strings.xml
+  ~ Module:     Valolink.shared.commonMain
+  ~ Author:     Tim Anhalt (BitTim)
+  ~ Modified:   19.06.26, 02:25
+  -->
+
+<resources>
+
+    <string name="generic_button_finish">Abschließen</string>
+
+    <string name="iconcd_email">E-Mail</string>
+    <string name="iconcd_code">Code</string>
+
+    <string name="auth_landing_button_email">Weiter mit E-Mail</string>
+    <string name="auth_landing_button_google">Weiter mit Google</string>
+
+    <string name="auth_email_title">Gib deine E-Mail ein</string>
+    <string name="auth_email_description">Im nächsten Schritt senden wir dir einen Link und einen Code mit denen du dich anmelden kannst</string>
+    <string name="auth_email_textField_label">E-Mail</string>
+    <string name="auth_email_error_empty">E-Mail darf nicht leer sein</string>
+    <string name="auth_email_error_invalid">Ungültige E-Mail</string>
+
+    <string name="auth_otp_title">Gib deinen Code ein</string>
+    <string name="auth_otp_description">Wir haben dir einen Anmeldelink und einen Code an die untenstehende E-Mail Adresse gesendet. Bitte benutz den Link oder gib den Code ein um dich anzumelden.</string>
+    <string name="auth_otp_label">Einmalcode</string>
+    <string name="auth_otp_error_empty">Code darf nicht leer sein</string>
+    <string name="auth_otp_error_length">Code muss 8 Ziffern lang sein</string>
+    <string name="auth_otp_error_invalid">Ungültige Zeichen. Nur Zahlen sind erlaubt</string>
+    <string name="iconcd_key">Key</string>
+    <string name="iconcd_apple">Apple</string>
+    <string name="iconcd_google">Google</string>
+    <string name="auth_landing_button_apple">Weiter mit Apple</string>
+    <string name="iconcd_waving_hand">Winkende Hand</string>
+    <string name="iconcd_back">Zurück</string>
+    <string name="iconcd_close">Schließen</string>
+    <string name="auth_landing_error_invalid">Ungültige E-Mail</string>
+    <string name="auth_landing_error_empty">E-Mail darf nicht leer sein</string>
+    <string name="auth_landing_text_field_label">E-Mail</string>
+    <string name="auth_landing_title">Willkommen zu Valolink!</string>
+    <string name="auth_landing_description">Melde dich jetzt an um anzufangen. Wenn du deine E-Mail verwendest, senden wir dir einen Link und einen Code mit denen du dich anmelden kannst.</string>
+    <string name="auth_otp_resend">Nochmal senden</string>
+    <string name="auth_otp_cooldown_in">in</string>
+    <string name="auth_otp_cooldown">in %1$d Sekunden</string>
+    <string name="unit_xp">EP</string>
+    <string name="iconcd_add">Hinzufügen</string>
+    <string name="activity_add_flow_map_step_title">Auf welcher Map wurde gespielt?</string>
+    <string name="activity_add_flow_mode_step_title">Welcher Modus wurde gespielt?</string>
+    <string name="generic_button_continue">Weiter</string>
+    <string name="activity_add_flow_score_step_title">Wie ist das Match ausgegangen?</string>
+    <string name="activity_add_flow_score_step_place_label">Platz</string>
+    <string name="activity_add_flow_score_step_you_label">Du</string>
+    <string name="activity_add_flow_score_step_enemy_label">Gegner</string>
+    <string name="activity_add_flow_score_step_surrendered_by_label">Wer hat aufgegeben?</string>
+    <string name="activity_add_flow_score_step_surrendered_by_no_one_label">Niemand</string>
+    <string name="activity_add_flow_score_step_surrendered_by_you_label">Du</string>
+    <string name="activity_add_flow_score_step_surrendered_by_enemy_label">Gegner</string>
+    <string name="activity_add_flow_score_step_score_error_empty">Ergebnis darf nicht leer sein</string>
+    <string name="activity_add_flow_score_step_score_error_invalid">Ungültige Eingabe</string>
+    <string name="activity_add_flow_score_step_score_error_negative">Ergebnis darf nicht negativ sein</string>
+    <string name="match_card_xp_placeholder">-</string>
+    <string name="activity_add_flow_mode_placeholder">Kein Modus</string>
+    <string name="activity_add_flow_map_placeholder">Keine Map</string>
+    <string name="activity_add_flow_xp_step_title">Wie viele EP hast du bekommen?</string>
+    <string name="activity_add_flow_xp_step_xp_label">EP</string>
+    <string name="activity_add_flow_xp_step_change_time">Datum und Uhrzeit ändern</string>
+    <string name="activity_add_flow_result_step_unranked">Ungewertet</string>
+    <string name="activity_add_flow_result_step_ranked">Gewertet</string>
+    <string name="activity_add_flow_result_step_rr_label">RR</string>
+    <string name="activity_add_flow_xp_step_xp_error_empty">EP darf nich leer sein</string>
+    <string name="activity_add_flow_xp_step_xp_error_invalid">Ungültige Eingabe</string>
+    <string name="activity_add_flow_xp_step_xp_error_negative">EP darf nicht negativ sein</string>
+    <string name="generic_button_cancel">Abbrechen</string>
+    <string name="activity_add_flow_mode_step_unranked">Ungewertet</string>
+    <string name="activity_add_flow_mode_step_ranked">Gewertet</string>
+    <string name="activity_add_flow_rank_step_rr_label">RR</string>
+    <string name="dialog_time_picker_title">Uhrzeit auswählen</string>
+    <string name="iconcd_time_picker_toggle_keyboard">Tastatur für Zeiteingabe verwenden</string>
+    <string name="iconcd_time_picker_toggle_dial">Wählscheibe für Zeiteingabe verwenden</string>
+    <string name="generic_button_back">Zurück</string>
+    <string name="date_time_picker_error_out_of_range">Datum und Uhrzeit sind außerhalb des gültigen Zeitraums</string>
+</resources>

@@ -1,3 +1,6 @@
+# Environment (Secrets)
+.env
+
 # Gradle files
 .gradle/
 .kotlin/
@@ -34,3 +37,7 @@ supabase.properties
 # Android Profiling
 *.hprof
 /app/release/
+
+# Junie
+.junie/
+.ai/
