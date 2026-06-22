@@ -79,10 +79,7 @@ create table public.activities (
     user_id uuid not null default auth.uid(),
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
-    time timestamp with time zone check (
-        (type = 'MATCH' and time is null) or
-        (type != 'MATCH' and time is not null)
-    ),
+    time timestamp with time zone not null default now(),
     type text not null check (type in ('MATCH', 'RR_REFUND', 'XP_CORRECTION')),
     xp integer not null default 0,
     rr integer default null,
