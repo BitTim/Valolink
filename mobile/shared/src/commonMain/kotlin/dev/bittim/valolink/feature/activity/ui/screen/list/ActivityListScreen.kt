@@ -7,13 +7,16 @@
  * File:       ActivityListScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 19:24
+ * Modified:   22.06.26, 17:12
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +29,9 @@ import kotlin.time.Clock
 
 @Composable
 @Preview
-fun ActivityListScreen() {
+fun ActivityListScreen(
+    state: ActivityListState = ActivityListState()
+) {
     Surface(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.displayCutout)
@@ -111,6 +116,20 @@ fun ActivityListScreen() {
                     xp = 1000
                 )
             )
+
+            Text(
+                text = "Actual data"
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(state.activities ?: emptyList()) { activity ->
+                    Text(
+                        text = activity.type.name
+                    )
+                }
+            }
         }
     }
 }

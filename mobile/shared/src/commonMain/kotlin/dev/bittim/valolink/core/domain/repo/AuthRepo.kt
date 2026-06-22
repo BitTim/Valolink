@@ -7,12 +7,13 @@
  * File:       AuthRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.06.26, 16:31
+ * Modified:   22.06.26, 16:30
  */
 
 package dev.bittim.valolink.core.domain.repo
 
 import kotlin.time.Duration
+import kotlin.uuid.Uuid
 
 interface AuthRepo {
     val emailCooldown: Duration
@@ -21,6 +22,8 @@ interface AuthRepo {
     fun verifyOtp(email: String, otp: String)
     fun signInWithGoogle()
     fun signInWithApple()
+
+    fun getCurrentUserId(): Uuid?
 
     fun signOut()
 }

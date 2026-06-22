@@ -7,7 +7,7 @@
  * File:       SupabaseAuthRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.06.26, 16:31
+ * Modified:   22.06.26, 16:30
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.uuid.Uuid
 
 class SupabaseAuthRepo(
     private val auth: Auth,
@@ -56,6 +57,10 @@ class SupabaseAuthRepo(
         scope.launch {
             auth.signInWith(Apple)
         }
+    }
+
+    override fun getCurrentUserId(): Uuid? {
+        return auth.currentUserOrNull()?.id?.let { Uuid.parse(it) }
     }
 
     override fun signOut() {
