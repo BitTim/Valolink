@@ -45,7 +45,7 @@ interface ValoRankDao {
      * @param rankTable The unique identifier of the rank table.
      * @return A stream emitting lists of rank entities for the specified rank table.
      */
-    @Query("SELECT * FROM valo_ranks WHERE rankTable = :rankTable")
+    `@Query`("SELECT * FROM valo_ranks WHERE rankTable = :rankTable ORDER BY tier ASC")
     fun get(rankTable: Uuid): Flow<List<ValoRankEntity>>
 
     /**
