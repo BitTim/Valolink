@@ -39,9 +39,10 @@ class MapRrToRank(
             !it.division.contains("UNRANKED") && !it.division.contains("INVALID")
         } ?: return null
 
-        val tierOffset = ranks.firstOrNull()?.tier ?: return null
-        val calculatedTier = (floor(rr.toDouble() / RR_PER_RANK).toInt() + tierOffset)
-        val calculatedRr = rr - calculatedTier * RR_PER_RANK
+        val tierOffset = ranks.minOfOrNull { it.tier } ?: return null
+        val relativeTier = floor(rr.toDouble() / RR_PER_RANK).toInt()
+        val calculatedTier = relativeTier + tierOffset
+        val calculatedRr = rr - relativeTier * RR_PER_RANK
         val rank = ranks.firstOrNull { it.tier == calculatedTier } ?: return null
 
         return Rank(
