@@ -22,6 +22,9 @@ class SupabaseValoRankTableRepo(
     private val database: Database,
     private val supabase: SupabaseClient
 ) : ValoRankTableRepo {
+    /**
+     * Synchronizes Valo rank table data from Supabase to the local database.
+     */
     override suspend fun sync() {
         val tables = supabase.from("valo_rank_tables").select().decodeList<ValoRankTableDto>()
         database.valoRankTableDao().upsert(tables.map { it.toEntity() })

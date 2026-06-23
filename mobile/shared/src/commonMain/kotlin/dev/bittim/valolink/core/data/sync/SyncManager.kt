@@ -28,6 +28,12 @@ class SyncManager(
     private val valoRankTableRepo: ValoRankTableRepo,
     private val valoRankRepo: ValoRankRepo
 ) {
+    /**
+     * Starts continuous synchronization of version data between remote and local repositories.
+     *
+     * Observes both remote and local versions and triggers a data sync whenever the remote
+     * version differs from the local version.
+     */
     fun init() {
         valoVersionRepo.observeRemote()
             .combine(valoVersionRepo.observe()) { remoteVersion, localVersion ->
@@ -40,6 +46,9 @@ class SyncManager(
             .launchIn(scope)
     }
 
+    /**
+     * Synchronizes all Valo repositories.
+     */
     private suspend fun sync() {
         withContext(Dispatchers.IO) {
             valoModeRepo.sync()

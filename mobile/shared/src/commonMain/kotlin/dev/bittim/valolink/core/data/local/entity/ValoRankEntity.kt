@@ -44,6 +44,12 @@ data class ValoRankEntity(
     val division: String,
     val divisionName: Map<String, String>
 ) {
+    /**
+     * Converts this entity to a domain model with localized tier and division names.
+     *
+     * @param locale The locale code for localizing names. If null, a default locale is used.
+     * @return A ValoRank domain model with localized names.
+     */
     fun toModel(locale: String?): ValoRank {
         return ValoRank(
             rankTable = rankTable,

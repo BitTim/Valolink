@@ -26,6 +26,11 @@ data class ValoCompetitiveSeasonDto(
     @SerialName("start_time") val startTime: Instant,
     @SerialName("end_time") val endTime: Instant,
 ) {
+    /**
+     * Converts this DTO to a domain entity.
+     *
+     * @return The corresponding [ValoCompetitiveSeasonEntity].
+     */
     fun toEntity(): ValoCompetitiveSeasonEntity {
         return ValoCompetitiveSeasonEntity(
             uuid = uuid,

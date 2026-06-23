@@ -29,18 +29,32 @@ class SupabaseValoCompetitiveSeasonRepo(
     private val database: Database,
     private val supabase: SupabaseClient
 ) : ValoCompetitiveSeasonRepo {
+    /**
+     * Observes changes to a competitive season by UUID.
+     *
+     * @return A flow that emits the competitive season for the given UUID, or null if not found.
+     */
     override fun observe(uuid: Uuid): Flow<ValoCompetitiveSeason?> {
         return database.valoCompetitiveSeasonDao().get(uuid)
             .map { it?.toModel() }
             .flowOn(Dispatchers.IO)
     }
 
+    /**
+     * Observes the competitive season data for a given season UUID.
+     *
+     * @param season The UUID of the season to observe.
+     * @return A flow that emits the competitive season, or null if not found.
+     */
     override fun observeBySeason(season: Uuid): Flow<ValoCompetitiveSeason?> {
         return database.valoCompetitiveSeasonDao().getBySeason(season)
             .map { it?.toModel() }
             .flowOn(Dispatchers.IO)
     }
 
+    /**
+     * Fetches all competitive seasons from Supabase and syncs them to the local database.
+     */
     override suspend fun sync() {
         val competitiveSeason = supabase.from("valo_competitive_seasons").select().decodeList<ValoCompetitiveSeasonDto>()
         database.valoCompetitiveSeasonDao().upsert(competitiveSeason.map { it.toEntity() })

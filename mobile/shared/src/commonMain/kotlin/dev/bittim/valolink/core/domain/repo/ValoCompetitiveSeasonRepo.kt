@@ -17,8 +17,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface ValoCompetitiveSeasonRepo {
-    fun observe(uuid: Uuid): Flow<ValoCompetitiveSeason?>
-    fun observeBySeason(season: Uuid): Flow<ValoCompetitiveSeason?>
+    /**
+ * Observes changes to a competitive season.
+ *
+ * @return A flow that emits the competitive season, or null if not found.
+ */
+fun observe(uuid: Uuid): Flow<ValoCompetitiveSeason?>
+    /**
+ * Observes the competitive season associated with the given season UUID.
+ *
+ * @param season The UUID of the season to observe.
+ * @return A Flow that emits the competitive season, or null if not found.
+ */
+fun observeBySeason(season: Uuid): Flow<ValoCompetitiveSeason?>
 
-    suspend fun sync()
+    /**
+ * Synchronizes the repository with the latest competitive season data.
+ */
+suspend fun sync()
 }

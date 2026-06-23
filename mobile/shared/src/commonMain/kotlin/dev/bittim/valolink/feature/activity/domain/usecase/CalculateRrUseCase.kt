@@ -16,6 +16,13 @@ import dev.bittim.valolink.core.domain.model.Activity
 import kotlin.uuid.Uuid
 
 class CalculateRrUseCase {
+    /**
+     * Calculates the sum of `rr` values from activities up to (and including) a specified identifier.
+     *
+     * @param activities The list of activities to process.
+     * @param upToInclusive The maximum activity identifier to include in the sum.
+     * @return The sum of `rr` values from activities with `id` less than or equal to `upToInclusive`, or `null` if `activities` is `null`.
+     */
     operator fun invoke(
         activities: List<Activity>?,
         upToInclusive: Uuid

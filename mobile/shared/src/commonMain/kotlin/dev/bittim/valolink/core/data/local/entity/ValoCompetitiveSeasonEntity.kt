@@ -45,6 +45,11 @@ data class ValoCompetitiveSeasonEntity(
     val startTime: Instant,
     val endTime: Instant
 ) {
+    /**
+     * Converts this competitive season entity to its domain model representation.
+     *
+     * @return The domain model instance with all properties mapped from the entity.
+     */
     fun toModel(): ValoCompetitiveSeason {
         return ValoCompetitiveSeason(
             uuid = uuid,
