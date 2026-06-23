@@ -7,13 +7,15 @@
  * File:       ValoRankEntity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   23.06.26, 02:38
  */
 
 package dev.bittim.valolink.core.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import dev.bittim.valolink.core.data.util.localized
+import dev.bittim.valolink.core.domain.model.ValoRank
 import kotlin.uuid.Uuid
 
 @Entity(
@@ -41,4 +43,20 @@ data class ValoRankEntity(
     val backgroundColor: String,
     val division: String,
     val divisionName: Map<String, String>
-)
+) {
+    fun toModel(locale: String?): ValoRank {
+        return ValoRank(
+            rankTable = rankTable,
+            tier = tier,
+            tierName = tierName.localized(locale),
+            smallIcon = smallIcon,
+            largeIcon = largeIcon,
+            rankTriangleDownIcon = rankTriangleDownIcon,
+            rankTriangleUpIcon = rankTriangleUpIcon,
+            color = color,
+            backgroundColor = backgroundColor,
+            division = division,
+            divisionName = divisionName.localized(locale)
+        )
+    }
+}

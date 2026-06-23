@@ -7,13 +7,14 @@
  * File:       ValoCompetitiveSeasonEntity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   23.06.26, 02:28
  */
 
 package dev.bittim.valolink.core.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import dev.bittim.valolink.core.domain.model.ValoCompetitiveSeason
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -43,4 +44,14 @@ data class ValoCompetitiveSeasonEntity(
     val rankTable: Uuid,
     val startTime: Instant,
     val endTime: Instant
-)
+) {
+    fun toModel(): ValoCompetitiveSeason {
+        return ValoCompetitiveSeason(
+            uuid = uuid,
+            season = season,
+            rankTable = rankTable,
+            startTime = startTime,
+            endTime = endTime
+        )
+    }
+}
