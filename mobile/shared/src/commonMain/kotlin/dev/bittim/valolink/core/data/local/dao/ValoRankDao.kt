@@ -27,7 +27,7 @@ interface ValoRankDao {
     @Query("SELECT * FROM valo_ranks WHERE rankTable = :rankTable AND tier = :tier LIMIT 1")
     fun get(rankTable: Uuid, tier: Int): Flow<ValoRankEntity?>
 
-    @Query("SELECT * FROM valo_ranks WHERE rankTable = :rankTable")
+    `@Query`("SELECT * FROM valo_ranks WHERE rankTable = :rankTable ORDER BY tier ASC")
     fun get(rankTable: Uuid): Flow<List<ValoRankEntity>>
 
     @Query("SELECT * FROM valo_ranks")
