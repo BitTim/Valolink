@@ -25,13 +25,6 @@ class MapRrToRank(
     private val valoCompetitiveSeasonRepo: ValoCompetitiveSeasonRepo,
     private val valoRankRepo: ValoRankRepo
 ) {
-    /**
-     * Converts an RR rating value into its corresponding rank at a specified time.
-     *
-     * @param time The instant at which to resolve the rank.
-     * @param locale Optional locale for rank data retrieval.
-     * @return A `Rank` with the matched rank entry and remaining RR points, or `null` if the rank cannot be determined.
-     */
     suspend operator fun invoke(rr: Int, time: Instant, locale: String? = null): Rank? {
         val season = valoSeasonRepo.observe(time, locale).firstOrNull() ?: return null
         val competitiveSeason = valoCompetitiveSeasonRepo.observeBySeason(season.uuid).firstOrNull() ?: return null
@@ -40,8 +33,9 @@ class MapRrToRank(
         } ?: return null
 
         val tierOffset = ranks.firstOrNull()?.tier ?: return null
-        val calculatedTier = (floor(rr.toDouble() / RR_PER_RANK).toInt() + tierOffset)
-        val calculatedRr = rr - calculatedTier * RR_PER_RANK
+        val relativeTier = floor(rr.toDouble() / RR_PER_RANK).toInt()
+        val calculatedTier = relativeTier + tierOffset
+        val calculatedRr = rr - relativeTier * RR_PER_RANK
         val rank = ranks.firstOrNull { it.tier == calculatedTier } ?: return null
 
         return Rank(
