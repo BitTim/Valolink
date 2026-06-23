@@ -20,6 +20,11 @@ import kotlin.uuid.Uuid
 data class ValoRankTableDto(
     val uuid: Uuid
 ) {
+    /**
+     * Converts this DTO to a domain entity.
+     *
+     * @return The corresponding ValoRankTableEntity.
+     */
     fun toEntity(): ValoRankTableEntity {
         return ValoRankTableEntity(
             uuid = uuid,

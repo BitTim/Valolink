@@ -31,6 +31,11 @@ data class ValoRankDto(
     val division: String,
     @SerialName("division_name") val divisionName: Map<String, String>,
 ) {
+    /**
+     * Converts this DTO to a ValoRankEntity.
+     *
+     * @return The corresponding entity representation.
+     */
     fun toEntity(): ValoRankEntity {
         return ValoRankEntity(
             rankTable = rankTable,

@@ -29,6 +29,11 @@ class SupabaseValoRankRepo(
     private val database: Database,
     private val supabase: SupabaseClient
 ) : ValoRankRepo {
+    /**
+     * Streams a rank tier from the local database.
+     *
+     * @return A flow that emits the rank for the specified tier, or `null` if not found.
+     */
     override fun observe(
         rankTable: Uuid,
         tier: Int,
@@ -39,12 +44,21 @@ class SupabaseValoRankRepo(
             .flowOn(Dispatchers.IO)
     }
 
+    /**
+     * Observes all rank data for a given rank table.
+     *
+     * @param locale The locale to use for localizing the returned rank models.
+     * @return A [Flow] emitting lists of all [ValoRank] models for the rank table.
+     */
     override fun observeAll(rankTable: Uuid, locale: String?): Flow<List<ValoRank>> {
         return database.valoRankDao().get(rankTable)
             .map { it.map { entity -> entity.toModel(locale) } }
             .flowOn(Dispatchers.IO)
     }
 
+    /**
+     * Fetches all rank data from the remote server and updates the local database.
+     */
     override suspend fun sync() {
         val ranks = supabase.from("valo_ranks").select().decodeList<ValoRankDto>()
         database.valoRankDao().upsert(ranks.map { it.toEntity() })

@@ -73,12 +73,42 @@ import dev.bittim.valolink.core.data.local.entity.*
 )
 abstract class Database : RoomDatabase() {
     abstract fun valoVersionDao(): ValoVersionDao
-    abstract fun valoModeDao(): ValoModeDao
-    abstract fun valoMapDao(): ValoMapDao
-    abstract fun valoSeasonDao(): ValoSeasonDao
-    abstract fun valoCompetitiveSeasonDao(): ValoCompetitiveSeasonDao
-    abstract fun valoRankTableDao(): ValoRankTableDao
-    abstract fun valoRankDao(): ValoRankDao
+    /**
+ * Provides access to the ValoMode data access object.
+ *
+ * @return The ValoMode DAO for database operations.
+ */
+abstract fun valoModeDao(): ValoModeDao
+    /**
+ * Provides access to the map data access object.
+ *
+ * @return The DAO for accessing map data.
+ */
+abstract fun valoMapDao(): ValoMapDao
+    /**
+ * Provides access to the DAO for season-related database operations.
+ *
+ * @return The ValoSeasonDao instance.
+ */
+abstract fun valoSeasonDao(): ValoSeasonDao
+    /**
+ * Provides access to the data access object for competitive season operations.
+ *
+ * @return The competitive season DAO.
+ */
+abstract fun valoCompetitiveSeasonDao(): ValoCompetitiveSeasonDao
+    /**
+ * Provides access to the rank table data access object.
+ *
+ * @return The ValoRankTableDao instance.
+ */
+abstract fun valoRankTableDao(): ValoRankTableDao
+    /**
+ * Provides access to the rank data access object.
+ *
+ * @return The [ValoRankDao] for rank-related database operations.
+ */
+abstract fun valoRankDao(): ValoRankDao
 }
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", "KotlinNoActualForExpect")

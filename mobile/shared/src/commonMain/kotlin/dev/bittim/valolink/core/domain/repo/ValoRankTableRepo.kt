@@ -13,5 +13,8 @@
 package dev.bittim.valolink.core.domain.repo
 
 interface ValoRankTableRepo {
-    suspend fun sync()
+    /**
+ * Synchronizes the ValoRank table data.
+ */
+suspend fun sync()
 }
