@@ -7,15 +7,12 @@
  * File:       SyncManager.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 04:16
+ * Modified:   23.06.26, 03:39
  */
 
 package dev.bittim.valolink.core.data.sync
 
-import dev.bittim.valolink.core.domain.repo.ValoMapRepo
-import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.core.domain.repo.ValoSeasonRepo
-import dev.bittim.valolink.core.domain.repo.ValoVersionRepo
+import dev.bittim.valolink.core.domain.repo.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
@@ -26,8 +23,17 @@ class SyncManager(
     private val valoVersionRepo: ValoVersionRepo,
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
-    private val valoSeasonRepo: ValoSeasonRepo
+    private val valoSeasonRepo: ValoSeasonRepo,
+    private val valoCompetitiveSeasonRepo: ValoCompetitiveSeasonRepo,
+    private val valoRankTableRepo: ValoRankTableRepo,
+    private val valoRankRepo: ValoRankRepo
 ) {
+    /**
+     * Starts continuous synchronization of version data between remote and local repositories.
+     *
+     * Observes both remote and local versions and triggers a data sync whenever the remote
+     * version differs from the local version.
+     */
     fun init() {
         valoVersionRepo.observeRemote()
             .combine(valoVersionRepo.observe()) { remoteVersion, localVersion ->
@@ -40,11 +46,17 @@ class SyncManager(
             .launchIn(scope)
     }
 
+    /**
+     * Synchronizes all Valo repositories.
+     */
     private suspend fun sync() {
         withContext(Dispatchers.IO) {
             valoModeRepo.sync()
             valoMapRepo.sync()
             valoSeasonRepo.sync()
+            valoRankTableRepo.sync()
+            valoCompetitiveSeasonRepo.sync()
+            valoRankRepo.sync()
         }
     }
 
