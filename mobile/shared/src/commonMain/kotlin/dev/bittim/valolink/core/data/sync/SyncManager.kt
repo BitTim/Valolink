@@ -7,15 +7,12 @@
  * File:       SyncManager.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 04:16
+ * Modified:   23.06.26, 03:39
  */
 
 package dev.bittim.valolink.core.data.sync
 
-import dev.bittim.valolink.core.domain.repo.ValoMapRepo
-import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.core.domain.repo.ValoSeasonRepo
-import dev.bittim.valolink.core.domain.repo.ValoVersionRepo
+import dev.bittim.valolink.core.domain.repo.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
@@ -26,7 +23,10 @@ class SyncManager(
     private val valoVersionRepo: ValoVersionRepo,
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
-    private val valoSeasonRepo: ValoSeasonRepo
+    private val valoSeasonRepo: ValoSeasonRepo,
+    private val valoCompetitiveSeasonRepo: ValoCompetitiveSeasonRepo,
+    private val valoRankTableRepo: ValoRankTableRepo,
+    private val valoRankRepo: ValoRankRepo
 ) {
     fun init() {
         valoVersionRepo.observeRemote()
@@ -45,6 +45,9 @@ class SyncManager(
             valoModeRepo.sync()
             valoMapRepo.sync()
             valoSeasonRepo.sync()
+            valoRankTableRepo.sync()
+            valoCompetitiveSeasonRepo.sync()
+            valoRankRepo.sync()
         }
     }
 
