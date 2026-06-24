@@ -123,7 +123,8 @@ class ActivityAddFlowViewModel(
             val isRankedSelected = _state.value.isRankedSelected
             val (prevRank, rank) = if (isRankedSelected) {
                 val totalRr = calculateRrBeforeTimeUseCase(activities, currentMode?.uuid, time)
-                Pair(mapRrToRank(totalRr, time), mapRrToRank(totalRr?.plus(rr ?: 0), time))
+                val currentTotalRr = rr?.let { (totalRr ?: 0) + it } ?: totalRr
+                Pair(mapRrToRank(totalRr, time), mapRrToRank(currentTotalRr, time))
             } else Pair(null, null)
             val rankChanged = prevRank?.rank?.tier != rank?.rank?.tier
 
