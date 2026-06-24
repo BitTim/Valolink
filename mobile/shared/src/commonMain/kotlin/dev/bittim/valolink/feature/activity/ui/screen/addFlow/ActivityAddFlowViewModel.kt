@@ -63,6 +63,11 @@ class ActivityAddFlowViewModel(
     private var modes: List<ValoMode>? = null
     private var activities: List<Activity>? = null
 
+    /**
+     * Moves the add flow back by one step or exits the screen from the first step.
+     *
+     * @param navBack Called when the current step is the first step and the screen should navigate back.
+     */
     private fun handleBack(
         navBack: () -> Unit
     ) {
@@ -86,6 +91,12 @@ class ActivityAddFlowViewModel(
         }
     }
 
+    /**
+     * Recomputes the derived UI state from the current selections and loaded data.
+     *
+     * Updates the visible cards, button enablement, match summary, and ranked indicators using the
+     * selected mode, map, score, time, and season activities.
+     */
     private fun updateUiState() {
         uiStateUpdateJob?.cancel()
         uiStateUpdateJob = viewModelScope.launch {
@@ -163,6 +174,9 @@ class ActivityAddFlowViewModel(
         }
     }
 
+    /**
+     * Loads the season activities for the selected time.
+     */
     private fun updateActivities() {
         activityFetchJob?.cancel()
         activityFetchJob = viewModelScope.launch {
@@ -170,6 +184,11 @@ class ActivityAddFlowViewModel(
         }
     }
 
+    /**
+     * Updates the selected mode and resets dependent selections when the mode category changes.
+     *
+     * @param uuid The selected mode identifier.
+     */
     private fun selectMode(uuid: Uuid?) {
         val oldCategory = modes?.firstOrNull { it.uuid == _state.value.modeUuid }?.category
         val newCategory = modes?.firstOrNull { it.uuid == uuid }?.category
@@ -274,6 +293,13 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Updates the selected time from the provided date and clock values.
+     *
+     * @param dateMillis The selected date in epoch milliseconds.
+     * @param hour The selected hour of day.
+     * @param minute The selected minute.
+     */
     private fun updateTime(dateMillis: Long, hour: Int, minute: Int) {
         val localDate = Instant.fromEpochMilliseconds(dateMillis).toLocalDateTime(timeZone).date
         val localTime = LocalTime(hour, minute)

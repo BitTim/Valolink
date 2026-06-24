@@ -24,6 +24,13 @@ class GetSeasonActivitiesForCurrentUserByTimeUseCase(
     private val valoSeasonRepo: ValoSeasonRepo,
     private val activityRepo: ActivityRepo
 ) {
+    /**
+     * Gets the current user's activities for the season active at the specified time.
+     *
+     * @param time The point in time used to determine the active season.
+     * @param locale The locale used when resolving the season.
+     * @return The activities for the current user in the active season, or an empty list if no current user or season is available.
+     */
     suspend operator fun invoke(time: Instant, locale: String? = null): List<Activity> {
         val userId = authRepo.getCurrentUserId() ?: return emptyList()
         val season = valoSeasonRepo.observe(time, locale).firstOrNull() ?: return emptyList()

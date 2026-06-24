@@ -31,6 +31,11 @@ data class ActivityDto(
     val rr: Int?,
     val mode: Uuid?
 ) {
+    /**
+     * Converts this DTO into an activity domain model.
+     *
+     * @return The corresponding activity model.
+     */
     fun toModel(): Activity {
         return Activity(
             id = id,

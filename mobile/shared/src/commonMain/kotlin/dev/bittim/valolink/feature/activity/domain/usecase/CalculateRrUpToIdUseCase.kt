@@ -17,11 +17,12 @@ import kotlin.uuid.Uuid
 
 class CalculateRrUpToIdUseCase {
     /**
-     * Calculates the sum of `rr` values from activities up to (and including) a specified identifier.
+     * Calculates the sum of `rr` values for matching activities up to a specified identifier.
      *
-     * @param activities The list of activities to process.
-     * @param upToInclusive The maximum activity identifier to include in the sum.
-     * @return The sum of `rr` values from activities sorted by time up to `id` equal to `upToInclusive`, or `null` if `activities` is `null`.
+     * @param activities The activities to process.
+     * @param modeUuid The activity mode to match.
+     * @param upToInclusive The activity identifier to include up to.
+     * @return The sum of `rr` values for matching activities up to `upToInclusive`, or `null` if no matching `rr` values are found or `activities` is `null`.
      */
     operator fun invoke(
         activities: List<Activity>?,

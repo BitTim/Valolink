@@ -18,11 +18,12 @@ import kotlin.uuid.Uuid
 
 class CalculateRrBeforeTimeUseCase {
     /**
-     * Calculates the sum of `rr` values from activities up to (and including) a specified timestamp.
+     * Calculates the sum of `rr` values for matching activities up to a given timestamp.
      *
-     * @param activities The list of activities to process.
-     * @param before The maximum timestamp to include in the sum.
-     * @return The sum of `rr` values from activities with `time` less than or equal to `before`, or `null` if `activities` is `null`.
+     * @param activities The activities to process.
+     * @param modeUuid The mode to match against each activity's mode.
+     * @param before The latest timestamp to include.
+     * @return The sum of `rr` values for activities with a matching mode and `time` less than or equal to `before`, or `null` if no matching activities contribute to the sum.
      */
     operator fun invoke(
         activities: List<Activity>?,
