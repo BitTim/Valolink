@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 19:45
+ * Modified:   24.06.26, 20:34
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -121,17 +121,18 @@ class ActivityAddFlowViewModel(
             val rr = _state.value.rr
 
             val isRankedSelected = _state.value.isRankedSelected
-            val (prevRank, rank) = if (isRankedSelected) {
+            val (prevRank, rank, hasRankPlacement) = if (isRankedSelected) {
                 val totalRr = calculateRrBeforeTimeUseCase(activities, currentMode?.uuid, time)
                 val currentTotalRr = rr?.let { (totalRr ?: 0) + it } ?: totalRr
-                Pair(mapRrToRank(totalRr, time), mapRrToRank(currentTotalRr, time))
-            } else Pair(null, null)
+                Triple(mapRrToRank(totalRr, time), mapRrToRank(currentTotalRr, time), totalRr != null)
+            } else Triple(null, null, false)
             val rankChanged = prevRank?.rank?.tier != rank?.rank?.tier
 
             val enableModeContinueButton = modes != null && _state.value.modeUuid != null
             val enableMapContinueButton = maps != null && _state.value.mapUuid != null
             val enableScoreContinueButton =
                 scoreA != null && _state.value.scoreAError == null && (isPlacementScoreType || scoreB != null && _state.value.scoreBError == null)
+            val enableRankContinueButton = false
             val enableResultContinueButton = false
 
             val iconUrl = if (rank != null) rank.rank.largeIcon else currentMode?.displayIcon
@@ -144,10 +145,12 @@ class ActivityAddFlowViewModel(
                     }?.map { map -> MapCardState.from(map) },
                     isPlacementScoreType = isPlacementScoreType,
                     supportsRanked = currentMode?.canBeRanked ?: false,
+                    hasRankPlacement = hasRankPlacement,
 
                     enableModeContinueButton = enableModeContinueButton,
                     enableMapContinueButton = enableMapContinueButton,
                     enableScoreContinueButton = enableScoreContinueButton,
+                    enableRankContinueButton = enableRankContinueButton,
                     enableResultContinueButton = enableResultContinueButton,
 
                     matchCardState = it.matchCardState.copy(
@@ -157,10 +160,12 @@ class ActivityAddFlowViewModel(
                             iconUrl = iconUrl,
                             mapImageUrl = currentMap?.splash,
                             outcome = matchOutcome,
-                            rrChipState = RrChipState(
-                                rr = rank?.rr ?: 0,
-                                rankChanged = rankChanged
-                            ),
+                            rrChipState = rank?.let {
+                                RrChipState(
+                                    rr = rank.rr,
+                                    rankChanged = rankChanged
+                                )
+                            },
                         ),
                         scoreChipState = it.matchCardState.scoreChipState.copy(
                             score = score,
@@ -191,14 +196,16 @@ class ActivityAddFlowViewModel(
      * @param uuid The selected mode identifier.
      */
     private fun selectMode(uuid: Uuid?) {
-        val oldCategory = modes?.firstOrNull { it.uuid == _state.value.modeUuid }?.category
-        val newCategory = modes?.firstOrNull { it.uuid == uuid }?.category
+        val oldMode = modes?.firstOrNull { it.uuid == _state.value.modeUuid }
+        val newMode = modes?.firstOrNull { it.uuid == uuid }
 
-        val scoreTypeChanged = newCategory?.getScoreType() != oldCategory?.getScoreType()
-        val mapTypeChanged = newCategory?.let { ValoMapCategory.from(it) } != oldCategory?.let { modeCategory ->  ValoMapCategory.from(modeCategory) }
+        val scoreTypeChanged = newMode?.category?.getScoreType() != oldMode?.category?.getScoreType()
+        val mapTypeChanged = newMode?.category?.let { ValoMapCategory.from(it) } != oldMode?.category?.let { modeCategory ->  ValoMapCategory.from(modeCategory) }
+        val supportsRankedChanged = newMode?.canBeRanked != oldMode?.canBeRanked
 
         if (scoreTypeChanged) { resetScore() }
         if (mapTypeChanged) { resetMap() }
+        if (supportsRankedChanged) { updateRanked(false) }
 
         _state.update { it.copy(modeUuid = uuid) }
         updateUiState()

@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   19.06.26, 02:25
+  ~ Modified:   24.06.26, 20:05
   -->
 
 <resources>
@@ -74,4 +74,5 @@
     <string name="iconcd_time_picker_toggle_dial">Toggle time input mode to dial</string>
     <string name="generic_button_back">Back</string>
     <string name="date_time_picker_error_out_of_range">Date and time is outside the valid range</string>
+    <string name="activity_add_flow_rank_step_title">How did your rank change?</string>
 </resources>

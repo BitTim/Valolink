@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   19.06.26, 02:25
+  ~ Modified:   24.06.26, 20:30
   -->
 
 <resources>
@@ -84,4 +84,5 @@
     <string name="iconcd_time_picker_toggle_dial">Wählscheibe für Zeiteingabe verwenden</string>
     <string name="generic_button_back">Zurück</string>
     <string name="date_time_picker_error_out_of_range">Datum und Uhrzeit sind außerhalb des gültigen Zeitraums</string>
+    <string name="activity_add_flow_rank_step_title">Wie hat sich dein Rang verändert?</string>
 </resources>
