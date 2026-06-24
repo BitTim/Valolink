@@ -7,7 +7,7 @@
  * File:       MapRrToRank.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.06.26, 03:30
+ * Modified:   24.06.26, 19:30
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
@@ -32,18 +32,26 @@ class MapRrToRank(
      * @param locale Optional locale for rank data retrieval.
      * @return A `Rank` with the matched rank entry and remaining RR points, or `null` if the rank cannot be determined.
      */
-    suspend operator fun invoke(rr: Int, time: Instant, locale: String? = null): Rank? {
+    suspend operator fun invoke(rr: Int?, time: Instant, locale: String? = null): Rank? {
         val season = valoSeasonRepo.observe(time, locale).firstOrNull() ?: return null
         val competitiveSeason = valoCompetitiveSeasonRepo.observeBySeason(season.uuid).firstOrNull() ?: return null
-        val ranks = valoRankRepo.observeAll(competitiveSeason.rankTable, locale).firstOrNull()?.filter {
+
+        val ranks = valoRankRepo.observeAll(competitiveSeason.rankTable, locale).firstOrNull()
+        val filteredRanks = ranks?.filter {
             !it.division.contains("UNRANKED") && !it.division.contains("INVALID")
         } ?: return null
 
-        val tierOffset = ranks.minOfOrNull { it.tier } ?: return null
+        if (rr == null) return ranks.firstOrNull { it.tier == 0 }?.let {
+            Rank(rank = it, rr = 0)
+        }
+
+        val tierOffset = filteredRanks.minOfOrNull { it.tier } ?: return null
         val relativeTier = floor(rr.toDouble() / RR_PER_RANK).toInt()
         val calculatedTier = relativeTier + tierOffset
         val calculatedRr = rr - relativeTier * RR_PER_RANK
-        val rank = ranks.firstOrNull { it.tier == calculatedTier } ?: return null
+
+        val actualTier = calculatedTier.coerceAtMost(filteredRanks.lastOrNull()?.tier ?: 0)
+        val rank = filteredRanks.firstOrNull { it.tier == actualTier } ?: return null
 
         return Rank(
             rank = rank,

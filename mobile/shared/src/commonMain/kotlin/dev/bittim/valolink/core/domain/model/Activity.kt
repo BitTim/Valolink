@@ -7,7 +7,7 @@
  * File:       Activity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 03:48
+ * Modified:   24.06.26, 19:10
  */
 
 package dev.bittim.valolink.core.domain.model
@@ -21,5 +21,6 @@ data class Activity(
     val time: Instant,
     val type: ActivityType,
     val xp: Int,
-    val rr: Int?
+    val rr: Int?,
+    val mode: Uuid?
 )

@@ -7,13 +7,14 @@
  * File:       CalculateRrBeforeTimeUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 03:52
+ * Modified:   24.06.26, 19:21
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
 
 import dev.bittim.valolink.core.domain.model.Activity
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 class CalculateRrBeforeTimeUseCase {
     /**
@@ -25,11 +26,14 @@ class CalculateRrBeforeTimeUseCase {
      */
     operator fun invoke(
         activities: List<Activity>?,
+        modeUuid: Uuid?,
         before: Instant
     ): Int? {
         if (activities == null) return null
 
-        val filteredActivities = activities.sortedBy { it.time }.takeWhile { it.time <= before }.filter { it.rr != null }
-        return filteredActivities.sumOf { it.rr!! }
+        val filteredActivities = activities.filter {
+            it.mode == modeUuid
+        }.sortedBy { it.time }.takeWhile { it.time <= before }.filter { it.rr != null }
+        return if(filteredActivities.isEmpty()) null else filteredActivities.sumOf { it.rr!! }
     }
 }
