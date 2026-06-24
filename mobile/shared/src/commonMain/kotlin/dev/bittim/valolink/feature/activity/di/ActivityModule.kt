@@ -7,7 +7,7 @@
  * File:       ActivityModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 03:52
+ * Modified:   24.06.26, 17:49
  */
 
 package dev.bittim.valolink.feature.activity.di
@@ -23,6 +23,7 @@ val featureActivityModule = module {
     singleOf(::ParseIntUseCase)
     singleOf(::FormatScoreUseCase)
     singleOf(::MatchOutcomeFromScoreUseCase)
+    singleOf(::GetSeasonActivitiesForCurrentUserByTimeUseCase)
     singleOf(::GetCurrentSeasonActivitiesForCurrentUserUseCase)
     singleOf(::CalculateRrBeforeTimeUseCase)
     singleOf(::CalculateRrUpToIdUseCase)

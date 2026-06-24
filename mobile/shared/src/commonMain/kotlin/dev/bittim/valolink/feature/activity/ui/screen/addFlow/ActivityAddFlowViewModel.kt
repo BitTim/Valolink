@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 14:21
+ * Modified:   24.06.26, 19:45
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -20,9 +20,7 @@ import dev.bittim.valolink.core.domain.extension.toLocalizedString
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.feature.activity.domain.usecase.FormatScoreUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.MatchOutcomeFromScoreUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.ParseIntUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.*
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.components.match.RrChipState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
@@ -40,25 +38,36 @@ class ActivityAddFlowViewModel(
     private val parseIntUseCase: ParseIntUseCase,
     private val formatScoreUseCase: FormatScoreUseCase,
     private val matchOutcomeFromScoreUseCase: MatchOutcomeFromScoreUseCase,
+    private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase,
+    private val calculateRrBeforeTimeUseCase: CalculateRrBeforeTimeUseCase,
+    private val mapRrToRank: MapRrToRank,
 
     private val valoModeRepo: ValoModeRepo,
-    private val valoMapRepo: ValoMapRepo
+    private val valoMapRepo: ValoMapRepo,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ActivityAddFlowState())
     val state = _state.asStateFlow()
 
     val timeZone = TimeZone.currentSystemDefault()
 
+    private var uiStateUpdateJob: Job? = null
     private var placeholderFetchJob: Job? = null
     private var modeObserveJob: Job? = null
     private var mapObserveJob: Job? = null
+    private var activityFetchJob: Job? = null
 
     private var modePlaceholder: String = ""
     private var mapPlaceholder: String = ""
 
     private var maps: List<SimpleValoMap>? = null
     private var modes: List<ValoMode>? = null
+    private var activities: List<Activity>? = null
 
+    /**
+     * Moves the add flow back by one step or exits the screen from the first step.
+     *
+     * @param navBack Called when the current step is the first step and the screen should navigate back.
+     */
     private fun handleBack(
         navBack: () -> Unit
     ) {
@@ -82,66 +91,105 @@ class ActivityAddFlowViewModel(
         }
     }
 
+    /**
+     * Recomputes the derived UI state from the current selections and loaded data.
+     *
+     * Updates the visible cards, button enablement, match summary, and ranked indicators using the
+     * selected mode, map, score, time, and season activities.
+     */
     private fun updateUiState() {
-        val currentMode = modes?.firstOrNull { it.uuid == _state.value.modeUuid }
-        val currentMap = maps?.firstOrNull { it.uuid == _state.value.mapUuid }
+        uiStateUpdateJob?.cancel()
+        uiStateUpdateJob = viewModelScope.launch {
+            activityFetchJob?.join()
 
-        val scoreA = _state.value.scoreA
-        val scoreB = _state.value.scoreB
-        val surrender = _state.value.surrender
-        val modeCategory = currentMode?.category ?: ValoModeCategory.Standard
+            val currentMode = modes?.firstOrNull { it.uuid == _state.value.modeUuid }
+            val currentMap = maps?.firstOrNull { it.uuid == _state.value.mapUuid }
 
-        val isPlacementScoreType = currentMode?.category?.getScoreType() == ValoModeCategory.ScoreType.Placement
-        val score = formatScoreUseCase(scoreA, scoreB, modeCategory)
-        val matchOutcome = matchOutcomeFromScoreUseCase(scoreA, scoreB, surrender, modeCategory) ?: MatchOutcome.Draw
+            val scoreA = _state.value.scoreA
+            val scoreB = _state.value.scoreB
+            val surrender = _state.value.surrender
+            val modeCategory = currentMode?.category ?: ValoModeCategory.Standard
 
-        val time = _state.value.time.toLocalizedString()
-        val xp = _state.value.xp
-        val rr = _state.value.rr
+            val isPlacementScoreType = currentMode?.category?.getScoreType() == ValoModeCategory.ScoreType.Placement
+            val score = formatScoreUseCase(scoreA, scoreB, modeCategory)
+            val matchOutcome =
+                matchOutcomeFromScoreUseCase(scoreA, scoreB, surrender, modeCategory) ?: MatchOutcome.Draw
 
-        val enableModeContinueButton = modes != null && _state.value.modeUuid != null
-        val enableMapContinueButton = maps != null && _state.value.mapUuid != null
-        val enableScoreContinueButton = scoreA != null && _state.value.scoreAError == null && (isPlacementScoreType || scoreB != null && _state.value.scoreBError == null)
-        val enableResultContinueButton = false
+            val time = _state.value.time
+            val localizedTimeString = _state.value.time.toLocalizedString()
+            val xp = _state.value.xp
+            val rr = _state.value.rr
 
-        _state.update { it.copy(
-            modeCardStates = modes?.map { mode -> ModeCardState.from(mode) },
-            mapCardStates = maps?.filter { map ->
-                map.category == currentMode?.category?.let { modeCategory ->  ValoMapCategory.from(modeCategory) }
-            }?.map { map -> MapCardState.from(map) },
-            isPlacementScoreType = isPlacementScoreType,
-            supportsRanked = currentMode?.canBeRanked ?: false,
+            val isRankedSelected = _state.value.isRankedSelected
+            val (prevRank, rank) = if (isRankedSelected) {
+                val totalRr = calculateRrBeforeTimeUseCase(activities, currentMode?.uuid, time)
+                val currentTotalRr = rr?.let { (totalRr ?: 0) + it } ?: totalRr
+                Pair(mapRrToRank(totalRr, time), mapRrToRank(currentTotalRr, time))
+            } else Pair(null, null)
+            val rankChanged = prevRank?.rank?.tier != rank?.rank?.tier
 
-            enableModeContinueButton = enableModeContinueButton,
-            enableMapContinueButton = enableMapContinueButton,
-            enableScoreContinueButton = enableScoreContinueButton,
-            enableResultContinueButton = enableResultContinueButton,
+            val enableModeContinueButton = modes != null && _state.value.modeUuid != null
+            val enableMapContinueButton = maps != null && _state.value.mapUuid != null
+            val enableScoreContinueButton =
+                scoreA != null && _state.value.scoreAError == null && (isPlacementScoreType || scoreB != null && _state.value.scoreBError == null)
+            val enableResultContinueButton = false
 
-            matchCardState = it.matchCardState.copy(
-                modeName = currentMode?.displayName ?: modePlaceholder,
-                mapName = currentMap?.displayName ?: mapPlaceholder,
-                iconState = it.matchCardState.iconState.copy(
-                    iconUrl = currentMode?.displayIcon,
-                    mapImageUrl = currentMap?.splash,
-                    outcome = matchOutcome,
-                    rrChipState = rr?.let { rr ->
-                        RrChipState(
-                            rr = rr,
-                            rankChanged = false
-                        )
-                    },
-                ),
-                scoreChipState = it.matchCardState.scoreChipState.copy(
-                    score = score,
-                    outcome = matchOutcome,
-                    wasSurrender = surrender in listOf(MatchEndReason.SURRENDER_A, MatchEndReason.SURRENDER_B)
-                ),
-                time = time,
-                xp = xp,
-            ),
-        ) }
+            val iconUrl = if (rank != null) rank.rank.largeIcon else currentMode?.displayIcon
+
+            _state.update {
+                it.copy(
+                    modeCardStates = modes?.map { mode -> ModeCardState.from(mode) },
+                    mapCardStates = maps?.filter { map ->
+                        map.category == currentMode?.category?.let { modeCategory -> ValoMapCategory.from(modeCategory) }
+                    }?.map { map -> MapCardState.from(map) },
+                    isPlacementScoreType = isPlacementScoreType,
+                    supportsRanked = currentMode?.canBeRanked ?: false,
+
+                    enableModeContinueButton = enableModeContinueButton,
+                    enableMapContinueButton = enableMapContinueButton,
+                    enableScoreContinueButton = enableScoreContinueButton,
+                    enableResultContinueButton = enableResultContinueButton,
+
+                    matchCardState = it.matchCardState.copy(
+                        modeName = currentMode?.displayName ?: modePlaceholder,
+                        mapName = currentMap?.displayName ?: mapPlaceholder,
+                        iconState = it.matchCardState.iconState.copy(
+                            iconUrl = iconUrl,
+                            mapImageUrl = currentMap?.splash,
+                            outcome = matchOutcome,
+                            rrChipState = RrChipState(
+                                rr = rank?.rr ?: 0,
+                                rankChanged = rankChanged
+                            ),
+                        ),
+                        scoreChipState = it.matchCardState.scoreChipState.copy(
+                            score = score,
+                            outcome = matchOutcome,
+                            wasSurrender = surrender in listOf(MatchEndReason.SURRENDER_A, MatchEndReason.SURRENDER_B)
+                        ),
+                        time = localizedTimeString,
+                        xp = xp,
+                    ),
+                )
+            }
+        }
     }
 
+    /**
+     * Loads the season activities for the selected time.
+     */
+    private fun updateActivities() {
+        activityFetchJob?.cancel()
+        activityFetchJob = viewModelScope.launch {
+            activities = getSeasonActivitiesForCurrentUserByTimeUseCase(_state.value.time)
+        }
+    }
+
+    /**
+     * Updates the selected mode and resets dependent selections when the mode category changes.
+     *
+     * @param uuid The selected mode identifier.
+     */
     private fun selectMode(uuid: Uuid?) {
         val oldCategory = modes?.firstOrNull { it.uuid == _state.value.modeUuid }?.category
         val newCategory = modes?.firstOrNull { it.uuid == uuid }?.category
@@ -246,12 +294,20 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Updates the selected time from the provided date and clock values.
+     *
+     * @param dateMillis The selected date in epoch milliseconds.
+     * @param hour The selected hour of day.
+     * @param minute The selected minute.
+     */
     private fun updateTime(dateMillis: Long, hour: Int, minute: Int) {
         val localDate = Instant.fromEpochMilliseconds(dateMillis).toLocalDateTime(timeZone).date
         val localTime = LocalTime(hour, minute)
         val newTime = LocalDateTime(localDate, localTime).toInstant(timeZone)
 
         _state.update { it.copy(time = newTime) }
+        updateActivities()
         updateUiState()
     }
 
@@ -320,6 +376,8 @@ class ActivityAddFlowViewModel(
             modePlaceholder = getString(Res.string.activity_add_flow_mode_placeholder)
             mapPlaceholder = getString(Res.string.activity_add_flow_map_placeholder)
         }
+
+        updateActivities()
 
         modeObserveJob?.cancel()
         modeObserveJob = viewModelScope.launch {

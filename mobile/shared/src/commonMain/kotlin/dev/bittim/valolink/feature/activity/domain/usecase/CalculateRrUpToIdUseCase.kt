@@ -7,7 +7,7 @@
  * File:       CalculateRrUpToIdUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 03:52
+ * Modified:   24.06.26, 19:21
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
@@ -17,21 +17,25 @@ import kotlin.uuid.Uuid
 
 class CalculateRrUpToIdUseCase {
     /**
-     * Calculates the sum of `rr` values from activities up to (and including) a specified identifier.
+     * Calculates the sum of `rr` values for matching activities up to a specified identifier.
      *
-     * @param activities The list of activities to process.
-     * @param upToInclusive The maximum activity identifier to include in the sum.
-     * @return The sum of `rr` values from activities sorted by time up to `id` equal to `upToInclusive`, or `null` if `activities` is `null`.
+     * @param activities The activities to process.
+     * @param modeUuid The activity mode to match.
+     * @param upToInclusive The activity identifier to include up to.
+     * @return The sum of `rr` values for matching activities up to `upToInclusive`, or `null` if no matching `rr` values are found or `activities` is `null`.
      */
     operator fun invoke(
         activities: List<Activity>?,
+        modeUuid: Uuid?,
         upToInclusive: Uuid
     ): Int? {
         if (activities == null) return null
 
-        val sortedActivities = activities.sortedBy { it.time }
+        val sortedActivities = activities.filter {
+            it.mode == modeUuid
+        }.sortedBy { it.time }
         val lastIndex = sortedActivities.indexOfFirst { it.id == upToInclusive }
         val filteredActivities = sortedActivities.take(lastIndex + 1).filter { it.rr != null }
-        return filteredActivities.sumOf { it.rr!! }
+        return if (filteredActivities.isEmpty()) null else filteredActivities.sumOf { it.rr!! }
     }
 }

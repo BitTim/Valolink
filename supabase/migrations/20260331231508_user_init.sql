@@ -83,6 +83,7 @@ create table public.activities (
     type text not null check (type in ('MATCH', 'RR_REFUND', 'XP_CORRECTION')),
     xp integer not null default 0,
     rr integer default null,
+    mode uuid default null check ((not (type = 'MATCH' or type = 'RR_REFUND')) or mode is not null),
 
     constraint activities_pkey primary key (user_id, id),
     constraint activities_user_id_fkey foreign key (user_id) references users(id) on update cascade on delete cascade
