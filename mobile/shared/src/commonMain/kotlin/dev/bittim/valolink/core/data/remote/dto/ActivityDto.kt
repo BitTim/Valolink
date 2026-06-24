@@ -7,7 +7,7 @@
  * File:       ActivityDto.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 16:58
+ * Modified:   24.06.26, 03:48
  */
 
 package dev.bittim.valolink.core.data.remote.dto
@@ -25,7 +25,7 @@ data class ActivityDto(
     @SerialName("user_id") val userId: Uuid,
     @SerialName("created_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant,
-    val time: Instant?,
+    val time: Instant,
     val type: ActivityType,
     val xp: Int,
     val rr: Int?

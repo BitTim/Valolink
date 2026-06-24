@@ -7,7 +7,7 @@
  * File:       ValoRankDao.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.06.26, 03:08
+ * Modified:   24.06.26, 04:06
  */
 
 package dev.bittim.valolink.core.data.local.dao
@@ -45,7 +45,7 @@ interface ValoRankDao {
      * @param rankTable The unique identifier of the rank table.
      * @return A stream emitting lists of rank entities for the specified rank table.
      */
-    `@Query`("SELECT * FROM valo_ranks WHERE rankTable = :rankTable ORDER BY tier ASC")
+    @Query("SELECT * FROM valo_ranks WHERE rankTable = :rankTable ORDER BY tier ASC")
     fun get(rankTable: Uuid): Flow<List<ValoRankEntity>>
 
     /**
