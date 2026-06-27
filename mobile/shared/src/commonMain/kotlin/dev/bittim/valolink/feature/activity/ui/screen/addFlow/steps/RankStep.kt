@@ -7,13 +7,15 @@
  * File:       RankStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 20:35
+ * Modified:   27.06.26, 01:43
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
+import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.Res
@@ -39,6 +42,7 @@ import valolink.shared.generated.resources.generic_button_continue
 @Composable
 fun RankStep(
     modifier: Modifier = Modifier,
+    rankCardStates: List<RankCardState>? = null,
     hasRankPlacement: Boolean,
     rr: Int?,
     rrError: String?,
@@ -60,6 +64,12 @@ fun RankStep(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(Spacing.m)
         ) {
+            LazyColumn {
+                items(rankCardStates ?: emptyList()) { rankCardState ->
+                    rankCardState.name?.let { Text(it) }
+                }
+            }
+
             AnimatedContent(
                 targetState = hasRankPlacement
             ) { hasRankPlacement ->

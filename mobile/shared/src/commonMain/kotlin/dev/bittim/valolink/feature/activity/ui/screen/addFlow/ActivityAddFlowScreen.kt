@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 14:21
+ * Modified:   27.06.26, 02:07
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -20,10 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.flowScaffold.FlowScaffold
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.MapStep
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ModeStep
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ScoreStep
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.XpStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.*
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -85,6 +82,17 @@ fun ActivityAddFlowScreen(
                         isPlacementScoreType = state.isPlacementScoreType,
                         enableContinueButton = state.enableScoreContinueButton,
                         onAction = onAction
+                    )
+                }
+                ActivityAddFlowStep.RankStep -> {
+                    RankStep(
+                        modifier = Modifier.padding(padding),
+                        rankCardStates = state.rankCardStates,
+                        hasRankPlacement = state.hasRankPlacement,
+                        rr = state.rr,
+                        rrError = state.rrError?.let { stringResource(it) },
+                        enableContinueButton = state.enableRankContinueButton,
+                        onAction = onAction,
                     )
                 }
                 ActivityAddFlowStep.XpStep -> {

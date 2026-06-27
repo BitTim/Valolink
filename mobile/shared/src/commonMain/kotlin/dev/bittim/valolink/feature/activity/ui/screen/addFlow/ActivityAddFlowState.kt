@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 20:11
+ * Modified:   27.06.26, 01:41
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -16,6 +16,7 @@ import dev.bittim.valolink.core.domain.model.MatchEndReason
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCardState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
+import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
 import org.jetbrains.compose.resources.StringResource
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -25,6 +26,7 @@ data class ActivityAddFlowState(
     val step: ActivityAddFlowStep = ActivityAddFlowStep.ModeStep,
     val modeCardStates: List<ModeCardState>? = null,
     val mapCardStates: List<MapCardState>? = null,
+    val rankCardStates: List<RankCardState>? = null,
     val isPlacementScoreType: Boolean = false,
     val supportsRanked: Boolean = false,
     val hasRankPlacement: Boolean = false,

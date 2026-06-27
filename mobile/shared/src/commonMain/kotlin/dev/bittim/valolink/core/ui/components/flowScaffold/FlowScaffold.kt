@@ -7,7 +7,7 @@
  * File:       FlowScaffold.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 21:41
+ * Modified:   27.06.26, 02:05
  */
 
 package dev.bittim.valolink.core.ui.components.flowScaffold
@@ -55,10 +55,10 @@ fun <S: FlowStep> FlowScaffold(
     )
 
     Surface(
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
             Box(

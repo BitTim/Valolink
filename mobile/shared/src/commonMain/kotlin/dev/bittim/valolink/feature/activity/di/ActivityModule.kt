@@ -7,7 +7,7 @@
  * File:       ActivityModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 17:49
+ * Modified:   27.06.26, 01:39
  */
 
 package dev.bittim.valolink.feature.activity.di
@@ -28,6 +28,7 @@ val featureActivityModule = module {
     singleOf(::CalculateRrBeforeTimeUseCase)
     singleOf(::CalculateRrUpToIdUseCase)
     singleOf(::MapRrToRank)
+    singleOf(::ObserveRanksByTimeUseCase)
 
     viewModelOf(::ActivityAddFlowViewModel)
     viewModelOf(::ActivityListViewModel)

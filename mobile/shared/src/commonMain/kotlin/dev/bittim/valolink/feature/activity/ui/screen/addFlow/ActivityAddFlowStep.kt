@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   16.06.26, 14:15
+ * Modified:   27.06.26, 01:56
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -18,8 +18,9 @@ enum class ActivityAddFlowStep(
     override val progress: Float
 ) : FlowStep {
     ModeStep(0f),
-    MapStep(0.33f),
-    ScoreStep(0.66f),
+    MapStep(0.2f),
+    ScoreStep(0.4f),
+    RankStep(0.8f),
     XpStep(1f),
 
     XpCorrectionStep(1f),

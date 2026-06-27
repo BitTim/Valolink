@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 20:34
+ * Modified:   27.06.26, 02:03
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -24,6 +24,8 @@ import dev.bittim.valolink.feature.activity.domain.usecase.*
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.components.match.RrChipState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
+import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -34,6 +36,7 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ActivityAddFlowViewModel(
     private val parseIntUseCase: ParseIntUseCase,
     private val formatScoreUseCase: FormatScoreUseCase,
@@ -41,6 +44,7 @@ class ActivityAddFlowViewModel(
     private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase,
     private val calculateRrBeforeTimeUseCase: CalculateRrBeforeTimeUseCase,
     private val mapRrToRank: MapRrToRank,
+    private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
 
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
@@ -55,6 +59,7 @@ class ActivityAddFlowViewModel(
     private var modeObserveJob: Job? = null
     private var mapObserveJob: Job? = null
     private var activityFetchJob: Job? = null
+    private var rankFetchJob: Job? = null
 
     private var modePlaceholder: String = ""
     private var mapPlaceholder: String = ""
@@ -62,6 +67,7 @@ class ActivityAddFlowViewModel(
     private var maps: List<SimpleValoMap>? = null
     private var modes: List<ValoMode>? = null
     private var activities: List<Activity>? = null
+    private var ranks: List<ValoRank>? = null
 
     /**
      * Moves the add flow back by one step or exits the screen from the first step.
@@ -73,14 +79,18 @@ class ActivityAddFlowViewModel(
     ) {
         when(_state.value.step) {
             ActivityAddFlowStep.ModeStep -> navBack()
-            ActivityAddFlowStep.MapStep -> {
-                _state.update { it.copy(step = ActivityAddFlowStep.ModeStep) }
+            ActivityAddFlowStep.MapStep -> _state.update {
+                it.copy(step = ActivityAddFlowStep.ModeStep)
             }
-            ActivityAddFlowStep.ScoreStep -> {
-                _state.update { it.copy(step = ActivityAddFlowStep.MapStep) }
+            ActivityAddFlowStep.ScoreStep -> _state.update {
+                it.copy(step = ActivityAddFlowStep.MapStep)
+            }
+            ActivityAddFlowStep.RankStep -> _state.update {
+                it.copy(step = ActivityAddFlowStep.ScoreStep)
             }
             ActivityAddFlowStep.XpStep -> _state.update {
-                it.copy(step = ActivityAddFlowStep.ScoreStep)
+                val prevStep = if (_state.value.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.ScoreStep
+                it.copy(step = prevStep)
             }
             ActivityAddFlowStep.XpCorrectionStep -> _state.update {
                 it.copy(step = ActivityAddFlowStep.ModeStep)
@@ -100,8 +110,6 @@ class ActivityAddFlowViewModel(
     private fun updateUiState() {
         uiStateUpdateJob?.cancel()
         uiStateUpdateJob = viewModelScope.launch {
-            activityFetchJob?.join()
-
             val currentMode = modes?.firstOrNull { it.uuid == _state.value.modeUuid }
             val currentMap = maps?.firstOrNull { it.uuid == _state.value.mapUuid }
 
@@ -143,6 +151,7 @@ class ActivityAddFlowViewModel(
                     mapCardStates = maps?.filter { map ->
                         map.category == currentMode?.category?.let { modeCategory -> ValoMapCategory.from(modeCategory) }
                     }?.map { map -> MapCardState.from(map) },
+                    rankCardStates = ranks?.map { rank -> RankCardState.from(rank) },
                     isPlacementScoreType = isPlacementScoreType,
                     supportsRanked = currentMode?.canBeRanked ?: false,
                     hasRankPlacement = hasRankPlacement,
@@ -181,16 +190,6 @@ class ActivityAddFlowViewModel(
     }
 
     /**
-     * Loads the season activities for the selected time.
-     */
-    private fun updateActivities() {
-        activityFetchJob?.cancel()
-        activityFetchJob = viewModelScope.launch {
-            activities = getSeasonActivitiesForCurrentUserByTimeUseCase(_state.value.time)
-        }
-    }
-
-    /**
      * Updates the selected mode and resets dependent selections when the mode category changes.
      *
      * @param uuid The selected mode identifier.
@@ -205,7 +204,7 @@ class ActivityAddFlowViewModel(
 
         if (scoreTypeChanged) { resetScore() }
         if (mapTypeChanged) { resetMap() }
-        if (supportsRankedChanged) { updateRanked(false) }
+        if (supportsRankedChanged) { selectRanked(false) }
 
         _state.update { it.copy(modeUuid = uuid) }
         updateUiState()
@@ -220,7 +219,7 @@ class ActivityAddFlowViewModel(
         _state.update { it.copy(mapUuid = null) }
     }
 
-    private fun updateScore(rawScore: String?, isScoreB: Boolean) {
+    private fun selectScore(rawScore: String?, isScoreB: Boolean) {
         when(val result = parseIntUseCase(rawScore, allowNegative = false)) {
             is Result.Ok -> {
                 _state.update { if(isScoreB) it.copy(
@@ -251,7 +250,7 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
-    private fun updateSurrender(reason: MatchEndReason) {
+    private fun selectSurrender(reason: MatchEndReason) {
         _state.update { it.copy(surrender = reason) }
         updateUiState()
     }
@@ -260,7 +259,7 @@ class ActivityAddFlowViewModel(
         _state.update { it.copy(scoreA = null, scoreB = null, scoreAError = null, scoreBError = null, surrender = MatchEndReason.COMPLETED) }
     }
 
-    private fun updateRr(rawRr: String?) {
+    private fun selectRr(rawRr: String?) {
         when(val result = parseIntUseCase(rawRr, allowNegative = true)) {
             is Result.Ok -> {
                 _state.update { it.copy(rr = result.data, rrError = null) }
@@ -278,12 +277,12 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
-    private fun updateRanked(selected: Boolean) {
+    private fun selectRanked(selected: Boolean) {
         _state.update { it.copy(isRankedSelected = selected) }
         updateUiState()
     }
 
-    private fun updateXp(rawXp: String?) {
+    private fun selectXp(rawXp: String?) {
         when(val result = parseIntUseCase(rawXp, allowNegative = false)) {
             is Result.Ok -> {
                 _state.update { it.copy(xp = result.data, xpError = null) }
@@ -308,13 +307,12 @@ class ActivityAddFlowViewModel(
      * @param hour The selected hour of day.
      * @param minute The selected minute.
      */
-    private fun updateTime(dateMillis: Long, hour: Int, minute: Int) {
+    private fun selectTime(dateMillis: Long, hour: Int, minute: Int) {
         val localDate = Instant.fromEpochMilliseconds(dateMillis).toLocalDateTime(timeZone).date
         val localTime = LocalTime(hour, minute)
         val newTime = LocalDateTime(localDate, localTime).toInstant(timeZone)
 
         _state.update { it.copy(time = newTime) }
-        updateActivities()
         updateUiState()
     }
 
@@ -328,7 +326,7 @@ class ActivityAddFlowViewModel(
                 selectMode(action.uuid)
             }
             is ActivityAddFlowAction.RankedChanged -> {
-                updateRanked(action.selected)
+                selectRanked(action.selected)
             }
             is ActivityAddFlowAction.ModeContinue -> {
                 _state.update { it.copy(step = ActivityAddFlowStep.MapStep) }
@@ -340,22 +338,23 @@ class ActivityAddFlowViewModel(
                 _state.update { it.copy(step = ActivityAddFlowStep.ScoreStep) }
             }
             is ActivityAddFlowAction.ScoreAChanged -> {
-                updateScore(action.rawScore, false)
+                selectScore(action.rawScore, false)
             }
             is ActivityAddFlowAction.ScoreBChanged -> {
-                updateScore(action.rawScore, true)
+                selectScore(action.rawScore, true)
             }
             is ActivityAddFlowAction.SurrenderChanged -> {
-                updateSurrender(action.reason)
+                selectSurrender(action.reason)
             }
             is ActivityAddFlowAction.ScoreContinue -> {
-                _state.update { it.copy(step = ActivityAddFlowStep.XpStep) }
+                val nextStep = if (_state.value.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.XpStep
+                _state.update { it.copy(step = nextStep) }
             }
             is ActivityAddFlowAction.RrChanged -> {
-                updateRr(action.rawRr)
+                selectRr(action.rawRr)
             }
             is ActivityAddFlowAction.XpChanged -> {
-                updateXp(action.rawXp)
+                selectXp(action.rawXp)
             }
             is ActivityAddFlowAction.ChangeTime -> {
                 _state.update { it.copy(dateTimePickerVisible = true) }
@@ -364,7 +363,7 @@ class ActivityAddFlowViewModel(
                 _state.update { it.copy(dateTimePickerVisible = false) }
             }
             is ActivityAddFlowAction.DateTimeSelected -> {
-                updateTime(action.dateMillis, action.hour, action.minute)
+                selectTime(action.dateMillis, action.hour, action.minute)
                 _state.update { it.copy(dateTimePickerVisible = false) }
             }
             is ActivityAddFlowAction.XpFinish -> {
@@ -384,14 +383,12 @@ class ActivityAddFlowViewModel(
             mapPlaceholder = getString(Res.string.activity_add_flow_map_placeholder)
         }
 
-        updateActivities()
-
         modeObserveJob?.cancel()
         modeObserveJob = viewModelScope.launch {
             valoModeRepo.observeAll(fallbackLocale).map { modeList ->
                 modeList.filter {
                     it.category !in setOf(ValoModeCategory.Unknown, ValoModeCategory.Tutorial, ValoModeCategory.Range)
-                }.sortedByDescending { it.duration?.split('-')?.firstOrNull()?.toInt() ?: 0 }
+                }.sortedByDescending { it.duration?.split('-')?.firstOrNull()?.toIntOrNull() ?: 0 }
             }.collectLatest {
                 modes = it
                 updateUiState()
@@ -407,6 +404,24 @@ class ActivityAddFlowViewModel(
                 }.sortedBy { it.displayName }
             }.collectLatest {
                 maps = it
+                updateUiState()
+            }
+        }
+
+        activityFetchJob?.cancel()
+        activityFetchJob = viewModelScope.launch {
+            state.map { it.time }.distinctUntilChanged().collectLatest {
+                activities = getSeasonActivitiesForCurrentUserByTimeUseCase(it)
+                updateUiState()
+            }
+        }
+
+        rankFetchJob?.cancel()
+        rankFetchJob = viewModelScope.launch {
+            state.distinctUntilChanged { old, new -> old.time == new.time }.flatMapLatest {
+                observeRanksByTimeUseCase(it.time).distinctUntilChanged()
+            }.collectLatest {
+                ranks = it
                 updateUiState()
             }
         }
