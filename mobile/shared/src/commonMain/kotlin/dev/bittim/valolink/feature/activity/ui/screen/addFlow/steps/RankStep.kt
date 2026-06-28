@@ -7,7 +7,7 @@
  * File:       RankStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.06.26, 12:51
+ * Modified:   28.06.26, 13:07
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -29,12 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.*
+import kotlin.math.absoluteValue
 
 @Composable
 fun RankStep(
@@ -43,13 +45,13 @@ fun RankStep(
     hasRankPlacement: Boolean,
     rr: Int?,
     rrError: String?,
-    initialSign: Boolean = false,
+    matchOutcome: MatchOutcome? = null,
     enableContinueButton: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit,
     maxRrDigits: Int = 2
 ) {
-    var rawRr by rememberSaveable { mutableStateOf(rr?.toString() ?: "") }
-    var signChecked by rememberSaveable { mutableStateOf(initialSign) }
+    var rawRr by rememberSaveable { mutableStateOf(rr?.absoluteValue?.toString() ?: "") }
+    var signChecked by rememberSaveable { mutableStateOf(if(rr == null) matchOutcome == MatchOutcome.Loss else rr < 0) }
 
     val action = {
         val sign = if (signChecked) "-" else ""

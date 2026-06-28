@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.06.26, 12:53
+ * Modified:   28.06.26, 12:58
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -161,6 +161,8 @@ class ActivityAddFlowViewModel(
                     enableScoreContinueButton = enableScoreContinueButton,
                     enableRankContinueButton = enableRankContinueButton,
                     enableResultContinueButton = enableResultContinueButton,
+
+                    matchOutcome = matchOutcome,
 
                     matchCardState = state.matchCardState.copy(
                         modeName = currentMode?.displayName ?: modePlaceholder,

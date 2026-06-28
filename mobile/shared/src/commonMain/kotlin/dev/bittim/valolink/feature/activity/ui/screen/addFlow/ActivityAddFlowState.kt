@@ -7,12 +7,13 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.06.26, 01:41
+ * Modified:   28.06.26, 12:59
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 
 import dev.bittim.valolink.core.domain.model.MatchEndReason
+import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCardState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
@@ -43,6 +44,8 @@ data class ActivityAddFlowState(
     val scoreBError: StringResource? = null,
     val xpError: StringResource? = null,
     val rrError: StringResource? = null,
+
+    val matchOutcome: MatchOutcome? = null,
 
     val matchCardState: MatchCardState = MatchCardState.Empty,
     val modeUuid: Uuid? = null,
