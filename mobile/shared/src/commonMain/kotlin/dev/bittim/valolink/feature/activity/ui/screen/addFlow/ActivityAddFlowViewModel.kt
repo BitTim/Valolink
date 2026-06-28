@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.06.26, 02:03
+ * Modified:   28.06.26, 12:53
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -145,8 +145,8 @@ class ActivityAddFlowViewModel(
 
             val iconUrl = if (rank != null) rank.rank.largeIcon else currentMode?.displayIcon
 
-            _state.update {
-                it.copy(
+            _state.update { state ->
+                state.copy(
                     modeCardStates = modes?.map { mode -> ModeCardState.from(mode) },
                     mapCardStates = maps?.filter { map ->
                         map.category == currentMode?.category?.let { modeCategory -> ValoMapCategory.from(modeCategory) }
@@ -162,21 +162,21 @@ class ActivityAddFlowViewModel(
                     enableRankContinueButton = enableRankContinueButton,
                     enableResultContinueButton = enableResultContinueButton,
 
-                    matchCardState = it.matchCardState.copy(
+                    matchCardState = state.matchCardState.copy(
                         modeName = currentMode?.displayName ?: modePlaceholder,
                         mapName = currentMap?.displayName ?: mapPlaceholder,
-                        iconState = it.matchCardState.iconState.copy(
+                        iconState = state.matchCardState.iconState.copy(
                             iconUrl = iconUrl,
                             mapImageUrl = currentMap?.splash,
                             outcome = matchOutcome,
-                            rrChipState = rank?.let {
+                            rrChipState = rr?.let {
                                 RrChipState(
-                                    rr = rank.rr,
+                                    rr = it,
                                     rankChanged = rankChanged
                                 )
                             },
                         ),
-                        scoreChipState = it.matchCardState.scoreChipState.copy(
+                        scoreChipState = state.matchCardState.scoreChipState.copy(
                             score = score,
                             outcome = matchOutcome,
                             wasSurrender = surrender in listOf(MatchEndReason.SURRENDER_A, MatchEndReason.SURRENDER_B)
@@ -220,7 +220,7 @@ class ActivityAddFlowViewModel(
     }
 
     private fun selectScore(rawScore: String?, isScoreB: Boolean) {
-        when(val result = parseIntUseCase(rawScore, allowNegative = false)) {
+        when(val result = parseIntUseCase(rawScore, allowNegative = false, maxDigits = 3)) {
             is Result.Ok -> {
                 _state.update { if(isScoreB) it.copy(
                     scoreB = result.data,
@@ -235,6 +235,7 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_score_step_score_error_empty
                     ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_score_step_score_error_invalid
                     ParseIntUseCase.IntParseError.NEGATIVE -> Res.string.activity_add_flow_score_step_score_error_negative
+                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_score_step_score_error_too_many_digits
                 }
 
                 _state.update { if(isScoreB) it.copy(
@@ -260,7 +261,7 @@ class ActivityAddFlowViewModel(
     }
 
     private fun selectRr(rawRr: String?) {
-        when(val result = parseIntUseCase(rawRr, allowNegative = true)) {
+        when(val result = parseIntUseCase(rawRr, allowNegative = true, maxDigits = 2)) {
             is Result.Ok -> {
                 _state.update { it.copy(rr = result.data, rrError = null) }
             }
@@ -269,6 +270,7 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
                     ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
                     ParseIntUseCase.IntParseError.NEGATIVE -> null
+                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_xp_step_xp_error_too_many_digits
                 }
 
                 _state.update { it.copy(rrError = error) }
@@ -292,6 +294,7 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
                     ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
                     ParseIntUseCase.IntParseError.NEGATIVE -> Res.string.activity_add_flow_xp_step_xp_error_negative
+                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> null
                 }
 
                 _state.update { it.copy(xpError = error) }

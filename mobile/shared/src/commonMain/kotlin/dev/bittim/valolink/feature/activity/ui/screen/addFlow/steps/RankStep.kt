@@ -7,18 +7,18 @@
  * File:       RankStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.06.26, 01:43
+ * Modified:   28.06.26, 12:51
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,10 +34,7 @@ import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import org.jetbrains.compose.resources.stringResource
-import valolink.shared.generated.resources.Res
-import valolink.shared.generated.resources.activity_add_flow_rank_step_rr_label
-import valolink.shared.generated.resources.activity_add_flow_rank_step_title
-import valolink.shared.generated.resources.generic_button_continue
+import valolink.shared.generated.resources.*
 
 @Composable
 fun RankStep(
@@ -46,10 +43,18 @@ fun RankStep(
     hasRankPlacement: Boolean,
     rr: Int?,
     rrError: String?,
+    initialSign: Boolean = false,
     enableContinueButton: Boolean,
-    onAction: (ActivityAddFlowAction) -> Unit
+    onAction: (ActivityAddFlowAction) -> Unit,
+    maxRrDigits: Int = 2
 ) {
     var rawRr by rememberSaveable { mutableStateOf(rr?.toString() ?: "") }
+    var signChecked by rememberSaveable { mutableStateOf(initialSign) }
+
+    val action = {
+        val sign = if (signChecked) "-" else ""
+        onAction(ActivityAddFlowAction.RrChanged("$sign$rawRr"))
+    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -64,26 +69,40 @@ fun RankStep(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(Spacing.m)
         ) {
-            LazyColumn {
-                items(rankCardStates ?: emptyList()) { rankCardState ->
-                    rankCardState.name?.let { Text(it) }
-                }
-            }
-
             AnimatedContent(
                 targetState = hasRankPlacement
             ) { hasRankPlacement ->
                 if (hasRankPlacement) {
                     Row(
                         modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.m),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.s),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        FilledTonalIconToggleButton(
+                            checked = signChecked,
+                            onCheckedChange = {
+                                signChecked = it
+                                action()
+                            }
+                        ) {
+                            AnimatedContent(
+                                targetState = signChecked
+                            ) {
+                                Icon(
+                                    imageVector = if (it) Icons.Default.Remove else Icons.Default.Add,
+                                    contentDescription = when (it) {
+                                        false -> stringResource(Res.string.activity_add_flow_rank_step_rr_sign_positive_desc)
+                                        true -> stringResource(Res.string.activity_add_flow_rank_step_rr_sign_negative_desc)
+                                    }
+                                )
+                            }
+                        }
+
                         OutlinedTextFieldWithError(
                             value = rawRr,
                             onValueChange = {
-                                rawRr = it
-                                onAction(ActivityAddFlowAction.RrChanged(rawRr))
+                                rawRr = it.take(maxRrDigits)
+                                action()
                             },
                             modifier = Modifier.weight(1f),
                             label = stringResource(Res.string.activity_add_flow_rank_step_rr_label),
@@ -97,13 +116,13 @@ fun RankStep(
                             onCheckedChange = {}
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Check,
+                                imageVector = Icons.Default.Shield,
                                 contentDescription = null
                             )
                         }
                     }
                 } else {
-
+                    Text("Placement")
                 }
             }
         }

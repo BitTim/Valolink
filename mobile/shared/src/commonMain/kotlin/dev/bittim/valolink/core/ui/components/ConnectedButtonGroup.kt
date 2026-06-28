@@ -7,7 +7,7 @@
  * File:       ConnectedButtonGroup.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 14:14
+ * Modified:   28.06.26, 12:33
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -74,7 +74,7 @@ fun SingleConnectedButtonGroup(
                     this.customItem(
                         buttonGroupContent = {
                             TonalToggleButton(
-                                modifier = Modifier.weight(entry.weight),
+                                modifier = if(!entry.weight.isNaN()) Modifier.weight(entry.weight) else Modifier,
                                 checked = checked,
                                 enabled = entry.enabled,
                                 onCheckedChange ={
@@ -83,7 +83,7 @@ fun SingleConnectedButtonGroup(
                                 }
                             ) {
                                 entry.icon?.let { it() }
-                                Spacer(modifier = Modifier.width(8.dp))
+                                if(entry.icon != null) Spacer(modifier = Modifier.width(8.dp))
                                 Text(text = entry.label)
                             }
                         },
