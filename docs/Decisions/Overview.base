@@ -4,7 +4,7 @@ filters:
     - file.ext != "base"
 formulas:
   Status: |
-    if (this.superseded_by.isEmpty(), "Approved", "Superseded")
+    if (this.supersededBy.isEmpty() || this.supersededBy == null, "Approved", "Superseded")
 views:
   - type: table
     name: Table

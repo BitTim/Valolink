@@ -11,13 +11,14 @@
             "id": "c3ffe42a836ba0cd",
             "type": "leaf",
             "state": {
-              "type": "bases",
+              "type": "markdown",
               "state": {
-                "file": "Decisions/Overview.base",
-                "viewName": "Table"
+                "file": "Decisions/(ADR-011) Season column on activities set by trigger.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-table",
-              "title": "Overview"
+              "icon": "lucide-file",
+              "title": "(ADR-011) Season column on activities set by trigger"
             }
           }
         ]
@@ -111,7 +112,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "Decisions/(ADR-001) Use KMP instead of Flutter.md",
+            "file": "Decisions/(ADR-011) Season column on activities set by trigger.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -167,12 +168,27 @@
   },
   "active": "c3ffe42a836ba0cd",
   "lastOpenFiles": [
-    "Decisions/(ADR-003) Web as separate React project.md",
+    "Decisions/(ADR-013) Activities paginated by season and only current season cached locally.md",
+    "Decisions/(ADR-012) User season stats maintained by trigger.md",
     "Decisions/Overview.base",
+    "ADR-020.md",
+    "Decisions/(ADR-017) Split visible RR from internal RR and fold PLACEMENT activity into MATCH.md",
+    "Decisions/(ADR-016) Level unlocks derived not stored.md",
+    "Decisions/(ADR-015) Room for all local storage.md",
+    "Decisions/(ADR-014) Valorant content cached in Supabase.md",
+    "Decisions/(ADR-011) Season column on activities set by trigger.md",
+    "Decisions/(ADR-010) Unify season, event and agent contracts with recruitments as valo_progressions.md",
+    "Decisions/(ADR-009) Keep match_participants a separate table.md",
+    "Decisions/(ADR-008) match_details renamed to matches.md",
+    "Decisions/(ADR-007) New activities tables replaces matches as unified timeline.md",
+    "Decisions/(ADR-006) Removed rel_match_contract.md",
+    "Decisions/(ADR-005) Split users into users and flags.md",
+    "Decisions/(ADR-004) Ownership lives on match_participants not matches.md",
+    "Decisions/(ADR-003) Web as separate React project.md",
     "Decisions/(ADR-002) Follows instead of Friends.md",
-    "Untitled.base",
     "Decisions/(ADR-001) Use KMP instead of Flutter.md",
     "Templates/Architecture Decision Record.md",
+    "Untitled.base",
     "Decisions/Overview.md",
     "Templates",
     "Decisions/ADR-001.md",

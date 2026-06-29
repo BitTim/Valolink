@@ -1,5 +1,5 @@
 ---
-superseded-by:
+supersededBy:
 ---
 ## Context
 A web version is also planned, but the KMP Web target is not yet production ready and the Web UX differs significantly from Mobile UX so there is no benefit to sharing UI anyway.

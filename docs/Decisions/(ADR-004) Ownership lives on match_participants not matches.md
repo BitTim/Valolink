@@ -1,5 +1,5 @@
 ---
-superseded-by:
+supersededBy:
 ---
 ## Context
 Putting the match owners UUID into the `matches` table directly would expose private users UUIDs and also their matches, which defeats the purpose of having private users.

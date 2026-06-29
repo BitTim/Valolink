@@ -1,5 +1,6 @@
 ---
-superseded-by:
+supersededBy:
+isPartial:
 ---
 ## Context
 ## Decision

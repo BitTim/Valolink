@@ -1,5 +1,5 @@
 ---
-superseded-by:
+supersededBy:
 ---
 ## Context
 Initial design used a `friends` table with a `friendship_status` enum. App features are asymmetric, like viewing match history does not require a mutual follow.

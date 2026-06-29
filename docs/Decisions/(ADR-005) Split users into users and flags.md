@@ -1,5 +1,5 @@
 ---
-superseded-by:
+supersededBy:
 ---
 ## Context
 Some user data needs to apply the users visibility rules while some data needs to stay public for discoverability.

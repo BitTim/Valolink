@@ -1,5 +1,5 @@
 ---
-superseded-by: 
+supersededBy:
 ---
 ## Context
 Valolink was Android-only. Needed cross-platform from here on, now with the ability and need to ship iOS from the start. Wanted UI that feels native to each platform, which ruled out Flutter and React Native.
