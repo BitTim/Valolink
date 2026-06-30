@@ -7,13 +7,14 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.06.26, 12:59
+ * Modified:   29.06.26, 02:13
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 
 import dev.bittim.valolink.core.domain.model.MatchEndReason
 import dev.bittim.valolink.core.domain.model.MatchOutcome
+import dev.bittim.valolink.core.domain.model.Rank
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCardState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
@@ -30,7 +31,6 @@ data class ActivityAddFlowState(
     val rankCardStates: List<RankCardState>? = null,
     val isPlacementScoreType: Boolean = false,
     val supportsRanked: Boolean = false,
-    val hasRankPlacement: Boolean = false,
 
     val enableModeContinueButton: Boolean = false,
     val enableMapContinueButton: Boolean = false,
@@ -46,6 +46,7 @@ data class ActivityAddFlowState(
     val rrError: StringResource? = null,
 
     val matchOutcome: MatchOutcome? = null,
+    val currentRank: Rank? = null,
 
     val matchCardState: MatchCardState = MatchCardState.Empty,
     val modeUuid: Uuid? = null,

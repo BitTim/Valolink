@@ -7,10 +7,10 @@
  * File:       CalculateRrUpToIdUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 19:21
+ * Modified:   30.06.26, 13:23
  */
 
-package dev.bittim.valolink.feature.activity.domain.usecase
+package dev.bittim.valolink.feature.activity.domain.usecase.rank
 
 import dev.bittim.valolink.core.domain.model.Activity
 import kotlin.uuid.Uuid

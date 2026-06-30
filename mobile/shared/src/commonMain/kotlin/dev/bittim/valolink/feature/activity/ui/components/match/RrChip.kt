@@ -7,7 +7,7 @@
  * File:       RrChip.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 19:24
+ * Modified:   29.06.26, 02:09
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -19,8 +19,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardDoubleArrowDown
-import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.QuestionMark
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -84,8 +84,8 @@ fun RrChip(
                         .padding(Spacing.xs)
                         .size(16.dp),
                     imageVector = when {
-                        (state.rr > 0) -> Icons.Outlined.KeyboardDoubleArrowUp
-                        (state.rr < 0) -> Icons.Outlined.KeyboardDoubleArrowDown
+                        (state.rr > 0) -> Icons.Outlined.KeyboardArrowUp
+                        (state.rr < 0) -> Icons.Outlined.KeyboardArrowDown
                         else -> Icons.Outlined.QuestionMark
                     },
                     tint = fgColor,

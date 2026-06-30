@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.06.26, 12:58
+ * Modified:   30.06.26, 13:56
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -20,7 +20,14 @@ import dev.bittim.valolink.core.domain.extension.toLocalizedString
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.feature.activity.domain.usecase.*
+import dev.bittim.valolink.feature.activity.domain.usecase.FormatScoreUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.MatchOutcomeFromScoreUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.ParseIntUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.rank.CalculateRrBeforeTimeUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.rank.CalculateRrDeltaUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.rank.MapRrToRank
+import dev.bittim.valolink.feature.activity.domain.usecase.rank.ObserveRanksByTimeUseCase
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.components.match.RrChipState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
@@ -45,6 +52,7 @@ class ActivityAddFlowViewModel(
     private val calculateRrBeforeTimeUseCase: CalculateRrBeforeTimeUseCase,
     private val mapRrToRank: MapRrToRank,
     private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
+    private val calculateRrDeltaUseCase: CalculateRrDeltaUseCase,
 
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
@@ -129,12 +137,16 @@ class ActivityAddFlowViewModel(
             val rr = _state.value.rr
 
             val isRankedSelected = _state.value.isRankedSelected
-            val (prevRank, rank, hasRankPlacement) = if (isRankedSelected) {
+            val (rank, newRank) = if (isRankedSelected) {
                 val totalRr = calculateRrBeforeTimeUseCase(activities, currentMode?.uuid, time)
-                val currentTotalRr = rr?.let { (totalRr ?: 0) + it } ?: totalRr
-                Triple(mapRrToRank(totalRr, time), mapRrToRank(currentTotalRr, time), totalRr != null)
-            } else Triple(null, null, false)
-            val rankChanged = prevRank?.rank?.tier != rank?.rank?.tier
+                val rank = mapRrToRank(totalRr, time)
+
+                val currentTotalRr = if (totalRr == null) { rr } else totalRr + (rr?.let { rr -> rank?.let { rank -> calculateRrDeltaUseCase(rank, rr) } } ?: 0)
+                val newRank = mapRrToRank(currentTotalRr, time)
+
+                Pair(rank, newRank)
+            } else Pair(null, null)
+            val rankChanged = rank?.rank?.tier != newRank?.rank?.tier
 
             val enableModeContinueButton = modes != null && _state.value.modeUuid != null
             val enableMapContinueButton = maps != null && _state.value.mapUuid != null
@@ -143,7 +155,7 @@ class ActivityAddFlowViewModel(
             val enableRankContinueButton = false
             val enableResultContinueButton = false
 
-            val iconUrl = if (rank != null) rank.rank.largeIcon else currentMode?.displayIcon
+            val iconUrl = if (newRank != null) newRank.rank.largeIcon else currentMode?.displayIcon
 
             _state.update { state ->
                 state.copy(
@@ -154,7 +166,6 @@ class ActivityAddFlowViewModel(
                     rankCardStates = ranks?.map { rank -> RankCardState.from(rank) },
                     isPlacementScoreType = isPlacementScoreType,
                     supportsRanked = currentMode?.canBeRanked ?: false,
-                    hasRankPlacement = hasRankPlacement,
 
                     enableModeContinueButton = enableModeContinueButton,
                     enableMapContinueButton = enableMapContinueButton,
@@ -163,6 +174,7 @@ class ActivityAddFlowViewModel(
                     enableResultContinueButton = enableResultContinueButton,
 
                     matchOutcome = matchOutcome,
+                    currentRank = rank,
 
                     matchCardState = state.matchCardState.copy(
                         modeName = currentMode?.displayName ?: modePlaceholder,

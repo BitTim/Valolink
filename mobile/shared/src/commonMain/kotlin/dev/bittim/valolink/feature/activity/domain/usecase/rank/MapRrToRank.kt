@@ -7,15 +7,16 @@
  * File:       MapRrToRank.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 19:30
+ * Modified:   30.06.26, 13:40
  */
 
-package dev.bittim.valolink.feature.activity.domain.usecase
+package dev.bittim.valolink.feature.activity.domain.usecase.rank
 
 import dev.bittim.valolink.core.domain.model.Rank
 import dev.bittim.valolink.core.domain.repo.ValoCompetitiveSeasonRepo
 import dev.bittim.valolink.core.domain.repo.ValoRankRepo
 import dev.bittim.valolink.core.domain.repo.ValoSeasonRepo
+import dev.bittim.valolink.feature.activity.domain.constants.RankConstants
 import kotlinx.coroutines.flow.firstOrNull
 import kotlin.math.floor
 import kotlin.time.Instant
@@ -47,9 +48,9 @@ class MapRrToRank(
         }
 
         val tierOffset = filteredRanks.minOfOrNull { it.tier } ?: return null
-        val relativeTier = floor(rr.toDouble() / RR_PER_RANK).toInt()
+        val relativeTier = floor(rr.toDouble() / RankConstants.RR_PER_RANK).toInt()
         val calculatedTier = relativeTier + tierOffset
-        val calculatedRr = rr - relativeTier * RR_PER_RANK
+        val calculatedRr = rr - relativeTier * RankConstants.RR_PER_RANK
 
         val actualTier = calculatedTier.coerceAtMost(filteredRanks.lastOrNull()?.tier ?: 0)
         val rank = filteredRanks.firstOrNull { it.tier == actualTier } ?: return null
@@ -58,9 +59,5 @@ class MapRrToRank(
             rank = rank,
             rr = calculatedRr
         )
-    }
-
-    companion object {
-        const val RR_PER_RANK = 100
     }
 }
