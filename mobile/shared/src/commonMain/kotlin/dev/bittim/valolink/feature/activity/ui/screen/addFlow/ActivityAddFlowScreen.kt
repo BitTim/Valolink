@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.06.26, 02:11
+ * Modified:   30.06.26, 14:23
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -88,9 +88,11 @@ fun ActivityAddFlowScreen(
                     RankStep(
                         modifier = Modifier.padding(padding),
                         rankCardStates = state.rankCardStates,
-                        currentRankRr = state.currentRank?.rr,
-                        rr = state.rr,
-                        rrError = state.rrError?.let { stringResource(it) },
+                        currentRank = state.currentRank,
+                        rrDelta = state.rrDelta,
+                        visibleRrDelta = state.visibleRrDelta,
+                        rrDeltaError = state.rrDeltaError?.let { stringResource(it) },
+                        showRankModifier = state.showRankModifier,
                         matchOutcome = state.matchOutcome,
                         enableContinueButton = state.enableRankContinueButton,
                         onAction = onAction,

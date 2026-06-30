@@ -7,7 +7,7 @@
  * File:       RankStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.06.26, 13:57
+ * Modified:   30.06.26, 14:23
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.domain.model.MatchOutcome
+import dev.bittim.valolink.core.domain.model.Rank
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
@@ -43,20 +44,23 @@ import kotlin.math.absoluteValue
 fun RankStep(
     modifier: Modifier = Modifier,
     rankCardStates: List<RankCardState>? = null,
-    currentRankRr: Int?,
-    rr: Int?,
-    rrError: String?,
+    currentRank: Rank?,
+    rrDelta: Int?,
+    visibleRrDelta: Int?,
+    rrDeltaError: String?,
+    showRankModifier: Boolean,
     matchOutcome: MatchOutcome? = null,
     enableContinueButton: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit,
     maxRrDigits: Int = 2
 ) {
-    var rawRr by rememberSaveable { mutableStateOf(rr?.absoluteValue?.toString() ?: "") }
-    var signChecked by rememberSaveable { mutableStateOf(if(rr == null) matchOutcome == MatchOutcome.Loss else rr < 0) }
+    var rawRrDelta by rememberSaveable { mutableStateOf(visibleRrDelta?.absoluteValue?.toString() ?: "") }
+    var signChecked by rememberSaveable { mutableStateOf(if(visibleRrDelta == null) matchOutcome == MatchOutcome.Loss else visibleRrDelta < 0) }
+    var modifierChecked by rememberSaveable(rrDelta) { mutableStateOf(false) }
 
     val action = {
         val sign = if (signChecked) "-" else ""
-        onAction(ActivityAddFlowAction.RrChanged("$sign$rawRr"))
+        onAction(ActivityAddFlowAction.RrDeltaChanged("$sign$rawRrDelta"))
     }
 
     Column(
@@ -73,7 +77,7 @@ fun RankStep(
             verticalArrangement = Arrangement.spacedBy(Spacing.m)
         ) {
             AnimatedContent(
-                targetState = currentRankRr != null
+                targetState = currentRank != null
             ) { hasRankPlacement ->
                 if (hasRankPlacement) {
                     Column(
@@ -83,16 +87,16 @@ fun RankStep(
                             horizontalArrangement = Arrangement.spacedBy(Spacing.s),
                         ) {
                             OutlinedTextFieldWithError(
-                                value = rawRr,
+                                value = rawRrDelta,
                                 onValueChange = {
-                                    rawRr = it.take(maxRrDigits)
+                                    rawRrDelta = it.take(maxRrDigits)
                                     action()
                                 },
                                 modifier = Modifier.weight(1f),
                                 label = stringResource(Res.string.activity_add_flow_rank_step_rr_label),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                error = rrError,
+                                error = rrDeltaError,
                                 leadingIcon = {
                                     IconToggleButton(
                                         checked = signChecked,
@@ -117,26 +121,24 @@ fun RankStep(
                             )
                         }
 
-                        val newRankRr = currentRankRr!!.plus((rr ?: 0))
-
                         AnimatedVisibility(
-                            visible = newRankRr !in 0..99
+                            visible = showRankModifier
                         ) {
                             AnimatedContent(
-                                targetState = newRankRr
-                            ) { rankRr ->
+                                targetState = rrDelta!!
+                            ) { rrDelta ->
                                 when {
-                                    rankRr < 0 -> FilterChip(
-                                        selected = false,
-                                        onClick = {  },
-                                        label = { Text("Rank Shield") },
+                                    rrDelta < 0 -> FilterChip(
+                                        selected = modifierChecked,
+                                        onClick = { modifierChecked = !modifierChecked },
+                                        label = { Text(stringResource(Res.string.activity_add_flow_rank_step_modifier_label_rank_shield)) },
                                         leadingIcon = { Icon(imageVector = Icons.Default.Shield, contentDescription = null) }
                                     )
 
-                                    rankRr >= 100 -> FilterChip(
-                                        selected = false,
-                                        onClick = {  },
-                                        label = { Text("Double rank up") },
+                                    rrDelta > 0 -> FilterChip(
+                                        selected = modifierChecked,
+                                        onClick = { modifierChecked = !modifierChecked},
+                                        label = { Text(stringResource(Res.string.activity_add_flow_rank_step_modifier_label_double_rank_up)) },
                                         leadingIcon = { Icon(imageVector = Icons.Default.KeyboardDoubleArrowUp, contentDescription = null) }
                                     )
                                 }
@@ -165,9 +167,11 @@ fun RankStepPreview() {
     MaterialTheme {
         Surface {
             RankStep(
-                currentRankRr = 50,
-                rr = 99,
-                rrError = null,
+                currentRank = null,
+                rrDelta = 50,
+                visibleRrDelta = 99,
+                rrDeltaError = null,
+                showRankModifier = true,
                 enableContinueButton = true,
                 onAction = {  },
             )

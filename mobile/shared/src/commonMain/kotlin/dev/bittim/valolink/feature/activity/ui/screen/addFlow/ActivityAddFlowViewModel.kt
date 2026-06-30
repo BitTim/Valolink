@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.06.26, 13:56
+ * Modified:   30.06.26, 14:20
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -134,18 +134,20 @@ class ActivityAddFlowViewModel(
             val time = _state.value.time
             val localizedTimeString = _state.value.time.toLocalizedString()
             val xp = _state.value.xp
-            val rr = _state.value.rr
+            val visibleRrDelta = _state.value.visibleRrDelta
 
             val isRankedSelected = _state.value.isRankedSelected
-            val (rank, newRank) = if (isRankedSelected) {
+            val (rank, newRank, rrDelta) = if (isRankedSelected) {
                 val totalRr = calculateRrBeforeTimeUseCase(activities, currentMode?.uuid, time)
                 val rank = mapRrToRank(totalRr, time)
 
-                val currentTotalRr = if (totalRr == null) { rr } else totalRr + (rr?.let { rr -> rank?.let { rank -> calculateRrDeltaUseCase(rank, rr) } } ?: 0)
+                val rrDelta = visibleRrDelta?.let { rr -> rank?.let { rank -> calculateRrDeltaUseCase(rank, rr) } }
+
+                val currentTotalRr = if (totalRr == null) { visibleRrDelta } else totalRr + (rrDelta ?: 0)
                 val newRank = mapRrToRank(currentTotalRr, time)
 
-                Pair(rank, newRank)
-            } else Pair(null, null)
+                Triple(rank, newRank, rrDelta)
+            } else Triple(null, null, null)
             val rankChanged = rank?.rank?.tier != newRank?.rank?.tier
 
             val enableModeContinueButton = modes != null && _state.value.modeUuid != null
@@ -173,8 +175,11 @@ class ActivityAddFlowViewModel(
                     enableRankContinueButton = enableRankContinueButton,
                     enableResultContinueButton = enableResultContinueButton,
 
+                    showRankModifier = rankChanged,
+
                     matchOutcome = matchOutcome,
                     currentRank = rank,
+                    rrDelta = rrDelta,
 
                     matchCardState = state.matchCardState.copy(
                         modeName = currentMode?.displayName ?: modePlaceholder,
@@ -183,7 +188,7 @@ class ActivityAddFlowViewModel(
                             iconUrl = iconUrl,
                             mapImageUrl = currentMap?.splash,
                             outcome = matchOutcome,
-                            rrChipState = rr?.let {
+                            rrChipState = visibleRrDelta?.let {
                                 RrChipState(
                                     rr = it,
                                     rankChanged = rankChanged
@@ -274,10 +279,10 @@ class ActivityAddFlowViewModel(
         _state.update { it.copy(scoreA = null, scoreB = null, scoreAError = null, scoreBError = null, surrender = MatchEndReason.COMPLETED) }
     }
 
-    private fun selectRr(rawRr: String?) {
-        when(val result = parseIntUseCase(rawRr, allowNegative = true, maxDigits = 2)) {
+    private fun selectVisibleRrDelta(rawRrDelta: String?) {
+        when(val result = parseIntUseCase(rawRrDelta, allowNegative = true, maxDigits = 2)) {
             is Result.Ok -> {
-                _state.update { it.copy(rr = result.data, rrError = null) }
+                _state.update { it.copy(visibleRrDelta = result.data, rrDeltaError = null) }
             }
             is Result.Err -> {
                 val error = when (result.error) {
@@ -287,7 +292,7 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_xp_step_xp_error_too_many_digits
                 }
 
-                _state.update { it.copy(rrError = error) }
+                _state.update { it.copy(rrDeltaError = error) }
             }
         }
         updateUiState()
@@ -367,8 +372,8 @@ class ActivityAddFlowViewModel(
                 val nextStep = if (_state.value.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.XpStep
                 _state.update { it.copy(step = nextStep) }
             }
-            is ActivityAddFlowAction.RrChanged -> {
-                selectRr(action.rawRr)
+            is ActivityAddFlowAction.RrDeltaChanged -> {
+                selectVisibleRrDelta(action.rawRr)
             }
             is ActivityAddFlowAction.XpChanged -> {
                 selectXp(action.rawXp)

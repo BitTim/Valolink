@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   28.06.26, 12:56
+  ~ Modified:   30.06.26, 14:22
   -->
 
 <resources>
@@ -89,4 +89,6 @@
     <string name="activity_add_flow_xp_step_xp_error_too_many_digits">RR hat zu viele Ziffern</string>
     <string name="activity_add_flow_rank_step_rr_sign_positive_desc">Indikator für positive Zahleneingabe</string>
     <string name="activity_add_flow_rank_step_rr_sign_negative_desc">Indikator für negative Zahleneingabe</string>
+    <string name="activity_add_flow_rank_step_modifier_label_rank_shield">Rang Schild</string>
+    <string name="activity_add_flow_rank_step_modifier_label_double_rank_up">Doppelter Aufstieg</string>
 </resources>
