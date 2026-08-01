@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.06.26, 14:23
+ * Modified:   01.08.26, 12:23
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -20,7 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.flowScaffold.FlowScaffold
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.*
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.MapStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ModeStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ScoreStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.XpStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankChangeState
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankStep
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -87,13 +92,17 @@ fun ActivityAddFlowScreen(
                 ActivityAddFlowStep.RankStep -> {
                     RankStep(
                         modifier = Modifier.padding(padding),
-                        rankCardStates = state.rankCardStates,
                         currentRank = state.currentRank,
-                        rrDelta = state.rrDelta,
-                        visibleRrDelta = state.visibleRrDelta,
-                        rrDeltaError = state.rrDeltaError?.let { stringResource(it) },
-                        showRankModifier = state.showRankModifier,
-                        matchOutcome = state.matchOutcome,
+                        selectedRankTier = state.selectedRankTier,
+                        placement = state.rankPlacement,
+                        rankCardStates = state.rankCardStates,
+                        rankChangeState = RankChangeState(
+                            rrDelta = state.rrDelta,
+                            visibleRrDelta = state.visibleRrDelta,
+                            matchOutcome = state.matchOutcome,
+                            rrDeltaError = state.rrDeltaError?.let { stringResource(it) },
+                            showRankModifier = state.showRankModifier,
+                        ),
                         enableContinueButton = state.enableRankContinueButton,
                         onAction = onAction,
                     )

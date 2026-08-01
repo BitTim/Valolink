@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.06.26, 14:23
+ * Modified:   01.08.26, 11:45
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -48,6 +48,8 @@ data class ActivityAddFlowState(
 
     val matchOutcome: MatchOutcome? = null,
     val currentRank: Rank? = null,
+    val rankPlacement: Boolean = false,
+    val selectedRankTier: Int? = null,
     val rrDelta: Int? = null,
 
     val matchCardState: MatchCardState = MatchCardState.Empty,

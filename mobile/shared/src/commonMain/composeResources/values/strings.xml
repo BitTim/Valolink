@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   30.06.26, 14:00
+  ~ Modified:   01.08.26, 11:40
   -->
 
 <resources>
@@ -81,4 +81,6 @@
     <string name="activity_add_flow_rank_step_rr_sign_negative_desc">Indicator for negative number input</string>
     <string name="activity_add_flow_rank_step_modifier_label_rank_shield">Rank shield</string>
     <string name="activity_add_flow_rank_step_modifier_label_double_rank_up">Double rank up</string>
+    <string name="activity_add_flow_rank_step_no_placement_label">No Placement</string>
+    <string name="activity_add_flow_rank_step_placement_label">Placement</string>
 </resources>
