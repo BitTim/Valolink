@@ -7,7 +7,7 @@
  * File:       ConnectedButtonGroup.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   28.06.26, 12:33
+ * Modified:   01.08.26, 12:58
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -46,7 +46,7 @@ fun SingleConnectedButtonGroup(
     initialSelection: Int = 0,
     onSelectionChange: (index: Int) -> Unit
 ) {
-    var selectedIndex by rememberSaveable { mutableIntStateOf(initialSelection) }
+    var selectedIndex by rememberSaveable(initialSelection) { mutableIntStateOf(initialSelection) }
 
     ButtonGroup(
         modifier = modifier,

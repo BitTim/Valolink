@@ -7,7 +7,7 @@
  * File:       CalculateRrBeforeTimeUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.06.26, 13:23
+ * Modified:   01.08.26, 12:58
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase.rank
@@ -32,9 +32,16 @@ class CalculateRrBeforeTimeUseCase {
     ): Int? {
         if (activities == null) return null
 
-        val filteredActivities = activities.filter {
-            it.mode == modeUuid
-        }.sortedBy { it.time }.takeWhile { it.time <= before }.filter { it.rr != null }
-        return if(filteredActivities.isEmpty()) null else filteredActivities.sumOf { it.rr!! }
+        var totalRr = 0
+        var hasRr = false
+
+        activities.forEach { activity ->
+            if (activity.mode == modeUuid && activity.time <= before && activity.rr != null) {
+                totalRr += activity.rr
+                hasRr = true
+            }
+        }
+
+        return totalRr.takeIf { hasRr }
     }
 }

@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 12:20
+ * Modified:   01.08.26, 13:02
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -16,22 +16,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.bittim.valolink.core.data.util.fallbackLocale
 import dev.bittim.valolink.core.domain.Result
-import dev.bittim.valolink.core.domain.extension.toLocalizedString
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
-import dev.bittim.valolink.feature.activity.domain.usecase.FormatScoreUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.MatchOutcomeFromScoreUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.ParseIntUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.rank.CalculateRrBeforeTimeUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.rank.CalculateRrDeltaUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.rank.MapRrToRank
 import dev.bittim.valolink.feature.activity.domain.usecase.rank.ObserveRanksByTimeUseCase
-import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
-import dev.bittim.valolink.feature.activity.ui.components.match.RrChipState
-import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
-import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowFormState
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowState
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowUiStateCalculator
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.resetActivityAddFlowSelections
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -46,13 +40,9 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalCoroutinesApi::class)
 class ActivityAddFlowViewModel(
     private val parseIntUseCase: ParseIntUseCase,
-    private val formatScoreUseCase: FormatScoreUseCase,
-    private val matchOutcomeFromScoreUseCase: MatchOutcomeFromScoreUseCase,
     private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase,
-    private val calculateRrBeforeTimeUseCase: CalculateRrBeforeTimeUseCase,
-    private val mapRrToRank: MapRrToRank,
     private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
-    private val calculateRrDeltaUseCase: CalculateRrDeltaUseCase,
+    private val uiStateCalculator: ActivityAddFlowUiStateCalculator,
 
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
@@ -97,7 +87,7 @@ class ActivityAddFlowViewModel(
                 it.copy(step = ActivityAddFlowStep.ScoreStep)
             }
             ActivityAddFlowStep.XpStep -> _state.update {
-                val prevStep = if (_state.value.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.ScoreStep
+                val prevStep = if (_state.value.form.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.ScoreStep
                 it.copy(step = prevStep)
             }
             ActivityAddFlowStep.XpCorrectionStep -> _state.update {
@@ -109,114 +99,24 @@ class ActivityAddFlowViewModel(
         }
     }
 
-    /**
-     * Recomputes the derived UI state from the current selections and loaded data.
-     *
-     * Updates the visible cards, button enablement, match summary, and ranked indicators using the
-     * selected mode, map, score, time, and season activities.
-     */
     private fun updateUiState() {
         uiStateUpdateJob?.cancel()
         uiStateUpdateJob = viewModelScope.launch {
-            val currentMode = modes?.firstOrNull { it.uuid == _state.value.modeUuid }
-            val currentMap = maps?.firstOrNull { it.uuid == _state.value.mapUuid }
-
-            val scoreA = _state.value.scoreA
-            val scoreB = _state.value.scoreB
-            val surrender = _state.value.surrender
-            val modeCategory = currentMode?.category ?: ValoModeCategory.Standard
-
-            val isPlacementScoreType = currentMode?.category?.getScoreType() == ValoModeCategory.ScoreType.Placement
-            val score = formatScoreUseCase(scoreA, scoreB, modeCategory)
-            val matchOutcome =
-                matchOutcomeFromScoreUseCase(scoreA, scoreB, surrender, modeCategory) ?: MatchOutcome.Draw
-
-            val time = _state.value.time
-            val localizedTimeString = _state.value.time.toLocalizedString()
-            val xp = _state.value.xp
-            val visibleRrDelta = _state.value.visibleRrDelta
-            val selectedRankTier = _state.value.selectedRankTier
-
-            val isRankedSelected = _state.value.isRankedSelected
-            val rankPlacement = _state.value.rankPlacement
-            val newSelectedRankTier = if (!rankPlacement) null else selectedRankTier
-
-            val (rank, newRank, rrDelta) = if (isRankedSelected) {
-                val totalRr = calculateRrBeforeTimeUseCase(activities, currentMode?.uuid, time)
-                val rank = mapRrToRank(totalRr, time)
-
-                val rrDelta = visibleRrDelta?.let { rr -> rank?.let { rank -> calculateRrDeltaUseCase(rank, rr) } }
-
-                val currentTotalRr = if (totalRr == null) { visibleRrDelta } else totalRr + (rrDelta ?: 0)
-                val newRank = if(rankPlacement) ranks?.find { it.tier == (newSelectedRankTier ?: 0) }?.let {
-                    // TODO: Extract to UseCase
-                    Rank(
-                        rank = it,
-                        rr = if(newSelectedRankTier != null) 50 else 0
-                    )
-                } else mapRrToRank(currentTotalRr, time)
-
-                Triple(rank, newRank, rrDelta)
-            } else Triple(null, null, null)
-            val rankChanged = rank?.rank?.tier != newRank?.rank?.tier
-
-            val enableModeContinueButton = modes != null && _state.value.modeUuid != null
-            val enableMapContinueButton = maps != null && _state.value.mapUuid != null
-            val enableScoreContinueButton =
-                scoreA != null && _state.value.scoreAError == null && (isPlacementScoreType || scoreB != null && _state.value.scoreBError == null)
-            val enableRankContinueButton = (rankPlacement && newSelectedRankTier != null) || !rankPlacement || visibleRrDelta != null
-            val enableResultContinueButton = false
-
-            val iconUrl = if (newRank != null) newRank.rank.largeIcon else currentMode?.displayIcon
-
-            _state.update { state ->
-                state.copy(
-                    modeCardStates = modes?.map { mode -> ModeCardState.from(mode) },
-                    mapCardStates = maps?.filter { map ->
-                        map.category == currentMode?.category?.let { modeCategory -> ValoMapCategory.from(modeCategory) }
-                    }?.map { map -> MapCardState.from(map) },
-                    rankCardStates = ranks?.map { rank -> RankCardState.from(rank) },
-                    isPlacementScoreType = isPlacementScoreType,
-                    supportsRanked = currentMode?.canBeRanked ?: false,
-
-                    enableModeContinueButton = enableModeContinueButton,
-                    enableMapContinueButton = enableMapContinueButton,
-                    enableScoreContinueButton = enableScoreContinueButton,
-                    enableRankContinueButton = enableRankContinueButton,
-                    enableResultContinueButton = enableResultContinueButton,
-
-                    showRankModifier = rankChanged,
-
-                    matchOutcome = matchOutcome,
-                    currentRank = rank,
-                    rrDelta = rrDelta,
-                    selectedRankTier = newSelectedRankTier,
-
-                    matchCardState = state.matchCardState.copy(
-                        modeName = currentMode?.displayName ?: modePlaceholder,
-                        mapName = currentMap?.displayName ?: mapPlaceholder,
-                        iconState = state.matchCardState.iconState.copy(
-                            iconUrl = iconUrl,
-                            mapImageUrl = currentMap?.splash,
-                            outcome = matchOutcome,
-                            rrChipState = visibleRrDelta?.let {
-                                RrChipState(
-                                    rr = it,
-                                    rankChanged = rankChanged
-                                )
-                            },
-                        ),
-                        scoreChipState = state.matchCardState.scoreChipState.copy(
-                            score = score,
-                            outcome = matchOutcome,
-                            wasSurrender = surrender in listOf(MatchEndReason.SURRENDER_A, MatchEndReason.SURRENDER_B)
-                        ),
-                        time = localizedTimeString,
-                        xp = xp,
-                    ),
-                )
-            }
+            val calculatedState = uiStateCalculator.calculate(
+                _state.value,
+                modes,
+                maps,
+                activities,
+                ranks,
+                modePlaceholder,
+                mapPlaceholder,
+            )
+            _state.value = calculatedState
         }
+    }
+
+    private fun updateForm(transform: (ActivityAddFlowFormState) -> ActivityAddFlowFormState) {
+        _state.update { it.copy(form = transform(it.form)) }
     }
 
     /**
@@ -225,40 +125,28 @@ class ActivityAddFlowViewModel(
      * @param uuid The selected mode identifier.
      */
     private fun selectMode(uuid: Uuid?) {
-        val oldMode = modes?.firstOrNull { it.uuid == _state.value.modeUuid }
+        val oldMode = modes?.firstOrNull { it.uuid == _state.value.form.modeUuid }
         val newMode = modes?.firstOrNull { it.uuid == uuid }
 
-        val scoreTypeChanged = newMode?.category?.getScoreType() != oldMode?.category?.getScoreType()
-        val mapTypeChanged = newMode?.category?.let { ValoMapCategory.from(it) } != oldMode?.category?.let { modeCategory ->  ValoMapCategory.from(modeCategory) }
-        val supportsRankedChanged = newMode?.canBeRanked != oldMode?.canBeRanked
-
-        if (scoreTypeChanged) { resetScore() }
-        if (mapTypeChanged) { resetMap() }
-        if (supportsRankedChanged) { selectRanked(false) }
-
-        _state.update { it.copy(modeUuid = uuid) }
+        _state.update {
+            val resetState = resetActivityAddFlowSelections(it, oldMode, newMode)
+            resetState.copy(form = resetState.form.copy(modeUuid = uuid))
+        }
         updateUiState()
     }
 
     private fun selectMap(uuid: Uuid?) {
-        _state.update { it.copy(mapUuid = uuid) }
+        updateForm { it.copy(mapUuid = uuid) }
         updateUiState()
-    }
-
-    private fun resetMap() {
-        _state.update { it.copy(mapUuid = null) }
     }
 
     private fun selectScore(rawScore: String?, isScoreB: Boolean) {
         when(val result = parseIntUseCase(rawScore, allowNegative = false, maxDigits = 3)) {
             is Result.Ok -> {
-                _state.update { if(isScoreB) it.copy(
-                    scoreB = result.data,
-                    scoreBError = null
-                ) else it.copy(
-                    scoreA = result.data,
-                    scoreAError = null
-                ) }
+                updateForm { form ->
+                    if (isScoreB) form.copy(scoreB = result.data, scoreBError = null)
+                    else form.copy(scoreA = result.data, scoreAError = null)
+                }
             }
             is Result.Err -> {
                 val error = when (result.error) {
@@ -268,13 +156,10 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_score_step_score_error_too_many_digits
                 }
 
-                _state.update { if(isScoreB) it.copy(
-                    scoreB = null,
-                    scoreBError = error
-                ) else it.copy(
-                    scoreA = null,
-                    scoreAError = error
-                ) }
+                updateForm { form ->
+                    if (isScoreB) form.copy(scoreB = null, scoreBError = error)
+                    else form.copy(scoreA = null, scoreAError = error)
+                }
             }
         }
 
@@ -282,28 +167,24 @@ class ActivityAddFlowViewModel(
     }
 
     private fun selectSurrender(reason: MatchEndReason) {
-        _state.update { it.copy(surrender = reason) }
+        updateForm { it.copy(surrender = reason) }
         updateUiState()
     }
 
-    private fun resetScore() {
-        _state.update { it.copy(scoreA = null, scoreB = null, scoreAError = null, scoreBError = null, surrender = MatchEndReason.COMPLETED) }
-    }
-
     private fun selectRankPlacement(placement: Boolean) {
-        _state.update { it.copy(rankPlacement = placement) }
+        updateForm { it.copy(rankPlacement = placement) }
         updateUiState()
     }
 
     private fun selectRankTier(tier: Int?) {
-        _state.update { it.copy(selectedRankTier = tier) }
+        updateForm { it.copy(selectedRankTier = tier) }
         updateUiState()
     }
 
     private fun selectVisibleRrDelta(rawRrDelta: String?) {
         when(val result = parseIntUseCase(rawRrDelta, allowNegative = true, maxDigits = 2)) {
             is Result.Ok -> {
-                _state.update { it.copy(visibleRrDelta = result.data, rrDeltaError = null) }
+                updateForm { it.copy(visibleRrDelta = result.data, rrDeltaError = null) }
             }
             is Result.Err -> {
                 val error = when (result.error) {
@@ -313,21 +194,21 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_xp_step_xp_error_too_many_digits
                 }
 
-                _state.update { it.copy(rrDeltaError = error) }
+                updateForm { it.copy(rrDeltaError = error) }
             }
         }
         updateUiState()
     }
 
     private fun selectRanked(selected: Boolean) {
-        _state.update { it.copy(isRankedSelected = selected) }
+        updateForm { it.copy(isRankedSelected = selected) }
         updateUiState()
     }
 
     private fun selectXp(rawXp: String?) {
         when(val result = parseIntUseCase(rawXp, allowNegative = false)) {
             is Result.Ok -> {
-                _state.update { it.copy(xp = result.data, xpError = null) }
+                updateForm { it.copy(xp = result.data, xpError = null) }
             }
             is Result.Err -> {
                 val error = when (result.error) {
@@ -337,7 +218,7 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> null
                 }
 
-                _state.update { it.copy(xpError = error) }
+                updateForm { it.copy(xpError = error) }
             }
         }
         updateUiState()
@@ -355,7 +236,7 @@ class ActivityAddFlowViewModel(
         val localTime = LocalTime(hour, minute)
         val newTime = LocalDateTime(localDate, localTime).toInstant(timeZone)
 
-        _state.update { it.copy(time = newTime) }
+        updateForm { it.copy(time = newTime) }
         updateUiState()
     }
 
@@ -380,17 +261,14 @@ class ActivityAddFlowViewModel(
             is ActivityAddFlowAction.MapContinue -> {
                 _state.update { it.copy(step = ActivityAddFlowStep.ScoreStep) }
             }
-            is ActivityAddFlowAction.ScoreAChanged -> {
-                selectScore(action.rawScore, false)
-            }
-            is ActivityAddFlowAction.ScoreBChanged -> {
-                selectScore(action.rawScore, true)
+            is ActivityAddFlowAction.ScoreChanged -> {
+                selectScore(action.rawScore, action.team == ActivityAddFlowAction.ScoreTeam.B)
             }
             is ActivityAddFlowAction.SurrenderChanged -> {
                 selectSurrender(action.reason)
             }
             is ActivityAddFlowAction.ScoreContinue -> {
-                val nextStep = if (_state.value.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.XpStep
+                val nextStep = if (_state.value.form.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.XpStep
                 _state.update { it.copy(step = nextStep) }
             }
             is ActivityAddFlowAction.RankPlacementChanged -> {
@@ -427,7 +305,7 @@ class ActivityAddFlowViewModel(
     init {
         val currentLocalDateTime = Clock.System.now().toLocalDateTime(timeZone)
         val currentTimeInstant = currentLocalDateTime.date.atTime(currentLocalDateTime.hour, currentLocalDateTime.minute).toInstant(timeZone)
-        _state.update { it.copy(time = currentTimeInstant) }
+        updateForm { it.copy(time = currentTimeInstant) }
 
         placeholderFetchJob?.cancel()
         placeholderFetchJob = viewModelScope.launch {
@@ -462,7 +340,7 @@ class ActivityAddFlowViewModel(
 
         activityFetchJob?.cancel()
         activityFetchJob = viewModelScope.launch {
-            state.map { it.time }.distinctUntilChanged().collectLatest {
+            state.map { it.form.time }.distinctUntilChanged().collectLatest {
                 activities = getSeasonActivitiesForCurrentUserByTimeUseCase(it)
                 updateUiState()
             }
@@ -470,10 +348,10 @@ class ActivityAddFlowViewModel(
 
         rankFetchJob?.cancel()
         rankFetchJob = viewModelScope.launch {
-            state.distinctUntilChanged { old, new -> old.time == new.time }.flatMapLatest {
-                observeRanksByTimeUseCase(it.time).distinctUntilChanged()
+            state.distinctUntilChanged { old, new -> old.form.time == new.form.time }.flatMapLatest {
+                observeRanksByTimeUseCase(it.form.time).distinctUntilChanged()
             }.collectLatest {
-                ranks = it.filter { rank -> !rank.division.contains("UNRANKED") && !rank.division.contains("INVALID") }
+                ranks = it
                 updateUiState()
             }
         }

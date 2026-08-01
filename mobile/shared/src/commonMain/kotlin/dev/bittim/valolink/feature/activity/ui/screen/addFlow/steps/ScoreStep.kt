@@ -7,7 +7,7 @@
  * File:       ScoreStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   16.06.26, 02:38
+ * Modified:   01.08.26, 12:58
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -39,6 +39,7 @@ fun ScoreStep(
     modifier: Modifier = Modifier,
     scoreA: Int?,
     scoreB: Int?,
+    surrender: MatchEndReason,
     scoreAError: String?,
     scoreBError: String?,
     isPlacementScoreType: Boolean,
@@ -46,8 +47,8 @@ fun ScoreStep(
     maxScoreDigits: Int = 3,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
-    var rawScoreA by rememberSaveable { mutableStateOf(scoreA?.toString() ?: "") }
-    var rawScoreB by rememberSaveable { mutableStateOf(scoreB?.toString() ?: "") }
+    var rawScoreA by rememberSaveable(scoreA) { mutableStateOf(scoreA?.toString() ?: "") }
+    var rawScoreB by rememberSaveable(scoreB) { mutableStateOf(scoreB?.toString() ?: "") }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -67,7 +68,7 @@ fun ScoreStep(
                     value = rawScoreA,
                     onValueChange = {
                         rawScoreA = it.take(maxScoreDigits)
-                        onAction(ActivityAddFlowAction.ScoreAChanged(rawScoreA))
+                        onAction(ActivityAddFlowAction.ScoreChanged(ActivityAddFlowAction.ScoreTeam.A, rawScoreA))
                     },
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(Res.string.activity_add_flow_score_step_place_label),
@@ -88,7 +89,7 @@ fun ScoreStep(
                             value = rawScoreA,
                             onValueChange = {
                                 rawScoreA = it.take(maxScoreDigits)
-                                onAction(ActivityAddFlowAction.ScoreAChanged(rawScoreA))
+                                onAction(ActivityAddFlowAction.ScoreChanged(ActivityAddFlowAction.ScoreTeam.A, rawScoreA))
                             },
                             modifier = Modifier.weight(1f),
                             label = stringResource(Res.string.activity_add_flow_score_step_you_label),
@@ -101,7 +102,7 @@ fun ScoreStep(
                             value = rawScoreB,
                             onValueChange = {
                                 rawScoreB = it.take(maxScoreDigits)
-                                onAction(ActivityAddFlowAction.ScoreBChanged(rawScoreB))
+                                onAction(ActivityAddFlowAction.ScoreChanged(ActivityAddFlowAction.ScoreTeam.B, rawScoreB))
                             },
                             modifier = Modifier.weight(1f),
                             label = stringResource(Res.string.activity_add_flow_score_step_enemy_label),
@@ -131,6 +132,7 @@ fun ScoreStep(
                                     weight = 1f
                                 )
                             },
+                            initialSelection = MatchEndReason.entries.indexOf(surrender),
                             onSelectionChange = { onAction(ActivityAddFlowAction.SurrenderChanged(MatchEndReason.entries[it])) }
                         )
                     }
@@ -158,6 +160,7 @@ fun ScoreStepPreview() {
                 modifier = Modifier.fillMaxSize(),
                 scoreA = null,
                 scoreB = null,
+                surrender = MatchEndReason.COMPLETED,
                 scoreAError = null,
                 scoreBError = "Sample Error",
                 isPlacementScoreType = false,
