@@ -26,6 +26,12 @@ data class RankCardState(
     val backgroundColor: Color = Color.Transparent
 ) {
     companion object {
+        /**
+         * Creates rank-card state from rank metadata and colors.
+         *
+         * @param rank The rank data used to populate the state.
+         * @return A rank-card state containing the rank details and parsed colors.
+         */
         fun from(rank: ValoRank): RankCardState {
             return RankCardState(
                 tier = rank.tier,

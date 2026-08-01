@@ -39,6 +39,11 @@ import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.signStyle
 import kotlin.math.absoluteValue
 
+/**
+ * Displays a colored chip showing a rating change and, when applicable, its rank-change direction.
+ *
+ * @param state The rating value and rank-change state to display.
+ */
 @Composable
 fun RrChip(
     modifier: Modifier = Modifier,

@@ -33,6 +33,17 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_rank_step_title
 import valolink.shared.generated.resources.generic_button_continue
 
+/**
+ * Displays the rank selection or rank change step in the activity-add flow.
+ *
+ * @param currentRank The user's current rank, when available.
+ * @param selectedRankTier The rank tier currently selected for placement.
+ * @param placement Whether the flow is placing a rank.
+ * @param rankCardStates The available rank card states for placement.
+ * @param rankChangeState The state used when changing an existing rank.
+ * @param enableContinueButton Whether the Continue button is enabled.
+ * @param onAction Handles actions emitted by the step.
+ */
 @Composable
 fun RankStep(
     modifier: Modifier = Modifier,

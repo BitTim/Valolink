@@ -28,6 +28,18 @@ class ActivityAddFlowUiStateCalculator(
     private val matchOutcomeFromScoreUseCase: MatchOutcomeFromScoreUseCase,
     private val calculateRankChangeUseCase: CalculateRankChangeUseCase,
 ) {
+    /**
+     * Builds the presentation state for the activity add flow from the current form and loaded game data.
+     *
+     * @param state The current activity add flow state.
+     * @param modes Available game modes.
+     * @param maps Available maps.
+     * @param activities Existing activities used to calculate rank changes.
+     * @param ranks Available rank tiers.
+     * @param modePlaceholder Text displayed when no mode is selected.
+     * @param mapPlaceholder Text displayed when no map is selected.
+     * @return The updated activity add flow state.
+     */
     fun calculate(
         state: ActivityAddFlowState,
         modes: List<ValoMode>?,

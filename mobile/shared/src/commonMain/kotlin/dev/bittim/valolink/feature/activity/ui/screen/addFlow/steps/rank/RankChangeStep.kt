@@ -50,6 +50,13 @@ data class RankChangeState(
     val maxRrDigits: Int = 2
 )
 
+/**
+ * Renders the rank rating change input and optional rank modifier selector.
+ *
+ * @param modifier The modifier applied to the component.
+ * @param state The current rank change values, validation state, and display configuration.
+ * @param onAction Receives actions when the rank rating value or sign changes.
+ */
 @Composable
 fun RankChangeStep(
     modifier: Modifier = Modifier,

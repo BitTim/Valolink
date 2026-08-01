@@ -99,6 +99,9 @@ class ActivityAddFlowViewModel(
         }
     }
 
+    /**
+     * Recalculates the activity add flow UI state using the current form data and supporting data.
+     */
     private fun updateUiState() {
         uiStateUpdateJob?.cancel()
         uiStateUpdateJob = viewModelScope.launch {
@@ -140,6 +143,12 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Parses and updates the score for the selected team.
+     *
+     * @param rawScore The entered score value.
+     * @param isScoreB Whether to update team B's score; otherwise, updates team A's score.
+     */
     private fun selectScore(rawScore: String?, isScoreB: Boolean) {
         when(val result = parseIntUseCase(rawScore, allowNegative = false, maxDigits = 3)) {
             is Result.Ok -> {
@@ -176,6 +185,11 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Updates the selected rank tier.
+     *
+     * @param tier The selected rank tier, or `null` to clear the selection.
+     */
     private fun selectRankTier(tier: Int?) {
         updateForm { it.copy(selectedRankTier = tier) }
         updateUiState()
@@ -200,6 +214,11 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Updates whether the activity is marked as ranked.
+     *
+     * @param selected Whether the activity is marked as ranked.
+     */
     private fun selectRanked(selected: Boolean) {
         updateForm { it.copy(isRankedSelected = selected) }
         updateUiState()
@@ -240,6 +259,12 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Processes an activity-entry action and updates the form or navigation state accordingly.
+     *
+     * @param action The activity-entry action to process.
+     * @param navBack Callback invoked when backward navigation exits the flow.
+     */
     fun onAction(
         action: ActivityAddFlowAction,
         navBack: () -> Unit

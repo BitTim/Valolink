@@ -23,6 +23,14 @@ class ParseIntUseCase {
         TOO_MANY_DIGITS
     }
 
+    /**
+     * Parses an optional string into an integer with configurable sign and digit constraints.
+     *
+     * @param rawValue The string to parse.
+     * @param allowNegative Whether negative values are accepted.
+     * @param maxDigits The maximum number of digits allowed in the absolute value, or `null` for no limit.
+     * @return A successful result containing the parsed integer, or an error describing why parsing failed.
+     */
     operator fun invoke(rawValue: String?, allowNegative: Boolean = true, maxDigits: Int? = null): Result<Int, IntParseError> {
         if (rawValue.isNullOrEmpty()) return Result.Err(IntParseError.EMPTY)
 

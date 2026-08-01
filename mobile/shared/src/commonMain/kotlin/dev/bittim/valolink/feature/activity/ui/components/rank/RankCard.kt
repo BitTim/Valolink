@@ -27,6 +27,11 @@ import coil3.compose.AsyncImage
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.IconCardLayout
 
+/**
+ * Displays a rank card with its image, name, division, and themed background.
+ *
+ * @param state The rank data and colors displayed by the card.
+ */
 @Composable
 fun RankCard(
     modifier: Modifier = Modifier,

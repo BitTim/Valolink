@@ -30,6 +30,18 @@ class CalculateRankChangeUseCase(
     private val mapRrToRank: MapRrToRank,
     private val calculateRrDeltaUseCase: CalculateRrDeltaUseCase,
 ) {
+    /**
+     * Calculates the rank change for a ranked activity based on prior rating or placement status.
+     *
+     * @param activities Activities used to determine the rating before the specified time.
+     * @param modeUuid The game mode identifier.
+     * @param time The point in time before which the rating is calculated.
+     * @param visibleRrDelta The visible rating change to apply.
+     * @param placement Whether the calculation is for placement.
+     * @param selectedRankTier The rank tier selected for placement.
+     * @param ranks Available rank definitions.
+     * @return The current rank, new rank, and rating change.
+     */
     operator fun invoke(
         activities: List<Activity>?,
         modeUuid: Uuid?,
@@ -55,6 +67,14 @@ class CalculateRankChangeUseCase(
         }
     }
 
+    /**
+     * Calculates the current rank, RR change, and resulting rank for an existing player.
+     *
+     * @param totalRr The player's total RR before the activity.
+     * @param visibleRrDelta The visible RR change from the activity.
+     * @param ranks The rank definitions used to map RR values to ranks.
+     * @return The calculated rank change, or an empty result when rank definitions are unavailable.
+     */
     private fun calculateExistingRankChange(
         totalRr: Int,
         visibleRrDelta: Int?,
@@ -74,6 +94,14 @@ class CalculateRankChangeUseCase(
         )
     }
 
+    /**
+     * Calculates the rank change for a placement scenario.
+     *
+     * @param placement Whether placement is active.
+     * @param selectedRankTier The selected rank tier for placement.
+     * @param ranks The available rank definitions.
+     * @return The unranked current rank and the resulting placement rank, or an empty change when rank definitions are unavailable.
+     */
     private fun calculatePlacementRankChange(
         placement: Boolean,
         selectedRankTier: Int?,

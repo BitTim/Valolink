@@ -36,6 +36,14 @@ data class ConnectedButtonGroupEntry(
     val enabled: Boolean = true,
 )
 
+/**
+ * Renders a connected group of selectable buttons.
+ *
+ * @param entries The buttons to display.
+ * @param style The visual style applied to the buttons.
+ * @param initialSelection The index of the initially selected button.
+ * @param onSelectionChange Called with the index of the newly selected button.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SingleConnectedButtonGroup(

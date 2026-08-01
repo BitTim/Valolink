@@ -20,6 +20,16 @@ sealed class ColorFormat(val length: Int) {
     data object RGBA : ColorFormat(8)
 }
 
+/**
+ * Parses a hexadecimal color string according to the specified channel format.
+ *
+ * An optional leading `#` is accepted. `RGB` values use full opacity, while
+ * `ARGB` and `RGBA` values include an explicit alpha component.
+ *
+ * @param value The hexadecimal color string to parse.
+ * @param format The channel ordering and required length of the color string.
+ * @return The parsed color.
+ */
 @Suppress("MagicNumber")
 fun Color.Companion.parseColor(value: String, format: ColorFormat): Color {
     val clean = value.removePrefix("#").uppercase()

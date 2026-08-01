@@ -29,6 +29,12 @@ import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankCha
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankStep
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Renders the cancellable multi-step activity-entry flow.
+ *
+ * @param state The current flow state.
+ * @param onAction Handles actions emitted by the flow.
+ */
 @Composable
 @Preview
 fun ActivityAddFlowScreen(

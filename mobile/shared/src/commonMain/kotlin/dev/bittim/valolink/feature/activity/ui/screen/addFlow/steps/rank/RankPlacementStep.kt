@@ -39,6 +39,14 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_rank_step_no_placement_label
 import valolink.shared.generated.resources.activity_add_flow_rank_step_placement_label
 
+/**
+ * Displays controls for enabling rank placement and selecting a rank.
+ *
+ * @param rankCardStates The rank cards available for selection.
+ * @param selectedRankTier The tier of the currently selected rank.
+ * @param placement Whether rank placement is enabled.
+ * @param onAction Handles rank placement and rank selection changes.
+ */
 @Composable
 fun RankPlacementStep(
     modifier: Modifier = Modifier,

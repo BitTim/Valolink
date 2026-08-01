@@ -28,6 +28,13 @@ class ObserveRanksByTimeUseCase(
     private val valoCompetitiveSeasonRepo: ValoCompetitiveSeasonRepo,
     private val valoRankRepo: ValoRankRepo
 ) {
+    /**
+     * Observes the ranks associated with the season and competitive season at a specified time.
+     *
+     * @param time The point in time used to select the season.
+     * @param locale The optional locale for localized season and rank data.
+     * @return A stream of distinct rank lists for the selected competitive season.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(time: Instant, locale: String? = null): Flow<List<ValoRank>> {
         return valoSeasonRepo.observe(time, locale).distinctUntilChanged().filterNotNull().flatMapLatest { season ->
