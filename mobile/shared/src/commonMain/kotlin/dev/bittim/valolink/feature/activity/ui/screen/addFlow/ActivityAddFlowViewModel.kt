@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 13:02
+ * Modified:   02.08.26, 18:53
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -205,7 +205,7 @@ class ActivityAddFlowViewModel(
                     ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
                     ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
                     ParseIntUseCase.IntParseError.NEGATIVE -> null
-                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_xp_step_xp_error_too_many_digits
+                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_rank_step_rr_error_too_many_digits
                 }
 
                 updateForm { it.copy(rrDeltaError = error) }

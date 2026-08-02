@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   01.08.26, 11:40
+  ~ Modified:   02.08.26, 18:53
   -->
 
 <resources>
@@ -76,7 +76,7 @@
     <string name="date_time_picker_error_out_of_range">Date and time is outside the valid range</string>
     <string name="activity_add_flow_rank_step_title">How did your rank change?</string>
     <string name="activity_add_flow_score_step_score_error_too_many_digits">Score has too many digits</string>
-    <string name="activity_add_flow_xp_step_xp_error_too_many_digits">RR has too many digits</string>
+    <string name="activity_add_flow_rank_step_rr_error_too_many_digits">RR has too many digits</string>
     <string name="activity_add_flow_rank_step_rr_sign_positive_desc">Indicator for positive number input</string>
     <string name="activity_add_flow_rank_step_rr_sign_negative_desc">Indicator for negative number input</string>
     <string name="activity_add_flow_rank_step_modifier_label_rank_shield">Rank shield</string>
