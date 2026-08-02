@@ -89,6 +89,6 @@
     <string name="activity_add_flow_xp_step_xp_error_too_many_digits">EP hat zu viele Ziffern</string>
     <string name="activity_add_flow_rank_step_rr_sign_positive_desc">Indikator für positive Zahleneingabe</string>
     <string name="activity_add_flow_rank_step_rr_sign_negative_desc">Indikator für negative Zahleneingabe</string>
-    <string name="activity_add_flow_rank_step_modifier_label_rank_shield">Rang Schild</string>
+    <string name="activity_add_flow_rank_step_modifier_label_rank_shield">Rangschild</string>
     <string name="activity_add_flow_rank_step_modifier_label_double_rank_up">Doppelter Aufstieg</string>
 </resources>
