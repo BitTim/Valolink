@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowSelectionReset.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 13:02
+ * Modified:   02.08.26, 19:15
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -23,7 +23,7 @@ import dev.bittim.valolink.core.domain.model.ValoMode
  * @param state The current activity add-flow state.
  * @param oldMode The previously selected mode.
  * @param newMode The newly selected mode.
- * @return The updated state with incompatible scores, map, and ranked selection cleared.
+ * @return The updated state with incompatible scores, map, and ranked inputs cleared.
  */
 fun resetActivityAddFlowSelections(
     state: ActivityAddFlowState,
@@ -43,7 +43,11 @@ fun resetActivityAddFlowSelections(
             scoreBError = if (scoreTypeChanged) null else state.form.scoreBError,
             surrender = if (scoreTypeChanged) MatchEndReason.COMPLETED else state.form.surrender,
             mapUuid = if (mapTypeChanged) null else state.form.mapUuid,
-            isRankedSelected = if (supportsRankedChanged) false else state.form.isRankedSelected,
+            isRankedSelected = !supportsRankedChanged && state.form.isRankedSelected,
+            rankPlacement = !supportsRankedChanged && state.form.rankPlacement,
+            selectedRankTier = if (supportsRankedChanged) null else state.form.selectedRankTier,
+            visibleRrDelta = if (supportsRankedChanged) null else state.form.visibleRrDelta,
+            rrDeltaError = if (supportsRankedChanged) null else state.form.rrDeltaError,
         ),
     )
 }
