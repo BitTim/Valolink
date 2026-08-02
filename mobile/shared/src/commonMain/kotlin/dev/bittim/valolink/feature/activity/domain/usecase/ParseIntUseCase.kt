@@ -37,7 +37,9 @@ class ParseIntUseCase {
         return try {
             val score = rawValue.toInt()
             if (score < 0 && !allowNegative) return Result.Err(IntParseError.NEGATIVE)
-            if (maxDigits != null && score.absoluteValue.toString().length > maxDigits) return Result.Err(IntParseError.TOO_MANY_DIGITS)
+            if (maxDigits != null && score.toLong().absoluteValue.toString().length > maxDigits) {
+                return Result.Err(IntParseError.TOO_MANY_DIGITS)
+            }
             Result.Ok(score)
         } catch (_: NumberFormatException) {
             Result.Err(IntParseError.INVALID)
