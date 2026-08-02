@@ -33,13 +33,17 @@ data class RankCardState(
          * @return A rank-card state containing the rank details and parsed colors.
          */
         fun from(rank: ValoRank): RankCardState {
+            fun parseOrTransparent(value: String): Color = runCatching {
+                Color.parseColor(value, ColorFormat.RGBA)
+            }.getOrDefault(Color.Transparent)
+
             return RankCardState(
                 tier = rank.tier,
                 name = rank.tierName,
                 division = rank.divisionName,
                 imageUrl = rank.largeIcon,
-                color = Color.parseColor(rank.color, ColorFormat.RGBA),
-                backgroundColor = Color.parseColor(rank.backgroundColor, ColorFormat.RGBA)
+                color = parseOrTransparent(rank.color),
+                backgroundColor = parseOrTransparent(rank.backgroundColor)
             )
         }
     }
