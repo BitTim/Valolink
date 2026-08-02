@@ -20,7 +20,7 @@ enum class ActivityAddFlowStep(
     ModeStep(0f),
     MapStep(0.2f),
     ScoreStep(0.4f),
-    RankStep(0.8f),
+    RankStep(0.6f),
     XpStep(1f),
 
     XpCorrectionStep(1f),
