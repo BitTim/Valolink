@@ -7,7 +7,7 @@
  * File:       ConnectedButtonGroup.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 14:14
+ * Modified:   01.08.26, 12:58
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -36,6 +36,14 @@ data class ConnectedButtonGroupEntry(
     val enabled: Boolean = true,
 )
 
+/**
+ * Renders a connected group of selectable buttons.
+ *
+ * @param entries The buttons to display.
+ * @param style The visual style applied to the buttons.
+ * @param initialSelection The index of the initially selected button.
+ * @param onSelectionChange Called with the index of the newly selected button.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SingleConnectedButtonGroup(
@@ -46,7 +54,7 @@ fun SingleConnectedButtonGroup(
     initialSelection: Int = 0,
     onSelectionChange: (index: Int) -> Unit
 ) {
-    var selectedIndex by rememberSaveable { mutableIntStateOf(initialSelection) }
+    var selectedIndex by rememberSaveable(initialSelection) { mutableIntStateOf(initialSelection) }
 
     ButtonGroup(
         modifier = modifier,
@@ -74,7 +82,7 @@ fun SingleConnectedButtonGroup(
                     this.customItem(
                         buttonGroupContent = {
                             TonalToggleButton(
-                                modifier = Modifier.weight(entry.weight),
+                                modifier = if(!entry.weight.isNaN()) Modifier.weight(entry.weight) else Modifier,
                                 checked = checked,
                                 enabled = entry.enabled,
                                 onCheckedChange ={
@@ -83,7 +91,7 @@ fun SingleConnectedButtonGroup(
                                 }
                             ) {
                                 entry.icon?.let { it() }
-                                Spacer(modifier = Modifier.width(8.dp))
+                                if(entry.icon != null) Spacer(modifier = Modifier.width(8.dp))
                                 Text(text = entry.label)
                             }
                         },

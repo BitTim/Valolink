@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   19.06.26, 02:25
+  ~ Modified:   02.08.26, 18:53
   -->
 
 <resources>
@@ -84,4 +84,11 @@
     <string name="iconcd_time_picker_toggle_dial">Wählscheibe für Zeiteingabe verwenden</string>
     <string name="generic_button_back">Zurück</string>
     <string name="date_time_picker_error_out_of_range">Datum und Uhrzeit sind außerhalb des gültigen Zeitraums</string>
+    <string name="activity_add_flow_rank_step_title">Wie hat sich dein Rang verändert?</string>
+    <string name="activity_add_flow_score_step_score_error_too_many_digits">Ergebnis hat zu viele Ziffern</string>
+    <string name="activity_add_flow_rank_step_rr_error_too_many_digits">EP hat zu viele Ziffern</string>
+    <string name="activity_add_flow_rank_step_rr_sign_positive_desc">Indikator für positive Zahleneingabe</string>
+    <string name="activity_add_flow_rank_step_rr_sign_negative_desc">Indikator für negative Zahleneingabe</string>
+    <string name="activity_add_flow_rank_step_modifier_label_rank_shield">Rangschild</string>
+    <string name="activity_add_flow_rank_step_modifier_label_double_rank_up">Doppelter Aufstieg</string>
 </resources>

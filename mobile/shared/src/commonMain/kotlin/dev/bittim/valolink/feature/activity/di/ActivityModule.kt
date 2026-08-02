@@ -7,13 +7,15 @@
  * File:       ActivityModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 17:49
+ * Modified:   01.08.26, 13:04
  */
 
 package dev.bittim.valolink.feature.activity.di
 
 import dev.bittim.valolink.feature.activity.domain.usecase.*
+import dev.bittim.valolink.feature.activity.domain.usecase.rank.*
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowViewModel
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowUiStateCalculator
 import dev.bittim.valolink.feature.activity.ui.screen.list.ActivityListViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -28,6 +30,10 @@ val featureActivityModule = module {
     singleOf(::CalculateRrBeforeTimeUseCase)
     singleOf(::CalculateRrUpToIdUseCase)
     singleOf(::MapRrToRank)
+    singleOf(::ObserveRanksByTimeUseCase)
+    singleOf(::CalculateRrDeltaUseCase)
+    singleOf(::CalculateRankChangeUseCase)
+    singleOf(::ActivityAddFlowUiStateCalculator)
 
     viewModelOf(::ActivityAddFlowViewModel)
     viewModelOf(::ActivityListViewModel)

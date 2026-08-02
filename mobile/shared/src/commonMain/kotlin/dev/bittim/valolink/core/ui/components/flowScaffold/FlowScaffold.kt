@@ -7,7 +7,7 @@
  * File:       FlowScaffold.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 21:41
+ * Modified:   27.06.26, 02:05
  */
 
 package dev.bittim.valolink.core.ui.components.flowScaffold
@@ -35,6 +35,17 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.iconcd_back
 import valolink.shared.generated.resources.iconcd_close
 
+/**
+ * Displays a multi-step flow with navigation controls, progress, optional hero content, and animated step content.
+ *
+ * @param step The current flow step.
+ * @param cancellable Whether the first step's close action is enabled.
+ * @param onBack Invoked when the user presses the back or close control.
+ * @param menuContent Optional content for the first step's overflow menu.
+ * @param hero Content displayed above the current step.
+ * @param heroAspectRatio The aspect ratio applied to the hero area.
+ * @param content Content displayed for the current step.
+ */
 @Composable
 fun <S: FlowStep> FlowScaffold(
     modifier: Modifier = Modifier,
@@ -55,10 +66,10 @@ fun <S: FlowStep> FlowScaffold(
     )
 
     Surface(
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
             Box(

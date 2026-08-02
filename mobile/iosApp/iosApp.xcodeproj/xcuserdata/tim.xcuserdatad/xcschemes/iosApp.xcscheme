@@ -8,10 +8,11 @@
   ~ File:       iosApp.xcscheme
   ~ Module:     Valolink.iosApp
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   22.06.26, 17:12
+  ~ Modified:   01.08.26, 12:23
   -->
 
 <Scheme
+   LastUpgradeVersion = "2700"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"

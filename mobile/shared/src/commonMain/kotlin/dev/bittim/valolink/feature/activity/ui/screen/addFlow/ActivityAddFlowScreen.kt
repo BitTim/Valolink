@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 14:21
+ * Modified:   01.08.26, 13:02
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -20,12 +20,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.flowScaffold.FlowScaffold
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.*
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.MapStep
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ModeStep
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ScoreStep
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.XpStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankChangeState
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankStep
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Renders the cancellable multi-step activity-entry flow.
+ *
+ * @param state The current flow state.
+ * @param onAction Handles actions emitted by the flow.
+ */
 @Composable
 @Preview
 fun ActivityAddFlowScreen(
@@ -59,42 +68,61 @@ fun ActivityAddFlowScreen(
                 ActivityAddFlowStep.ModeStep -> {
                     ModeStep(
                         modifier = Modifier.padding(padding),
-                        selectedModeUuid = state.modeUuid,
+                        selectedModeUuid = state.form.modeUuid,
                         modeCardStates = state.modeCardStates,
-                        enableContinueButton = state.enableModeContinueButton,
-                        isRankedSelected = state.isRankedSelected,
+                        enableContinueButton = state.canContinueFromMode,
+                        isRankedSelected = state.form.isRankedSelected,
                         onAction = onAction
                     )
                 }
                 ActivityAddFlowStep.MapStep -> {
                     MapStep(
                         modifier = Modifier.padding(padding),
-                        selectedMapUuid = state.mapUuid,
+                        selectedMapUuid = state.form.mapUuid,
                         mapCardStates = state.mapCardStates,
-                        enableContinueButton = state.enableMapContinueButton,
+                        enableContinueButton = state.canContinueFromMap,
                         onAction = onAction
                     )
                 }
                 ActivityAddFlowStep.ScoreStep -> {
                     ScoreStep(
                         modifier = Modifier.padding(padding),
-                        scoreA = state.scoreA,
-                        scoreB = state.scoreB,
-                        scoreAError = state.scoreAError?.let { stringResource(it) },
-                        scoreBError = state.scoreBError?.let { stringResource(it) },
+                        scoreA = state.form.scoreA,
+                        scoreB = state.form.scoreB,
+                        surrender = state.form.surrender,
+                        scoreAError = state.form.scoreAError?.let { stringResource(it) },
+                        scoreBError = state.form.scoreBError?.let { stringResource(it) },
                         isPlacementScoreType = state.isPlacementScoreType,
-                        enableContinueButton = state.enableScoreContinueButton,
+                        enableContinueButton = state.canContinueFromScore,
                         onAction = onAction
+                    )
+                }
+                ActivityAddFlowStep.RankStep -> {
+                    RankStep(
+                        modifier = Modifier.padding(padding),
+                        currentRank = state.currentRank,
+                        selectedRankTier = state.form.selectedRankTier,
+                        placement = state.form.rankPlacement,
+                        rankCardStates = state.rankCardStates,
+                        rankChangeState = RankChangeState(
+                            rrDelta = state.rrDelta,
+                            visibleRrDelta = state.form.visibleRrDelta,
+                            matchOutcome = state.matchOutcome,
+                            rrDeltaError = state.form.rrDeltaError?.let { stringResource(it) },
+                            showRankModifier = state.showRankModifier,
+                        ),
+                        enableContinueButton = state.canContinueFromRank,
+                        onAction = onAction,
                     )
                 }
                 ActivityAddFlowStep.XpStep -> {
                     XpStep(
                         modifier = Modifier.padding(padding),
-                        xp = state.xp,
-                        xpError = state.xpError?.let { stringResource(it) },
-                        time = state.time,
+                        xp = state.form.xp,
+                        xpError = state.form.xpError?.let { stringResource(it) },
+                        time = state.form.time,
                         dateTimePickerVisible = state.dateTimePickerVisible,
-                        enableContinueButton = state.enableResultContinueButton,
+                        enableContinueButton = false,
                         onAction = onAction
                     )
                 }
