@@ -34,12 +34,14 @@ class MapRrToRank {
             Rank(rank = it, rr = 0)
         }
 
+        val boundedRr = rr.coerceAtLeast(0)
         val tierOffset = rankedRanks.minOfOrNull { it.tier } ?: return null
-        val relativeTier = floor(rr.toDouble() / RankConstants.RR_PER_RANK).toInt()
+        val highestTier = rankedRanks.maxOf { it.tier }
+        val relativeTier = floor(boundedRr.toDouble() / RankConstants.RR_PER_RANK).toInt()
         val calculatedTier = relativeTier + tierOffset
-        val calculatedRr = rr - relativeTier * RankConstants.RR_PER_RANK
+        val calculatedRr = boundedRr - relativeTier * RankConstants.RR_PER_RANK
 
-        val actualTier = calculatedTier.coerceAtMost(rankedRanks.lastOrNull()?.tier ?: 0)
+        val actualTier = calculatedTier.coerceIn(tierOffset, highestTier)
         val rank = rankedRanks.firstOrNull { it.tier == actualTier } ?: return null
 
         return Rank(
