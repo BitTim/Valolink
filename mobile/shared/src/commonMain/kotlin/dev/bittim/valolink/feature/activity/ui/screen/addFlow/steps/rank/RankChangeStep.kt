@@ -63,8 +63,10 @@ fun RankChangeStep(
     state: RankChangeState,
     onAction: (ActivityAddFlowAction) -> Unit,
 ) {
-    var rawRrDelta by rememberSaveable { mutableStateOf(state.visibleRrDelta?.absoluteValue?.toString() ?: "") }
-    var signChecked by rememberSaveable { mutableStateOf(if(state.visibleRrDelta == null) state.matchOutcome == MatchOutcome.Loss else state.visibleRrDelta < 0) }
+    var rawRrDelta by rememberSaveable(state.visibleRrDelta) { mutableStateOf(state.visibleRrDelta?.absoluteValue?.toString() ?: "") }
+    var signChecked by rememberSaveable(state.visibleRrDelta, state.matchOutcome) {
+        mutableStateOf(state.visibleRrDelta?.let { it < 0 } ?: (state.matchOutcome == MatchOutcome.Loss))
+    }
     var modifierChecked by rememberSaveable(state.rrDelta) { mutableStateOf(false) }
 
     val action = {
