@@ -7,7 +7,7 @@
  * File:       FlowScaffold.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.06.26, 02:05
+ * Modified:   18.08.26, 20:43
  */
 
 package dev.bittim.valolink.core.ui.components.flowScaffold
@@ -36,14 +36,13 @@ import valolink.shared.generated.resources.iconcd_back
 import valolink.shared.generated.resources.iconcd_close
 
 /**
- * Displays a multi-step flow with navigation controls, progress, optional hero content, and animated step content.
+ * Displays a multistep flow with navigation controls, progress, optional hero content, and animated step content.
  *
  * @param step The current flow step.
  * @param cancellable Whether the first step's close action is enabled.
  * @param onBack Invoked when the user presses the back or close control.
  * @param menuContent Optional content for the first step's overflow menu.
  * @param hero Content displayed above the current step.
- * @param heroAspectRatio The aspect ratio applied to the hero area.
  * @param content Content displayed for the current step.
  */
 @Composable
@@ -53,9 +52,9 @@ fun <S: FlowStep> FlowScaffold(
     step: S,
     cancellable: Boolean = true,
     onBack: () -> Unit = {},
-    menuContent: (@Composable () -> Unit)? = null,
-    hero: @Composable () -> Unit = {},
-    heroAspectRatio: Float = 3f/1f,
+    menuContent: (@Composable (dismiss: () -> Unit) -> Unit)? = null,
+    hero: @Composable (step: S) -> Unit = {},
+    heroKey: (S) -> Any = { it },
     content: @Composable AnimatedContentScope.(S, padding: PaddingValues) -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -127,7 +126,7 @@ fun <S: FlowStep> FlowScaffold(
                             expanded = menuExpanded,
                             onDismissRequest = { menuExpanded = false }
                         ) {
-                            menuContent?.invoke()
+                            menuContent?.invoke { menuExpanded = false }
                         }
                     }
                 }
@@ -137,15 +136,15 @@ fun <S: FlowStep> FlowScaffold(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(Spacing.s),
+                verticalArrangement = Arrangement.spacedBy(Spacing.l),
             ) {
-                Box(
-                    modifier = Modifier.aspectRatio(heroAspectRatio)
-                        .padding(padding)
+                AnimatedContent(
+                    modifier = Modifier.padding(padding)
                         .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.Center
-                ) {
-                    hero()
+                    targetState = step,
+                    contentKey = heroKey,
+                ) { currentStep ->
+                    hero(currentStep)
                 }
 
                 AnimatedContent(
@@ -186,17 +185,22 @@ fun FlowScaffoldPreview() {
             menuContent = {},
             hero = {
                 Box(
-                    modifier = Modifier.aspectRatio(1f)
-                        .padding(Spacing.l)
-                        .clip(MaterialShapes.Cookie12Sided.toShape())
-                        .background(MaterialTheme.colorScheme.primaryContainer)
+                    modifier = Modifier.aspectRatio(3f/1f),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        modifier = Modifier.fillMaxSize().padding(Spacing.xxl),
-                        imageVector = Icons.Default.Android,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        contentDescription = null
-                    )
+                    Box(
+                        modifier = Modifier.aspectRatio(1f)
+                            .padding(Spacing.l)
+                            .clip(MaterialShapes.Cookie12Sided.toShape())
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize().padding(Spacing.xl),
+                            imageVector = Icons.Default.Android,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = null
+                        )
+                    }
                 }
             },
             content = { _, padding ->

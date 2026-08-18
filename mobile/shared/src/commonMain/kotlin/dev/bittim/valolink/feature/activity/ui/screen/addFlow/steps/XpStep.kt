@@ -7,28 +7,25 @@
  * File:       XpStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 04:23
+ * Modified:   18.08.26, 20:45
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
-import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
 import dev.bittim.valolink.feature.activity.ui.components.dateTimePicker.DateTimePickerDialog
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.sections.XpSection
 import org.jetbrains.compose.resources.stringResource
-import valolink.shared.generated.resources.*
+import valolink.shared.generated.resources.Res
+import valolink.shared.generated.resources.activity_add_flow_xp_step_change_time
+import valolink.shared.generated.resources.activity_add_flow_xp_step_title
+import valolink.shared.generated.resources.generic_button_finish
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -43,8 +40,6 @@ fun XpStep(
     enableContinueButton: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
-    var rawXp by rememberSaveable { mutableStateOf(xp?.toString() ?: "") }
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.l)
@@ -54,23 +49,12 @@ fun XpStep(
             style = MaterialTheme.typography.titleLarge
         )
 
-        Column(
+        XpSection(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(Spacing.m)
-        ) {
-            OutlinedTextFieldWithError(
-                value = rawXp,
-                onValueChange = {
-                    rawXp = it
-                    onAction(ActivityAddFlowAction.XpChanged(rawXp))
-                },
-                modifier = Modifier.fillMaxWidth(),
-                label = stringResource(Res.string.activity_add_flow_xp_step_xp_label),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                error = xpError,
-            )
-        }
+            xp = xp,
+            xpError = xpError,
+            onAction = onAction
+        )
 
         Column(
             modifier = Modifier.padding(top = Spacing.m)

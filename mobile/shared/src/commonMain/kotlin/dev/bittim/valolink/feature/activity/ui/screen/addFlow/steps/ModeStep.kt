@@ -7,7 +7,7 @@
  * File:       ModeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   17.06.26, 14:16
+ * Modified:   18.08.26, 20:43
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -15,10 +15,7 @@ package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MilitaryTech
@@ -50,10 +47,10 @@ fun ModeStep(
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.l)
     ) {
         Text(
-            modifier = Modifier.padding(bottom = Spacing.m),
             text = stringResource(Res.string.activity_add_flow_mode_step_title),
             style = MaterialTheme.typography.titleLarge
         )

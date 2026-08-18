@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   02.08.26, 18:53
+ * Modified:   18.08.26, 20:40
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import org.jetbrains.compose.resources.getString
 import valolink.shared.generated.resources.*
+import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
@@ -91,6 +92,10 @@ class ActivityAddFlowViewModel(
                 it.copy(step = prevStep)
             }
             ActivityAddFlowStep.XpCorrectionStep -> _state.update {
+                // Remove sign from XP value to prevent negative values from going into the main flow
+                selectXp(_state.value.form.xp?.absoluteValue.toString())
+                updateUiState()
+
                 it.copy(step = ActivityAddFlowStep.ModeStep)
             }
             ActivityAddFlowStep.RrRefundStep -> _state.update {
@@ -224,8 +229,8 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
-    private fun selectXp(rawXp: String?) {
-        when(val result = parseIntUseCase(rawXp, allowNegative = false)) {
+    private fun selectXp(rawXp: String?, allowNegative: Boolean = false) {
+        when(val result = parseIntUseCase(rawXp, allowNegative = allowNegative)) {
             is Result.Ok -> {
                 updateForm { it.copy(xp = result.data, xpError = null) }
             }
@@ -271,6 +276,12 @@ class ActivityAddFlowViewModel(
     ) {
         when (action) {
             is ActivityAddFlowAction.Back -> handleBack(navBack)
+            is ActivityAddFlowAction.ToXpCorrection -> {
+                _state.update { it.copy(step = ActivityAddFlowStep.XpCorrectionStep) }
+            }
+            is ActivityAddFlowAction.ToRrRefund -> {
+                _state.update { it.copy(step = ActivityAddFlowStep.RrRefundStep) }
+            }
             is ActivityAddFlowAction.ModeSelected -> {
                 selectMode(action.uuid)
             }
@@ -309,7 +320,7 @@ class ActivityAddFlowViewModel(
                 _state.update { it.copy(step = ActivityAddFlowStep.XpStep) }
             }
             is ActivityAddFlowAction.XpChanged -> {
-                selectXp(action.rawXp)
+                selectXp(action.rawXp, action.allowNegative)
             }
             is ActivityAddFlowAction.ChangeTime -> {
                 _state.update { it.copy(dateTimePickerVisible = true) }

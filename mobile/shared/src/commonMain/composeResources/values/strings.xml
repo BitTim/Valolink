@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   02.08.26, 18:53
+  ~ Modified:   10.08.26, 10:39
   -->
 
 <resources>
@@ -83,4 +83,7 @@
     <string name="activity_add_flow_rank_step_modifier_label_double_rank_up">Double rank up</string>
     <string name="activity_add_flow_rank_step_no_placement_label">No Placement</string>
     <string name="activity_add_flow_rank_step_placement_label">Placement</string>
+    <string name="activity_add_flow_xp_correction_step_title">XP Correction</string>
+    <string name="activity_add_flow_xp_correction_menu_item">XP Correction</string>
+    <string name="activity_add_flow_rr_refund_menu_item">RR Refund</string>
 </resources>
