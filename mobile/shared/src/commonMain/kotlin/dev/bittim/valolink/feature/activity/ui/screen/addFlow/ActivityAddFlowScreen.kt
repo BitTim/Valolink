@@ -40,6 +40,12 @@ import valolink.shared.generated.resources.activity_add_flow_xp_correction_menu_
  * @param state The current flow state.
  * @param onAction Handles actions emitted by the flow.
  */
+/**
+ * Renders the cancellable activity-entry flow and dispatches user actions.
+ *
+ * @param state The current flow state.
+ * @param onAction Callback invoked for flow and form actions.
+ */
 @Composable
 @Preview
 fun ActivityAddFlowScreen(

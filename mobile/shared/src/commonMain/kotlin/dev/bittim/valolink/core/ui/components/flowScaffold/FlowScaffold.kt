@@ -45,6 +45,18 @@ import valolink.shared.generated.resources.iconcd_close
  * @param hero Content displayed above the current step.
  * @param content Content displayed for the current step.
  */
+/**
+ * Provides a scaffold for displaying a multistep flow with navigation controls, progress, hero content, and step content.
+ *
+ * @param padding Padding applied around the navigation controls and step content.
+ * @param step The current flow step.
+ * @param cancellable Whether the flow can be dismissed from its first step.
+ * @param onBack Called when back navigation or dismissal is completed.
+ * @param menuContent Optional content for the first-step overflow menu. The provided callback dismisses the menu.
+ * @param hero Content displayed above the current step content.
+ * @param heroKey Determines when hero content is treated as changed for animation.
+ * @param content Content displayed for the current step.
+ */
 @Composable
 fun <S: FlowStep> FlowScaffold(
     modifier: Modifier = Modifier,

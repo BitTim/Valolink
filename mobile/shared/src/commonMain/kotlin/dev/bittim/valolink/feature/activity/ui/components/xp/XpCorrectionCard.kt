@@ -23,6 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import dev.bittim.valolink.core.ui.Spacing
 
+/**
+ * Displays an XP correction value in a styled card.
+ *
+ * @param modifier The modifier applied to the card.
+ * @param elevation The card's tonal elevation.
+ * @param shape The card's shape.
+ * @param xp The XP correction value to display.
+ */
 @Composable
 fun XpCorrectionCard(
     modifier: Modifier = Modifier,

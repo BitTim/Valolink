@@ -69,9 +69,9 @@ class ActivityAddFlowViewModel(
     private var ranks: List<ValoRank>? = null
 
     /**
-     * Moves the add flow back by one step or exits the screen from the first step.
+     * Navigates to the previous step in the activity entry flow or exits from the first step.
      *
-     * @param navBack Called when the current step is the first step and the screen should navigate back.
+     * @param navBack Called when navigating back from the first step.
      */
     private fun handleBack(
         navBack: () -> Unit
@@ -108,7 +108,9 @@ class ActivityAddFlowViewModel(
     }
 
     /**
-     * Recalculates the activity add flow UI state using the current form data and supporting data.
+     * Recalculates the activity add flow UI state from the current form and supporting data.
+     *
+     * @param state The activity add flow state to recalculate.
      */
     private fun updateUiState(state: ActivityAddFlowState = _state.value) {
         uiStateUpdateJob?.cancel()
@@ -232,6 +234,12 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Parses and stores the XP input, applying the appropriate validation error when needed.
+     *
+     * @param rawXp The raw XP input to parse.
+     * @param allowNegative Whether negative XP values are accepted.
+     */
     private fun selectXp(rawXp: String?, allowNegative: Boolean = false) {
         when(val result = parseIntUseCase(rawXp, allowNegative = allowNegative)) {
             is Result.Ok -> {

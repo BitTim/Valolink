@@ -36,6 +36,14 @@ import valolink.shared.generated.resources.activity_add_flow_map_step_title
 import valolink.shared.generated.resources.generic_button_continue
 import kotlin.uuid.Uuid
 
+/**
+ * Displays the map selection step of the activity add flow.
+ *
+ * @param selectedMapUuid The UUID of the currently selected map.
+ * @param mapCardStates The map cards available for selection.
+ * @param enableContinueButton Whether the Continue button is enabled.
+ * @param onAction Handles map selection and Continue actions.
+ */
 @Composable
 fun MapStep(
     modifier: Modifier = Modifier,

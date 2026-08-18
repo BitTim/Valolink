@@ -28,6 +28,12 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_rank_step_rr_sign_negative_desc
 import valolink.shared.generated.resources.activity_add_flow_rank_step_rr_sign_positive_desc
 
+/**
+ * Displays a toggle button that switches between positive and negative sign icons.
+ *
+ * @param checked The initial checked state of the button.
+ * @param onCheckedChange Called with the updated checked state when the button is toggled.
+ */
 @Composable
 fun LeadingSignIconToggleButton(
     checked: Boolean,

@@ -29,6 +29,16 @@ import valolink.shared.generated.resources.generic_button_finish
 import kotlin.time.Clock
 import kotlin.time.Instant
 
+/**
+ * Displays the XP entry step with time controls and an optional date-time picker.
+ *
+ * @param xp The current XP value.
+ * @param xpError The validation error for the XP value, if any.
+ * @param time The initial date and time shown by the date-time picker.
+ * @param dateTimePickerVisible Whether to display the date-time picker.
+ * @param enableContinueButton Whether the finish button is enabled.
+ * @param onAction Handles user actions from the step.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun XpStep(

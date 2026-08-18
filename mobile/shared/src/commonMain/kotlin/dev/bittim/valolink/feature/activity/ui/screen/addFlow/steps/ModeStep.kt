@@ -37,6 +37,15 @@ import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.*
 import kotlin.uuid.Uuid
 
+/**
+ * Displays the activity mode selection step.
+ *
+ * @param selectedModeUuid The UUID of the currently selected mode.
+ * @param modeCardStates The available mode cards, or `null` when no modes are available.
+ * @param isRankedSelected Whether ranked mode is initially selected.
+ * @param enableContinueButton Whether the Continue button is enabled.
+ * @param onAction Receives mode selection, ranking selection, and Continue actions.
+ */
 @Composable
 fun ModeStep(
     modifier: Modifier = Modifier,

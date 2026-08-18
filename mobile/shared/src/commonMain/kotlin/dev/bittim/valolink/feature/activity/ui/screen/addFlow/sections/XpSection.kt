@@ -32,6 +32,14 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_xp_step_xp_label
 import kotlin.math.absoluteValue
 
+/**
+ * Provides an editable XP field with optional support for negative values.
+ *
+ * @param xp The initial XP value.
+ * @param xpError The validation error message to display, if any.
+ * @param allowNegative Whether the user can enter negative XP values.
+ * @param onAction Receives an action whenever the XP value or sign changes.
+ */
 @Composable
 fun XpSection(
     modifier: Modifier = Modifier,
