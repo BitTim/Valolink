@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.08.26, 20:40
+ * Modified:   18.08.26, 20:59
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -91,12 +91,15 @@ class ActivityAddFlowViewModel(
                 val prevStep = if (_state.value.form.isRankedSelected) ActivityAddFlowStep.RankStep else ActivityAddFlowStep.ScoreStep
                 it.copy(step = prevStep)
             }
-            ActivityAddFlowStep.XpCorrectionStep -> _state.update {
+            ActivityAddFlowStep.XpCorrectionStep -> {
                 // Remove sign from XP value to prevent negative values from going into the main flow
-                selectXp(_state.value.form.xp?.absoluteValue.toString())
-                updateUiState()
-
-                it.copy(step = ActivityAddFlowStep.ModeStep)
+                val resultingState = _state.updateAndGet {
+                    it.copy(
+                        form = it.form.copy(xp = it.form.xp?.absoluteValue),
+                        step = ActivityAddFlowStep.ModeStep,
+                    )
+                }
+                updateUiState(resultingState)
             }
             ActivityAddFlowStep.RrRefundStep -> _state.update {
                 it.copy(step = ActivityAddFlowStep.ModeStep)
@@ -107,11 +110,11 @@ class ActivityAddFlowViewModel(
     /**
      * Recalculates the activity add flow UI state using the current form data and supporting data.
      */
-    private fun updateUiState() {
+    private fun updateUiState(state: ActivityAddFlowState = _state.value) {
         uiStateUpdateJob?.cancel()
         uiStateUpdateJob = viewModelScope.launch {
             val calculatedState = uiStateCalculator.calculate(
-                _state.value,
+                state,
                 modes,
                 maps,
                 activities,
