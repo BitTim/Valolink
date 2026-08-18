@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 13:02
+ * Modified:   10.08.26, 10:15
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -49,3 +49,6 @@ val ActivityAddFlowState.canContinueFromScore: Boolean
 val ActivityAddFlowState.canContinueFromRank: Boolean
     get() = (form.rankPlacement && form.selectedRankTier != null) ||
         !form.rankPlacement || form.visibleRrDelta != null
+
+val ActivityAddFlowState.canContinueFromXpCorrection: Boolean
+    get() = form.xp != null && form.xpError == null

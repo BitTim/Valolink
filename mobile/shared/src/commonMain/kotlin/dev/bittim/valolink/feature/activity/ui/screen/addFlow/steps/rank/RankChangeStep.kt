@@ -7,7 +7,7 @@
  * File:       RankChangeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   31.07.26, 12:12
+ * Modified:   18.08.26, 20:22
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank
@@ -20,9 +20,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -36,9 +34,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.OutlinedTextFieldWithError
+import dev.bittim.valolink.feature.activity.ui.components.LeadingSignIconToggleButton
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import org.jetbrains.compose.resources.stringResource
-import valolink.shared.generated.resources.*
+import valolink.shared.generated.resources.Res
+import valolink.shared.generated.resources.activity_add_flow_rank_step_modifier_label_double_rank_up
+import valolink.shared.generated.resources.activity_add_flow_rank_step_modifier_label_rank_shield
+import valolink.shared.generated.resources.activity_add_flow_rank_step_rr_label
 import kotlin.math.absoluteValue
 
 data class RankChangeState(
@@ -51,11 +53,11 @@ data class RankChangeState(
 )
 
 /**
- * Renders the rank rating change input and optional rank modifier selector.
+ * Renders a rank-rating change input with an optional rank modifier selector.
  *
  * @param modifier The modifier applied to the component.
- * @param state The current rank change values, validation state, and display configuration.
- * @param onAction Receives actions when the rank rating value or sign changes.
+ * @param state The current rank-change values, validation state, and display configuration.
+ * @param onAction Receives actions when the rank-rating value or sign changes.
  */
 @Composable
 fun RankChangeStep(
@@ -92,25 +94,13 @@ fun RankChangeStep(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 error = state.rrDeltaError,
                 leadingIcon = {
-                    IconToggleButton(
+                    LeadingSignIconToggleButton(
                         checked = signChecked,
                         onCheckedChange = {
                             signChecked = it
                             action()
                         }
-                    ) {
-                        AnimatedContent(
-                            targetState = signChecked
-                        ) {
-                            Icon(
-                                imageVector = if (it) Icons.Default.Remove else Icons.Default.Add,
-                                contentDescription = when (it) {
-                                    false -> stringResource(Res.string.activity_add_flow_rank_step_rr_sign_positive_desc)
-                                    true -> stringResource(Res.string.activity_add_flow_rank_step_rr_sign_negative_desc)
-                                }
-                            )
-                        }
-                    }
+                    )
                 },
             )
         }

@@ -7,13 +7,18 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 13:02
+ * Modified:   18.08.26, 20:14
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,19 +26,25 @@ import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.flowScaffold.FlowScaffold
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.*
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.MapStep
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ModeStep
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.ScoreStep
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.XpStep
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.*
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankChangeState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankStep
 import org.jetbrains.compose.resources.stringResource
+import valolink.shared.generated.resources.Res
+import valolink.shared.generated.resources.activity_add_flow_rr_refund_menu_item
+import valolink.shared.generated.resources.activity_add_flow_xp_correction_menu_item
 
 /**
  * Renders the cancellable multi-step activity-entry flow.
  *
  * @param state The current flow state.
  * @param onAction Handles actions emitted by the flow.
+ */
+/**
+ * Renders the cancellable activity-entry flow and dispatches user actions.
+ *
+ * @param state The current flow state.
+ * @param onAction Callback invoked for flow and form actions.
  */
 @Composable
 @Preview
@@ -50,19 +61,48 @@ fun ActivityAddFlowScreen(
         step = state.step,
         cancellable = true,
         onBack = { onAction(ActivityAddFlowAction.Back) },
-        menuContent = {
+        menuContent = { dismiss ->
             DropdownMenuItem(
-                leadingIcon = {},
-                text = {},
-                onClick = {}
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                },
+                text = {
+                    Text(text = stringResource(Res.string.activity_add_flow_xp_correction_menu_item))
+                },
+                onClick = {
+                    onAction(ActivityAddFlowAction.ToXpCorrection)
+                    dismiss()
+                }
+            )
+
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Replay, contentDescription = null)
+                },
+                text = {
+                    Text(text = stringResource(Res.string.activity_add_flow_rr_refund_menu_item))
+                },
+                onClick = {
+                    onAction(ActivityAddFlowAction.ToRrRefund)
+                    dismiss()
+                }
             )
         },
-        hero = {
-            MatchCard(
-                modifier = Modifier.fillMaxWidth(),
-                state = state.matchCardState
-            )
+        hero = { step ->
+            when (step) {
+                ActivityAddFlowStep.XpCorrectionStep -> { }
+                ActivityAddFlowStep.RrRefundStep -> {
+
+                }
+                else -> {
+                    MatchCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = state.matchCardState
+                    )
+                }
+            }
         },
+        heroKey = { s -> if (s == ActivityAddFlowStep.XpCorrectionStep || s == ActivityAddFlowStep.RrRefundStep) s else "match" },
         content = { step, padding ->
             when (step) {
                 ActivityAddFlowStep.ModeStep -> {
@@ -127,7 +167,13 @@ fun ActivityAddFlowScreen(
                     )
                 }
                 ActivityAddFlowStep.XpCorrectionStep -> {
-
+                    XpCorrectionStep (
+                        modifier = Modifier.padding(padding),
+                        xp = state.form.xp,
+                        xpError = state.form.xpError?.let { stringResource(it) },
+                        enableContinueButton = state.canContinueFromXpCorrection,
+                        onAction = onAction
+                    )
                 }
                 ActivityAddFlowStep.RrRefundStep -> {
 
