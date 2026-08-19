@@ -93,8 +93,8 @@
     <string name="activity_add_flow_rank_step_modifier_label_double_rank_up">Doppelter Aufstieg</string>
     <string name="activity_add_flow_rank_step_no_placement_label">Keine Platzierung</string>
     <string name="activity_add_flow_rank_step_placement_label">Platzierung</string>
-    <string name="activity_add_flow_xp_correction_step_title">EP Korrektur</string>
-    <string name="activity_add_flow_xp_correction_menu_item">EP Korrektur</string>
-    <string name="activity_add_flow_rr_refund_menu_item">RR Rückerstattung</string>
-    <string name="activity_add_flow_rr_refund_step_title">RR Rückerstattung</string>
+    <string name="activity_add_flow_xp_correction_step_title">EP-Korrektur</string>
+    <string name="activity_add_flow_xp_correction_menu_item">EP-Korrektur</string>
+    <string name="activity_add_flow_rr_refund_menu_item">RR-Rückerstattung</string>
+    <string name="activity_add_flow_rr_refund_step_title">RR-Rückerstattung</string>
 </resources>
