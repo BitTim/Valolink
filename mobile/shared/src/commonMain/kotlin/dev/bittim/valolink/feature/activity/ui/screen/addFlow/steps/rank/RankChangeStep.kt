@@ -65,6 +65,7 @@ fun RankChangeStep(
         RrSection(
             modifier = Modifier.weight(1f),
             visibleRrDelta = state.visibleRrDelta,
+            maxRrDigit = state.maxRrDigits,
             rrDeltaError = state.rrDeltaError,
             matchOutcome = state.matchOutcome,
             onAction = onAction
