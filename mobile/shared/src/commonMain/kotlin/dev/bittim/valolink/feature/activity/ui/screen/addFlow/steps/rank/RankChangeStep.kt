@@ -45,11 +45,10 @@ data class RankChangeState(
 )
 
 /**
- * Renders a rank-rating change input with an optional rank modifier selector.
+ * Renders rank-rating input and an optional rank modifier selector.
  *
- * @param modifier The modifier applied to the component.
- * @param state The current rank-change values, validation state, and display configuration.
- * @param onAction Receives actions when the rank-rating value or sign changes.
+ * @param state The rank-change values, validation state, and display configuration.
+ * @param onAction Receives actions from rank-rating input changes.
  */
 @Composable
 fun RankChangeStep(

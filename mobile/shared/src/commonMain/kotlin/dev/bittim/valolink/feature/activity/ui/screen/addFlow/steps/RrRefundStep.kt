@@ -31,6 +31,14 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_rr_refund_step_title
 import valolink.shared.generated.resources.generic_button_finish
 
+/**
+ * Displays the RR refund step with the current refund value, validation state, and finish action.
+ *
+ * @param visibleRrDelta The RR refund value to display.
+ * @param rrDeltaError The validation error associated with the RR refund value.
+ * @param enableContinueButton Whether the Finish button is enabled.
+ * @param onAction Handles actions emitted by the step.
+ */
 @Composable
 fun RrRefundStep(
     modifier: Modifier = Modifier,

@@ -29,6 +29,15 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_rank_step_rr_label
 import kotlin.math.absoluteValue
 
+/**
+ * Displays a numeric field for entering a match's round differential.
+ *
+ * @param visibleRrDelta The existing round differential to display.
+ * @param maxRrDigit The maximum number of digits allowed in the differential.
+ * @param rrDeltaError The validation error message to display.
+ * @param matchOutcome The match outcome used to determine the default sign when no differential exists.
+ * @param onAction Callback invoked when the differential or its sign changes.
+ */
 @Composable
 fun RrSection(
     modifier: Modifier = Modifier,
