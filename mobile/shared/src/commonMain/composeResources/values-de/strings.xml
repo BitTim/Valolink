@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   02.08.26, 18:53
+  ~ Modified:   19.08.26, 04:48
   -->
 
 <resources>
@@ -91,4 +91,10 @@
     <string name="activity_add_flow_rank_step_rr_sign_negative_desc">Indikator für negative Zahleneingabe</string>
     <string name="activity_add_flow_rank_step_modifier_label_rank_shield">Rangschild</string>
     <string name="activity_add_flow_rank_step_modifier_label_double_rank_up">Doppelter Aufstieg</string>
+    <string name="activity_add_flow_rank_step_no_placement_label">Keine Platzierung</string>
+    <string name="activity_add_flow_rank_step_placement_label">Platzierung</string>
+    <string name="activity_add_flow_xp_correction_step_title">EP Korrektur</string>
+    <string name="activity_add_flow_xp_correction_menu_item">EP Korrektur</string>
+    <string name="activity_add_flow_rr_refund_menu_item">RR Rückerstattung</string>
+    <string name="activity_add_flow_rr_refund_step_title">RR Rückerstattung</string>
 </resources>

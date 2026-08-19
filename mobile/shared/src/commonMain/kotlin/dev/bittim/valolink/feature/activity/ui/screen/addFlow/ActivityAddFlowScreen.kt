@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.08.26, 20:14
+ * Modified:   19.08.26, 05:01
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -82,6 +82,7 @@ fun ActivityAddFlowScreen(
                 text = {
                     Text(text = stringResource(Res.string.activity_add_flow_rr_refund_menu_item))
                 },
+                enabled = state.currentRank != null && state.currentRank.rank.tier != 0 && !state.form.rankPlacement,
                 onClick = {
                     onAction(ActivityAddFlowAction.ToRrRefund)
                     dismiss()
@@ -91,9 +92,7 @@ fun ActivityAddFlowScreen(
         hero = { step ->
             when (step) {
                 ActivityAddFlowStep.XpCorrectionStep -> { }
-                ActivityAddFlowStep.RrRefundStep -> {
-
-                }
+                ActivityAddFlowStep.RrRefundStep -> { }
                 else -> {
                     MatchCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -176,7 +175,13 @@ fun ActivityAddFlowScreen(
                     )
                 }
                 ActivityAddFlowStep.RrRefundStep -> {
-
+                    RrRefundStep (
+                        modifier = Modifier.padding(padding),
+                        visibleRrDelta = state.form.visibleRrDelta,
+                        rrDeltaError = state.form.rrDeltaError?.let { stringResource(it) },
+                        enableContinueButton = state.canContinueFromRrRefund,
+                        onAction = onAction
+                    )
                 }
             }
         }
