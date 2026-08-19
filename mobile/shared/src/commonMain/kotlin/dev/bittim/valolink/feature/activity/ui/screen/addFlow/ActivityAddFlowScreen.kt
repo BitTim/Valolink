@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.08.26, 20:14
+ * Modified:   19.08.26, 05:01
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -46,6 +46,12 @@ import valolink.shared.generated.resources.activity_add_flow_xp_correction_menu_
  * @param state The current flow state.
  * @param onAction Callback invoked for flow and form actions.
  */
+/**
+ * Displays the cancellable activity-entry flow and dispatches user interactions as actions.
+ *
+ * @param state The current flow state.
+ * @param onAction Callback invoked for flow and step interactions.
+ */
 @Composable
 @Preview
 fun ActivityAddFlowScreen(
@@ -82,6 +88,7 @@ fun ActivityAddFlowScreen(
                 text = {
                     Text(text = stringResource(Res.string.activity_add_flow_rr_refund_menu_item))
                 },
+                enabled = state.currentRank != null && state.currentRank.rank.tier != 0 && !state.form.rankPlacement,
                 onClick = {
                     onAction(ActivityAddFlowAction.ToRrRefund)
                     dismiss()
@@ -91,9 +98,7 @@ fun ActivityAddFlowScreen(
         hero = { step ->
             when (step) {
                 ActivityAddFlowStep.XpCorrectionStep -> { }
-                ActivityAddFlowStep.RrRefundStep -> {
-
-                }
+                ActivityAddFlowStep.RrRefundStep -> { }
                 else -> {
                     MatchCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -176,7 +181,13 @@ fun ActivityAddFlowScreen(
                     )
                 }
                 ActivityAddFlowStep.RrRefundStep -> {
-
+                    RrRefundStep (
+                        modifier = Modifier.padding(padding),
+                        visibleRrDelta = state.form.visibleRrDelta,
+                        rrDeltaError = state.form.rrDeltaError?.let { stringResource(it) },
+                        enableContinueButton = state.canContinueFromRrRefund,
+                        onAction = onAction
+                    )
                 }
             }
         }

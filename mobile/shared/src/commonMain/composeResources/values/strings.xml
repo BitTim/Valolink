@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   10.08.26, 10:39
+  ~ Modified:   19.08.26, 04:46
   -->
 
 <resources>
@@ -86,4 +86,5 @@
     <string name="activity_add_flow_xp_correction_step_title">XP Correction</string>
     <string name="activity_add_flow_xp_correction_menu_item">XP Correction</string>
     <string name="activity_add_flow_rr_refund_menu_item">RR Refund</string>
+    <string name="activity_add_flow_rr_refund_step_title">RR Refund</string>
 </resources>
