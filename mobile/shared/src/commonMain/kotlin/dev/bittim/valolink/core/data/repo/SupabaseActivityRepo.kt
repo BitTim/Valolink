@@ -7,7 +7,7 @@
  * File:       SupabaseActivityRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 16:53
+ * Modified:   19.08.26, 17:01
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -34,5 +34,9 @@ class SupabaseActivityRepo(
                 ActivityDto::time lte season.endTime
             }
         }.decodeList<ActivityDto>().map { it.toModel() }
+    }
+
+    override suspend fun upsert(activity: Activity) {
+        supabase.from("activities").upsert(ActivityDto.fromModel(activity))
     }
 }

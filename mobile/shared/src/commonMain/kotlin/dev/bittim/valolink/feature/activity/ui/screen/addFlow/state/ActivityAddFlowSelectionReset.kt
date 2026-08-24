@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowSelectionReset.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   02.08.26, 19:15
+ * Modified:   19.08.26, 16:08
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -41,7 +41,7 @@ fun resetActivityAddFlowSelections(
             scoreB = if (scoreTypeChanged) null else state.form.scoreB,
             scoreAError = if (scoreTypeChanged) null else state.form.scoreAError,
             scoreBError = if (scoreTypeChanged) null else state.form.scoreBError,
-            surrender = if (scoreTypeChanged) MatchEndReason.COMPLETED else state.form.surrender,
+            endReason = if (scoreTypeChanged) MatchEndReason.COMPLETED else state.form.endReason,
             mapUuid = if (mapTypeChanged) null else state.form.mapUuid,
             isRankedSelected = !supportsRankedChanged && state.form.isRankedSelected,
             rankPlacement = !supportsRankedChanged && state.form.rankPlacement,

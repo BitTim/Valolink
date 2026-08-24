@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 13:08
+ * Modified:   24.08.26, 14:02
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -57,7 +57,7 @@ class ActivityAddFlowUiStateCalculator(
         val matchOutcome = matchOutcomeFromScoreUseCase(
             state.form.scoreA,
             state.form.scoreB,
-            state.form.surrender,
+            state.form.endReason,
             modeCategory,
         ) ?: MatchOutcome.Draw
 
@@ -68,6 +68,7 @@ class ActivityAddFlowUiStateCalculator(
                 modeUuid = currentMode?.uuid,
                 time = state.form.time,
                 visibleRrDelta = state.form.visibleRrDelta,
+                rankModifier = state.form.rankModifier,
                 placement = state.form.rankPlacement,
                 selectedRankTier = selectedRankTier,
                 ranks = ranks,
@@ -107,7 +108,7 @@ class ActivityAddFlowUiStateCalculator(
                 scoreChipState = state.matchCardState.scoreChipState.copy(
                     score = score,
                     outcome = matchOutcome,
-                    wasSurrender = state.form.surrender in listOf(
+                    wasSurrender = state.form.endReason in listOf(
                         MatchEndReason.SURRENDER_A,
                         MatchEndReason.SURRENDER_B,
                     ),

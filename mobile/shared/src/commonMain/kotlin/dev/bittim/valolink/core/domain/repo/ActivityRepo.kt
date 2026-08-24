@@ -7,7 +7,7 @@
  * File:       ActivityRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 16:53
+ * Modified:   19.08.26, 17:01
  */
 
 package dev.bittim.valolink.core.domain.repo
@@ -18,4 +18,5 @@ import kotlin.uuid.Uuid
 
 interface ActivityRepo {
     suspend fun get(user: Uuid, season: ValoSeason): List<Activity>
+    suspend fun upsert(activity: Activity)
 }

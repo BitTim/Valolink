@@ -4,10 +4,10 @@
  * Project:    Valolink
  * License:    GPLv3
  *
- * File:       MapRrToRank.kt
+ * File:       MapRrToRankUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 12:58
+ * Modified:   23.08.26, 12:14
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase.rank
@@ -17,7 +17,9 @@ import dev.bittim.valolink.core.domain.model.ValoRank
 import dev.bittim.valolink.feature.activity.domain.constants.RankConstants
 import kotlin.math.floor
 
-class MapRrToRank {
+class MapRrToRankUseCase(
+    private val filterRanksUseCase: FilterRanksUseCase
+) {
     /**
      * Maps an RR value to the corresponding ranked tier.
      *
@@ -26,9 +28,7 @@ class MapRrToRank {
      * @return The resolved rank and remaining RR, or `null` if no matching rank exists.
      */
     operator fun invoke(rr: Int?, ranks: List<ValoRank>): Rank? {
-        val rankedRanks = ranks.filter {
-            !it.division.contains("UNRANKED") && !it.division.contains("INVALID")
-        }
+        val rankedRanks = filterRanksUseCase(ranks)
 
         if (rr == null) return ranks.firstOrNull { it.tier == 0 }?.let {
             Rank(rank = it, rr = 0)

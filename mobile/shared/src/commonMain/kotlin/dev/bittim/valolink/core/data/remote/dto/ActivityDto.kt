@@ -7,7 +7,7 @@
  * File:       ActivityDto.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 19:10
+ * Modified:   19.08.26, 16:57
  */
 
 package dev.bittim.valolink.core.data.remote.dto
@@ -16,6 +16,7 @@ import dev.bittim.valolink.core.domain.model.Activity
 import dev.bittim.valolink.core.domain.model.ActivityType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -48,4 +49,20 @@ data class ActivityDto(
         )
     }
 
+    companion object {
+        fun fromModel(activity: Activity): ActivityDto {
+            return ActivityDto(
+                id = activity.id,
+                userId = activity.userId,
+                createdAt = Clock.System.now(),
+                updatedAt = Clock.System.now(),
+                time = activity.time,
+                type = activity.type,
+                xp = activity.xp,
+                rr = activity.rr,
+                mode = activity.mode
+            )
+        }
+
+    }
 }

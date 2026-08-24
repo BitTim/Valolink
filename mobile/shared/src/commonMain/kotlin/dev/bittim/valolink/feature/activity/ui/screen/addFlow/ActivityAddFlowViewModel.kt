@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.08.26, 20:59
+ * Modified:   24.08.26, 14:18
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -19,13 +19,11 @@ import dev.bittim.valolink.core.domain.Result
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
+import dev.bittim.valolink.feature.activity.domain.usecase.FinalizeActivityWithCurrentUserUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.ParseIntUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.rank.ObserveRanksByTimeUseCase
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowFormState
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowState
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowUiStateCalculator
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.resetActivityAddFlowSelections
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -44,6 +42,7 @@ class ActivityAddFlowViewModel(
     private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase,
     private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
     private val uiStateCalculator: ActivityAddFlowUiStateCalculator,
+    private val finalizeActivityWithCurrentUserUseCase: FinalizeActivityWithCurrentUserUseCase,
 
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
@@ -59,6 +58,7 @@ class ActivityAddFlowViewModel(
     private var mapObserveJob: Job? = null
     private var activityFetchJob: Job? = null
     private var rankFetchJob: Job? = null
+    private var finalizeActivityJob: Job? = null
 
     private var modePlaceholder: String = ""
     private var mapPlaceholder: String = ""
@@ -186,7 +186,7 @@ class ActivityAddFlowViewModel(
     }
 
     private fun selectSurrender(reason: MatchEndReason) {
-        updateForm { it.copy(surrender = reason) }
+        updateForm { it.copy(endReason = reason) }
         updateUiState()
     }
 
@@ -221,6 +221,11 @@ class ActivityAddFlowViewModel(
                 updateForm { it.copy(rrDeltaError = error) }
             }
         }
+        updateUiState()
+    }
+
+    private fun selectRankModifier(rankModifier: Boolean) {
+        updateForm { it.copy(rankModifier = rankModifier) }
         updateUiState()
     }
 
@@ -327,6 +332,9 @@ class ActivityAddFlowViewModel(
             is ActivityAddFlowAction.RrDeltaChanged -> {
                 selectVisibleRrDelta(action.rawRr)
             }
+            is ActivityAddFlowAction.RankModifierChanged -> {
+                selectRankModifier(action.rankModifier)
+            }
             is ActivityAddFlowAction.RankContinue -> {
                 _state.update { it.copy(step = ActivityAddFlowStep.XpStep) }
             }
@@ -343,8 +351,15 @@ class ActivityAddFlowViewModel(
                 selectTime(action.dateMillis, action.hour, action.minute)
                 _state.update { it.copy(dateTimePickerVisible = false) }
             }
-            is ActivityAddFlowAction.XpFinish -> {
-                // TODO: Implement
+            is ActivityAddFlowAction.Finish -> {
+                val finalizeActivityInput = _state.value.toFinalizeActivityInput(action.type)
+                if(finalizeActivityInput != null) {
+                    finalizeActivityJob?.cancel()
+                    finalizeActivityJob = viewModelScope.launch {
+                        finalizeActivityWithCurrentUserUseCase(finalizeActivityInput)
+                        navBack()
+                    }
+                }
             }
         }
     }

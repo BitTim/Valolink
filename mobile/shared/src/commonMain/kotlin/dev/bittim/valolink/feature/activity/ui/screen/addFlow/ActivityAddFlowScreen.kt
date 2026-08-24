@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 05:01
+ * Modified:   24.08.26, 14:27
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -134,7 +134,7 @@ fun ActivityAddFlowScreen(
                         modifier = Modifier.padding(padding),
                         scoreA = state.form.scoreA,
                         scoreB = state.form.scoreB,
-                        surrender = state.form.surrender,
+                        surrender = state.form.endReason,
                         scoreAError = state.form.scoreAError?.let { stringResource(it) },
                         scoreBError = state.form.scoreBError?.let { stringResource(it) },
                         isPlacementScoreType = state.isPlacementScoreType,
@@ -167,7 +167,7 @@ fun ActivityAddFlowScreen(
                         xpError = state.form.xpError?.let { stringResource(it) },
                         time = state.form.time,
                         dateTimePickerVisible = state.dateTimePickerVisible,
-                        enableContinueButton = false,
+                        enableContinueButton = state.canContinueFromXp,
                         onAction = onAction
                     )
                 }

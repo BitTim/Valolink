@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Decisions/(ADR-005) Split users into users and flags.md",
+                "file": "Decisions/(ADR-003) Web as separate React project.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "(ADR-005) Split users into users and flags"
+              "title": "(ADR-003) Web as separate React project"
             }
           }
         ]

@@ -7,7 +7,7 @@
  * File:       RrRefundStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 04:46
+ * Modified:   19.08.26, 17:18
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import dev.bittim.valolink.core.domain.model.ActivityType
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.sections.RrSection
@@ -67,7 +68,7 @@ fun RrRefundStep(
         Button(
             modifier = Modifier.fillMaxWidth(),
             enabled = enableContinueButton,
-            onClick = { onAction(ActivityAddFlowAction.XpFinish) }
+            onClick = { onAction(ActivityAddFlowAction.Finish(ActivityType.RR_REFUND)) }
         ) {
             Text(text = stringResource(Res.string.generic_button_finish))
         }

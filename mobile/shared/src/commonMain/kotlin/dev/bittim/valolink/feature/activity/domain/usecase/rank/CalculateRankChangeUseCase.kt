@@ -7,7 +7,7 @@
  * File:       CalculateRankChangeUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 13:06
+ * Modified:   24.08.26, 14:01
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase.rank
@@ -27,8 +27,9 @@ data class RankChange(
 /** Calculates the current rank, RR change, and resulting rank for a ranked activity. */
 class CalculateRankChangeUseCase(
     private val calculateRrBeforeTimeUseCase: CalculateRrBeforeTimeUseCase,
-    private val mapRrToRank: MapRrToRank,
+    private val mapRrToRankUseCase: MapRrToRankUseCase,
     private val calculateRrDeltaUseCase: CalculateRrDeltaUseCase,
+    private val calculateTotalRrFromPlacementRankUseCase: CalculateTotalRrFromPlacementRankUseCase,
 ) {
     /**
      * Calculates the rank change for a ranked activity based on prior rating or placement status.
@@ -47,6 +48,7 @@ class CalculateRankChangeUseCase(
         modeUuid: Uuid?,
         time: Instant,
         visibleRrDelta: Int?,
+        rankModifier: Boolean,
         placement: Boolean,
         selectedRankTier: Int?,
         ranks: List<ValoRank>?,
@@ -56,6 +58,7 @@ class CalculateRankChangeUseCase(
             calculateExistingRankChange(
                 totalRr = totalRr,
                 visibleRrDelta = visibleRrDelta,
+                rankModifier = rankModifier,
                 ranks = ranks,
             )
         } else {
@@ -78,14 +81,15 @@ class CalculateRankChangeUseCase(
     private fun calculateExistingRankChange(
         totalRr: Int,
         visibleRrDelta: Int?,
+        rankModifier: Boolean,
         ranks: List<ValoRank>?,
     ): RankChange {
         val rankDefinitions = ranks ?: return RankChange()
-        val currentRank = mapRrToRank(totalRr, rankDefinitions)
+        val currentRank = mapRrToRankUseCase(totalRr, rankDefinitions)
         val rrDelta = visibleRrDelta?.let { rr ->
-            currentRank?.let { calculateRrDeltaUseCase(it, rr) }
+            currentRank?.let { calculateRrDeltaUseCase(it, rr, rankModifier) }
         }
-        val newRank = mapRrToRank(totalRr + (rrDelta ?: 0), rankDefinitions)
+        val newRank = mapRrToRankUseCase(totalRr + (rrDelta ?: 0), rankDefinitions)
 
         return RankChange(
             current = currentRank,
@@ -108,16 +112,21 @@ class CalculateRankChangeUseCase(
         ranks: List<ValoRank>?,
     ): RankChange {
         val rankDefinitions = ranks ?: return RankChange()
-        val unranked = mapRrToRank(null, rankDefinitions)
+        val unranked = mapRrToRankUseCase(null, rankDefinitions)
         val newRank = if (placement && selectedRankTier != null) {
             rankDefinitions.find { it.tier == selectedRankTier }?.let { Rank(rank = it, rr = 50) } ?: unranked
         } else {
             unranked
         }
 
+        val rrDelta = if(placement && selectedRankTier != null) {
+            calculateTotalRrFromPlacementRankUseCase(selectedRankTier, rankDefinitions)
+        } else 0
+
         return RankChange(
             current = unranked,
             new = newRank,
+            rrDelta = rrDelta,
         )
     }
 }
