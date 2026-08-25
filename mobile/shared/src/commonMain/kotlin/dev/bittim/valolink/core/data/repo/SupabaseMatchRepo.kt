@@ -7,7 +7,7 @@
  * File:       SupabaseMatchRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 17:56
+ * Modified:   25.08.26, 16:55
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -23,15 +23,15 @@ import io.github.jan.supabase.postgrest.from
 class SupabaseMatchRepo(
     private val supabase: SupabaseClient
 ) : MatchRepo {
-    override suspend fun upsert(
+    override suspend fun insert(
         match: Match,
         matchParticipant: MatchParticipant
     ) {
-        supabase.from("matches").upsert(MatchDto.fromModel(match))
-        upsertParticipant(matchParticipant)
+        supabase.from("matches").insert(MatchDto.fromModel(match))
+        insertParticipant(matchParticipant)
     }
 
-    override suspend fun upsertParticipant(matchParticipant: MatchParticipant) {
-        supabase.from("match_participants").upsert(MatchParticipantDto.fromModel(matchParticipant))
+    override suspend fun insertParticipant(matchParticipant: MatchParticipant) {
+        supabase.from("match_participants").insert(MatchParticipantDto.fromModel(matchParticipant))
     }
 }

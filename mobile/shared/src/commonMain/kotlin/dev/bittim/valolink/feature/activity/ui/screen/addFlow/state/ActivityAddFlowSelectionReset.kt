@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowSelectionReset.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 16:08
+ * Modified:   25.08.26, 17:03
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -48,6 +48,7 @@ fun resetActivityAddFlowSelections(
             selectedRankTier = if (supportsRankedChanged) null else state.form.selectedRankTier,
             visibleRrDelta = if (supportsRankedChanged) null else state.form.visibleRrDelta,
             rrDeltaError = if (supportsRankedChanged) null else state.form.rrDeltaError,
+            rankModifier = if (supportsRankedChanged) false else state.form.rankModifier,
         ),
     )
 }

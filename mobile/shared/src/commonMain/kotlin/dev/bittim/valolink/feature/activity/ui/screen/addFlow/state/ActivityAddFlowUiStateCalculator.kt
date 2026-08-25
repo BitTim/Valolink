@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.08.26, 14:02
+ * Modified:   25.08.26, 17:47
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -90,7 +90,7 @@ class ActivityAddFlowUiStateCalculator(
                 }
                 ?.map { RankCardState.from(it) },
             isPlacementScoreType = isPlacementScoreType,
-            showRankModifier = rankChanged,
+            showRankModifier = rankChanged || state.form.rankModifier,
             matchOutcome = matchOutcome,
             currentRank = rankChange?.current,
             rrDelta = rankChange?.rrDelta,

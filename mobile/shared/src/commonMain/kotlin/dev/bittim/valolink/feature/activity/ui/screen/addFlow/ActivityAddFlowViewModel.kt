@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 14:09
+ * Modified:   25.08.26, 16:57
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -353,13 +353,15 @@ class ActivityAddFlowViewModel(
             }
             is ActivityAddFlowAction.Finish -> {
                 if (_state.value.isFinalizing) return
+
+                val finalizeActivityInput = _state.value.toFinalizeActivityInput(action.type) ?: return
                 _state.update { it.copy(isFinalizing = true) }
 
-                val finalizeActivityInput = _state.value.toFinalizeActivityInput(action.type)
-                if(finalizeActivityInput != null) {
-                    finalizeActivityJob?.cancel()
-                    finalizeActivityJob = viewModelScope.launch {
+                finalizeActivityJob?.cancel()
+                finalizeActivityJob = viewModelScope.launch {
+                    try {
                         finalizeActivityWithCurrentUserUseCase(finalizeActivityInput)
+                    } finally {
                         navBack()
                         _state.update { it.copy(isFinalizing = false) }
                     }

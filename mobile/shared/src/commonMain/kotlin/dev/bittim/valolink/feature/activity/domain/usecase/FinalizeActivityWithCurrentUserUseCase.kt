@@ -7,7 +7,7 @@
  * File:       FinalizeActivityWithCurrentUserUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 13:33
+ * Modified:   25.08.26, 16:55
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
@@ -67,7 +67,7 @@ class FinalizeActivityWithCurrentUserUseCase(
             else -> null
         }
 
-        activityRepo.upsert(activity)
-        matchBundle?.let { matchRepo.upsert(it.match, it.participant) }
+        activityRepo.insert(activity)
+        matchBundle?.let { matchRepo.insert(it.match, it.participant) }
     }
 }

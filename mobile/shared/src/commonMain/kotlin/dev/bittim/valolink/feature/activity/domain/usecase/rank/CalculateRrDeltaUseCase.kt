@@ -7,7 +7,7 @@
  * File:       CalculateRrDeltaUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.08.26, 14:28
+ * Modified:   25.08.26, 16:54
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase.rank
@@ -30,7 +30,7 @@ class CalculateRrDeltaUseCase {
             // Rank Shield was used, negative RR will have no effect
             visibleRr < 0 && rank.rr == 0 && rankModifier -> -visibleRr
             // Double rank up happened
-            visibleRr > 0 && combinedRr > RankConstants.RR_PER_RANK && rankModifier -> RankConstants.RR_PER_RANK
+            visibleRr > 0 && combinedRr >= RankConstants.RR_PER_RANK && rankModifier -> RankConstants.RR_PER_RANK
             else -> 0
         }
 
