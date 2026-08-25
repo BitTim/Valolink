@@ -21,11 +21,11 @@ class MapRrToRankUseCase(
     private val filterRanksUseCase: FilterRanksUseCase
 ) {
     /**
-     * Maps an RR value to the corresponding ranked tier.
+     * Maps a competitive rating value to the corresponding ranked tier.
      *
-     * @param rr The RR value, or `null` to use the tier-0 rank with zero RR.
+     * @param rr The RR value, or `null` to resolve the tier-0 rank with zero RR.
      * @param ranks The rank definitions for the active competitive season.
-     * @return The resolved rank and remaining RR, or `null` if no matching rank exists.
+     * @return The resolved rank with its remaining RR, or `null` when no applicable ranked tier exists.
      */
     operator fun invoke(rr: Int?, ranks: List<ValoRank>): Rank? {
         val rankedRanks = filterRanksUseCase(ranks)

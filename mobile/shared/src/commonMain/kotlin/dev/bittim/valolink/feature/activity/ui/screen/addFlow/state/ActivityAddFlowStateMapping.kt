@@ -15,6 +15,12 @@ package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
 import dev.bittim.valolink.core.domain.model.ActivityType
 import dev.bittim.valolink.feature.activity.domain.model.FinalizeActivityInput
 
+/**
+ * Maps the activity form state to the input required to finalize the specified activity type.
+ *
+ * @param type The activity type to finalize.
+ * @return The corresponding finalization input, or `null` when required form data is missing.
+ */
 fun ActivityAddFlowState.toFinalizeActivityInput(
     type: ActivityType
 ): FinalizeActivityInput? {

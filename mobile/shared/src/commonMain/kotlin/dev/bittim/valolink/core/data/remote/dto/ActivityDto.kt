@@ -50,6 +50,12 @@ data class ActivityDto(
     }
 
     companion object {
+        /**
+         * Creates an activity data-transfer object from a domain model.
+         *
+         * @param activity The activity domain model to convert.
+         * @return An activity data-transfer object with current creation and update timestamps.
+         */
         fun fromModel(activity: Activity): ActivityDto {
             return ActivityDto(
                 id = activity.id,

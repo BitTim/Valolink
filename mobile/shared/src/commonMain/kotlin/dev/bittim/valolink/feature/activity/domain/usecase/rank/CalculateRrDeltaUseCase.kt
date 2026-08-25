@@ -17,11 +17,12 @@ import dev.bittim.valolink.feature.activity.domain.constants.RankConstants
 
 class CalculateRrDeltaUseCase {
     /**
-     * Calculates the RR delta to apply for a rank and its visible RR change.
+     * Calculates the stored RR change from a rank's current RR, visible RR change, and rank modifier status.
      *
-     * @param rank The rank whose stored RR is used to adjust the visible change.
+     * @param rank The rank whose current RR determines tier boundary adjustments.
      * @param visibleRr The displayed RR change.
-     * @return The adjusted RR delta, capped at zero losses or raised to the minimum post-rank-up RR when required.
+     * @param rankModifier Whether the applicable rank modifier is active.
+     * @return The adjusted RR delta, including rank shield compensation or double rank-up adjustment when applicable.
      */
     operator fun invoke(rank: Rank, visibleRr: Int, rankModifier: Boolean): Int {
         val combinedRr = rank.rr + visibleRr

@@ -23,6 +23,12 @@ import io.github.jan.supabase.postgrest.from
 class SupabaseMatchRepo(
     private val supabase: SupabaseClient
 ) : MatchRepo {
+    /**
+     * Inserts a match and its participant into the data store.
+     *
+     * @param match The match to insert.
+     * @param matchParticipant The participant associated with the match.
+     */
     override suspend fun insert(
         match: Match,
         matchParticipant: MatchParticipant

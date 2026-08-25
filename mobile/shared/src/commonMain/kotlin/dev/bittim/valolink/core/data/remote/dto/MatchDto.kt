@@ -33,6 +33,11 @@ data class MatchDto(
     val map: Uuid,
     val mode: Uuid
 ) {
+    /**
+     * Converts this data-transfer object into a match domain model.
+     *
+     * @return The match represented by this data-transfer object.
+     */
     fun toModel(): Match {
         return Match(
             id = id,
@@ -47,6 +52,12 @@ data class MatchDto(
     }
 
     companion object {
+        /**
+         * Creates a data-transfer object from a match model.
+         *
+         * @param match The match model to convert.
+         * @return A match DTO containing the model's properties and current creation and update timestamps.
+         */
         fun fromModel(match: Match): MatchDto {
             return MatchDto(
                 id = match.id,

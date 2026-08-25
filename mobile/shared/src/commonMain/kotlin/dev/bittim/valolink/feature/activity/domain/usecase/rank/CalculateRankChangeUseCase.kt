@@ -32,16 +32,17 @@ class CalculateRankChangeUseCase(
     private val calculateTotalRrFromPlacementRankUseCase: CalculateTotalRrFromPlacementRankUseCase,
 ) {
     /**
-     * Calculates the rank change for a ranked activity based on prior rating or placement status.
+     * Calculates the current and new rank for a ranked activity.
      *
      * @param activities Activities used to determine the rating before the specified time.
      * @param modeUuid The game mode identifier.
      * @param time The point in time before which the rating is calculated.
-     * @param visibleRrDelta The visible rating change to apply.
+     * @param visibleRrDelta The visible RR change to apply.
+     * @param rankModifier Whether the rank modifier applies to the RR change.
      * @param placement Whether the calculation is for placement.
      * @param selectedRankTier The rank tier selected for placement.
      * @param ranks Available rank definitions.
-     * @return The current rank, new rank, and rating change.
+     * @return The current rank, new rank, and RR change.
      */
     operator fun invoke(
         activities: List<Activity>?,
@@ -71,11 +72,12 @@ class CalculateRankChangeUseCase(
     }
 
     /**
-     * Calculates the current rank, RR change, and resulting rank for an existing player.
+     * Calculates the rank change for a player with an existing rating.
      *
-     * @param totalRr The player's total RR before the activity.
-     * @param visibleRrDelta The visible RR change from the activity.
-     * @param ranks The rank definitions used to map RR values to ranks.
+     * @param totalRr The player's total rating before the activity.
+     * @param visibleRrDelta The visible rating change from the activity.
+     * @param rankModifier Whether the rank-based rating modifier applies.
+     * @param ranks The rank definitions used to map rating values to ranks.
      * @return The calculated rank change, or an empty result when rank definitions are unavailable.
      */
     private fun calculateExistingRankChange(
@@ -104,7 +106,7 @@ class CalculateRankChangeUseCase(
      * @param placement Whether placement is active.
      * @param selectedRankTier The selected rank tier for placement.
      * @param ranks The available rank definitions.
-     * @return The unranked current rank and the resulting placement rank, or an empty change when rank definitions are unavailable.
+     * @return The unranked current rank, resulting placement rank, and placement RR delta, or an empty change when rank definitions are unavailable.
      */
     private fun calculatePlacementRankChange(
         placement: Boolean,

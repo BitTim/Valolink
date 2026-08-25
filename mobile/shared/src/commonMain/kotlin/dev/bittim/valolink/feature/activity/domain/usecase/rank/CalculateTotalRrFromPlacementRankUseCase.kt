@@ -18,6 +18,13 @@ import dev.bittim.valolink.feature.activity.domain.constants.RankConstants
 class CalculateTotalRrFromPlacementRankUseCase(
     private val filterRanksUseCase: FilterRanksUseCase
 ) {
+    /**
+     * Calculates the total rating points for a placement rank tier.
+     *
+     * @param placementRankTier The tier assigned to the placement rank.
+     * @param ranks The ranks used to determine the minimum tier.
+     * @return The calculated rating points, or `null` if no ranks remain after filtering.
+     */
     operator fun invoke(placementRankTier: Int, ranks: List<ValoRank>): Int? {
         val tierOffset = filterRanksUseCase(ranks).minOfOrNull { it.tier } ?: return null
         return (placementRankTier - tierOffset) * RankConstants.RR_PER_RANK + (RankConstants.RR_PER_RANK / 2)

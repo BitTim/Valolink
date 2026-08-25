@@ -40,6 +40,16 @@ import kotlin.time.Instant
  * @param enableContinueButton Whether the finish button is enabled.
  * @param onAction Handles user actions from the step.
  */
+/**
+ * Displays the XP entry step, including XP input, time selection, and completion controls.
+ *
+ * @param xp The current XP value.
+ * @param xpError The validation error associated with the XP value, if any.
+ * @param time The initial date and time shown by the picker.
+ * @param dateTimePickerVisible Whether the date and time picker is displayed.
+ * @param enableContinueButton Whether the finish button is enabled.
+ * @param onAction Handles actions from the XP entry screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun XpStep(

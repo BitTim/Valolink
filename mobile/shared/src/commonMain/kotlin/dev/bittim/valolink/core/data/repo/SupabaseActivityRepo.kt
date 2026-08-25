@@ -23,6 +23,13 @@ import kotlin.uuid.Uuid
 class SupabaseActivityRepo(
     private val supabase: SupabaseClient
 ): ActivityRepo {
+    /**
+     * Retrieves a user's activities recorded during the specified season.
+     *
+     * @param user The user's unique identifier.
+     * @param season The season whose time range filters the activities.
+     * @return The activities recorded for the user within the season.
+     */
     override suspend fun get(
         user: Uuid,
         season: ValoSeason

@@ -31,6 +31,12 @@ import org.jetbrains.compose.resources.stringResource
  * @param state The current flow state.
  * @param onAction Callback invoked for flow and step interactions.
  */
+/**
+ * Renders the activity-entry flow and forwards user interactions as actions.
+ *
+ * @param state The current state of the activity-entry flow.
+ * @param onAction Callback invoked when the user performs an action.
+ */
 @Composable
 @Preview
 fun ActivityAddFlowScreen(

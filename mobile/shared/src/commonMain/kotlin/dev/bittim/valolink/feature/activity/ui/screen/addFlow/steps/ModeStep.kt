@@ -52,6 +52,16 @@ import kotlin.uuid.Uuid
  * @param enableContinueButton Whether the Continue button is enabled.
  * @param onAction Receives mode selection, ranking selection, and Continue actions.
  */
+/**
+ * Displays the mode selection step for the activity add flow.
+ *
+ * @param selectedModeUuid The UUID of the currently selected mode.
+ * @param modeCardStates The available mode cards, or `null` when no modes are available.
+ * @param isRankedSelected Whether ranked mode is initially selected.
+ * @param enableContinueButton Whether the Continue button is enabled.
+ * @param enableRrRefundOption Whether the RR refund menu option is enabled.
+ * @param onAction Handles mode selection, ranking changes, navigation, and continuation actions.
+ */
 @Composable
 fun ModeStep(
     modifier: Modifier = Modifier,

@@ -185,6 +185,11 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Selects the reason the match ended.
+     *
+     * @param reason The selected match end reason.
+     */
     private fun selectSurrender(reason: MatchEndReason) {
         updateForm { it.copy(endReason = reason) }
         updateUiState()
@@ -205,6 +210,11 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Updates the visible rank-rating delta and its validation error.
+     *
+     * @param rawRrDelta The rank-rating delta entered by the user.
+     */
     private fun selectVisibleRrDelta(rawRrDelta: String?) {
         when(val result = parseIntUseCase(rawRrDelta, allowNegative = true, maxDigits = 2)) {
             is Result.Ok -> {
@@ -224,6 +234,11 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Updates the selected rank modifier and recalculates the UI state.
+     *
+     * @param rankModifier Whether the rank modifier is enabled.
+     */
     private fun selectRankModifier(rankModifier: Boolean) {
         updateForm { it.copy(rankModifier = rankModifier) }
         updateUiState()
@@ -281,10 +296,10 @@ class ActivityAddFlowViewModel(
     }
 
     /**
-     * Processes an activity-entry action and updates the form or navigation state accordingly.
+     * Processes an activity-entry action, updating form state, navigation, or activity finalization as needed.
      *
      * @param action The activity-entry action to process.
-     * @param navBack Callback invoked when backward navigation exits the flow.
+     * @param navBack Callback invoked when leaving the flow.
      */
     fun onAction(
         action: ActivityAddFlowAction,

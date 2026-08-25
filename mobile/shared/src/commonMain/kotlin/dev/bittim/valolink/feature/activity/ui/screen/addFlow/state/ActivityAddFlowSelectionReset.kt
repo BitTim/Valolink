@@ -25,6 +25,14 @@ import dev.bittim.valolink.core.domain.model.ValoMode
  * @param newMode The newly selected mode.
  * @return The updated state with incompatible scores, map, and ranked inputs cleared.
  */
+/**
+ * Resets activity add-flow selections affected by changes between two modes.
+ *
+ * @param state The current activity add-flow state.
+ * @param oldMode The previously selected mode.
+ * @param newMode The newly selected mode.
+ * @return A copied state with incompatible scores, map, or ranked selections reset.
+ */
 fun resetActivityAddFlowSelections(
     state: ActivityAddFlowState,
     oldMode: ValoMode?,

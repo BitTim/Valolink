@@ -33,6 +33,12 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.iconcd_email
 import valolink.shared.generated.resources.iconcd_waving_hand
 
+/**
+ * Displays the authentication flow for the current step and forwards user actions.
+ *
+ * @param state The current authentication flow state.
+ * @param onAction Callback invoked when an authentication action occurs.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @Preview

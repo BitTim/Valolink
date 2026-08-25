@@ -27,6 +27,12 @@ class FinalizeActivityWithCurrentUserUseCase(
     private val activityRepo: ActivityRepo,
     private val matchRepo: MatchRepo
 ) {
+    /**
+     * Finalizes an activity for the currently authenticated user and persists it with any associated match data.
+     *
+     * @param finalizeActivityInput The activity details and, when applicable, match details to finalize.
+     * @throws IllegalStateException If no user is authenticated.
+     */
     suspend operator fun invoke(finalizeActivityInput: FinalizeActivityInput) {
         val userId = authRepo.getCurrentUserId() ?: throw IllegalStateException("User is not authenticated")
 

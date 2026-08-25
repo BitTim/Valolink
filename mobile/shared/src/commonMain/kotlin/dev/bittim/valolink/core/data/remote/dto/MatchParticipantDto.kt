@@ -30,6 +30,11 @@ data class MatchParticipantDto(
     @SerialName("is_owner") val isOwner: Boolean,
     @SerialName("is_team_b") val isTeamB: Boolean
 ) {
+    /**
+     * Converts this data-transfer object into a match participant model.
+     *
+     * @return A match participant model containing the participant's identifiers, rating, ownership status, and team assignment.
+     */
     fun toModel(): MatchParticipant {
         return MatchParticipant(
             userId = userId,
@@ -42,6 +47,12 @@ data class MatchParticipantDto(
     }
 
     companion object {
+        /**
+         * Creates a data-transfer object from a match participant.
+         *
+         * @param matchParticipant The match participant to convert.
+         * @return A DTO containing the participant's properties and current creation and update timestamps.
+         */
         fun fromModel(matchParticipant: MatchParticipant): MatchParticipantDto {
             return MatchParticipantDto(
                 userId = matchParticipant.userId,
