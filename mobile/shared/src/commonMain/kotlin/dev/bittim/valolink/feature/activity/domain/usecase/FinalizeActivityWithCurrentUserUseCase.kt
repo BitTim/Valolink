@@ -7,25 +7,19 @@
  * File:       FinalizeActivityWithCurrentUserUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 16:55
+ * Modified:   25.08.26, 21:40
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
 
-import dev.bittim.valolink.core.domain.model.Activity
-import dev.bittim.valolink.core.domain.model.Match
-import dev.bittim.valolink.core.domain.model.MatchParticipant
+import dev.bittim.valolink.core.domain.model.ActivityDraft
+import dev.bittim.valolink.core.domain.model.MatchDraft
+import dev.bittim.valolink.core.domain.model.MatchParticipantDraft
 import dev.bittim.valolink.core.domain.repo.ActivityRepo
-import dev.bittim.valolink.core.domain.repo.AuthRepo
-import dev.bittim.valolink.core.domain.repo.MatchRepo
 import dev.bittim.valolink.feature.activity.domain.model.FinalizeActivityInput
-import dev.bittim.valolink.feature.activity.domain.model.MatchBundle
-import kotlin.uuid.Uuid
 
 class FinalizeActivityWithCurrentUserUseCase(
-    private val authRepo: AuthRepo,
-    private val activityRepo: ActivityRepo,
-    private val matchRepo: MatchRepo
+    private val activityRepo: ActivityRepo
 ) {
     /**
      * Finalizes an activity for the currently authenticated user and persists it with any associated match data.
@@ -34,11 +28,7 @@ class FinalizeActivityWithCurrentUserUseCase(
      * @throws IllegalStateException If no user is authenticated.
      */
     suspend operator fun invoke(finalizeActivityInput: FinalizeActivityInput) {
-        val userId = authRepo.getCurrentUserId() ?: throw IllegalStateException("User is not authenticated")
-
-        val activity = Activity(
-            id = Uuid.random(),
-            userId = userId,
+        val activityDraft = ActivityDraft(
             time = finalizeActivityInput.time,
             type = finalizeActivityInput.type,
             xp = finalizeActivityInput.xp,
@@ -48,8 +38,7 @@ class FinalizeActivityWithCurrentUserUseCase(
 
         val matchBundle = when (finalizeActivityInput) {
             is FinalizeActivityInput.Match -> {
-                val match = Match(
-                    id = Uuid.random(),
+                val matchDraft = MatchDraft(
                     scoreA = finalizeActivityInput.scoreA,
                     scoreB = finalizeActivityInput.scoreB,
                     endReason = finalizeActivityInput.endReason,
@@ -59,21 +48,17 @@ class FinalizeActivityWithCurrentUserUseCase(
                     mode = finalizeActivityInput.mode
                 )
 
-                val participant = MatchParticipant(
-                    userId = userId,
-                    activity = activity.id,
-                    match = match.id,
+                val participantDraft = MatchParticipantDraft(
                     visibleRr = finalizeActivityInput.visibleRr,
                     isOwner = true,
                     isTeamB = false
                 )
 
-                MatchBundle(match, participant)
+                Pair(matchDraft, participantDraft)
             }
             else -> null
         }
 
-        activityRepo.insert(activity)
-        matchBundle?.let { matchRepo.insert(it.match, it.participant) }
+        activityRepo.insert(activityDraft, matchBundle?.first, matchBundle?.second)
     }
 }
