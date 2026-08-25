@@ -7,18 +7,12 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.08.26, 14:27
+ * Modified:   25.08.26, 14:11
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Replay
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,22 +24,7 @@ import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.*
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankChangeState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankStep
 import org.jetbrains.compose.resources.stringResource
-import valolink.shared.generated.resources.Res
-import valolink.shared.generated.resources.activity_add_flow_rr_refund_menu_item
-import valolink.shared.generated.resources.activity_add_flow_xp_correction_menu_item
 
-/**
- * Renders the cancellable multi-step activity-entry flow.
- *
- * @param state The current flow state.
- * @param onAction Handles actions emitted by the flow.
- */
-/**
- * Renders the cancellable activity-entry flow and dispatches user actions.
- *
- * @param state The current flow state.
- * @param onAction Callback invoked for flow and form actions.
- */
 /**
  * Displays the cancellable activity-entry flow and dispatches user interactions as actions.
  *
@@ -67,34 +46,6 @@ fun ActivityAddFlowScreen(
         step = state.step,
         cancellable = true,
         onBack = { onAction(ActivityAddFlowAction.Back) },
-        menuContent = { dismiss ->
-            DropdownMenuItem(
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
-                },
-                text = {
-                    Text(text = stringResource(Res.string.activity_add_flow_xp_correction_menu_item))
-                },
-                onClick = {
-                    onAction(ActivityAddFlowAction.ToXpCorrection)
-                    dismiss()
-                }
-            )
-
-            DropdownMenuItem(
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Replay, contentDescription = null)
-                },
-                text = {
-                    Text(text = stringResource(Res.string.activity_add_flow_rr_refund_menu_item))
-                },
-                enabled = state.currentRank != null && state.currentRank.rank.tier != 0 && !state.form.rankPlacement,
-                onClick = {
-                    onAction(ActivityAddFlowAction.ToRrRefund)
-                    dismiss()
-                }
-            )
-        },
         hero = { step ->
             when (step) {
                 ActivityAddFlowStep.XpCorrectionStep -> { }
@@ -116,6 +67,7 @@ fun ActivityAddFlowScreen(
                         selectedModeUuid = state.form.modeUuid,
                         modeCardStates = state.modeCardStates,
                         enableContinueButton = state.canContinueFromMode,
+                        enableRrRefundOption = state.canRrRefund,
                         isRankedSelected = state.form.isRankedSelected,
                         onAction = onAction
                     )

@@ -7,7 +7,7 @@
  * File:       FinalizeActivityWithCurrentUserUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 17:22
+ * Modified:   25.08.26, 13:33
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
@@ -28,7 +28,7 @@ class FinalizeActivityWithCurrentUserUseCase(
     private val matchRepo: MatchRepo
 ) {
     suspend operator fun invoke(finalizeActivityInput: FinalizeActivityInput) {
-        val userId = authRepo.getCurrentUserId() ?: return // TODO: Replace with Error
+        val userId = authRepo.getCurrentUserId() ?: throw IllegalStateException("User is not authenticated")
 
         val activity = Activity(
             id = Uuid.random(),
