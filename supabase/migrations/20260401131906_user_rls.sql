@@ -221,17 +221,10 @@ on matches for select
 to authenticated
 using (true);
 
-create policy "Owner can insert own matches"
+create policy "Users can insert matches"
 on matches for insert
 to authenticated
-with check (
-    exists (
-        select 1 from match_participants
-        where user_id = (select auth.uid())
-        and match = matches.id
-        and is_owner = true
-    )
-);
+with check (true);
 
 create policy "Owner can update own matches"
 on matches for update

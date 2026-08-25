@@ -7,7 +7,7 @@
  * File:       XpStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.08.26, 20:45
+ * Modified:   19.08.26, 17:17
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -17,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import dev.bittim.valolink.core.domain.model.ActivityType
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.feature.activity.ui.components.dateTimePicker.DateTimePickerDialog
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
@@ -38,6 +39,16 @@ import kotlin.time.Instant
  * @param dateTimePickerVisible Whether to display the date-time picker.
  * @param enableContinueButton Whether the finish button is enabled.
  * @param onAction Handles user actions from the step.
+ */
+/**
+ * Displays the XP entry step, including XP input, time selection, and completion controls.
+ *
+ * @param xp The current XP value.
+ * @param xpError The validation error associated with the XP value, if any.
+ * @param time The initial date and time shown by the picker.
+ * @param dateTimePickerVisible Whether the date and time picker is displayed.
+ * @param enableContinueButton Whether the finish button is enabled.
+ * @param onAction Handles actions from the XP entry screen.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +90,7 @@ fun XpStep(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = enableContinueButton,
-                onClick = { onAction(ActivityAddFlowAction.XpFinish) }
+                onClick = { onAction(ActivityAddFlowAction.Finish(ActivityType.MATCH)) }
             ) {
                 Text(text = stringResource(Res.string.generic_button_finish))
             }

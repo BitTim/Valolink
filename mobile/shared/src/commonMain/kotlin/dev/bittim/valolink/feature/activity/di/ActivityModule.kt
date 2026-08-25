@@ -7,7 +7,7 @@
  * File:       ActivityModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 13:04
+ * Modified:   24.08.26, 13:39
  */
 
 package dev.bittim.valolink.feature.activity.di
@@ -22,6 +22,8 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val featureActivityModule = module {
+    singleOf(::FilterRanksUseCase)
+
     singleOf(::ParseIntUseCase)
     singleOf(::FormatScoreUseCase)
     singleOf(::MatchOutcomeFromScoreUseCase)
@@ -29,11 +31,13 @@ val featureActivityModule = module {
     singleOf(::GetCurrentSeasonActivitiesForCurrentUserUseCase)
     singleOf(::CalculateRrBeforeTimeUseCase)
     singleOf(::CalculateRrUpToIdUseCase)
-    singleOf(::MapRrToRank)
+    singleOf(::CalculateTotalRrFromPlacementRankUseCase)
+    singleOf(::MapRrToRankUseCase)
     singleOf(::ObserveRanksByTimeUseCase)
     singleOf(::CalculateRrDeltaUseCase)
     singleOf(::CalculateRankChangeUseCase)
     singleOf(::ActivityAddFlowUiStateCalculator)
+    singleOf(::FinalizeActivityWithCurrentUserUseCase)
 
     viewModelOf(::ActivityAddFlowViewModel)
     viewModelOf(::ActivityListViewModel)

@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 04:51
+ * Modified:   25.08.26, 14:09
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -34,7 +34,12 @@ data class ActivityAddFlowState(
     val currentRank: Rank? = null,
     val rrDelta: Int? = null,
     val matchCardState: MatchCardState = MatchCardState.Empty,
+
+    val isFinalizing: Boolean = false
 )
+
+val ActivityAddFlowState.canRrRefund: Boolean
+    get() = currentRank != null && currentRank.rank.tier != 0 && !form.rankPlacement
 
 val ActivityAddFlowState.canContinueFromMode: Boolean
     get() = modeCardStates != null && form.modeUuid != null
@@ -50,8 +55,11 @@ val ActivityAddFlowState.canContinueFromRank: Boolean
     get() = (form.rankPlacement && form.selectedRankTier != null) ||
         !form.rankPlacement || form.visibleRrDelta != null
 
+val ActivityAddFlowState.canContinueFromXp: Boolean
+    get() = form.xp != null && form.xpError == null && !isFinalizing
+
 val ActivityAddFlowState.canContinueFromXpCorrection: Boolean
-    get() = form.xp != null && form.xpError == null
+    get() = form.xp != null && form.xpError == null && !isFinalizing
 
 val ActivityAddFlowState.canContinueFromRrRefund: Boolean
-    get() = form.visibleRrDelta != null && form.rrDeltaError == null
+    get() = form.visibleRrDelta != null && form.rrDeltaError == null && !isFinalizing

@@ -7,22 +7,28 @@
  * File:       ModeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.08.26, 20:43
+ * Modified:   25.08.26, 14:05
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MilitaryTech
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
@@ -46,6 +52,16 @@ import kotlin.uuid.Uuid
  * @param enableContinueButton Whether the Continue button is enabled.
  * @param onAction Receives mode selection, ranking selection, and Continue actions.
  */
+/**
+ * Displays the mode selection step for the activity add flow.
+ *
+ * @param selectedModeUuid The UUID of the currently selected mode.
+ * @param modeCardStates The available mode cards, or `null` when no modes are available.
+ * @param isRankedSelected Whether ranked mode is initially selected.
+ * @param enableContinueButton Whether the Continue button is enabled.
+ * @param enableRrRefundOption Whether the RR refund menu option is enabled.
+ * @param onAction Handles mode selection, ranking changes, navigation, and continuation actions.
+ */
 @Composable
 fun ModeStep(
     modifier: Modifier = Modifier,
@@ -53,8 +69,11 @@ fun ModeStep(
     modeCardStates: List<ModeCardState>?,
     isRankedSelected: Boolean,
     enableContinueButton: Boolean,
+    enableRrRefundOption: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.l)
@@ -108,12 +127,72 @@ fun ModeStep(
                 )
             }
 
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                enabled = enableContinueButton,
-                onClick = { onAction(ActivityAddFlowAction.ModeContinue) }
-            ) {
-                Text(text = stringResource(Res.string.generic_button_continue))
+            Row {
+                Button(
+                    modifier = Modifier.weight(1f),
+                    enabled = enableContinueButton,
+                    shape = RoundedCornerShape(
+                        topStart = Spacing.xl,
+                        topEnd = Spacing.s,
+                        bottomStart = Spacing.xl,
+                        bottomEnd = Spacing.s
+                    ),
+                    onClick = { onAction(ActivityAddFlowAction.ModeContinue) }
+                ) {
+                    Text(text = stringResource(Res.string.generic_button_continue))
+                }
+
+                Box {
+                    FilledIconButton(
+                        onClick = { menuExpanded = !menuExpanded },
+                        shape = RoundedCornerShape(
+                            topStart = Spacing.s,
+                            topEnd = Spacing.xl,
+                            bottomStart = Spacing.s,
+                            bottomEnd = Spacing.xl
+                        ),
+                    ) {
+                        val iconRotation = animateFloatAsState(if (menuExpanded) 180f else 0f)
+
+                        Icon(
+                            modifier = Modifier.rotate(iconRotation.value),
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = null
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                            },
+                            text = {
+                                Text(text = stringResource(Res.string.activity_add_flow_xp_correction_menu_item))
+                            },
+                            onClick = {
+                                onAction(ActivityAddFlowAction.ToXpCorrection)
+                                menuExpanded = false
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Icon(imageVector = Icons.Default.Replay, contentDescription = null)
+                            },
+                            text = {
+                                Text(text = stringResource(Res.string.activity_add_flow_rr_refund_menu_item))
+                            },
+                            enabled = enableRrRefundOption,
+                            onClick = {
+                                onAction(ActivityAddFlowAction.ToRrRefund)
+                                menuExpanded = false
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -154,6 +233,7 @@ fun ModeStepPreview() {
                 ),
                 isRankedSelected = true,
                 enableContinueButton = true,
+                enableRrRefundOption = true,
                 onAction = {}
             )
         }

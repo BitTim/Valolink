@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowSelectionReset.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   02.08.26, 19:15
+ * Modified:   25.08.26, 17:03
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -25,6 +25,14 @@ import dev.bittim.valolink.core.domain.model.ValoMode
  * @param newMode The newly selected mode.
  * @return The updated state with incompatible scores, map, and ranked inputs cleared.
  */
+/**
+ * Resets activity add-flow selections affected by changes between two modes.
+ *
+ * @param state The current activity add-flow state.
+ * @param oldMode The previously selected mode.
+ * @param newMode The newly selected mode.
+ * @return A copied state with incompatible scores, map, or ranked selections reset.
+ */
 fun resetActivityAddFlowSelections(
     state: ActivityAddFlowState,
     oldMode: ValoMode?,
@@ -41,13 +49,14 @@ fun resetActivityAddFlowSelections(
             scoreB = if (scoreTypeChanged) null else state.form.scoreB,
             scoreAError = if (scoreTypeChanged) null else state.form.scoreAError,
             scoreBError = if (scoreTypeChanged) null else state.form.scoreBError,
-            surrender = if (scoreTypeChanged) MatchEndReason.COMPLETED else state.form.surrender,
+            endReason = if (scoreTypeChanged) MatchEndReason.COMPLETED else state.form.endReason,
             mapUuid = if (mapTypeChanged) null else state.form.mapUuid,
             isRankedSelected = !supportsRankedChanged && state.form.isRankedSelected,
             rankPlacement = !supportsRankedChanged && state.form.rankPlacement,
             selectedRankTier = if (supportsRankedChanged) null else state.form.selectedRankTier,
             visibleRrDelta = if (supportsRankedChanged) null else state.form.visibleRrDelta,
             rrDeltaError = if (supportsRankedChanged) null else state.form.rrDeltaError,
+            rankModifier = if (supportsRankedChanged) false else state.form.rankModifier,
         ),
     )
 }

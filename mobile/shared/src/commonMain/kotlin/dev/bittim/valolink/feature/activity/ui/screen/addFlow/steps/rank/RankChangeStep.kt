@@ -7,7 +7,7 @@
  * File:       RankChangeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 04:43
+ * Modified:   25.08.26, 18:16
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank
@@ -44,6 +44,12 @@ data class RankChangeState(
     val maxRrDigits: Int = 2
 )
 
+enum class RankModifier {
+    NONE,
+    RANK_SHIELD,
+    DOUBLE_RANK_UP
+}
+
 /**
  * Renders rank-rating input and an optional rank modifier selector.
  *
@@ -56,7 +62,7 @@ fun RankChangeStep(
     state: RankChangeState,
     onAction: (ActivityAddFlowAction) -> Unit,
 ) {
-    var modifierChecked by rememberSaveable(state.rrDelta) { mutableStateOf(false) }
+    var modifierChecked by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier,
@@ -71,25 +77,38 @@ fun RankChangeStep(
         )
 
         AnimatedVisibility(
-            visible = state.showRankModifier
+            visible = state.showRankModifier || modifierChecked
         ) {
             AnimatedContent(
-                targetState = state.rrDelta!!
-            ) { rrDelta ->
-                when {
-                    rrDelta < 0 -> FilterChip(
+                targetState = when {
+                    state.rrDelta!! > 0 -> RankModifier.DOUBLE_RANK_UP
+                    state.rrDelta < 0 -> RankModifier.RANK_SHIELD
+                    state.rrDelta <= 0 && modifierChecked -> RankModifier.RANK_SHIELD
+                    else -> RankModifier.NONE
+                }
+            ) { modifier ->
+                when(modifier) {
+                    RankModifier.RANK_SHIELD -> FilterChip(
                         selected = modifierChecked,
-                        onClick = { modifierChecked = !modifierChecked },
+                        onClick = {
+                            modifierChecked = !modifierChecked
+                            onAction(ActivityAddFlowAction.RankModifierChanged(modifierChecked))
+                        },
                         label = { Text(stringResource(Res.string.activity_add_flow_rank_step_modifier_label_rank_shield)) },
                         leadingIcon = { Icon(imageVector = Icons.Default.Shield, contentDescription = null) }
                     )
 
-                    rrDelta > 0 -> FilterChip(
+                    RankModifier.DOUBLE_RANK_UP -> FilterChip(
                         selected = modifierChecked,
-                        onClick = { modifierChecked = !modifierChecked},
+                        onClick = {
+                            modifierChecked = !modifierChecked
+                            onAction(ActivityAddFlowAction.RankModifierChanged(modifierChecked))
+                        },
                         label = { Text(stringResource(Res.string.activity_add_flow_rank_step_modifier_label_double_rank_up)) },
                         leadingIcon = { Icon(imageVector = Icons.Default.KeyboardDoubleArrowUp, contentDescription = null) }
                     )
+
+                    RankModifier.NONE -> {}
                 }
             }
         }

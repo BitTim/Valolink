@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   18.08.26, 20:59
+ * Modified:   25.08.26, 16:57
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -19,13 +19,11 @@ import dev.bittim.valolink.core.domain.Result
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
+import dev.bittim.valolink.feature.activity.domain.usecase.FinalizeActivityWithCurrentUserUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.ParseIntUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.rank.ObserveRanksByTimeUseCase
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowFormState
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowState
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowUiStateCalculator
-import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.resetActivityAddFlowSelections
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -44,6 +42,7 @@ class ActivityAddFlowViewModel(
     private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase,
     private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
     private val uiStateCalculator: ActivityAddFlowUiStateCalculator,
+    private val finalizeActivityWithCurrentUserUseCase: FinalizeActivityWithCurrentUserUseCase,
 
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
@@ -59,6 +58,7 @@ class ActivityAddFlowViewModel(
     private var mapObserveJob: Job? = null
     private var activityFetchJob: Job? = null
     private var rankFetchJob: Job? = null
+    private var finalizeActivityJob: Job? = null
 
     private var modePlaceholder: String = ""
     private var mapPlaceholder: String = ""
@@ -185,8 +185,13 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Selects the reason the match ended.
+     *
+     * @param reason The selected match end reason.
+     */
     private fun selectSurrender(reason: MatchEndReason) {
-        updateForm { it.copy(surrender = reason) }
+        updateForm { it.copy(endReason = reason) }
         updateUiState()
     }
 
@@ -205,6 +210,11 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    /**
+     * Updates the visible rank-rating delta and its validation error.
+     *
+     * @param rawRrDelta The rank-rating delta entered by the user.
+     */
     private fun selectVisibleRrDelta(rawRrDelta: String?) {
         when(val result = parseIntUseCase(rawRrDelta, allowNegative = true, maxDigits = 2)) {
             is Result.Ok -> {
@@ -221,6 +231,16 @@ class ActivityAddFlowViewModel(
                 updateForm { it.copy(rrDeltaError = error) }
             }
         }
+        updateUiState()
+    }
+
+    /**
+     * Updates the selected rank modifier and recalculates the UI state.
+     *
+     * @param rankModifier Whether the rank modifier is enabled.
+     */
+    private fun selectRankModifier(rankModifier: Boolean) {
+        updateForm { it.copy(rankModifier = rankModifier) }
         updateUiState()
     }
 
@@ -276,10 +296,10 @@ class ActivityAddFlowViewModel(
     }
 
     /**
-     * Processes an activity-entry action and updates the form or navigation state accordingly.
+     * Processes an activity-entry action, updating form state, navigation, or activity finalization as needed.
      *
      * @param action The activity-entry action to process.
-     * @param navBack Callback invoked when backward navigation exits the flow.
+     * @param navBack Callback invoked when leaving the flow.
      */
     fun onAction(
         action: ActivityAddFlowAction,
@@ -327,6 +347,9 @@ class ActivityAddFlowViewModel(
             is ActivityAddFlowAction.RrDeltaChanged -> {
                 selectVisibleRrDelta(action.rawRr)
             }
+            is ActivityAddFlowAction.RankModifierChanged -> {
+                selectRankModifier(action.rankModifier)
+            }
             is ActivityAddFlowAction.RankContinue -> {
                 _state.update { it.copy(step = ActivityAddFlowStep.XpStep) }
             }
@@ -343,8 +366,21 @@ class ActivityAddFlowViewModel(
                 selectTime(action.dateMillis, action.hour, action.minute)
                 _state.update { it.copy(dateTimePickerVisible = false) }
             }
-            is ActivityAddFlowAction.XpFinish -> {
-                // TODO: Implement
+            is ActivityAddFlowAction.Finish -> {
+                if (_state.value.isFinalizing) return
+
+                val finalizeActivityInput = _state.value.toFinalizeActivityInput(action.type) ?: return
+                _state.update { it.copy(isFinalizing = true) }
+
+                finalizeActivityJob?.cancel()
+                finalizeActivityJob = viewModelScope.launch {
+                    try {
+                        finalizeActivityWithCurrentUserUseCase(finalizeActivityInput)
+                    } finally {
+                        navBack()
+                        _state.update { it.copy(isFinalizing = false) }
+                    }
+                }
             }
         }
     }

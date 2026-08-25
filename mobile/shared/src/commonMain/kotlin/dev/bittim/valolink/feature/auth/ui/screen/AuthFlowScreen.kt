@@ -7,7 +7,7 @@
  * File:       AuthFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:21
+ * Modified:   19.08.26, 17:54
  */
 
 package dev.bittim.valolink.feature.auth.ui.screen
@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.ui.Spacing
@@ -32,6 +33,12 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.iconcd_email
 import valolink.shared.generated.resources.iconcd_waving_hand
 
+/**
+ * Displays the authentication flow for the current step and forwards user actions.
+ *
+ * @param state The current authentication flow state.
+ * @param onAction Callback invoked when an authentication action occurs.
+ */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @Preview
@@ -48,19 +55,25 @@ fun AuthFlowScreen(
         step = state.step,
         cancellable = false,
         onBack = { onAction(AuthFlowAction.Back) },
+        heroKey = { "" },
         hero = {
-            AnimatedHeroIcon(
-                shape = MaterialShapes.Cookie12Sided.toShape(),
-                icon = when(state.step) {
-                    AuthFlowStep.LandingStep -> Icons.Default.WavingHand
-                    AuthFlowStep.OtpStep -> Icons.Default.Email
-                },
-                contentDescription = when(state.step) {
-                    AuthFlowStep.LandingStep -> stringResource(Res.string.iconcd_waving_hand)
-                    AuthFlowStep.OtpStep -> stringResource(Res.string.iconcd_email)
-                },
-                targetRotation = state.heroIconRotation
-            )
+            Box(
+                modifier = Modifier.aspectRatio(3f / 1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                AnimatedHeroIcon(
+                    shape = MaterialShapes.Cookie12Sided.toShape(),
+                    icon = when (state.step) {
+                        AuthFlowStep.LandingStep -> Icons.Default.WavingHand
+                        AuthFlowStep.OtpStep -> Icons.Default.Email
+                    },
+                    contentDescription = when (state.step) {
+                        AuthFlowStep.LandingStep -> stringResource(Res.string.iconcd_waving_hand)
+                        AuthFlowStep.OtpStep -> stringResource(Res.string.iconcd_email)
+                    },
+                    targetRotation = state.heroIconRotation
+                )
+            }
         },
         content = { _, padding ->
             when(state.step) {
