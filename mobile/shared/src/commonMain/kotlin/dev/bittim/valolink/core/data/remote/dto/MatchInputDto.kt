@@ -30,6 +30,12 @@ data class MatchInputDto(
     val mode: Uuid
 ) {
     companion object {
+        /**
+         * Creates match input data from a match draft.
+         *
+         * @param matchDraft The match draft to convert.
+         * @return The corresponding match input data.
+         */
         fun fromModel(matchDraft: MatchDraft): MatchInputDto {
             return MatchInputDto(
                 scoreA = matchDraft.scoreA,

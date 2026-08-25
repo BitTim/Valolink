@@ -12,8 +12,8 @@
 
 package dev.bittim.valolink.core.data.repo
 
-import dev.bittim.valolink.core.data.remote.dto.MatchParticipantInputDto
-import dev.bittim.valolink.core.domain.model.MatchParticipantDraft
+import dev.bittim.valolink.core.data.remote.dto.MatchParticipantDto
+import dev.bittim.valolink.core.domain.model.MatchParticipant
 import dev.bittim.valolink.core.domain.repo.MatchRepo
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
@@ -21,7 +21,10 @@ import io.github.jan.supabase.postgrest.from
 class SupabaseMatchRepo(
     private val supabase: SupabaseClient
 ) : MatchRepo {
-    override suspend fun insertParticipant(matchParticipantDraft: MatchParticipantDraft) {
-        supabase.from("match_participants").insert(MatchParticipantInputDto.fromModel(matchParticipantDraft))
+    /**
+     * Inserts a match participant record.
+     */
+    override suspend fun insertParticipant(matchParticipant: MatchParticipant) {
+        supabase.from("match_participants").insert(MatchParticipantDto.fromModel(matchParticipant))
     }
 }

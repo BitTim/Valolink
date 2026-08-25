@@ -27,6 +27,12 @@ data class ActivityInputDto(
     val mode: Uuid?
 ) {
     companion object {
+        /**
+         * Creates an activity input DTO from an activity draft.
+         *
+         * @param activityDraft The activity draft to convert.
+         * @return An activity input DTO containing the draft's activity data.
+         */
         fun fromModel(activityDraft: ActivityDraft): ActivityInputDto {
             return ActivityInputDto(
                 time = activityDraft.time,

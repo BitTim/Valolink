@@ -23,6 +23,12 @@ data class MatchParticipantInputDto(
     @SerialName("is_team_b") val isTeamB: Boolean
 ) {
     companion object {
+        /**
+         * Creates an input DTO from a match participant draft.
+         *
+         * @param matchParticipantDraft The draft containing the participant's visible rating and match status.
+         * @return The corresponding match participant input DTO.
+         */
         fun fromModel(matchParticipantDraft: MatchParticipantDraft): MatchParticipantInputDto {
             return MatchParticipantInputDto(
                 visibleRr = matchParticipantDraft.visibleRr,

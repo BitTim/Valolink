@@ -12,11 +12,13 @@
 
 package dev.bittim.valolink.core.domain.repo
 
-import dev.bittim.valolink.core.domain.model.MatchParticipantDraft
+import dev.bittim.valolink.core.domain.model.MatchParticipant
 
 interface MatchRepo {
     /**
-    * Inserts a match participant independently of its match.
-    */
-    suspend fun insertParticipant(matchParticipantDraft: MatchParticipantDraft)
+ * Inserts a participant into a match.
+ *
+ * @param matchParticipant The participant to insert.
+ */
+suspend fun insertParticipant(matchParticipant: MatchParticipant)
 }

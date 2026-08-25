@@ -47,6 +47,15 @@ class SupabaseActivityRepo(
         }.decodeList<ActivityDto>().map { it.toModel() }
     }
 
+    /**
+     * Inserts an activity and returns its identifier.
+     *
+     * @param activityDraft The activity to insert.
+     * @param matchDraft The match details required for a match activity.
+     * @param matchParticipantDraft The participant details required for a match activity.
+     * @return The UUID of the inserted activity.
+     * @throws IllegalArgumentException If a match activity lacks match or participant details.
+     */
     override suspend fun insert(activityDraft: ActivityDraft, matchDraft: MatchDraft?, matchParticipantDraft: MatchParticipantDraft?): Uuid {
         val activityInput = ActivityInputDto.fromModel(activityDraft)
 
