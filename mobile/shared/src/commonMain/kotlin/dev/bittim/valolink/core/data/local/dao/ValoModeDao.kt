@@ -7,7 +7,7 @@
  * File:       ValoModeDao.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 20:13
+ * Modified:   27.08.26, 16:31
  */
 
 package dev.bittim.valolink.core.data.local.dao
@@ -19,14 +19,20 @@ import dev.bittim.valolink.core.data.local.entity.ValoModeEntity
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
+private const val singleQuery = "SELECT * FROM valo_modes WHERE uuid = :uuid LIMIT 1"
+private const val allQuery = "SELECT * FROM valo_modes"
+
 @Dao
 interface ValoModeDao {
     @Upsert
     suspend fun upsert(valoModes: List<ValoModeEntity>)
 
-    @Query("SELECT * FROM valo_modes WHERE uuid = :uuid LIMIT 1")
-    fun get(uuid: Uuid): Flow<ValoModeEntity?>
+    @Query(singleQuery)
+    suspend fun get(uuid: Uuid): ValoModeEntity?
 
-    @Query("SELECT * FROM valo_modes")
-    fun get(): Flow<List<ValoModeEntity>>
+    @Query(singleQuery)
+    fun observe(uuid: Uuid): Flow<ValoModeEntity?>
+
+    @Query(allQuery)
+    fun observe(): Flow<List<ValoModeEntity>>
 }

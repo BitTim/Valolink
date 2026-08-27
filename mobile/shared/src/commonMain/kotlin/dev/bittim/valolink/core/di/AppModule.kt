@@ -7,7 +7,7 @@
  * File:       AppModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 17:02
+ * Modified:   27.08.26, 17:06
  */
 
 package dev.bittim.valolink.core.di
@@ -74,7 +74,6 @@ val sharedModule = module {
     singleOf(::SupabaseValoRankRepo).bind<ValoRankRepo>()
 
     singleOf(::SupabaseActivityRepo).bind<ActivityRepo>()
-    singleOf(::SupabaseMatchRepo).bind<MatchRepo>()
 
     single<SyncManager> { SyncManager(
         get(named("SyncScope")),

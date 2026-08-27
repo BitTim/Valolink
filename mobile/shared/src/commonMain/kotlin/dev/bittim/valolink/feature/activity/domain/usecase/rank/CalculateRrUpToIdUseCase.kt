@@ -7,7 +7,7 @@
  * File:       CalculateRrUpToIdUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.06.26, 13:23
+ * Modified:   27.08.26, 19:07
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase.rank
@@ -32,10 +32,28 @@ class CalculateRrUpToIdUseCase {
         if (activities == null) return null
 
         val sortedActivities = activities.filter {
-            it.mode == modeUuid
+            val activityModeUuid = when(it) {
+                is Activity.MatchActivity -> it.match.mode.uuid
+                is Activity.RrRefundActivity -> it.mode.uuid
+                else -> false
+            }
+
+            activityModeUuid == modeUuid
         }.sortedBy { it.time }
         val lastIndex = sortedActivities.indexOfFirst { it.id == upToInclusive }
-        val filteredActivities = sortedActivities.take(lastIndex + 1).filter { it.rr != null }
-        return if (filteredActivities.isEmpty()) null else filteredActivities.sumOf { it.rr!! }
+        val filteredActivities = sortedActivities.take(lastIndex + 1).filter {
+            when(it) {
+                is Activity.MatchActivity -> it.rr != null
+                is Activity.RrRefundActivity -> true
+                else -> false
+            }
+        }
+        return if (filteredActivities.isEmpty()) null else filteredActivities.sumOf {
+            when(it) {
+                is Activity.MatchActivity -> it.rr!!
+                is Activity.RrRefundActivity -> it.rr
+                else -> 0
+            }
+        }
     }
 }

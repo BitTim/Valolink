@@ -7,7 +7,7 @@
  * File:       CalculateRrBeforeTimeUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 12:58
+ * Modified:   27.08.26, 18:48
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase.rank
@@ -35,9 +35,15 @@ class CalculateRrBeforeTimeUseCase {
         var totalRr = 0
         var hasRr = false
 
-        activities.forEach { activity ->
-            if (activity.mode == modeUuid && activity.time <= before && activity.rr != null) {
-                totalRr += activity.rr
+        for(activity in activities) {
+            val (activityModeUuid, activityRr) = when (activity) {
+                is Activity.MatchActivity -> activity.match.mode.uuid to activity.rr
+                is Activity.RrRefundActivity -> activity.mode.uuid to activity.rr
+                else -> continue
+            }
+
+            if (activityModeUuid == modeUuid && activity.time <= before && activityRr != null) {
+                totalRr += activityRr
                 hasRr = true
             }
         }

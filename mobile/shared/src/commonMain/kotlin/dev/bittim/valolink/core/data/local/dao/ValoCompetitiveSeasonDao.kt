@@ -7,7 +7,7 @@
  * File:       ValoCompetitiveSeasonDao.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.06.26, 03:03
+ * Modified:   27.08.26, 16:33
  */
 
 package dev.bittim.valolink.core.data.local.dao
@@ -33,7 +33,7 @@ interface ValoCompetitiveSeasonDao {
      * @return The competitive season entity if found, `null` otherwise.
      */
     @Query("SELECT * FROM valo_competitive_seasons WHERE uuid = :uuid LIMIT 1")
-    fun get(uuid: Uuid): Flow<ValoCompetitiveSeasonEntity?>
+    fun observe(uuid: Uuid): Flow<ValoCompetitiveSeasonEntity?>
 
     /**
      * Retrieves the competitive season entity for the given season ID.
@@ -50,5 +50,5 @@ interface ValoCompetitiveSeasonDao {
      * @return A flow emitting the list of all competitive season entities whenever table contents change.
      */
     @Query("SELECT * FROM valo_competitive_seasons")
-    fun get(): Flow<List<ValoCompetitiveSeasonEntity>>
+    fun observe(): Flow<List<ValoCompetitiveSeasonEntity>>
 }

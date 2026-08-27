@@ -7,7 +7,7 @@
  * File:       SupabaseValoRankRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.06.26, 03:10
+ * Modified:   27.08.26, 16:33
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -39,7 +39,7 @@ class SupabaseValoRankRepo(
         tier: Int,
         locale: String?
     ): Flow<ValoRank?> {
-        return database.valoRankDao().get(rankTable, tier)
+        return database.valoRankDao().observe(rankTable, tier)
             .map { it?.toModel(locale) }
             .flowOn(Dispatchers.IO)
     }
@@ -51,7 +51,7 @@ class SupabaseValoRankRepo(
      * @return A [Flow] emitting lists of all [ValoRank] models for the rank table.
      */
     override fun observeAll(rankTable: Uuid, locale: String?): Flow<List<ValoRank>> {
-        return database.valoRankDao().get(rankTable)
+        return database.valoRankDao().observe(rankTable)
             .map { it.map { entity -> entity.toModel(locale) } }
             .flowOn(Dispatchers.IO)
     }

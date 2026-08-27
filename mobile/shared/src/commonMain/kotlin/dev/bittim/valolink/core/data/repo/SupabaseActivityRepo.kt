@@ -7,20 +7,18 @@
  * File:       SupabaseActivityRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 21:37
+ * Modified:   27.08.26, 18:29
  */
 
 package dev.bittim.valolink.core.data.repo
 
-import dev.bittim.valolink.core.data.remote.dto.ActivityDto
-import dev.bittim.valolink.core.data.remote.dto.ActivityInputDto
-import dev.bittim.valolink.core.data.remote.dto.MatchInputDto
-import dev.bittim.valolink.core.data.remote.dto.MatchParticipantInputDto
+import dev.bittim.valolink.core.data.remote.dto.*
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ActivityRepo
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.rpc
 import kotlin.uuid.Uuid
 
@@ -37,14 +35,16 @@ class SupabaseActivityRepo(
     override suspend fun get(
         user: Uuid,
         season: ValoSeason
-    ): List<Activity> {
-        return supabase.from("activities").select {
+    ): List<ActivityWithMatchDto> {
+        return supabase.from("activities").select(columns = Columns.raw(
+            "*, match_participants(*, matches(*))"
+        )) {
             filter {
-                ActivityDto::userId eq user
-                ActivityDto::time gte season.startTime
-                ActivityDto::time lte season.endTime
+                ActivityWithMatchDto::userId eq user
+                ActivityWithMatchDto::time gte season.startTime
+                ActivityWithMatchDto::time lte season.endTime
             }
-        }.decodeList<ActivityDto>().map { it.toModel() }
+        }.decodeList<ActivityWithMatchDto>()
     }
 
     /**

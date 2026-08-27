@@ -7,7 +7,7 @@
  * File:       XpCorrectionStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 17:17
+ * Modified:   26.08.26, 16:06
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps
@@ -32,14 +32,6 @@ import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_xp_correction_step_title
 import valolink.shared.generated.resources.generic_button_finish
 
-/**
- * Displays the XP correction step with an editable XP value and a finish action.
- *
- * @param xp The current XP value.
- * @param xpError The validation error associated with the XP value, if any.
- * @param enableContinueButton Whether the finish button is enabled.
- * @param onAction Handles XP updates and the finish action.
- */
 /**
  * Displays the XP correction step with editable XP input and a Finish button.
  *

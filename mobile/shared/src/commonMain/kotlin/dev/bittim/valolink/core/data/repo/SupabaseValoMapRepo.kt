@@ -7,7 +7,7 @@
  * File:       SupabaseValoMapRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 20:21
+ * Modified:   27.08.26, 16:34
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -29,17 +29,21 @@ class SupabaseValoMapRepo(
     private val database: Database,
     private val supabase: SupabaseClient
 ) : ValoMapRepo {
+    override suspend fun get(uuid: Uuid, locale: String?): SimpleValoMap? {
+        return database.valoMapDao().get(uuid)?.toSimpleModel(locale)
+    }
+
     override fun observe(
         uuid: Uuid,
         locale: String?
     ): Flow<SimpleValoMap?> {
-        return database.valoMapDao().get(uuid)
+        return database.valoMapDao().observe(uuid)
             .map { it?.toSimpleModel(locale) }
             .flowOn(Dispatchers.IO)
     }
 
     override fun observeAll(locale: String?): Flow<List<SimpleValoMap>> {
-        return database.valoMapDao().get()
+        return database.valoMapDao().observe()
             .map { it.map { entity -> entity.toSimpleModel(locale) } }
             .flowOn(Dispatchers.IO)
     }

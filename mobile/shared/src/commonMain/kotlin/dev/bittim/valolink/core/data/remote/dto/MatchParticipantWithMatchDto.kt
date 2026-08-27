@@ -4,10 +4,10 @@
  * Project:    Valolink
  * License:    GPLv3
  *
- * File:       MatchParticipantDto.kt
+ * File:       MatchParticipantWithMatchDto.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 17:07
+ * Modified:   27.08.26, 17:09
  */
 
 package dev.bittim.valolink.core.data.remote.dto
@@ -19,7 +19,7 @@ import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 @Serializable
-data class MatchParticipantDto(
+data class MatchParticipantWithMatchDto(
     @SerialName("user_id") val userId: Uuid,
     val activity: Uuid,
     val match: Uuid,
@@ -27,19 +27,15 @@ data class MatchParticipantDto(
     @SerialName("updated_at") val updatedAt: Instant,
     @SerialName("visible_rr") val visibleRr: Int?,
     @SerialName("is_owner") val isOwner: Boolean,
-    @SerialName("is_team_b") val isTeamB: Boolean
+    @SerialName("is_team_b") val isTeamB: Boolean,
+    val matches: MatchDto?
 ) {
-    /**
-     * Converts this data-transfer object into a match participant model.
-     *
-     * @return A match participant model containing the participant's identifiers, rating, ownership status, and team assignment.
-     */
-    fun toModel(): MatchParticipant {
-        return MatchParticipant(
+    fun toModel(): MatchParticipant =
+        MatchParticipant(
             userId = userId,
             visibleRr = visibleRr,
             isOwner = isOwner,
             isTeamB = isTeamB
         )
-    }
+
 }

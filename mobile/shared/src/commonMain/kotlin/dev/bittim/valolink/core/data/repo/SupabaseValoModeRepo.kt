@@ -7,7 +7,7 @@
  * File:       SupabaseValoModeRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 20:21
+ * Modified:   27.08.26, 16:35
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -29,14 +29,18 @@ class SupabaseValoModeRepo(
     private val database: Database,
     private val supabase: SupabaseClient
 ) : ValoModeRepo {
+    override suspend fun get(uuid: Uuid, locale: String?): ValoMode? {
+        return database.valoModeDao().get(uuid)?.toModel(locale)
+    }
+
     override fun observe(uuid: Uuid, locale: String?): Flow<ValoMode?> {
-        return database.valoModeDao().get(uuid)
+        return database.valoModeDao().observe(uuid)
             .map { it?.toModel(locale) }
             .flowOn(Dispatchers.IO)
     }
 
     override fun observeAll(locale: String?): Flow<List<ValoMode>> {
-        return database.valoModeDao().get()
+        return database.valoModeDao().observe()
             .map { it.map { entity -> entity.toModel(locale) } }
             .flowOn(Dispatchers.IO)
     }

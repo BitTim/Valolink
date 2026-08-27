@@ -7,7 +7,7 @@
  * File:       ValoRankTableDao.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.06.26, 04:18
+ * Modified:   27.08.26, 16:33
  */
 
 package dev.bittim.valolink.core.data.local.dao
@@ -35,7 +35,7 @@ interface ValoRankTableDao {
      * @return A Flow emitting the matching `ValoRankTableEntity`, or `null` if no entity exists for the given UUID.
      */
     @Query("SELECT * FROM valo_rank_tables WHERE uuid = :uuid")
-    fun get(uuid: Uuid): Flow<ValoRankTableEntity?>
+    fun observe(uuid: Uuid): Flow<ValoRankTableEntity?>
 
     /**
      * Retrieves all rank table entities.
@@ -43,5 +43,5 @@ interface ValoRankTableDao {
      * @return A Flow emitting the list of all rank table entities.
      */
     @Query("SELECT * FROM valo_rank_tables")
-    fun get(): Flow<List<ValoRankTableEntity>>
+    fun observe(): Flow<List<ValoRankTableEntity>>
 }

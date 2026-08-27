@@ -7,7 +7,7 @@
  * File:       ActivityListScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 17:12
+ * Modified:   27.08.26, 19:18
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
@@ -126,7 +126,7 @@ fun ActivityListScreen(
             ) {
                 items(state.activities ?: emptyList()) { activity ->
                     Text(
-                        text = activity.type.name
+                        text = activity.id.toString()
                     )
                 }
             }

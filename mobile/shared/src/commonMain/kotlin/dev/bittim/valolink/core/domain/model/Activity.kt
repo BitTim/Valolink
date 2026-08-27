@@ -7,7 +7,7 @@
  * File:       Activity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.06.26, 19:10
+ * Modified:   27.08.26, 17:24
  */
 
 package dev.bittim.valolink.core.domain.model
@@ -15,12 +15,33 @@ package dev.bittim.valolink.core.domain.model
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-data class Activity(
-    val id: Uuid,
-    val userId: Uuid,
-    val time: Instant,
-    val type: ActivityType,
-    val xp: Int,
-    val rr: Int?,
-    val mode: Uuid?
-)
+sealed class Activity {
+    abstract val id: Uuid
+    abstract val userId: Uuid
+    abstract val time: Instant
+
+    data class MatchActivity(
+        override val id: Uuid,
+        override val userId: Uuid,
+        override val time: Instant,
+        val xp: Int,
+        val rr: Int?,
+        val matchParticipant: MatchParticipant,
+        val match: Match
+    ) : Activity()
+
+    data class XpCorrectionActivity(
+        override val id: Uuid,
+        override val userId: Uuid,
+        override val time: Instant,
+        val xp: Int
+    ) : Activity()
+
+    data class RrRefundActivity(
+        override val id: Uuid,
+        override val userId: Uuid,
+        override val time: Instant,
+        val rr: Int,
+        val mode: ValoMode
+    ) : Activity()
+}
