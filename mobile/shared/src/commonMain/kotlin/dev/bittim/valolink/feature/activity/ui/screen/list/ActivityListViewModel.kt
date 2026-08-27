@@ -7,7 +7,7 @@
  * File:       ActivityListViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 17:43
+ * Modified:   27.08.26, 20:35
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
@@ -29,7 +29,17 @@ class ActivityListViewModel(
 
     private var getActivitiesJob: Job? = null
 
+    fun onAction(action: ActivityListAction) {
+        when (action) {
+            is ActivityListAction.Refresh -> refreshActivities()
+        }
+    }
+
     init {
+        refreshActivities()
+    }
+
+    private fun refreshActivities() {
         getActivitiesJob?.cancel()
         getActivitiesJob = viewModelScope.launch {
             val activities = getSeasonActivitiesForCurrentUserByTimeUseCase()

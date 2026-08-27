@@ -7,16 +7,15 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 17:47
+ * Modified:   27.08.26, 20:51
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
 
 import dev.bittim.valolink.core.domain.extension.toLocalizedString
 import dev.bittim.valolink.core.domain.model.*
-import dev.bittim.valolink.feature.activity.domain.usecase.FormatScoreUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.MatchOutcomeFromScoreUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.rank.CalculateRankChangeUseCase
+import dev.bittim.valolink.feature.activity.domain.logic.formatScore
+import dev.bittim.valolink.feature.activity.domain.model.RankChange
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
 import dev.bittim.valolink.feature.activity.ui.components.match.RrChipState
 import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
@@ -24,9 +23,6 @@ import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
 
 /** Builds presentation state from add-flow input and loaded feature data. */
 class ActivityAddFlowUiStateCalculator(
-    private val formatScoreUseCase: FormatScoreUseCase,
-    private val matchOutcomeFromScoreUseCase: MatchOutcomeFromScoreUseCase,
-    private val calculateRankChangeUseCase: CalculateRankChangeUseCase,
 ) {
     /**
      * Builds the presentation state for the activity add flow from the current form and loaded game data.
@@ -53,17 +49,17 @@ class ActivityAddFlowUiStateCalculator(
         val currentMap = maps?.firstOrNull { it.uuid == state.form.mapUuid }
         val modeCategory = currentMode?.category ?: ValoModeCategory.Standard
         val isPlacementScoreType = currentMode?.category?.getScoreType() == ValoModeCategory.ScoreType.Placement
-        val score = formatScoreUseCase(state.form.scoreA, state.form.scoreB, modeCategory)
-        val matchOutcome = matchOutcomeFromScoreUseCase(
+        val score = formatScore(state.form.scoreA, state.form.scoreB, modeCategory)
+        val matchOutcome = MatchOutcome.fromScore(
             state.form.scoreA,
             state.form.scoreB,
             state.form.endReason,
             modeCategory,
-        ) ?: MatchOutcome.Draw
+        )
 
         val selectedRankTier = if (state.form.rankPlacement) state.form.selectedRankTier else null
         val rankChange = if (state.form.isRankedSelected) {
-            calculateRankChangeUseCase(
+            RankChange.calculate(
                 activities = activities,
                 modeUuid = currentMode?.uuid,
                 time = state.form.time,

@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 16:57
+ * Modified:   27.08.26, 19:58
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -19,10 +19,11 @@ import dev.bittim.valolink.core.domain.Result
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
+import dev.bittim.valolink.feature.activity.domain.logic.IntParseError
+import dev.bittim.valolink.feature.activity.domain.logic.parseIntInput
 import dev.bittim.valolink.feature.activity.domain.usecase.FinalizeActivityWithCurrentUserUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.ParseIntUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.rank.ObserveRanksByTimeUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.ObserveRanksByTimeUseCase
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -38,7 +39,6 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ActivityAddFlowViewModel(
-    private val parseIntUseCase: ParseIntUseCase,
     private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase,
     private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
     private val uiStateCalculator: ActivityAddFlowUiStateCalculator,
@@ -160,7 +160,7 @@ class ActivityAddFlowViewModel(
      * @param isScoreB Whether to update team B's score; otherwise, updates team A's score.
      */
     private fun selectScore(rawScore: String?, isScoreB: Boolean) {
-        when(val result = parseIntUseCase(rawScore, allowNegative = false, maxDigits = 3)) {
+        when(val result = parseIntInput(rawScore, allowNegative = false, maxDigits = 3)) {
             is Result.Ok -> {
                 updateForm { form ->
                     if (isScoreB) form.copy(scoreB = result.data, scoreBError = null)
@@ -169,10 +169,10 @@ class ActivityAddFlowViewModel(
             }
             is Result.Err -> {
                 val error = when (result.error) {
-                    ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_score_step_score_error_empty
-                    ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_score_step_score_error_invalid
-                    ParseIntUseCase.IntParseError.NEGATIVE -> Res.string.activity_add_flow_score_step_score_error_negative
-                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_score_step_score_error_too_many_digits
+                    IntParseError.EMPTY -> Res.string.activity_add_flow_score_step_score_error_empty
+                    IntParseError.INVALID -> Res.string.activity_add_flow_score_step_score_error_invalid
+                    IntParseError.NEGATIVE -> Res.string.activity_add_flow_score_step_score_error_negative
+                    IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_score_step_score_error_too_many_digits
                 }
 
                 updateForm { form ->
@@ -216,16 +216,16 @@ class ActivityAddFlowViewModel(
      * @param rawRrDelta The rank-rating delta entered by the user.
      */
     private fun selectVisibleRrDelta(rawRrDelta: String?) {
-        when(val result = parseIntUseCase(rawRrDelta, allowNegative = true, maxDigits = 2)) {
+        when(val result = parseIntInput(rawRrDelta, allowNegative = true, maxDigits = 2)) {
             is Result.Ok -> {
                 updateForm { it.copy(visibleRrDelta = result.data, rrDeltaError = null) }
             }
             is Result.Err -> {
                 val error = when (result.error) {
-                    ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
-                    ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
-                    ParseIntUseCase.IntParseError.NEGATIVE -> null
-                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_rank_step_rr_error_too_many_digits
+                    IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
+                    IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
+                    IntParseError.NEGATIVE -> null
+                    IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_rank_step_rr_error_too_many_digits
                 }
 
                 updateForm { it.copy(rrDeltaError = error) }
@@ -261,16 +261,16 @@ class ActivityAddFlowViewModel(
      * @param allowNegative Whether negative XP values are accepted.
      */
     private fun selectXp(rawXp: String?, allowNegative: Boolean = false) {
-        when(val result = parseIntUseCase(rawXp, allowNegative = allowNegative)) {
+        when(val result = parseIntInput(rawXp, allowNegative = allowNegative)) {
             is Result.Ok -> {
                 updateForm { it.copy(xp = result.data, xpError = null) }
             }
             is Result.Err -> {
                 val error = when (result.error) {
-                    ParseIntUseCase.IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
-                    ParseIntUseCase.IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
-                    ParseIntUseCase.IntParseError.NEGATIVE -> Res.string.activity_add_flow_xp_step_xp_error_negative
-                    ParseIntUseCase.IntParseError.TOO_MANY_DIGITS -> null
+                    IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
+                    IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
+                    IntParseError.NEGATIVE -> Res.string.activity_add_flow_xp_step_xp_error_negative
+                    IntParseError.TOO_MANY_DIGITS -> null
                 }
 
                 updateForm { it.copy(xpError = error) }

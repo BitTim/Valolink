@@ -7,7 +7,7 @@
  * File:       GetSeasonActivitiesForCurrentUserByTimeUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 19:15
+ * Modified:   27.08.26, 20:42
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
@@ -47,8 +47,7 @@ class GetSeasonActivitiesForCurrentUserByTimeUseCase(
 
             val match = if(map != null && mode != null) matchDto.toModel(map, mode) else null
 
-            println(dto)
             dto.toModel(matchParticipant, match, mode)
-        }
+        }.sortedByDescending { it.time }
     }
 }

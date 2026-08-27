@@ -7,10 +7,10 @@
  * File:       ObserveRanksByTimeUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   02.08.26, 19:11
+ * Modified:   27.08.26, 19:58
  */
 
-package dev.bittim.valolink.feature.activity.domain.usecase.rank
+package dev.bittim.valolink.feature.activity.domain.usecase
 
 import dev.bittim.valolink.core.domain.model.ValoRank
 import dev.bittim.valolink.core.domain.repo.ValoCompetitiveSeasonRepo
