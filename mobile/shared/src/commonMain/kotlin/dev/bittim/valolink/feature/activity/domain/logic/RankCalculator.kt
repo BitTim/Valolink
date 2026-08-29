@@ -7,7 +7,7 @@
  * File:       RankCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 19:55
+ * Modified:   29.08.26, 16:42
  */
 
 package dev.bittim.valolink.feature.activity.domain.logic
@@ -16,23 +16,24 @@ import dev.bittim.valolink.core.domain.model.Activity
 import dev.bittim.valolink.core.domain.model.Rank
 import dev.bittim.valolink.core.domain.model.ValoRank
 import dev.bittim.valolink.feature.activity.domain.constants.RankConstants
+import dev.bittim.valolink.feature.activity.domain.model.RankChange
 import kotlin.math.floor
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 object RankCalculator {
     /**
-     * Calculates the sum of `rr` values for matching activities up to a given timestamp.
+     * Calculates the sum of `rr` values for matching activities up to a given timestamp while excluding it.
      *
      * @param activities The activities to process.
      * @param modeUuid The mode to match against each activity's mode.
-     * @param before The latest timestamp to include.
+     * @param time The latest timestamp to include.
      * @return The sum of `rr` values for activities with a matching mode and `time` less than or equal to `before`, or `null` if no matching activities contribute to the sum.
      */
     fun calculateRrUpToTime(
         activities: List<Activity>?,
         modeUuid: Uuid?,
-        before: Instant
+        time: Instant
     ): Int? {
         if (activities == null) return null
 
@@ -46,7 +47,7 @@ object RankCalculator {
                 else -> continue
             }
 
-            if (activityModeUuid == modeUuid && activity.time <= before && activityRr != null) {
+            if (activityModeUuid == modeUuid && activity.time < time && activityRr != null) {
                 totalRr += activityRr
                 hasRr = true
             }
@@ -55,45 +56,38 @@ object RankCalculator {
         return totalRr.takeIf { hasRr }
     }
 
-    /**
-     * Calculates the sum of `rr` values for matching activities up to a specified identifier.
-     *
-     * @param activities The activities to process.
-     * @param modeUuid The activity mode to match.
-     * @param upToInclusive The activity identifier to include up to.
-     * @return The sum of `rr` values for matching activities up to `upToInclusive`, or `null` if no matching `rr` values are found or `activities` is `null`.
-     */
-    fun calculateRrUpToId(
+    fun calculateRankChanges(
         activities: List<Activity>?,
-        modeUuid: Uuid?,
-        upToInclusive: Uuid
-    ): Int? {
+        ranks: List<ValoRank>?
+    ): Map<Uuid, RankChange>? {
         if (activities == null) return null
 
-        val sortedActivities = activities.filter {
-            val activityModeUuid = when(it) {
-                is Activity.MatchActivity -> it.match.mode.uuid
-                is Activity.RrRefundActivity -> it.mode.uuid
-                else -> false
+        val result = mutableMapOf<Uuid, RankChange>()
+        val runningRrByMode = mutableMapOf<Uuid, Int?>()
+
+        for (activity in activities.sortedBy { it.time }) {
+            val (modeUuid, rrDelta) = when (activity) {
+                is Activity.MatchActivity -> {
+                    if (!activity.match.isRanked) continue
+                    activity.match.mode.uuid to activity.rr
+                }
+                is Activity.RrRefundActivity -> activity.mode.uuid to activity.rr
+                else -> continue
             }
 
-            activityModeUuid == modeUuid
-        }.sortedBy { it.time }
-        val lastIndex = sortedActivities.indexOfFirst { it.id == upToInclusive }
-        val filteredActivities = sortedActivities.take(lastIndex + 1).filter {
-            when(it) {
-                is Activity.MatchActivity -> it.rr != null
-                is Activity.RrRefundActivity -> true
-                else -> false
+            val runningRr = runningRrByMode[modeUuid]
+            check(!(runningRr != null && rrDelta == null)) {
+                "Ranked match with no rr found after a placement was already established for mode $modeUuid"
+            }
+
+            result[activity.id] = RankChange.fromFinalRr(runningRr, rrDelta, ranks)
+            runningRrByMode[modeUuid] = when {
+                runningRr == null && rrDelta == null -> null
+                else -> (runningRr ?: 0) + (rrDelta ?: 0)
             }
         }
-        return if (filteredActivities.isEmpty()) null else filteredActivities.sumOf {
-            when(it) {
-                is Activity.MatchActivity -> it.rr!!
-                is Activity.RrRefundActivity -> it.rr
-                else -> 0
-            }
-        }
+
+        return result
     }
 
     /**

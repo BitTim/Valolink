@@ -7,7 +7,7 @@
  * File:       MatchCardState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 20:27
+ * Modified:   29.08.26, 16:58
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -17,6 +17,7 @@ import dev.bittim.valolink.core.domain.model.Activity
 import dev.bittim.valolink.core.domain.model.MatchEndReason
 import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.feature.activity.domain.logic.formatScore
+import dev.bittim.valolink.feature.activity.domain.model.RankChange
 
 data class MatchCardState(
     val iconState: MatchIconState,
@@ -27,9 +28,7 @@ data class MatchCardState(
     val xp: Int?,
 ) {
     companion object {
-        fun fromActivity(activity: Activity.MatchActivity): MatchCardState {
-            // TODO: Get and display ranks for ranked games
-
+        fun fromActivity(activity: Activity.MatchActivity, rankChange: RankChange?): MatchCardState {
             val score = formatScore(
                 activity.match.scoreA,
                 activity.match.scoreB,
@@ -45,16 +44,17 @@ data class MatchCardState(
             )
 
             val wasSurrender = activity.match.endReason == MatchEndReason.SURRENDER_A || activity.match.endReason == MatchEndReason.SURRENDER_B
+            val rankChanged = rankChange?.current != rankChange?.new
 
             return MatchCardState(
                 iconState = MatchIconState(
                     outcome = matchOutcome,
                     mapImageUrl = activity.match.map.splash,
-                    iconUrl = activity.match.mode.displayIcon,
+                    iconUrl = rankChange?.new?.rank?.largeIcon ?: activity.match.mode.displayIcon,
                     rrChipState = activity.matchParticipant.visibleRr?.let { rr ->
                         RrChipState(
                             rr = rr,
-                            rankChanged = false
+                            rankChanged = rankChanged
                         )
                     }
                 ),

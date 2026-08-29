@@ -7,13 +7,14 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 20:51
+ * Modified:   29.08.26, 16:09
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
 
 import dev.bittim.valolink.core.domain.extension.toLocalizedString
 import dev.bittim.valolink.core.domain.model.*
+import dev.bittim.valolink.feature.activity.domain.logic.RankCalculator
 import dev.bittim.valolink.feature.activity.domain.logic.formatScore
 import dev.bittim.valolink.feature.activity.domain.model.RankChange
 import dev.bittim.valolink.feature.activity.ui.components.map.MapCardState
@@ -58,19 +59,11 @@ class ActivityAddFlowUiStateCalculator(
         )
 
         val selectedRankTier = if (state.form.rankPlacement) state.form.selectedRankTier else null
-        val rankChange = if (state.form.isRankedSelected) {
-            RankChange.calculate(
-                activities = activities,
-                modeUuid = currentMode?.uuid,
-                time = state.form.time,
-                visibleRrDelta = state.form.visibleRrDelta,
-                rankModifier = state.form.rankModifier,
-                placement = state.form.rankPlacement,
-                selectedRankTier = selectedRankTier,
-                ranks = ranks,
-            )
-        } else {
-            null
+        val totalRr = RankCalculator.calculateRrUpToTime(activities, currentMode?.uuid, state.form.time)
+        val rankChange = when {
+            !state.form.isRankedSelected -> null
+            totalRr != null -> RankChange.fromRawRr(totalRr, state.form.visibleRrDelta, state.form.rankModifier, ranks)
+            else -> RankChange.fromPlacement(state.form.rankPlacement, selectedRankTier, ranks)
         }
         val rankChanged = rankChange?.current?.rank?.tier != rankChange?.new?.rank?.tier
         val iconUrl = rankChange?.new?.rank?.largeIcon ?: currentMode?.displayIcon
