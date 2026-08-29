@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:41
+ * Modified:   29.08.26, 18:09
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -53,6 +53,7 @@ class ActivityAddFlowUiStateCalculator {
         val matchOutcome = MatchOutcome.fromScore(
             state.form.scoreA,
             state.form.scoreB,
+            false,
             state.form.endReason,
             modeCategory,
         )

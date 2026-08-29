@@ -7,7 +7,7 @@
  * File:       GetSeasonActivitiesForCurrentUserByTimeUseCase.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 20:42
+ * Modified:   29.08.26, 18:18
  */
 
 package dev.bittim.valolink.feature.activity.domain.usecase
@@ -36,16 +36,18 @@ class GetSeasonActivitiesForCurrentUserByTimeUseCase(
         val userId = authRepo.getCurrentUserId() ?: return emptyList()
         val season = valoSeasonRepo.observe(time, locale).firstOrNull() ?: return emptyList()
 
-        return activityRepo.get(userId, season).map { dto ->
+        return activityRepo.get(userId, season).mapNotNull { dto ->
             val matchParticipantDto = dto.matchParticipants
             val matchParticipant = matchParticipantDto?.toModel()
             val matchDto = matchParticipantDto?.matches
 
             val modeId = matchDto?.mode ?: dto.mode
-            val mode = modeId?.let { modeRepo.get(it) }
-            val map = matchDto?.let { mapRepo.get(it.map) }
+            val mode = modeId?.let { modeRepo.get(it, locale) }
+            val map = matchDto?.let { mapRepo.get(it.map, locale) }
 
-            val match = if(map != null && mode != null) matchDto.toModel(map, mode) else null
+            val match = if (matchDto != null && map != null && mode != null) {
+                matchDto.toModel(map, mode)
+            } else null
 
             dto.toModel(matchParticipant, match, mode)
         }.sortedByDescending { it.time }

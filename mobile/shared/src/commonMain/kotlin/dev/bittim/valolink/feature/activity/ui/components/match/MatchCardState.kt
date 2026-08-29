@@ -7,7 +7,7 @@
  * File:       MatchCardState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 16:58
+ * Modified:   29.08.26, 18:09
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -39,6 +39,7 @@ data class MatchCardState(
             val matchOutcome = MatchOutcome.fromScore(
                 activity.match.scoreA,
                 activity.match.scoreB,
+                activity.matchParticipant.isTeamB,
                 activity.match.endReason,
                 activity.match.mode.category,
             )

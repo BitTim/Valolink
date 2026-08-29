@@ -7,7 +7,7 @@
  * File:       ActivityListViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:12
+ * Modified:   29.08.26, 18:00
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
@@ -50,6 +50,7 @@ class ActivityListViewModel(
         rankFetchJob = viewModelScope.launch {
             observeRanksByTimeUseCase(Clock.System.now()).distinctUntilChanged().collectLatest {
                 ranks = it
+                refreshActivities()
             }
         }
 

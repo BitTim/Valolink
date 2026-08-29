@@ -7,7 +7,7 @@
  * File:       MatchOutcome.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 20:02
+ * Modified:   29.08.26, 18:09
  */
 
 package dev.bittim.valolink.core.domain.model
@@ -18,10 +18,10 @@ enum class MatchOutcome {
     Loss;
 
     companion object {
-        fun fromScore(scoreA: Int?, scoreB: Int?, surrender: MatchEndReason, modeCategory: ValoModeCategory): MatchOutcome {
+        fun fromScore(scoreA: Int?, scoreB: Int?, isTeamB: Boolean, surrender: MatchEndReason, modeCategory: ValoModeCategory): MatchOutcome {
             return when (surrender) {
-                MatchEndReason.SURRENDER_A -> Loss
-                MatchEndReason.SURRENDER_B -> Win
+                MatchEndReason.SURRENDER_A -> if (isTeamB) Win else Loss
+                MatchEndReason.SURRENDER_B -> if (isTeamB) Loss else Win
                 MatchEndReason.COMPLETED -> {
                     if (scoreA == null) return Draw
 
@@ -30,8 +30,8 @@ enum class MatchOutcome {
 
                         ValoModeCategory.Standard, ValoModeCategory.TDM, ValoModeCategory.Skirmish -> when {
                             scoreB == null -> Draw
-                            scoreA > scoreB -> Win
-                            scoreA < scoreB -> Loss
+                            scoreA > scoreB -> if (isTeamB) Loss else Win
+                            scoreA < scoreB -> if (isTeamB) Win else Loss
                             else -> Draw
                         }
 

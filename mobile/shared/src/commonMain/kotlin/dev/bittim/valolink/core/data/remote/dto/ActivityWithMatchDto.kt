@@ -7,7 +7,7 @@
  * File:       ActivityWithMatchDto.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 19:10
+ * Modified:   29.08.26, 18:13
  */
 
 package dev.bittim.valolink.core.data.remote.dto
@@ -31,7 +31,7 @@ data class ActivityWithMatchDto(
     val mode: Uuid?,
     @SerialName("match_participants") val matchParticipants: MatchParticipantWithMatchDto?
 ) {
-    fun toModel(matchParticipant: MatchParticipant?, match: Match?, mode: ValoMode?): Activity {
+    fun toModel(matchParticipant: MatchParticipant?, match: Match?, mode: ValoMode?): Activity? {
         return when(type) {
             ActivityType.MATCH -> Activity.MatchActivity(
                 id = id,
@@ -39,15 +39,15 @@ data class ActivityWithMatchDto(
                 time = time,
                 xp = xp,
                 rr = rr,
-                matchParticipant = matchParticipant ?: throw IllegalArgumentException("Match participant not found"),
-                match = match ?: throw IllegalArgumentException("Match not found")
+                matchParticipant = matchParticipant ?: return null,
+                match = match ?: return null
             )
             ActivityType.RR_REFUND -> Activity.RrRefundActivity(
                 id = id,
                 userId = userId,
                 time = time,
-                rr = rr ?: throw IllegalArgumentException("RR not found"),
-                mode = mode ?: throw IllegalArgumentException("Mode not found")
+                rr = rr ?: return null,
+                mode = mode ?: return null
             )
             ActivityType.XP_CORRECTION -> Activity.XpCorrectionActivity(
                 id = id,
