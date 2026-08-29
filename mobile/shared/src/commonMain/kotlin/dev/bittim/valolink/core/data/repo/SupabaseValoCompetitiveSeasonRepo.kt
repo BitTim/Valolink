@@ -7,7 +7,7 @@
  * File:       SupabaseValoCompetitiveSeasonRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.06.26, 03:04
+ * Modified:   27.08.26, 16:33
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -35,7 +35,7 @@ class SupabaseValoCompetitiveSeasonRepo(
      * @return A flow that emits the competitive season for the given UUID, or null if not found.
      */
     override fun observe(uuid: Uuid): Flow<ValoCompetitiveSeason?> {
-        return database.valoCompetitiveSeasonDao().get(uuid)
+        return database.valoCompetitiveSeasonDao().observe(uuid)
             .map { it?.toModel() }
             .flowOn(Dispatchers.IO)
     }

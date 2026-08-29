@@ -7,13 +7,14 @@
  * File:       ActivityModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.08.26, 13:39
+ * Modified:   27.08.26, 19:58
  */
 
 package dev.bittim.valolink.feature.activity.di
 
-import dev.bittim.valolink.feature.activity.domain.usecase.*
-import dev.bittim.valolink.feature.activity.domain.usecase.rank.*
+import dev.bittim.valolink.feature.activity.domain.usecase.FinalizeActivityWithCurrentUserUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.ObserveRanksByTimeUseCase
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowViewModel
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowUiStateCalculator
 import dev.bittim.valolink.feature.activity.ui.screen.list.ActivityListViewModel
@@ -22,20 +23,8 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val featureActivityModule = module {
-    singleOf(::FilterRanksUseCase)
-
-    singleOf(::ParseIntUseCase)
-    singleOf(::FormatScoreUseCase)
-    singleOf(::MatchOutcomeFromScoreUseCase)
     singleOf(::GetSeasonActivitiesForCurrentUserByTimeUseCase)
-    singleOf(::GetCurrentSeasonActivitiesForCurrentUserUseCase)
-    singleOf(::CalculateRrBeforeTimeUseCase)
-    singleOf(::CalculateRrUpToIdUseCase)
-    singleOf(::CalculateTotalRrFromPlacementRankUseCase)
-    singleOf(::MapRrToRankUseCase)
     singleOf(::ObserveRanksByTimeUseCase)
-    singleOf(::CalculateRrDeltaUseCase)
-    singleOf(::CalculateRankChangeUseCase)
     singleOf(::ActivityAddFlowUiStateCalculator)
     singleOf(::FinalizeActivityWithCurrentUserUseCase)
 

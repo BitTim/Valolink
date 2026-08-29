@@ -7,12 +7,17 @@
  * File:       MatchCardState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 19:12
+ * Modified:   29.08.26, 18:09
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
 
+import dev.bittim.valolink.core.domain.extension.toLocalizedString
+import dev.bittim.valolink.core.domain.model.Activity
+import dev.bittim.valolink.core.domain.model.MatchEndReason
 import dev.bittim.valolink.core.domain.model.MatchOutcome
+import dev.bittim.valolink.feature.activity.domain.logic.formatScore
+import dev.bittim.valolink.feature.activity.domain.model.RankChange
 
 data class MatchCardState(
     val iconState: MatchIconState,
@@ -23,6 +28,49 @@ data class MatchCardState(
     val xp: Int?,
 ) {
     companion object {
+        fun fromActivity(activity: Activity.MatchActivity, rankChange: RankChange?): MatchCardState {
+            val score = formatScore(
+                activity.match.scoreA,
+                activity.match.scoreB,
+                activity.match.mode.category,
+                activity.matchParticipant.isTeamB
+            )
+
+            val matchOutcome = MatchOutcome.fromScore(
+                activity.match.scoreA,
+                activity.match.scoreB,
+                activity.matchParticipant.isTeamB,
+                activity.match.endReason,
+                activity.match.mode.category,
+            )
+
+            val wasSurrender = activity.match.endReason == MatchEndReason.SURRENDER_A || activity.match.endReason == MatchEndReason.SURRENDER_B
+            val rankChanged = rankChange?.current != rankChange?.new
+
+            return MatchCardState(
+                iconState = MatchIconState(
+                    outcome = matchOutcome,
+                    mapImageUrl = activity.match.map.splash,
+                    iconUrl = rankChange?.new?.rank?.largeIcon ?: activity.match.mode.displayIcon,
+                    rrChipState = activity.matchParticipant.visibleRr?.let { rr ->
+                        RrChipState(
+                            rr = rr,
+                            rankChanged = rankChanged
+                        )
+                    }
+                ),
+                scoreChipState = ScoreChipState(
+                    outcome = matchOutcome,
+                    wasSurrender = wasSurrender,
+                    score = score
+                ),
+                modeName = activity.match.mode.displayName,
+                mapName = activity.match.map.displayName,
+                time = activity.match.time.toLocalizedString(),
+                xp = activity.xp
+            )
+        }
+
         val Empty = MatchCardState(
             iconState = MatchIconState(
                 outcome = MatchOutcome.Draw,

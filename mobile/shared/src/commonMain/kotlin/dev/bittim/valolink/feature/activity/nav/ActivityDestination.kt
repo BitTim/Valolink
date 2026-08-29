@@ -7,7 +7,7 @@
  * File:       ActivityDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 16:36
+ * Modified:   27.08.26, 20:40
  */
 
 package dev.bittim.valolink.feature.activity.nav
@@ -56,7 +56,8 @@ fun EntryProviderScope<NavKey>.activityDestination(
         val activityListState by activityListViewModel.state.collectAsStateWithLifecycle()
 
         ActivityListScreen(
-            state = activityListState
+            state = activityListState,
+            onAction = activityListViewModel::onAction
         )
     }
 

@@ -7,7 +7,7 @@
  * File:       Match.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 15:36
+ * Modified:   27.08.26, 16:07
  */
 
 package dev.bittim.valolink.core.domain.model
@@ -22,6 +22,6 @@ data class Match(
     val endReason: MatchEndReason,
     val isRanked: Boolean,
     val time: Instant,
-    val map: Uuid,
-    val mode: Uuid
+    val map: SimpleValoMap,
+    val mode: ValoMode
 )

@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 14:11
+ * Modified:   29.08.26, 17:15
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -25,12 +25,6 @@ import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankCha
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankStep
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Displays the cancellable activity-entry flow and dispatches user interactions as actions.
- *
- * @param state The current flow state.
- * @param onAction Callback invoked for flow and step interactions.
- */
 /**
  * Renders the activity-entry flow and forwards user interactions as actions.
  *

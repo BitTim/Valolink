@@ -7,7 +7,7 @@
  * File:       ValoMapRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   08.06.26, 19:32
+ * Modified:   27.08.26, 16:22
  */
 
 package dev.bittim.valolink.core.domain.repo
@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface ValoMapRepo {
+    suspend fun get(uuid: Uuid, locale: String? = null): SimpleValoMap?
     fun observe(uuid: Uuid, locale: String? = null): Flow<SimpleValoMap?>
     fun observeAll(locale: String? = null): Flow<List<SimpleValoMap>>
 

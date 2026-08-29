@@ -7,7 +7,7 @@
  * File:       ValoModeRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 16:27
+ * Modified:   27.08.26, 16:35
  */
 
 package dev.bittim.valolink.core.domain.repo
@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface ValoModeRepo {
+    suspend fun get(uuid: Uuid, locale: String? = null): ValoMode?
     fun observe(uuid: Uuid, locale: String? = null): Flow<ValoMode?>
     fun observeAll(locale: String? = null): Flow<List<ValoMode>>
 

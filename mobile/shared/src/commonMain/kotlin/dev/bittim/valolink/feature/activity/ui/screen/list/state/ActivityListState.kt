@@ -7,13 +7,11 @@
  * File:       ActivityListState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 16:24
+ * Modified:   29.08.26, 17:12
  */
 
-package dev.bittim.valolink.feature.activity.ui.screen.list
-
-import dev.bittim.valolink.core.domain.model.Activity
+package dev.bittim.valolink.feature.activity.ui.screen.list.state
 
 data class ActivityListState(
-    val activities: List<Activity>? = null
+    val items: List<ActivityListItemState>? = null,
 )

@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   19.08.26, 04:48
+  ~ Modified:   27.08.26, 20:10
   -->
 
 <resources>
@@ -97,4 +97,7 @@
     <string name="activity_add_flow_xp_correction_menu_item">EP-Korrektur</string>
     <string name="activity_add_flow_rr_refund_menu_item">RR-Rückerstattung</string>
     <string name="activity_add_flow_rr_refund_step_title">RR-Rückerstattung</string>
+    <string name="unit_rr">RR</string>
+    <string name="rr_refund_label">rückerstattet</string>
+    <string name="xp_correction_label">korrigiert</string>
 </resources>

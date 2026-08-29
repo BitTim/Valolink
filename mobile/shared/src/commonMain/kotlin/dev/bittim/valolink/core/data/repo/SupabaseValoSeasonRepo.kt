@@ -7,7 +7,7 @@
  * File:       SupabaseValoSeasonRepo.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 04:16
+ * Modified:   27.08.26, 16:33
  */
 
 package dev.bittim.valolink.core.data.repo
@@ -34,7 +34,7 @@ class SupabaseValoSeasonRepo(
         uuid: Uuid,
         locale: String?
     ): Flow<ValoSeason?> {
-        return database.valoSeasonDao().get(uuid)
+        return database.valoSeasonDao().observe(uuid)
             .map { it?.toModel(locale) }
             .flowOn(Dispatchers.IO)
     }
@@ -43,13 +43,13 @@ class SupabaseValoSeasonRepo(
         time: Instant,
         locale: String?
     ): Flow<ValoSeason?> {
-        return database.valoSeasonDao().get(time)
+        return database.valoSeasonDao().observe(time)
             .map { it?.toModel(locale) }
             .flowOn(Dispatchers.IO)
     }
 
     override fun observeAll(locale: String?): Flow<List<ValoSeason>> {
-        return database.valoSeasonDao().get()
+        return database.valoSeasonDao().observe()
             .map { it.map { entity -> entity.toModel(locale) } }
             .flowOn(Dispatchers.IO)
     }

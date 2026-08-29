@@ -7,7 +7,7 @@
  * File:       ValoSeasonDao.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   22.06.26, 04:12
+ * Modified:   27.08.26, 16:33
  */
 
 package dev.bittim.valolink.core.data.local.dao
@@ -26,11 +26,11 @@ interface ValoSeasonDao {
     suspend fun upsert(seasons: List<ValoSeasonEntity>)
 
     @Query("SELECT * FROM valo_seasons WHERE uuid = :uuid LIMIT 1")
-    fun get(uuid: Uuid): Flow<ValoSeasonEntity?>
+    fun observe(uuid: Uuid): Flow<ValoSeasonEntity?>
 
     @Query("SELECT * FROM valo_seasons WHERE startTime < :time AND :time < endTime LIMIT 1")
-    fun get(time: Instant): Flow<ValoSeasonEntity?>
+    fun observe(time: Instant): Flow<ValoSeasonEntity?>
 
     @Query("SELECT * FROM valo_seasons")
-    fun get(): Flow<List<ValoSeasonEntity>>
+    fun observe(): Flow<List<ValoSeasonEntity>>
 }

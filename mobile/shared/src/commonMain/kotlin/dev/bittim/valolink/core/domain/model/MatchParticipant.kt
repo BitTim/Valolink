@@ -7,7 +7,7 @@
  * File:       MatchParticipant.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 15:37
+ * Modified:   27.08.26, 17:07
  */
 
 package dev.bittim.valolink.core.domain.model
@@ -16,8 +16,6 @@ import kotlin.uuid.Uuid
 
 data class MatchParticipant(
     val userId: Uuid,
-    val activity: Uuid,
-    val match: Uuid,
     val visibleRr: Int?,
     val isOwner: Boolean,
     val isTeamB: Boolean
