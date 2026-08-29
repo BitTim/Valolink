@@ -7,7 +7,7 @@
  * File:       ActivityListViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 16:59
+ * Modified:   29.08.26, 17:12
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
@@ -20,6 +20,8 @@ import dev.bittim.valolink.feature.activity.domain.logic.RankCalculator
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.ObserveRanksByTimeUseCase
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCardState
+import dev.bittim.valolink.feature.activity.ui.screen.list.state.ActivityListItemState
+import dev.bittim.valolink.feature.activity.ui.screen.list.state.ActivityListState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

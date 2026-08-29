@@ -7,7 +7,7 @@
  * File:       RankCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 16:42
+ * Modified:   29.08.26, 17:40
  */
 
 package dev.bittim.valolink.feature.activity.domain.logic
@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 
 object RankCalculator {
     /**
-     * Calculates the sum of `rr` values for matching activities up to a given timestamp while excluding it.
+     * Calculates the sum of `rr` values for matching activities up to a given timestamp.
      *
      * @param activities The activities to process.
      * @param modeUuid The mode to match against each activity's mode.
@@ -33,7 +33,8 @@ object RankCalculator {
     fun calculateRrUpToTime(
         activities: List<Activity>?,
         modeUuid: Uuid?,
-        time: Instant
+        time: Instant,
+        inclusive: Boolean = false
     ): Int? {
         if (activities == null) return null
 
@@ -47,7 +48,7 @@ object RankCalculator {
                 else -> continue
             }
 
-            if (activityModeUuid == modeUuid && activity.time < time && activityRr != null) {
+            if (activityModeUuid == modeUuid && ((inclusive && activity.time <= time) || (!inclusive && activity.time < time)) && activityRr != null) {
                 totalRr += activityRr
                 hasRr = true
             }

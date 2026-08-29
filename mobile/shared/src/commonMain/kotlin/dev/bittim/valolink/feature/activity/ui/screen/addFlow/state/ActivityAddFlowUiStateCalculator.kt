@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 16:09
+ * Modified:   29.08.26, 17:41
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -23,8 +23,7 @@ import dev.bittim.valolink.feature.activity.ui.components.mode.ModeCardState
 import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
 
 /** Builds presentation state from add-flow input and loaded feature data. */
-class ActivityAddFlowUiStateCalculator(
-) {
+class ActivityAddFlowUiStateCalculator {
     /**
      * Builds the presentation state for the activity add flow from the current form and loaded game data.
      *
@@ -59,7 +58,7 @@ class ActivityAddFlowUiStateCalculator(
         )
 
         val selectedRankTier = if (state.form.rankPlacement) state.form.selectedRankTier else null
-        val totalRr = RankCalculator.calculateRrUpToTime(activities, currentMode?.uuid, state.form.time)
+        val totalRr = RankCalculator.calculateRrUpToTime(activities, currentMode?.uuid, state.form.time, inclusive = true)
         val rankChange = when {
             !state.form.isRankedSelected -> null
             totalRr != null -> RankChange.fromRawRr(totalRr, state.form.visibleRrDelta, state.form.rankModifier, ranks)

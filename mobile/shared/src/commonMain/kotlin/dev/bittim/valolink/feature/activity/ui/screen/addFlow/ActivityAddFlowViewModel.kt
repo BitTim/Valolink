@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 19:58
+ * Modified:   29.08.26, 17:39
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -424,7 +424,7 @@ class ActivityAddFlowViewModel(
         activityFetchJob?.cancel()
         activityFetchJob = viewModelScope.launch {
             state.map { it.form.time }.distinctUntilChanged().collectLatest {
-                activities = getSeasonActivitiesForCurrentUserByTimeUseCase(it)
+                activities = getSeasonActivitiesForCurrentUserByTimeUseCase(state.value.form.time)
                 updateUiState()
             }
         }

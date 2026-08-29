@@ -7,7 +7,7 @@
  * File:       ActivityListScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:09
+ * Modified:   29.08.26, 17:12
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
@@ -28,6 +28,8 @@ import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.SeamlessLazyColumn
 import dev.bittim.valolink.feature.activity.ui.components.match.*
+import dev.bittim.valolink.feature.activity.ui.screen.list.state.ActivityListItemState
+import dev.bittim.valolink.feature.activity.ui.screen.list.state.ActivityListState
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.*
 import kotlin.time.Clock
