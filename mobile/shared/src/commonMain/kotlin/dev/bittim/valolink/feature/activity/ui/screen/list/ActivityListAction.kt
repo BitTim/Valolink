@@ -7,7 +7,7 @@
  * File:       ActivityListAction.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 20:35
+ * Modified:   30.08.26, 18:10
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list

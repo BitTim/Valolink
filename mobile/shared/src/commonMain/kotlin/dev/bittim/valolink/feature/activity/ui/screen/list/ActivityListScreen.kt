@@ -7,13 +7,17 @@
  * File:       ActivityListScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:12
+ * Modified:   30.08.26, 18:29
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.EventNote
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,31 +60,68 @@ fun ActivityListScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
-            SeamlessLazyColumn (
-                modifier = Modifier.weight(1f),
+            AnimatedContent(
+                targetState = state.items?.isEmpty() == true
             ) {
-                items(state.items ?: emptyList()) { item ->
-                    when(item) {
-                        is ActivityListItemState.MatchCard -> {
-                            MatchCard(
-                                modifier = Modifier.fillMaxWidth(),
-                                state = item.state
-                            )
+                if (it) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(Spacing.xxl),
+                            imageVector = Icons.AutoMirrored.Filled.EventNote,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.outlineVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(Spacing.l))
+
+                        Text(
+                            text = stringResource(Res.string.activity_list_empty),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(horizontal = Spacing.xxxl),
+                            text = stringResource(Res.string.activity_list_empty_subtext),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                } else {
+                    SeamlessLazyColumn(
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        items(state.items ?: emptyList()) { item ->
+                            when (item) {
+                                is ActivityListItemState.MatchCard -> {
+                                    MatchCard(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        state = item.state
+                                    )
+                                }
+
+                                is ActivityListItemState.RrRefund -> Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = "${item.rr} ${stringResource(Res.string.unit_rr)} ${stringResource(Res.string.rr_refund_label)} - ${item.modeName}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                is ActivityListItemState.XpCorrection -> Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = "${item.xp} ${stringResource(Res.string.unit_xp)} ${stringResource(Res.string.xp_correction_label)}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
-                        is ActivityListItemState.RrRefund -> Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "${item.rr} ${stringResource(Res.string.unit_rr)} ${stringResource(Res.string.rr_refund_label)} - ${item.modeName}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
-                        )
-                        is ActivityListItemState.XpCorrection -> Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "${item.xp} ${stringResource(Res.string.unit_xp)} ${stringResource(Res.string.xp_correction_label)}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
-                        )
                     }
                 }
             }
@@ -90,7 +131,20 @@ fun ActivityListScreen(
 
 @Composable
 @Preview
-fun ActivityListScreenPreview() {
+fun ActivityListScreenEmptyPreview() {
+    MaterialTheme {
+        Surface {
+            ActivityListScreen(
+                state = ActivityListState(items = listOf()),
+                onAction = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun ActivityListScreenPopulatedPreview() {
     MaterialTheme {
         Surface {
             ActivityListScreen(

@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   30.08.26, 03:50
+  ~ Modified:   30.08.26, 18:21
   -->
 
 <resources>
@@ -93,4 +93,6 @@
     <string name="activity_add_flow_rank_step_rr_error_negative">RR cannot be negative</string>
     <string name="activity_add_flow_rank_step_rr_error_empty">RR cannot be empty</string>
     <string name="activity_add_flow_rank_step_rr_error_invalid">Invalid input</string>
+    <string name="activity_list_empty">No matches yet</string>
+    <string name="activity_list_empty_subtext">Add a match to track your stats</string>
 </resources>
