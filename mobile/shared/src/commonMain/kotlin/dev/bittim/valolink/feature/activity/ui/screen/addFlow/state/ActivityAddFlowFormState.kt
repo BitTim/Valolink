@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowFormState.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   24.08.26, 14:09
+ * Modified:   30.08.26, 03:14
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -30,10 +30,12 @@ data class ActivityAddFlowFormState(
     val rankPlacement: Boolean = false,
     val selectedRankTier: Int? = null,
     val visibleRrDelta: Int? = null,
+    val placementRr: Int? = null,
     val rankModifier: Boolean = false,
     val time: Instant = Clock.System.now(),
     val scoreAError: StringResource? = null,
     val scoreBError: StringResource? = null,
     val xpError: StringResource? = null,
     val rrDeltaError: StringResource? = null,
+    val placementRrError: StringResource? = null,
 )

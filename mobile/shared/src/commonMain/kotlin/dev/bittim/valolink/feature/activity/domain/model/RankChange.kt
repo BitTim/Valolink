@@ -7,7 +7,7 @@
  * File:       RankChange.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 16:46
+ * Modified:   30.08.26, 03:31
  */
 
 package dev.bittim.valolink.feature.activity.domain.model
@@ -57,31 +57,22 @@ data class RankChange(
          *
          * @param placement Whether placement is active.
          * @param selectedRankTier The selected rank tier for placement.
+         * @param placementRr The placement RR value.
          * @param ranks The available rank definitions.
          * @return The unranked current rank, resulting placement rank, and placement RR delta, or an empty change when rank definitions are unavailable.
          */
         fun fromPlacement(
             placement: Boolean,
             selectedRankTier: Int?,
+            placementRr: Int?,
             ranks: List<ValoRank>?,
         ): RankChange {
             val rankDefinitions = ranks ?: return RankChange()
-            val unranked = RankCalculator.mapRrToRank(null, rankDefinitions)
-            val newRank = if (placement && selectedRankTier != null) {
-                rankDefinitions.find { it.tier == selectedRankTier }?.let { Rank(rank = it, rr = 50) } ?: unranked
-            } else {
-                unranked
-            }
+            val rrDelta = if(placement && selectedRankTier != null && placementRr != null) {
+                RankCalculator.calculateTotalRrFromPlacement(selectedRankTier, placementRr, rankDefinitions)
+            } else null
 
-            val rrDelta = if(placement && selectedRankTier != null) {
-                RankCalculator.calculateTotalRrFromPlacement(selectedRankTier, rankDefinitions)
-            } else 0
-
-            return RankChange(
-                current = unranked,
-                new = newRank,
-                rrDelta = rrDelta,
-            )
+            return fromFinalRr(null, rrDelta, ranks)
         }
     }
 }

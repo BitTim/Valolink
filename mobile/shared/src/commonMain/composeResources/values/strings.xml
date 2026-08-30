@@ -7,7 +7,7 @@
   ~ File:       strings.xml
   ~ Module:     Valolink.shared.commonMain
   ~ Author:     Tim Anhalt (BitTim)
-  ~ Modified:   27.08.26, 20:10
+  ~ Modified:   30.08.26, 03:50
   -->
 
 <resources>
@@ -90,4 +90,7 @@
     <string name="unit_rr">RR</string>
     <string name="rr_refund_label">refunded</string>
     <string name="xp_correction_label">corrected</string>
+    <string name="activity_add_flow_rank_step_rr_error_negative">RR cannot be negative</string>
+    <string name="activity_add_flow_rank_step_rr_error_empty">RR cannot be empty</string>
+    <string name="activity_add_flow_rank_step_rr_error_invalid">Invalid input</string>
 </resources>

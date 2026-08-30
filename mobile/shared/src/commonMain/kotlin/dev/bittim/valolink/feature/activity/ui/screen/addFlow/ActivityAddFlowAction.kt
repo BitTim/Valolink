@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowAction.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:15
+ * Modified:   30.08.26, 03:11
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -31,6 +31,7 @@ sealed interface ActivityAddFlowAction {
     data class SurrenderChanged(val reason: MatchEndReason) : ActivityAddFlowAction
     data object ScoreContinue : ActivityAddFlowAction
     data class RankPlacementChanged(val placement: Boolean) : ActivityAddFlowAction
+    data class PlacementRrChanged(val rawPlacementRr: String?) : ActivityAddFlowAction
     data class RankSelected(val tier: Int) : ActivityAddFlowAction
     data class RrDeltaChanged(val rawRr: String?) : ActivityAddFlowAction
     data class RankModifierChanged(val rankModifier: Boolean): ActivityAddFlowAction

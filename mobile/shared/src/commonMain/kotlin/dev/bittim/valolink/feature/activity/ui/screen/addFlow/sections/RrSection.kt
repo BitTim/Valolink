@@ -7,7 +7,7 @@
  * File:       RrSection.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   19.08.26, 04:42
+ * Modified:   30.08.26, 03:41
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.sections
@@ -33,7 +33,7 @@ import kotlin.math.absoluteValue
  * Displays a numeric field for entering a match's round differential.
  *
  * @param visibleRrDelta The existing round differential to display.
- * @param maxRrDigit The maximum number of digits allowed in the differential.
+ * @param maxRrDigits The maximum number of digits allowed in the differential.
  * @param rrDeltaError The validation error message to display.
  * @param matchOutcome The match outcome used to determine the default sign when no differential exists.
  * @param onAction Callback invoked when the differential or its sign changes.
@@ -42,7 +42,7 @@ import kotlin.math.absoluteValue
 fun RrSection(
     modifier: Modifier = Modifier,
     visibleRrDelta: Int?,
-    maxRrDigit: Int = 2,
+    maxRrDigits: Int = 2,
     rrDeltaError: String?,
     matchOutcome: MatchOutcome?,
     onAction: (ActivityAddFlowAction) -> Unit,
@@ -60,7 +60,7 @@ fun RrSection(
     OutlinedTextFieldWithError(
         value = rawRrDelta,
         onValueChange = {
-            rawRrDelta = it.take(maxRrDigit)
+            rawRrDelta = it.take(maxRrDigits)
             action()
         },
         modifier = modifier,

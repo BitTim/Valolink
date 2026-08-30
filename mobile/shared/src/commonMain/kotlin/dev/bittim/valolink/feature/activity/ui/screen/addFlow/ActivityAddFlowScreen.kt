@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowScreen.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:15
+ * Modified:   30.08.26, 03:17
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -22,6 +22,7 @@ import dev.bittim.valolink.feature.activity.ui.components.match.MatchCard
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.*
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.*
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankChangeState
+import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankPlacementState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank.RankStep
 import org.jetbrains.compose.resources.stringResource
 
@@ -98,15 +99,19 @@ fun ActivityAddFlowScreen(
                     RankStep(
                         modifier = Modifier.padding(padding),
                         currentRank = state.currentRank,
-                        selectedRankTier = state.form.selectedRankTier,
-                        placement = state.form.rankPlacement,
-                        rankCardStates = state.rankCardStates,
+                        rankPlacementState = RankPlacementState(
+                            rankCardStates = state.rankCardStates,
+                            selectedRankTier = state.form.selectedRankTier,
+                            placement = state.form.rankPlacement,
+                            placementRr = state.form.placementRr,
+                            placementRrError = state.form.placementRrError?.let { stringResource(it) },
+                        ),
                         rankChangeState = RankChangeState(
                             rrDelta = state.rrDelta,
+                            showRankModifier = state.showRankModifier,
                             visibleRrDelta = state.form.visibleRrDelta,
                             matchOutcome = state.matchOutcome,
                             rrDeltaError = state.form.rrDeltaError?.let { stringResource(it) },
-                            showRankModifier = state.showRankModifier,
                         ),
                         enableContinueButton = state.canContinueFromRank,
                         onAction = onAction,

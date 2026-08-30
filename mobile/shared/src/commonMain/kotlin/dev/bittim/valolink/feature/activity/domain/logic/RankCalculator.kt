@@ -7,7 +7,7 @@
  * File:       RankCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:40
+ * Modified:   30.08.26, 03:29
  */
 
 package dev.bittim.valolink.feature.activity.domain.logic
@@ -130,12 +130,13 @@ object RankCalculator {
      * Calculates the total rating points for a placement rank tier.
      *
      * @param placementRankTier The tier assigned to the placement rank.
+     * @param placementRr The placement RR value.
      * @param ranks The ranks used to determine the minimum tier.
      * @return The calculated rating points, or `null` if no ranks remain after filtering.
      */
-    fun calculateTotalRrFromPlacement(placementRankTier: Int, ranks: List<ValoRank>): Int? {
+    fun calculateTotalRrFromPlacement(placementRankTier: Int, placementRr: Int, ranks: List<ValoRank>): Int? {
         val tierOffset = RankFilter.filterUnrankedAndInvalid(ranks).minOfOrNull { it.tier } ?: return null
-        return (placementRankTier - tierOffset) * RankConstants.RR_PER_RANK + (RankConstants.RR_PER_RANK / 2)
+        return (placementRankTier - tierOffset) * RankConstants.RR_PER_RANK + placementRr
     }
 
     /**
@@ -146,12 +147,11 @@ object RankCalculator {
      * @return The resolved rank with its remaining RR, or `null` when no applicable ranked tier exists.
      */
     fun mapRrToRank(rr: Int?, ranks: List<ValoRank>): Rank? {
-        val rankedRanks = RankFilter.filterUnrankedAndInvalid(ranks)
-
         if (rr == null) return ranks.firstOrNull { it.tier == 0 }?.let {
             Rank(rank = it, rr = 0)
         }
 
+        val rankedRanks = RankFilter.filterUnrankedAndInvalid(ranks)
         val boundedRr = rr.coerceAtLeast(0)
         val tierOffset = rankedRanks.minOfOrNull { it.tier } ?: return null
         val highestTier = rankedRanks.maxOf { it.tier }

@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 18:09
+ * Modified:   30.08.26, 03:26
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -63,7 +63,7 @@ class ActivityAddFlowUiStateCalculator {
         val rankChange = when {
             !state.form.isRankedSelected -> null
             totalRr != null -> RankChange.fromRawRr(totalRr, state.form.visibleRrDelta, state.form.rankModifier, ranks)
-            else -> RankChange.fromPlacement(state.form.rankPlacement, selectedRankTier, ranks)
+            else -> RankChange.fromPlacement(state.form.rankPlacement, selectedRankTier, state.form.placementRr, ranks)
         }
         val rankChanged = rankChange?.current?.rank?.tier != rankChange?.new?.rank?.tier
         val iconUrl = rankChange?.new?.rank?.largeIcon ?: currentMode?.displayIcon

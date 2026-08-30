@@ -7,7 +7,7 @@
  * File:       RankChangeStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   25.08.26, 18:16
+ * Modified:   30.08.26, 03:05
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank
@@ -36,12 +36,12 @@ import valolink.shared.generated.resources.activity_add_flow_rank_step_modifier_
 import valolink.shared.generated.resources.activity_add_flow_rank_step_modifier_label_rank_shield
 
 data class RankChangeState(
+    val rankStepContext: RankStepContext = RankStepContext(),
     val rrDelta: Int? = null,
+    val showRankModifier: Boolean = false,
     val visibleRrDelta: Int? = null,
     val matchOutcome: MatchOutcome? = null,
     val rrDeltaError: String? = null,
-    val showRankModifier: Boolean = false,
-    val maxRrDigits: Int = 2
 )
 
 enum class RankModifier {
@@ -70,7 +70,7 @@ fun RankChangeStep(
         RrSection(
             modifier = Modifier.weight(1f),
             visibleRrDelta = state.visibleRrDelta,
-            maxRrDigit = state.maxRrDigits,
+            maxRrDigits = state.rankStepContext.maxRrDigits,
             rrDeltaError = state.rrDeltaError,
             matchOutcome = state.matchOutcome,
             onAction = onAction
@@ -123,9 +123,9 @@ private fun RankChangeStepPreview() {
             RankChangeStep(
                 modifier = Modifier.fillMaxSize(),
                 state = RankChangeState(
-                    rrDelta = 50,
                     visibleRrDelta = 99,
                     rrDeltaError = null,
+                    rrDelta = 50,
                     showRankModifier = true,
                 ),
                 onAction = { }

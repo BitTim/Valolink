@@ -7,7 +7,7 @@
  * File:       RankStep.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   01.08.26, 12:00
+ * Modified:   30.08.26, 03:40
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.steps.rank
@@ -26,20 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dev.bittim.valolink.core.domain.model.Rank
 import dev.bittim.valolink.core.ui.Spacing
-import dev.bittim.valolink.feature.activity.ui.components.rank.RankCardState
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowAction
 import org.jetbrains.compose.resources.stringResource
 import valolink.shared.generated.resources.Res
 import valolink.shared.generated.resources.activity_add_flow_rank_step_title
 import valolink.shared.generated.resources.generic_button_continue
 
+data class RankStepContext(
+    val maxRrDigits: Int = 2
+)
+
 /**
  * Displays the rank selection or rank change step in the activity-add flow.
  *
  * @param currentRank The user's current rank, when available.
- * @param selectedRankTier The rank tier currently selected for placement.
- * @param placement Whether the flow is placing a rank.
- * @param rankCardStates The available rank card states for placement.
+ * @param rankPlacementState The state used when placing a rank.
  * @param rankChangeState The state used when changing an existing rank.
  * @param enableContinueButton Whether the Continue button is enabled.
  * @param onAction Handles actions emitted by the step.
@@ -48,9 +49,7 @@ import valolink.shared.generated.resources.generic_button_continue
 fun RankStep(
     modifier: Modifier = Modifier,
     currentRank: Rank?,
-    selectedRankTier: Int?,
-    placement: Boolean,
-    rankCardStates: List<RankCardState>?,
+    rankPlacementState: RankPlacementState,
     rankChangeState: RankChangeState?,
     enableContinueButton: Boolean,
     onAction: (ActivityAddFlowAction) -> Unit,
@@ -80,9 +79,7 @@ fun RankStep(
                 } else {
                     RankPlacementStep(
                         modifier = Modifier.weight(1f),
-                        rankCardStates = rankCardStates,
-                        selectedRankTier = selectedRankTier,
-                        placement = placement,
+                        state = rankPlacementState,
                         onAction = onAction,
                     )
                 }
@@ -104,12 +101,22 @@ fun RankStep(
 fun RankStepPreview() {
     MaterialTheme {
         Surface {
+            val rankStepContext = RankStepContext()
+
             RankStep(
                 currentRank = null,
-                selectedRankTier = null,
-                placement = false,
-                rankCardStates = null,
-                rankChangeState = null,
+                rankChangeState = RankChangeState(
+                    rankStepContext = rankStepContext,
+                    rrDelta = null,
+                    showRankModifier = false
+                ),
+                rankPlacementState = RankPlacementState(
+                    rankStepContext = rankStepContext,
+                    rankCardStates = emptyList(),
+                    selectedRankTier = null,
+                    placement = false,
+
+                ),
                 enableContinueButton = true,
                 onAction = {  },
             )
