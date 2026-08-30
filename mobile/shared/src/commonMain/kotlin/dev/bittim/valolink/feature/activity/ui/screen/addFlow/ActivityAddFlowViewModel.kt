@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.08.26, 03:14
+ * Modified:   30.08.26, 03:50
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -222,8 +222,8 @@ class ActivityAddFlowViewModel(
             }
             is Result.Err -> {
                 val error = when (result.error) {
-                    IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
-                    IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
+                    IntParseError.EMPTY -> Res.string.activity_add_flow_rank_step_rr_error_empty
+                    IntParseError.INVALID -> Res.string.activity_add_flow_rank_step_rr_error_invalid
                     IntParseError.NEGATIVE -> null
                     IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_rank_step_rr_error_too_many_digits
                 }
@@ -241,9 +241,9 @@ class ActivityAddFlowViewModel(
             }
             is Result.Err -> {
                 val error = when (result.error) {
-                    IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
-                    IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
-                    IntParseError.NEGATIVE -> null
+                    IntParseError.EMPTY -> Res.string.activity_add_flow_rank_step_rr_error_empty
+                    IntParseError.INVALID -> Res.string.activity_add_flow_rank_step_rr_error_invalid
+                    IntParseError.NEGATIVE -> Res.string.activity_add_flow_rank_step_rr_error_negative
                     IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_rank_step_rr_error_too_many_digits
                 }
 
