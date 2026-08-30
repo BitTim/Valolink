@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   29.08.26, 17:39
+ * Modified:   30.08.26, 03:14
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -234,6 +234,25 @@ class ActivityAddFlowViewModel(
         updateUiState()
     }
 
+    private fun selectPlacementRr(rawPlacementRr: String?) {
+        when(val result = parseIntInput(rawPlacementRr, allowNegative = false, maxDigits = 2)) {
+            is Result.Ok -> {
+                updateForm { it.copy(placementRr = result.data, placementRrError = null) }
+            }
+            is Result.Err -> {
+                val error = when (result.error) {
+                    IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
+                    IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
+                    IntParseError.NEGATIVE -> null
+                    IntParseError.TOO_MANY_DIGITS -> Res.string.activity_add_flow_rank_step_rr_error_too_many_digits
+                }
+
+                updateForm { it.copy(placementRrError = error) }
+            }
+        }
+        updateUiState()
+    }
+
     /**
      * Updates the selected rank modifier and recalculates the UI state.
      *
@@ -340,6 +359,9 @@ class ActivityAddFlowViewModel(
             }
             is ActivityAddFlowAction.RankPlacementChanged -> {
                 selectRankPlacement(action.placement)
+            }
+            is ActivityAddFlowAction.PlacementRrChanged -> {
+                selectPlacementRr(action.rawPlacementRr)
             }
             is ActivityAddFlowAction.RankSelected -> {
                 selectRankTier(action.tier)
