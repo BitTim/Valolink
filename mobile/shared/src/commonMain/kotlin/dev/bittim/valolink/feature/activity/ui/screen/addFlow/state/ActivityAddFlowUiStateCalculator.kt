@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowUiStateCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.08.26, 03:26
+ * Modified:   05.10.26, 03:02
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow.state
@@ -31,7 +31,7 @@ class ActivityAddFlowUiStateCalculator {
      * @param modes Available game modes.
      * @param maps Available maps.
      * @param activities Existing activities used to calculate rank changes.
-     * @param ranks Available rank tiers.
+     * @param rankTables Available rank tiers.
      * @param modePlaceholder Text displayed when no mode is selected.
      * @param mapPlaceholder Text displayed when no map is selected.
      * @return The updated activity add flow state.
@@ -41,10 +41,12 @@ class ActivityAddFlowUiStateCalculator {
         modes: List<ValoMode>?,
         maps: List<SimpleValoMap>?,
         activities: List<Activity>?,
-        ranks: List<ValoRank>?,
+        rankTables: List<ValoRankTable>?,
         modePlaceholder: String,
         mapPlaceholder: String,
     ): ActivityAddFlowState {
+        val ranks = rankTables?.last()?.ranks
+
         val currentMode = modes?.firstOrNull { it.uuid == state.form.modeUuid }
         val currentMap = maps?.firstOrNull { it.uuid == state.form.mapUuid }
         val modeCategory = currentMode?.category ?: ValoModeCategory.Standard

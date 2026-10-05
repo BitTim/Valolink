@@ -7,7 +7,7 @@
  * File:       ActivityAddFlowViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.08.26, 03:50
+ * Modified:   05.10.26, 02:59
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.addFlow
@@ -15,17 +15,16 @@ package dev.bittim.valolink.feature.activity.ui.screen.addFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.bittim.valolink.core.data.util.fallbackLocale
-import dev.bittim.valolink.core.domain.Result
+import dev.bittim.valolink.core.domain.Outcome
 import dev.bittim.valolink.core.domain.model.*
 import dev.bittim.valolink.core.domain.repo.ValoMapRepo
 import dev.bittim.valolink.core.domain.repo.ValoModeRepo
+import dev.bittim.valolink.core.domain.repo.ValoRankRepo
 import dev.bittim.valolink.feature.activity.domain.logic.IntParseError
 import dev.bittim.valolink.feature.activity.domain.logic.parseIntInput
 import dev.bittim.valolink.feature.activity.domain.usecase.FinalizeActivityWithCurrentUserUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.ObserveRanksByTimeUseCase
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -37,15 +36,14 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ActivityAddFlowViewModel(
     private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase,
-    private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
     private val uiStateCalculator: ActivityAddFlowUiStateCalculator,
     private val finalizeActivityWithCurrentUserUseCase: FinalizeActivityWithCurrentUserUseCase,
 
     private val valoModeRepo: ValoModeRepo,
     private val valoMapRepo: ValoMapRepo,
+    private val valoRankRepo: ValoRankRepo,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ActivityAddFlowState())
     val state = _state.asStateFlow()
@@ -66,7 +64,7 @@ class ActivityAddFlowViewModel(
     private var maps: List<SimpleValoMap>? = null
     private var modes: List<ValoMode>? = null
     private var activities: List<Activity>? = null
-    private var ranks: List<ValoRank>? = null
+    private var rankTables: List<ValoRankTable>? = null
 
     /**
      * Navigates to the previous step in the activity entry flow or exits from the first step.
@@ -120,7 +118,7 @@ class ActivityAddFlowViewModel(
                 modes,
                 maps,
                 activities,
-                ranks,
+                rankTables,
                 modePlaceholder,
                 mapPlaceholder,
             )
@@ -161,13 +159,13 @@ class ActivityAddFlowViewModel(
      */
     private fun selectScore(rawScore: String?, isScoreB: Boolean) {
         when(val result = parseIntInput(rawScore, allowNegative = false, maxDigits = 3)) {
-            is Result.Ok -> {
+            is Outcome.Ok -> {
                 updateForm { form ->
                     if (isScoreB) form.copy(scoreB = result.data, scoreBError = null)
                     else form.copy(scoreA = result.data, scoreAError = null)
                 }
             }
-            is Result.Err -> {
+            is Outcome.Err -> {
                 val error = when (result.error) {
                     IntParseError.EMPTY -> Res.string.activity_add_flow_score_step_score_error_empty
                     IntParseError.INVALID -> Res.string.activity_add_flow_score_step_score_error_invalid
@@ -217,10 +215,10 @@ class ActivityAddFlowViewModel(
      */
     private fun selectVisibleRrDelta(rawRrDelta: String?) {
         when(val result = parseIntInput(rawRrDelta, allowNegative = true, maxDigits = 2)) {
-            is Result.Ok -> {
+            is Outcome.Ok -> {
                 updateForm { it.copy(visibleRrDelta = result.data, rrDeltaError = null) }
             }
-            is Result.Err -> {
+            is Outcome.Err -> {
                 val error = when (result.error) {
                     IntParseError.EMPTY -> Res.string.activity_add_flow_rank_step_rr_error_empty
                     IntParseError.INVALID -> Res.string.activity_add_flow_rank_step_rr_error_invalid
@@ -236,10 +234,10 @@ class ActivityAddFlowViewModel(
 
     private fun selectPlacementRr(rawPlacementRr: String?) {
         when(val result = parseIntInput(rawPlacementRr, allowNegative = false, maxDigits = 2)) {
-            is Result.Ok -> {
+            is Outcome.Ok -> {
                 updateForm { it.copy(placementRr = result.data, placementRrError = null) }
             }
-            is Result.Err -> {
+            is Outcome.Err -> {
                 val error = when (result.error) {
                     IntParseError.EMPTY -> Res.string.activity_add_flow_rank_step_rr_error_empty
                     IntParseError.INVALID -> Res.string.activity_add_flow_rank_step_rr_error_invalid
@@ -281,10 +279,10 @@ class ActivityAddFlowViewModel(
      */
     private fun selectXp(rawXp: String?, allowNegative: Boolean = false) {
         when(val result = parseIntInput(rawXp, allowNegative = allowNegative)) {
-            is Result.Ok -> {
+            is Outcome.Ok -> {
                 updateForm { it.copy(xp = result.data, xpError = null) }
             }
-            is Result.Err -> {
+            is Outcome.Err -> {
                 val error = when (result.error) {
                     IntParseError.EMPTY -> Res.string.activity_add_flow_xp_step_xp_error_empty
                     IntParseError.INVALID -> Res.string.activity_add_flow_xp_step_xp_error_invalid
@@ -453,12 +451,7 @@ class ActivityAddFlowViewModel(
 
         rankFetchJob?.cancel()
         rankFetchJob = viewModelScope.launch {
-            state.distinctUntilChanged { old, new -> old.form.time == new.form.time }.flatMapLatest {
-                observeRanksByTimeUseCase(it.form.time).distinctUntilChanged()
-            }.collectLatest {
-                ranks = it
-                updateUiState()
-            }
+            valoRankRepo.observeAllTables().collectLatest { rankTables = it }
         }
     }
 }

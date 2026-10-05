@@ -7,7 +7,7 @@
  * File:       NavBarDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   04.06.26, 01:19
+ * Modified:   26.09.26, 16:58
  */
 
 package dev.bittim.valolink.core.nav

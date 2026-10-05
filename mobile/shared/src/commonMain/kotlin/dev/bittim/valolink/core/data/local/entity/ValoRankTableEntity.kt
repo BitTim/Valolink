@@ -7,7 +7,7 @@
  * File:       ValoRankTableEntity.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   23.05.26, 17:40
+ * Modified:   26.09.26, 17:26
  */
 
 package dev.bittim.valolink.core.data.local.entity

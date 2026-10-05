@@ -7,14 +7,14 @@
  * File:       ActivityModule.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   27.08.26, 19:58
+ * Modified:   26.09.26, 17:36
  */
 
 package dev.bittim.valolink.feature.activity.di
 
 import dev.bittim.valolink.feature.activity.domain.usecase.FinalizeActivityWithCurrentUserUseCase
+import dev.bittim.valolink.feature.activity.domain.usecase.FindRankTableByTimeUseCase
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.ObserveRanksByTimeUseCase
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.ActivityAddFlowViewModel
 import dev.bittim.valolink.feature.activity.ui.screen.addFlow.state.ActivityAddFlowUiStateCalculator
 import dev.bittim.valolink.feature.activity.ui.screen.list.ActivityListViewModel
@@ -24,7 +24,7 @@ import org.koin.dsl.module
 
 val featureActivityModule = module {
     singleOf(::GetSeasonActivitiesForCurrentUserByTimeUseCase)
-    singleOf(::ObserveRanksByTimeUseCase)
+    singleOf(::FindRankTableByTimeUseCase)
     singleOf(::ActivityAddFlowUiStateCalculator)
     singleOf(::FinalizeActivityWithCurrentUserUseCase)
 

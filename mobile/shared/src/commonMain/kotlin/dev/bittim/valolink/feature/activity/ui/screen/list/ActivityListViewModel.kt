@@ -7,7 +7,7 @@
  * File:       ActivityListViewModel.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.08.26, 18:10
+ * Modified:   05.10.26, 03:05
  */
 
 package dev.bittim.valolink.feature.activity.ui.screen.list
@@ -15,26 +15,27 @@ package dev.bittim.valolink.feature.activity.ui.screen.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.bittim.valolink.core.domain.model.Activity
-import dev.bittim.valolink.core.domain.model.ValoRank
+import dev.bittim.valolink.core.domain.model.ValoRankTable
+import dev.bittim.valolink.core.domain.repo.ValoRankRepo
 import dev.bittim.valolink.feature.activity.domain.logic.RankCalculator
 import dev.bittim.valolink.feature.activity.domain.usecase.GetSeasonActivitiesForCurrentUserByTimeUseCase
-import dev.bittim.valolink.feature.activity.domain.usecase.ObserveRanksByTimeUseCase
 import dev.bittim.valolink.feature.activity.ui.components.match.MatchCardState
 import dev.bittim.valolink.feature.activity.ui.screen.list.state.ActivityListItemState
 import dev.bittim.valolink.feature.activity.ui.screen.list.state.ActivityListState
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 
 class ActivityListViewModel(
-    private val observeRanksByTimeUseCase: ObserveRanksByTimeUseCase,
+    private val valoRankRepo: ValoRankRepo,
     private val getSeasonActivitiesForCurrentUserByTimeUseCase: GetSeasonActivitiesForCurrentUserByTimeUseCase
 ) : ViewModel() {
-    private val _state = MutableStateFlow(ActivityListState())
+    private val _state = MutableStateFlow<ActivityListState>(ActivityListState.Loading)
     val state = _state.asStateFlow()
 
-    private var ranks: List<ValoRank>? = null
+    private var ranks: List<ValoRankTable>? = null
 
     private var rankFetchJob: Job? = null
     private var activitiesFetchJob: Job? = null
@@ -48,10 +49,7 @@ class ActivityListViewModel(
     init {
         rankFetchJob?.cancel()
         rankFetchJob = viewModelScope.launch {
-            observeRanksByTimeUseCase(Clock.System.now()).distinctUntilChanged().collectLatest {
-                ranks = it
-                refreshActivities()
-            }
+            valoRankRepo.observeAllTables().collectLatest { ranks = it }
         }
 
         refreshActivities()
@@ -60,18 +58,24 @@ class ActivityListViewModel(
     private fun refreshActivities() {
         activitiesFetchJob?.cancel()
         activitiesFetchJob = viewModelScope.launch {
+            _state.value = ActivityListState.Loading
+
             val activities = getSeasonActivitiesForCurrentUserByTimeUseCase()
             val rankChanges = RankCalculator.calculateRankChanges(activities, ranks)
 
             val items = activities.map {
                 when (it) {
-                    is Activity.MatchActivity -> ActivityListItemState.MatchCard(MatchCardState.fromActivity(it, rankChanges?.get(it.id)))
-                    is Activity.XpCorrectionActivity -> ActivityListItemState.XpCorrection(it.xp)
-                    is Activity.RrRefundActivity -> ActivityListItemState.RrRefund(it.rr, it.mode.displayName)
+                    is Activity.MatchActivity -> ActivityListItemState.MatchCard(it.id, MatchCardState.fromActivity(it, rankChanges?.get(it.id)))
+                    is Activity.XpCorrectionActivity -> ActivityListItemState.XpCorrection(it.id, it.xp)
+                    is Activity.RrRefundActivity -> ActivityListItemState.RrRefund(it.id, it.rr, it.mode.displayName)
                 }
             }
 
-            _state.update { it.copy(items = items) }
+            // TODO: Error handling
+            _state.value = when {
+                items.isEmpty() -> ActivityListState.Empty
+                else -> ActivityListState.Content(items)
+            }
         }
     }
 }

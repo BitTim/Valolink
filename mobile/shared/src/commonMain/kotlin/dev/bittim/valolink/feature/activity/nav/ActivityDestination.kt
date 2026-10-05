@@ -7,7 +7,7 @@
  * File:       ActivityDestination.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.08.26, 18:10
+ * Modified:   26.09.26, 16:58
  */
 
 package dev.bittim.valolink.feature.activity.nav

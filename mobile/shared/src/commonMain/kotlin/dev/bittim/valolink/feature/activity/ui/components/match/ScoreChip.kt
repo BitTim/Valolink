@@ -7,7 +7,7 @@
  * File:       ScoreChip.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   15.06.26, 20:51
+ * Modified:   05.10.26, 03:05
  */
 
 package dev.bittim.valolink.feature.activity.ui.components.match
@@ -30,11 +30,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.bittim.valolink.core.domain.model.MatchOutcome
 import dev.bittim.valolink.core.ui.Spacing
 import dev.bittim.valolink.core.ui.components.colors
+
+object ScoreChipDefaults {
+    val iconHeight: Dp = 16.dp
+    val iconPadding: PaddingValues = PaddingValues(Spacing.xs)
+    val textPadding: PaddingValues = PaddingValues(horizontal = Spacing.s, vertical = Spacing.xs)
+    val cornerRadius: Dp = Spacing.m
+    val connectedCornerRadius: Dp = Spacing.xs
+    val connectedSpacing: Dp = Spacing.xxs
+    val skeletonWidth: Dp = 48.dp
+
+    val textStyle: TextStyle
+        @Composable get() = MaterialTheme.typography.labelMedium
+
+    val textHeight: Dp
+        @Composable get() = with(LocalDensity.current) { textStyle.lineHeight.toDp() }
+
+    val height: Dp
+        @Composable get() = maxOf(
+            iconHeight + iconPadding.calculateTopPadding() + iconPadding.calculateBottomPadding(),
+            textHeight + textPadding.calculateTopPadding() + textPadding.calculateBottomPadding()
+        )
+}
 
 @Composable
 fun ScoreChip(
@@ -46,13 +71,13 @@ fun ScoreChip(
     val fgColor by animateColorAsState(colors.fg)
 
     val innerCornerRadius by animateDpAsState(
-        targetValue = if(state.wasSurrender) Spacing.xs else Spacing.m
+        targetValue = if(state.wasSurrender) ScoreChipDefaults.connectedCornerRadius else ScoreChipDefaults.cornerRadius
     )
 
     Row (
         modifier = modifier.height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.xxs)
+        horizontalArrangement = Arrangement.spacedBy(ScoreChipDefaults.connectedSpacing)
     ) {
         AnimatedVisibility(
             visible = state.wasSurrender
@@ -60,17 +85,17 @@ fun ScoreChip(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(
-                        topStart = Spacing.m,
+                        topStart = ScoreChipDefaults.cornerRadius,
                         topEnd = innerCornerRadius,
-                        bottomStart = Spacing.m,
+                        bottomStart = ScoreChipDefaults.cornerRadius,
                         bottomEnd = innerCornerRadius
                     ))
                     .background(color = bgColor)
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(Spacing.xs)
-                        .size(16.dp),
+                        .padding(ScoreChipDefaults.iconPadding)
+                        .size(ScoreChipDefaults.iconHeight),
                     imageVector = Icons.Default.Flag,
                     tint = fgColor,
                     contentDescription = null
@@ -82,9 +107,9 @@ fun ScoreChip(
             modifier = Modifier.fillMaxHeight()
                 .clip(RoundedCornerShape(
                     topStart = innerCornerRadius,
-                    topEnd = Spacing.m,
+                    topEnd = ScoreChipDefaults.cornerRadius,
                     bottomStart = innerCornerRadius,
-                    bottomEnd = Spacing.m
+                    bottomEnd = ScoreChipDefaults.cornerRadius
                 ))
                 .background(color = bgColor)
         ) {
@@ -93,11 +118,11 @@ fun ScoreChip(
             ) {
                 Text(
                     modifier = Modifier
-                        .padding(horizontal = Spacing.s, vertical = Spacing.xs)
+                        .padding(ScoreChipDefaults.textPadding)
                         .align(Alignment.Center),
                     text = it,
                     color = fgColor,
-                    style = MaterialTheme.typography.labelMedium,
+                    style = ScoreChipDefaults.textStyle,
                 )
             }
         }

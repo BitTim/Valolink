@@ -7,7 +7,7 @@
  * File:       RankCalculator.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   30.08.26, 03:29
+ * Modified:   05.10.26, 02:50
  */
 
 package dev.bittim.valolink.feature.activity.domain.logic
@@ -15,6 +15,7 @@ package dev.bittim.valolink.feature.activity.domain.logic
 import dev.bittim.valolink.core.domain.model.Activity
 import dev.bittim.valolink.core.domain.model.Rank
 import dev.bittim.valolink.core.domain.model.ValoRank
+import dev.bittim.valolink.core.domain.model.ValoRankTable
 import dev.bittim.valolink.feature.activity.domain.constants.RankConstants
 import dev.bittim.valolink.feature.activity.domain.model.RankChange
 import kotlin.math.floor
@@ -59,7 +60,7 @@ object RankCalculator {
 
     fun calculateRankChanges(
         activities: List<Activity>?,
-        ranks: List<ValoRank>?
+        rankTables: List<ValoRankTable>?
     ): Map<Uuid, RankChange>? {
         if (activities == null) return null
 
@@ -81,7 +82,7 @@ object RankCalculator {
                 "Ranked match with no rr found after a placement was already established for mode $modeUuid"
             }
 
-            result[activity.id] = RankChange.fromFinalRr(runningRr, rrDelta, ranks)
+            result[activity.id] = RankChange.fromFinalRr(runningRr, rrDelta, rankTables?.last()?.ranks) // TODO: Actually pick the correct rank table for the activity by timestamp
             runningRrByMode[modeUuid] = when {
                 runningRr == null && rrDelta == null -> null
                 else -> (runningRr ?: 0) + (rrDelta ?: 0)

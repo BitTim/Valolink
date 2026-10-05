@@ -7,7 +7,7 @@
  * File:       IconCardLayout.kt
  * Module:     Valolink.shared.commonMain
  * Author:     Tim Anhalt (BitTim)
- * Modified:   07.06.26, 18:52
+ * Modified:   05.10.26, 03:05
  */
 
 package dev.bittim.valolink.core.ui.components
@@ -18,6 +18,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -45,7 +46,7 @@ fun IconCardLayout(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing)
         ) {
-            icon(Modifier.size(with(LocalDensity.current) { iconSize.toDp() }))
+            icon(Modifier.clip(MaterialTheme.shapes.medium).size(with(LocalDensity.current) { iconSize.toDp() }))
             content(Modifier.onSizeChanged { iconSize = it.height })
         }
     }
