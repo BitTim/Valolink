@@ -1,0 +1,1 @@
+This module holds the concept of activities as well as their creation

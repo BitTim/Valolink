@@ -1,0 +1,1 @@
+This module holds the concept of contacts as well as related logic 

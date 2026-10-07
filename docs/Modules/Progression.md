@@ -1,0 +1,1 @@
+This model handles calculation of progress within different types of progressions.

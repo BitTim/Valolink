@@ -1,0 +1,1 @@
+This module holds the logic to import and export data from the internal database into a saveable file like JSON in order to let the user keep a backup of their data.

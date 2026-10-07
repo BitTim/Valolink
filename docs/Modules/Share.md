@@ -1,0 +1,1 @@
+This module handles importing and exporting certain types of data into a shareable QR-Code. Such a QR-Code will be provided by the companion app in the future as well.

@@ -1,0 +1,1 @@
+This module handles syncing of game content data from [[valorant-api.com]] and maps it into domain models for use with other modules.

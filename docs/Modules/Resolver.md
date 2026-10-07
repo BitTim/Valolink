@@ -1,0 +1,1 @@
+This module handles resolving [[Content]] data for a provided timestamp or the current timestamp respectively.

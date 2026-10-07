@@ -1,0 +1,1 @@
+This module handles calculation of rank changes.
